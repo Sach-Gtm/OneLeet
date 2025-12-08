@@ -19,9 +19,9 @@ async function googleAuth(req, res) {
         }
 
         email = email.toLowerCase().trim();
-        name = name?.trim();
+        if (name) name = name.trim();
 
-        let user = await User.findOne({ email }).select("+password");
+        let user = await User.findOne({ email });
 
         if (user) {
             if (user.authProvider === "local" && !user.googleId) {
@@ -31,10 +31,9 @@ async function googleAuth(req, res) {
                 await user.save();
             }
 
-            user.password = undefined;
-
             const token = generateToken(user._id);
 
+            // Set cookie
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
@@ -50,6 +49,7 @@ async function googleAuth(req, res) {
             });
         }
 
+        // Create new
         const newUser = await User.create({
             name,
             email,
@@ -57,8 +57,6 @@ async function googleAuth(req, res) {
             avatar,
             authProvider: "google",
         });
-
-        newUser.password = undefined;
 
         const token = generateToken(newUser._id);
 
@@ -71,7 +69,7 @@ async function googleAuth(req, res) {
 
         return res.status(201).json({
             success: true,
-            message: "Google account registered successfully",
+            message: "Google registration successful",
             user: newUser,
             token,
         });
