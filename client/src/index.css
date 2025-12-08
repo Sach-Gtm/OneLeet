@@ -14,6 +14,14 @@
   overflow-x: hidden;
   background: black;
 } */
+ /* Glass Noise Effect */
+ .glass-noise {
+   background-image:
+     radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+     url("https://grainy-gradients.vercel.app/noise.svg");
+   opacity: 0.4;
+   mix-blend-mode: screen;
+ }
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
