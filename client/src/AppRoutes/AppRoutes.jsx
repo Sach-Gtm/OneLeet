@@ -6,19 +6,20 @@ import {
     useLocation,
 } from "react-router-dom";
 
-import Register from "../Pages/Auth/Register";
 import Home from "../Pages/General/Home";
-import Login from "../Pages/Auth/Login";
-import Navbar from "../Components/Navbar";
+import Navbar from "../Components/General/Navbar";
 
 import { StarsBackground } from '@/Components/animate-ui/components/backgrounds/stars'
-import NotFound from "@/Components/NotFound";
+import NotFound from "@/Components/General/NotFound";
+import Mentors from "@/Pages/Navbar-Pages/Mentors";
+import Login from "@/Pages/Auth/Login";
+import PrivacyPolicy from "@/Pages/Footer-Pages/PrivacyPolicy";
+import Team from "@/Pages/Footer-Pages/Team";
 
 const AppLayout = ({ children }) => {
     const location = useLocation();
 
     const isAuthPage =
-        location.pathname.startsWith("/user/register") ||
         location.pathname.startsWith("/user/login");
 
     return (
@@ -43,9 +44,11 @@ const AppRoutes = () => {
                 <Routes>
 
                     <Route path="/" element={<Home />} />
-                    <Route path="/user/register" element={<Register />} />
-                    <Route path="/user/login" element={<Login />} />
                     <Route path="*" element={<NotFound/>}/>
+                    <Route path="/mentor" element={<Mentors/>}/>
+                    <Route path="/user/login" element={<Login />} />
+                    <Route path="/privacy" element={<PrivacyPolicy/>}/>
+                    <Route path="/team" element={<Team/>}/>
                 </Routes>
             </AppLayout>
         </Router>
