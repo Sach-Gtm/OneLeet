@@ -48,6 +48,42 @@ function generateQuestions({ subject = "", topic = "", difficulty = "moderate", 
     return { provider: "stub", questions };
 }
 
+function predictDifficulty({ questionText = "" } = {}) {
+    const len = questionText.trim().length;
+    const difficulty = len > 160 ? "hard" : len > 80 ? "moderate" : "easy";
+    return {
+        provider: "stub",
+        difficulty,
+        confidence: 0.6,
+        rationale:
+            "Sample heuristic based on question length — configure an AI provider (Gemini) " +
+            "for a real difficulty prediction.",
+    };
+}
+
+function generateStudyPlan({ targetExam = "LEET", days = 7, hoursPerDay = 2, weakAreas = [] } = {}) {
+    const topics = weakAreas.length
+        ? weakAreas
+        : ["Mathematics", "Physics", "Digital Electronics", "C Programming", "Mechanics"];
+    const n = Math.min(Math.max(parseInt(days, 10) || 7, 1), 30);
+    const plan = [];
+    for (let d = 1; d <= n; d++) {
+        const topic = topics[(d - 1) % topics.length];
+        plan.push({
+            day: d,
+            focus: topic,
+            hours: hoursPerDay,
+            tasks: [`Revise ${topic} concepts`, `Solve 15 ${topic} PYQs`, "Take a short quiz"],
+        });
+    }
+    return {
+        provider: "stub",
+        targetExam,
+        summary: `A ${n}-day sample plan. Configure an AI provider for a personalised schedule.`,
+        plan,
+    };
+}
+
 function analyzePerformance({ stats = {} } = {}) {
     return {
         provider: "stub",
@@ -64,4 +100,11 @@ function analyzePerformance({ stats = {} } = {}) {
     };
 }
 
-module.exports = { summarizeNote, generateFlashcards, generateQuestions, analyzePerformance };
+module.exports = {
+    summarizeNote,
+    generateFlashcards,
+    generateQuestions,
+    predictDifficulty,
+    generateStudyPlan,
+    analyzePerformance,
+};

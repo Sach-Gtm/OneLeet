@@ -10,6 +10,7 @@ const pyqRoutes = require("./src/routes/content/pyqRoutes");
 const studyNotesRoutes = require("./src/routes/content/studyNotesRoutes");
 const testRoutes = require("./src/routes/test/testRoutes");
 const attemptRoutes = require("./src/routes/test/attemptRoutes");
+const aiRoutes = require("./src/routes/ai/aiRoutes");
 
 // Builds and returns the configured Express app WITHOUT starting a server or
 // connecting to the database. server.js wires those up for real runs; tests
@@ -53,6 +54,7 @@ app.use("/api/pyqs", pyqRoutes);
 app.use("/api/notes", studyNotesRoutes);
 app.use("/api/tests", testRoutes);
 app.use("/api/attempts", attemptRoutes);
+app.use("/api/ai", aiRoutes);
 
 // 404 for unmatched routes
 app.use((req, res) => {

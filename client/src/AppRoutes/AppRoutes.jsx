@@ -26,6 +26,7 @@ import NotesLibrary from "@/Pages/App/NotesLibrary";
 import TestsList from "@/Pages/App/TestsList";
 import TestTake from "@/Pages/App/TestTake";
 import TestResult from "@/Pages/App/TestResult";
+import AiTools from "@/Pages/App/AiTools";
 import ComingSoon from "@/Pages/App/ComingSoon";
 
 const AppRoutes = () => {
@@ -62,7 +63,7 @@ const AppRoutes = () => {
                     <Route path="/tests" element={<TestsList />} />
                     <Route path="/tests/result/:attemptId" element={<TestResult />} />
                     <Route path="/tests/:id" element={<TestTake />} />
-                    <Route path="/ai-tools" element={<ComingSoon title="AI Tools" />} />
+                    <Route path="/ai-tools" element={<AiTools />} />
                     <Route path="/analytics" element={<ComingSoon title="Analytics" />} />
                     <Route path="/community" element={<ComingSoon title="Community" />} />
                     <Route path="/profile" element={<ComingSoon title="Profile" />} />

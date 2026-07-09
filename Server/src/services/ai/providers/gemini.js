@@ -73,6 +73,37 @@ async function generateQuestions({ subject, topic, difficulty = "moderate", coun
     return { provider: "gemini", questions: Array.isArray(parsed.questions) ? parsed.questions : [] };
 }
 
+async function predictDifficulty({ questionText } = {}) {
+    const prompt =
+        `Classify the difficulty of this LEET exam question as one of easy, moderate, or hard, ` +
+        `and briefly justify it. Respond ONLY as JSON: ` +
+        `{"difficulty": "easy|moderate|hard", "confidence": number (0-1), "rationale": string}.\n` +
+        `Question: ${questionText}`;
+    const raw = await callGemini(prompt, { json: true });
+    const parsed = safeJsonParse(raw) || {};
+    return {
+        provider: "gemini",
+        difficulty: parsed.difficulty || "moderate",
+        confidence: typeof parsed.confidence === "number" ? parsed.confidence : 0.7,
+        rationale: parsed.rationale || raw,
+    };
+}
+
+async function generateStudyPlan({ targetExam = "LEET", days = 7, hoursPerDay = 2, weakAreas = [] } = {}) {
+    const prompt =
+        `Create a ${days}-day study plan for a student targeting ${targetExam}, studying about ` +
+        `${hoursPerDay} hours/day. ${weakAreas.length ? `Prioritise these weak areas: ${weakAreas.join(", ")}. ` : ""}` +
+        `Respond ONLY as JSON: {"summary": string, "plan": [{"day": number, "focus": string, "hours": number, "tasks": string[]}]}.`;
+    const raw = await callGemini(prompt, { json: true });
+    const parsed = safeJsonParse(raw) || { summary: raw, plan: [] };
+    return {
+        provider: "gemini",
+        targetExam,
+        summary: parsed.summary || "",
+        plan: Array.isArray(parsed.plan) ? parsed.plan : [],
+    };
+}
+
 async function analyzePerformance({ stats } = {}) {
     const prompt =
         `A LEET aspirant has these prep stats: ${JSON.stringify(stats || {})}. ` +
@@ -88,4 +119,11 @@ async function analyzePerformance({ stats } = {}) {
     };
 }
 
-module.exports = { summarizeNote, generateFlashcards, generateQuestions, analyzePerformance };
+module.exports = {
+    summarizeNote,
+    generateFlashcards,
+    generateQuestions,
+    predictDifficulty,
+    generateStudyPlan,
+    analyzePerformance,
+};
