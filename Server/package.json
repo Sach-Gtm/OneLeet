@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
+    "seed:pyqs": "node scripts/seedPyqs.js",
     "test": "echo \"No automated tests configured yet\" && exit 0"
   },
   "keywords": [],

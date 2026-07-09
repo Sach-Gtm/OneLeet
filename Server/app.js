@@ -6,6 +6,7 @@ const userRoutes = require("./src/routes/user/userRoutes");
 const googleAuth = require("./src/routes/user/googleAuth");
 const pdfRoutes = require("./src/routes/content/noteRoutes");
 const dashboardRoutes = require("./src/routes/dashboard/dashboardRoutes");
+const pyqRoutes = require("./src/routes/content/pyqRoutes");
 
 // Builds and returns the configured Express app WITHOUT starting a server or
 // connecting to the database. server.js wires those up for real runs; tests
@@ -45,6 +46,7 @@ app.use("/api/auth", userRoutes);
 app.use("/api/auth", googleAuth);
 app.use("/api/pdf", pdfRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/pyqs", pyqRoutes);
 
 // 404 for unmatched routes
 app.use((req, res) => {
