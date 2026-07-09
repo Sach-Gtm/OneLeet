@@ -22,6 +22,7 @@ import ProtectedRoute from "@/Components/Auth/ProtectedRoute";
 import AppShell from "@/Components/App/AppShell";
 import Dashboard from "@/Pages/App/Dashboard";
 import PyqArchive from "@/Pages/App/PyqArchive";
+import NotesLibrary from "@/Pages/App/NotesLibrary";
 import ComingSoon from "@/Pages/App/ComingSoon";
 
 const AppRoutes = () => {
@@ -54,7 +55,7 @@ const AppRoutes = () => {
                 >
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/pyqs" element={<PyqArchive />} />
-                    <Route path="/notes" element={<ComingSoon title="Notes" />} />
+                    <Route path="/notes" element={<NotesLibrary />} />
                     <Route path="/tests" element={<ComingSoon title="Mock Tests" />} />
                     <Route path="/ai-tools" element={<ComingSoon title="AI Tools" />} />
                     <Route path="/analytics" element={<ComingSoon title="Analytics" />} />
