@@ -1,4 +1,3 @@
-import ChromaGrid from "@/Components/animate-ui/ChromaGrid";
 import React, { useState } from "react";
 import { Github, Linkedin } from "lucide-react";
 
@@ -7,19 +6,10 @@ const Team = () => {
 
     const members = [
         {
-            name: "Saurav Anand",
-            username: "@isauravanand",
-            // rank: "Rank 23 @ipuLeet-2025",
-            tagline: "Full Stack Developer ",
-            image: "https://res.cloudinary.com/dtgo1vvgs/image/upload/v1765216641/download_5_twuygb.jpg",
-            github: "https://github.com/isauravanand",
-            linkedin: "https://www.linkedin.com/in/saurav-anand-257037251/"
-        },
-        {
             name: "Sachin Gautam",
             username: "@sachingautam",
             // rank: "Rank 54 @ipuLeet-2025",
-            tagline: "Bakchodi Developer",
+            tagline: "Founder & Full Stack Developer",
             image: "https://res.cloudinary.com/dtgo1vvgs/image/upload/v1765217102/caa3166d46ae69f93dec818856d0a830_etcpk3.jpg",
             github: "https://github.com/sach-gtm",
             linkedin: "https://www.linkedin.com/in/sachin-gautam-1484a2227/"

@@ -10,16 +10,6 @@ const ChromaGrid = ({ items, className = '', radius = 300, damping = 0.45, fadeO
 
   const demo = [
     {
-      image: "https://res.cloudinary.com/dtgo1vvgs/image/upload/v1765214319/sauravanand_r9lt8n.jpg",
-      title: 'Saurav Anand',
-      subtitle: 'Rank 23 @ipuLeet-2025',
-      Rank:"MAIT'28",
-      handle: '@isauravanand',
-      borderColor: '#4F46E5',
-      gradient: 'linear-gradient(145deg,#4F46E5,#000)',
-      url: 'https://github.com/isauravanand'
-    },
-    {
       image: 'https://res.cloudinary.com/dtgo1vvgs/image/upload/v1765214319/sachingautam_gjva2h.jpg',
       title: 'Sachin Gautam',
       subtitle: 'Rank 54 @ipuLeet-2025',
@@ -29,7 +19,6 @@ const ChromaGrid = ({ items, className = '', radius = 300, damping = 0.45, fadeO
       gradient: 'linear-gradient(145deg,#4F46E5,#000)',
       url: 'https://www.linkedin.com/in/sachin-gautam-1484a2227/'
     },
-    
   ];
 
   const data = items?.length ? items : demo;
