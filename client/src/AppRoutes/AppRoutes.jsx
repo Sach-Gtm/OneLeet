@@ -23,6 +23,9 @@ import AppShell from "@/Components/App/AppShell";
 import Dashboard from "@/Pages/App/Dashboard";
 import PyqArchive from "@/Pages/App/PyqArchive";
 import NotesLibrary from "@/Pages/App/NotesLibrary";
+import TestsList from "@/Pages/App/TestsList";
+import TestTake from "@/Pages/App/TestTake";
+import TestResult from "@/Pages/App/TestResult";
 import ComingSoon from "@/Pages/App/ComingSoon";
 
 const AppRoutes = () => {
@@ -56,7 +59,9 @@ const AppRoutes = () => {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/pyqs" element={<PyqArchive />} />
                     <Route path="/notes" element={<NotesLibrary />} />
-                    <Route path="/tests" element={<ComingSoon title="Mock Tests" />} />
+                    <Route path="/tests" element={<TestsList />} />
+                    <Route path="/tests/result/:attemptId" element={<TestResult />} />
+                    <Route path="/tests/:id" element={<TestTake />} />
                     <Route path="/ai-tools" element={<ComingSoon title="AI Tools" />} />
                     <Route path="/analytics" element={<ComingSoon title="Analytics" />} />
                     <Route path="/community" element={<ComingSoon title="Community" />} />

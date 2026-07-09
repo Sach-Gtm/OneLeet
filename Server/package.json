@@ -8,6 +8,7 @@
     "dev": "node --watch server.js",
     "seed:pyqs": "node scripts/seedPyqs.js",
     "seed:notes": "node scripts/seedNotes.js",
+    "seed:tests": "node scripts/seedTests.js",
     "test": "echo \"No automated tests configured yet\" && exit 0"
   },
   "keywords": [],

@@ -11,6 +11,7 @@ const StatsSchema = new mongoose.Schema(
         accuracy: { type: Number, default: 0 },     // percentage, 0-100
         streak: { type: Number, default: 0 },       // consecutive active days
         overallPrep: { type: Number, default: 0 },  // syllabus coverage %, 0-100
+        lastActiveAt: { type: Date },               // for streak calculation
     },
     { _id: false }
 );

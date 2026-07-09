@@ -1,11 +1,23 @@
-// Aggregated data for the student dashboard. Today it surfaces the user's
-// denormalised stats; `recentActivity` and `continueLearning` are returned as
-// empty arrays and will be populated by the Tests / PYQ / Notes features as
-// those land (this keeps the frontend contract stable so the dashboard doesn't
-// need a rewrite later).
+const Attempt = require("../../models/attemptModel");
+
+// Aggregated data for the student dashboard: the user's denormalised stats plus
+// their most recent activity (completed mock tests). `continueLearning` stays
+// empty until learning-progress tracking lands.
 async function getDashboard(req, res, next) {
     try {
         const s = req.user.stats || {};
+
+        const attempts = await Attempt.find({ user: req.user._id })
+            .select("testTitle score totalMarks accuracy submittedAt")
+            .sort({ submittedAt: -1 })
+            .limit(5);
+
+        const recentActivity = attempts.map((a) => ({
+            type: "test",
+            title: `Completed ${a.testTitle || "a mock test"}`,
+            meta: `Score ${a.score}/${a.totalMarks} · ${a.accuracy}%`,
+            time: a.submittedAt,
+        }));
 
         return res.status(200).json({
             success: true,
@@ -17,7 +29,7 @@ async function getDashboard(req, res, next) {
                 streak: s.streak || 0,
                 overallPrep: s.overallPrep || 0,
             },
-            recentActivity: [],
+            recentActivity,
             continueLearning: [],
         });
     } catch (error) {
