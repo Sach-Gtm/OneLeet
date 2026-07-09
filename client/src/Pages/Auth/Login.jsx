@@ -20,7 +20,7 @@ export default function Login() {
     const { refresh } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
 
-    const redirectTo = location.state?.from?.pathname || "/";
+    const redirectTo = location.state?.from?.pathname || "/dashboard";
 
     const {
         register,

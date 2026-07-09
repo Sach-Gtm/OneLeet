@@ -58,7 +58,7 @@ export default function Register() {
             await registerUser(payload);
             await refresh();
             toast.success("Account created — welcome to OneLeet!");
-            navigate("/", { replace: true });
+            navigate("/dashboard", { replace: true });
         } catch (err) {
             toast.error(err.message || "Registration failed");
         }

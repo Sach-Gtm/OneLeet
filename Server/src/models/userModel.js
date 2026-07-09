@@ -8,8 +8,9 @@ const StatsSchema = new mongoose.Schema(
         testsTaken: { type: Number, default: 0 },
         pyqsSolved: { type: Number, default: 0 },
         studyHours: { type: Number, default: 0 },
-        accuracy: { type: Number, default: 0 }, // percentage, 0-100
-        streak: { type: Number, default: 0 },   // consecutive active days
+        accuracy: { type: Number, default: 0 },     // percentage, 0-100
+        streak: { type: Number, default: 0 },       // consecutive active days
+        overallPrep: { type: Number, default: 0 },  // syllabus coverage %, 0-100
     },
     { _id: false }
 );
