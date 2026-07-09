@@ -28,6 +28,8 @@ import TestTake from "@/Pages/App/TestTake";
 import TestResult from "@/Pages/App/TestResult";
 import AiTools from "@/Pages/App/AiTools";
 import Leaderboard from "@/Pages/App/Leaderboard";
+import Community from "@/Pages/App/Community";
+import PostDetail from "@/Pages/App/PostDetail";
 import ComingSoon from "@/Pages/App/ComingSoon";
 
 const AppRoutes = () => {
@@ -67,7 +69,8 @@ const AppRoutes = () => {
                     <Route path="/ai-tools" element={<AiTools />} />
                     <Route path="/leaderboard" element={<Leaderboard />} />
                     <Route path="/analytics" element={<ComingSoon title="Analytics" />} />
-                    <Route path="/community" element={<ComingSoon title="Community" />} />
+                    <Route path="/community" element={<Community />} />
+                    <Route path="/community/:id" element={<PostDetail />} />
                     <Route path="/profile" element={<ComingSoon title="Profile" />} />
                 </Route>
             </Routes>
