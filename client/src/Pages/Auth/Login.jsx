@@ -1,5 +1,5 @@
 import React from "react";
-import GoogleLoginPopup from "../../components/auth/GoogleLogin";
+import GoogleLoginPopup from "../../Components/Auth/GoogleLogin";
 
 export default function Login() {
   return (
