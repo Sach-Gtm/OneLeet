@@ -11,6 +11,7 @@ const studyNotesRoutes = require("./src/routes/content/studyNotesRoutes");
 const testRoutes = require("./src/routes/test/testRoutes");
 const attemptRoutes = require("./src/routes/test/attemptRoutes");
 const aiRoutes = require("./src/routes/ai/aiRoutes");
+const leaderboardRoutes = require("./src/routes/leaderboard/leaderboardRoutes");
 
 // Builds and returns the configured Express app WITHOUT starting a server or
 // connecting to the database. server.js wires those up for real runs; tests
@@ -55,6 +56,7 @@ app.use("/api/notes", studyNotesRoutes);
 app.use("/api/tests", testRoutes);
 app.use("/api/attempts", attemptRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/leaderboard", leaderboardRoutes);
 
 // 404 for unmatched routes
 app.use((req, res) => {

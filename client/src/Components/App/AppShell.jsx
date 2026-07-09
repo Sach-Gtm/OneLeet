@@ -7,6 +7,7 @@ import {
     ClipboardList,
     Sparkles,
     BarChart3,
+    Trophy,
     Users,
     User,
     GraduationCap,
@@ -33,6 +34,7 @@ const NAV = [
         section: "AI & Stats",
         items: [
             { to: "/ai-tools", label: "AI Tools", icon: Sparkles },
+            { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
             { to: "/analytics", label: "Analytics", icon: BarChart3 },
         ],
     },
