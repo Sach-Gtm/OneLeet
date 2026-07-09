@@ -1,27 +1,77 @@
 import api from "./axios";
 
+// Normalises axios errors so callers can `catch (err) { err.message }` and also
+// read `err.errors` (array of field messages from the zod validator).
+const unwrap = (error) => {
+    if (error.response && error.response.data) {
+        const data = error.response.data;
+        const message =
+            data.message ||
+            (Array.isArray(data.errors) && data.errors[0]) ||
+            "Something went wrong";
+        const e = new Error(message);
+        e.errors = data.errors;
+        e.status = error.response.status;
+        throw e;
+    }
+    throw new Error("Network error or API is unavailable.");
+};
+
+export const registerUser = async (payload) => {
+    try {
+        const { data } = await api.post("/auth/register", payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const loginUser = async (payload) => {
+    try {
+        const { data } = await api.post("/auth/login", payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const getMe = async () => {
+    const { data } = await api.get("/auth/me");
+    return data;
+};
+
+export const forgotPassword = async (payload) => {
+    try {
+        const { data } = await api.post("/auth/forgot-password", payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const resetPassword = async (token, payload) => {
+    try {
+        const { data } = await api.post(`/auth/reset-password/${token}`, payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
 
 export const loginwithGoogle = async (formData) => {
     try {
-        const response = await api.post("/auth/google-login", formData);
-        return response.data;
+        const { data } = await api.post("/auth/google-login", formData);
+        return data;
     } catch (error) {
-        if (error.response) {
-            throw error.response.data;
-        } else {
-            throw new Error("Network error or API is unavailable.");
-        }
+        unwrap(error);
     }
 };
 
 export const logoutUser = async () => {
     try {
-        return await api.post("/auth/logout");
+        const { data } = await api.post("/auth/logout");
+        return data;
     } catch (error) {
-        if (error.response) {
-            throw error.response.data;
-        } else {
-            throw new Error("Network error or API is unavailable.");
-        }
+        unwrap(error);
     }
 };

@@ -1,13 +1,17 @@
 const User = require("../../models/userModel");
-const jwt = require("jsonwebtoken");
+const generateToken = require("../../utils/generateToken");
+const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
 
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-    });
+const sanitize = (user) => {
+    const obj = user.toObject ? user.toObject() : { ...user };
+    delete obj.password;
+    delete obj.resetPasswordToken;
+    delete obj.resetPasswordExpire;
+    return obj;
 };
 
-async function googleAuth(req, res) {
+// POST /api/auth/google-login
+async function googleAuth(req, res, next) {
     try {
         let { name, email, googleId, avatar } = req.body;
 
@@ -24,62 +28,52 @@ async function googleAuth(req, res) {
         let user = await User.findOne({ email });
 
         if (user) {
-            if (user.authProvider === "local" && !user.googleId) {
+            // Link an existing local account to Google on first Google sign-in.
+            if (!user.googleId) {
                 user.googleId = googleId;
                 user.authProvider = "google";
-                if (avatar) user.avatar = avatar;
+                if (avatar && !user.avatar) user.avatar = avatar;
                 await user.save();
             }
 
             const token = generateToken(user._id);
-
-            // Set cookie
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-            });
+            res.cookie("token", token, buildCookieOptions(SEVEN_DAYS));
 
             return res.status(200).json({
                 success: true,
                 message: "Google login successful",
-                user,
+                user: sanitize(user),
                 token,
             });
         }
 
-        // Create new
+        // New Google user
         const newUser = await User.create({
             name,
             email,
             googleId,
             avatar,
+            role: "student",
             authProvider: "google",
         });
 
         const token = generateToken(newUser._id);
-
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie("token", token, buildCookieOptions(SEVEN_DAYS));
 
         return res.status(201).json({
             success: true,
             message: "Google registration successful",
-            user: newUser,
+            user: sanitize(newUser),
             token,
         });
-
     } catch (error) {
-        console.error("Google Auth Error:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-        });
+        if (error && error.code === 11000) {
+            return res.status(409).json({
+                success: false,
+                message: "An account with this email already exists",
+            });
+        }
+        next(error);
     }
 }
 

@@ -16,18 +16,18 @@ import {
     ChevronRight
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { logoutUser } from "../../Api/AuthApis";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
     const location = useLocation();
     const [hidden, setHidden] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [showSuccessMsg, setShowSuccessMsg] = useState(false);
     const [hoveredPath, setHoveredPath] = useState(location.pathname);
 
+    const { isAuthenticated: isLoggedIn, logout } = useAuth();
     const { scrollY } = useScroll();
 
     const navLinks = [
@@ -38,20 +38,6 @@ export default function Navbar() {
         { name: "Our Team", path: "/team", icon: <Bot size={16} /> },
         { name: "Mentors", path: "/mentor", icon: <Users size={16} /> },
     ];
-
-    useEffect(() => {
-        const checkLogin = () => {
-            const token = localStorage.getItem("token");
-            setIsLoggedIn(!!token);
-        };
-        checkLogin();
-        window.addEventListener("storage", checkLogin);
-        window.addEventListener("auth-change", checkLogin);
-        return () => {
-            window.removeEventListener("storage", checkLogin);
-            window.removeEventListener("auth-change", checkLogin);
-        };
-    }, [location]);
 
     useEffect(() => {
         setHoveredPath(location.pathname);
@@ -75,17 +61,10 @@ export default function Navbar() {
     };
 
     const confirmLogout = async () => {
-        try {
-            await logoutUser();
-            localStorage.removeItem("token");
-            setIsLoggedIn(false);
-            window.dispatchEvent(new Event("storage"));
-            setShowLogoutConfirm(false);
-            setShowSuccessMsg(true);
-            setTimeout(() => setShowSuccessMsg(false), 3000);
-        } catch (error) {
-            console.error("Logout failed", error);
-        }
+        await logout();
+        setShowLogoutConfirm(false);
+        setShowSuccessMsg(true);
+        setTimeout(() => setShowSuccessMsg(false), 3000);
     };
 
     return (
@@ -157,7 +136,7 @@ export default function Navbar() {
                                     <span>Logout</span>
                                 </button>
                             ) : (
-                                <Link to="/user/login">
+                                <Link to="/login">
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
@@ -243,7 +222,7 @@ export default function Navbar() {
                                             <LogOut size={18} /> Logout
                                         </button>
                                     ) : (
-                                        <Link to="/user/login">
+                                        <Link to="/login">
                                             <button className="w-full p-3 rounded-xl bg-white text-black font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
                                                 <LogIn size={18} /> Login
                                             </button>

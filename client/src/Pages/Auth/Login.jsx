@@ -1,33 +1,143 @@
-import React from "react";
-import GoogleLoginPopup from "../../Components/Auth/GoogleLogin";
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import AuthLayout from "@/Components/Auth/AuthLayout";
+import GoogleLogin from "@/Components/Auth/GoogleLogin";
+import { loginSchema } from "@/lib/validations/auth";
+import { loginUser } from "@/Api/AuthApis";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
-  return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-transparent relative overflow-hidden">
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { refresh } = useAuth();
+    const [showPassword, setShowPassword] = useState(false);
 
-          {/* Transparent dark blur overlay */}
-          <div className="fixed inset-0 bg-transparent backdrop-blur-md"></div>
+    const redirectTo = location.state?.from?.pathname || "/";
 
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(loginSchema),
+        defaultValues: { email: "", password: "" },
+    });
 
-          <div className="relative z-50 
-        bg-black/40 
-        backdrop-blur-xl 
-        border border-white/10 
-        shadow-2xl 
-        rounded-2xl 
-        p-10 
-        max-w-sm 
-        w-full 
-        flex flex-col 
-        items-center">
+    const onSubmit = async (values) => {
+        try {
+            await loginUser(values);
+            await refresh();
+            toast.success("Welcome back!");
+            navigate(redirectTo, { replace: true });
+        } catch (err) {
+            toast.error(err.message || "Login failed");
+        }
+    };
 
-              <h2 className="text-white text-2xl font-semibold mb-6 text-center">
-                  Login with Google
-              </h2>
+    return (
+        <AuthLayout
+            heading="You are one step closer to your dream engineering college."
+            subheading="Access premium mock tests, expert video lectures, and a community of toppers. Your journey begins here."
+            stats={[
+                { value: "50k+", label: "Active Students" },
+                { value: "100+", label: "Top Colleges" },
+            ]}
+        >
+            <div className="space-y-6">
+                <div>
+                    <h2 className="text-2xl font-bold text-slate-900">Welcome Back</h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                        Please enter your details to sign in.
+                    </p>
+                </div>
 
-              <GoogleLoginPopup />
-          </div>
-      </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+                    <div className="space-y-1.5">
+                        <Label htmlFor="email">Email Address</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            autoComplete="email"
+                            placeholder="student@example.com"
+                            {...register("email")}
+                        />
+                        {errors.email && (
+                            <p className="text-xs text-red-500">{errors.email.message}</p>
+                        )}
+                    </div>
 
-  );
+                    <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="password">Password</Label>
+                            <Link
+                                to="/forgot-password"
+                                className="text-xs font-semibold text-blue-600 hover:underline"
+                            >
+                                Forgot Password?
+                            </Link>
+                        </div>
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                autoComplete="current-password"
+                                placeholder="••••••••"
+                                className="pr-10"
+                                {...register("password")}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((v) => !v)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
+                        {errors.password && (
+                            <p className="text-xs text-red-500">{errors.password.message}</p>
+                        )}
+                    </div>
+
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                            <>
+                                <Loader2 className="h-4 w-4 animate-spin" /> Signing in...
+                            </>
+                        ) : (
+                            <>
+                                Login <ArrowRight className="h-4 w-4" />
+                            </>
+                        )}
+                    </Button>
+                </form>
+
+                <div className="flex items-center gap-3">
+                    <div className="h-px flex-1 bg-slate-200" />
+                    <span className="text-xs text-slate-400">Or continue with</span>
+                    <div className="h-px flex-1 bg-slate-200" />
+                </div>
+
+                <GoogleLogin redirectTo={redirectTo} />
+
+                <p className="text-center text-sm text-slate-500">
+                    Don&apos;t have an account?{" "}
+                    <Link
+                        to="/register"
+                        className="font-semibold text-blue-600 hover:underline"
+                    >
+                        Register for free
+                    </Link>
+                </p>
+            </div>
+        </AuthLayout>
+    );
 }

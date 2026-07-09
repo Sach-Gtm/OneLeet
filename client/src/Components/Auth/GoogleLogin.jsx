@@ -1,16 +1,19 @@
-import React from 'react';
-import { useGoogleLogin } from '@react-oauth/google';
-import { loginwithGoogle } from '../../Api/AuthApis';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { loginwithGoogle } from "../../Api/AuthApis";
+import { useAuth } from "@/context/AuthContext";
 
-const GoogleLogin = ({ onError, onSuccess }) => {
+const GoogleLogin = ({ redirectTo = "/", onError }) => {
     const navigate = useNavigate();
+    const { refresh } = useAuth();
 
     const handleGoogleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {
                 const googleUserInfo = await fetch(
-                    'https://www.googleapis.com/oauth2/v3/userinfo',
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
                     {
                         headers: {
                             Authorization: `Bearer ${tokenResponse.access_token}`,
@@ -19,49 +22,44 @@ const GoogleLogin = ({ onError, onSuccess }) => {
                 );
 
                 if (!googleUserInfo.ok) {
-                    throw new Error('Failed to fetch user info from Google');
+                    throw new Error("Failed to fetch user info from Google");
                 }
 
                 const userData = await googleUserInfo.json();
 
-                const googleAuthData = {
+                await loginwithGoogle({
                     googleId: userData.sub,
                     email: userData.email,
-                    name: userData.name || userData.given_name || '',
+                    name: userData.name || userData.given_name || "",
                     avatar: userData.picture || null,
-                };
+                });
 
-                const response = await loginwithGoogle(googleAuthData);
-
-                if (response?.token) {
-                    localStorage.setItem("token", response.token);
-                    window.dispatchEvent(new Event("auth-change"));
-                    navigate('/');
-                } else {
-                    if (response?.success) navigate('/');
-                }
-
+                // Cookie is set by the backend; refresh pulls the user in.
+                await refresh();
+                toast.success("Signed in with Google");
+                navigate(redirectTo);
             } catch (error) {
-                const errorMessage = error.message || 'Google login failed. Please try again.';
-                if (onError) onError(errorMessage);
-                else console.error('Google login error:', error);
+                const message =
+                    error.message || "Google login failed. Please try again.";
+                if (onError) onError(message);
+                else toast.error(message);
             }
         },
-
         onError: (error) => {
-            const errorMessage = error.error_description || 'Google login failed. Please try again.';
-            if (onError) onError(errorMessage);
-            else console.error('Google OAuth error:', error);
+            const message =
+                error?.error_description || "Google login failed. Please try again.";
+            if (onError) onError(message);
+            else toast.error(message);
         },
     });
 
     return (
         <button
             type="button"
-            onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-bold py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 active:scale-95 text-sm"
+            onClick={() => handleGoogleLogin()}
+            className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-[0.98]"
         >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />

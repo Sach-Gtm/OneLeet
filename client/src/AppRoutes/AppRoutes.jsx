@@ -3,34 +3,49 @@ import {
     BrowserRouter as Router,
     Routes,
     Route,
-    useLocation
+    Navigate,
+    useLocation,
 } from "react-router-dom";
 
 import Home from "../Pages/General/Home";
 import Navbar from "../Components/General/Navbar";
 
-import { StarsBackground } from '@/Components/animate-ui/components/backgrounds/stars'
+import { StarsBackground } from "@/Components/animate-ui/components/backgrounds/stars";
 import NotFound from "@/Components/General/NotFound";
 import Mentors from "@/Pages/Navbar-Pages/Mentors";
-import Login from "@/Pages/Auth/Login";
 import PrivacyPolicy from "@/Pages/Footer-Pages/PrivacyPolicy";
 import Team from "@/Pages/Footer-Pages/Team";
 
+import Login from "@/Pages/Auth/Login";
+import Register from "@/Pages/Auth/Register";
+import ForgotPassword from "@/Pages/Auth/ForgotPassword";
+import ResetPassword from "@/Pages/Auth/ResetPassword";
+
+// Auth screens are full-screen light layouts, so they render WITHOUT the dark
+// marketing chrome (star background + navbar). Everything else keeps the dark
+// landing shell.
+const AUTH_PREFIXES = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/user/login",
+];
 
 const AppLayout = ({ children }) => {
     const location = useLocation();
+    const isAuthPage = AUTH_PREFIXES.some((p) =>
+        location.pathname.startsWith(p)
+    );
 
-    const isAuthPage =
-        location.pathname.startsWith("/user/login");
+    if (isAuthPage) {
+        return <>{children}</>;
+    }
 
     return (
         <div className="relative min-h-screen w-full overflow-hidden">
-            {!isAuthPage && (
-                <StarsBackground className="absolute inset-0 -z-10" />
-            )}
-
-            {!isAuthPage && <Navbar />}
-
+            <StarsBackground className="absolute inset-0 -z-10" />
+            <Navbar />
             <div className="relative z-10">{children}</div>
         </div>
     );
@@ -38,23 +53,27 @@ const AppLayout = ({ children }) => {
 
 const AppRoutes = () => {
     return (
-        // <HexagonBackground>
+        <Router>
+            <AppLayout>
+                <Routes>
+                    {/* Public marketing (dark theme) */}
+                    <Route path="/" element={<Home />} />
+                    <Route path="/mentor" element={<Mentors />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/team" element={<Team />} />
 
-            <Router>
-                <AppLayout>
-                    <Routes>
+                    {/* Auth (light theme) */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password/:token" element={<ResetPassword />} />
+                    {/* Legacy path kept working */}
+                    <Route path="/user/login" element={<Navigate to="/login" replace />} />
 
-                        <Route path="/" element={<Home />} />
-                        <Route path="/mentor" element={<Mentors />} />
-                        <Route path="/user/login" element={<Login />} />
-                        <Route path="/privacy" element={<PrivacyPolicy />} />
-                        <Route path="/team" element={<Team />} />
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
-                </AppLayout>
-            </Router>
-
-        // </HexagonBackground>
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </AppLayout>
+        </Router>
     );
 };
 
