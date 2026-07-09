@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
 import {
     LayoutDashboard,
@@ -16,6 +16,7 @@ import {
     LogOut,
     Menu,
     X,
+    Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -223,7 +224,15 @@ export default function AppShell() {
                 </header>
 
                 <main className="flex-1 p-4 sm:p-6">
-                    <Outlet />
+                    <Suspense
+                        fallback={
+                            <div className="flex h-64 items-center justify-center">
+                                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                            </div>
+                        }
+                    >
+                        <Outlet />
+                    </Suspense>
                 </main>
             </div>
         </div>
