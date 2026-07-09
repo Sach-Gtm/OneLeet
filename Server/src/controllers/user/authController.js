@@ -1,5 +1,7 @@
 const crypto = require("crypto");
+const fs = require("fs");
 const User = require("../../models/userModel");
+const cloudinary = require("../../config/cloudinary");
 const generateToken = require("../../utils/generateToken");
 const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
 
@@ -174,6 +176,71 @@ async function resetPassword(req, res, next) {
     }
 }
 
+// PATCH /api/auth/me — update editable profile fields
+async function updateProfile(req, res, next) {
+    try {
+        const allowed = ["name", "phone", "college", "branch", "yearOfStudy", "targetExam"];
+        const updates = {};
+        for (const key of allowed) {
+            if (req.body[key] !== undefined) updates[key] = req.body[key];
+        }
+        const user = await User.findByIdAndUpdate(req.user._id, updates, {
+            returnDocument: "after",
+            runValidators: true,
+        }).select("-password");
+        return res.status(200).json({ success: true, message: "Profile updated", user });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// POST /api/auth/change-password
+async function changePassword(req, res, next) {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const user = await User.findById(req.user._id).select("+password");
+        if (!user.password) {
+            return res.status(400).json({
+                success: false,
+                message: "This account signs in with Google. Use 'Forgot password' to set a password.",
+            });
+        }
+        const match = await user.matchPassword(currentPassword);
+        if (!match) {
+            return res.status(401).json({ success: false, message: "Current password is incorrect" });
+        }
+        user.password = newPassword; // hashed by the pre-save hook
+        await user.save();
+        return res.status(200).json({ success: true, message: "Password changed successfully" });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// POST /api/auth/me/avatar — upload a profile photo to Cloudinary
+async function uploadAvatar(req, res, next) {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "No image uploaded" });
+        }
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "oneleet/avatars",
+            resource_type: "image",
+            transformation: [{ width: 256, height: 256, crop: "fill", gravity: "auto" }],
+        });
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            { avatar: result.secure_url },
+            { returnDocument: "after" }
+        ).select("-password");
+        if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+        return res.status(200).json({ success: true, message: "Avatar updated", avatar: result.secure_url, user });
+    } catch (error) {
+        if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+        next(error);
+    }
+}
+
 // POST /api/auth/logout
 function logout(req, res) {
     res.cookie("token", "", { ...buildCookieOptions(), expires: new Date(0) });
@@ -186,5 +253,8 @@ module.exports = {
     getMe,
     forgotPassword,
     resetPassword,
+    updateProfile,
+    changePassword,
+    uploadAvatar,
     logout,
 };

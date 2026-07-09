@@ -2,7 +2,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const DEST = "src/uploads/pdf";
+const DEST = "src/uploads/images";
 fs.mkdirSync(DEST, { recursive: true }); // ensure it exists on a fresh deploy
 
 const storage = multer.diskStorage({
@@ -14,16 +14,18 @@ const storage = multer.diskStorage({
     },
 });
 
-const pdfUploadLocal = multer({
+const ALLOWED = [".jpg", ".jpeg", ".png", ".webp"];
+
+const imageUploadLocal = multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 },
+    limits: { fileSize: 3 * 1024 * 1024 }, // 3 MB
     fileFilter: (req, file, cb) => {
         const ext = path.extname(file.originalname).toLowerCase();
-        if (ext !== ".pdf" || file.mimetype !== "application/pdf") {
-            return cb(new Error("Only PDF files are allowed"));
+        if (!ALLOWED.includes(ext) || !file.mimetype.startsWith("image/")) {
+            return cb(new Error("Only JPG, PNG or WEBP images are allowed"));
         }
         cb(null, true);
     },
 });
 
-module.exports = pdfUploadLocal.single("pdfFile");
+module.exports = imageUploadLocal.single("avatar");

@@ -67,6 +67,37 @@ export const loginwithGoogle = async (formData) => {
     }
 };
 
+export const updateProfile = async (payload) => {
+    try {
+        const { data } = await api.patch("/auth/me", payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const changePassword = async (payload) => {
+    try {
+        const { data } = await api.post("/auth/change-password", payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const uploadAvatar = async (file) => {
+    const formData = new FormData();
+    formData.append("avatar", file);
+    try {
+        const { data } = await api.post("/auth/me/avatar", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 export const logoutUser = async () => {
     try {
         const { data } = await api.post("/auth/logout");

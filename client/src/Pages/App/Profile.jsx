@@ -1,0 +1,264 @@
+import { useRef, useState } from "react";
+import {
+    Camera,
+    Mail,
+    Phone,
+    GraduationCap,
+    Building2,
+    BookMarked,
+    CalendarDays,
+    Target,
+    Save,
+    Lock,
+    Loader2,
+    Award,
+    ClipboardCheck,
+    CheckCircle2,
+    Clock,
+    ChevronDown,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
+import { updateProfile, changePassword, uploadAvatar } from "@/Api/AuthApis";
+
+const inputCls =
+    "h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
+
+function IconField({ icon, ...props }) {
+    const Icon = icon;
+    return (
+        <div className="relative">
+            <Icon size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input className={inputCls} {...props} />
+        </div>
+    );
+}
+
+export default function Profile() {
+    const { user, setUser } = useAuth();
+    const fileRef = useRef(null);
+
+    const [form, setForm] = useState({
+        name: user?.name || "",
+        phone: user?.phone || "",
+        targetExam: user?.targetExam || "",
+        college: user?.college || "",
+        branch: user?.branch || "",
+        yearOfStudy: user?.yearOfStudy || "",
+    });
+    const [saving, setSaving] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
+    const [pwOpen, setPwOpen] = useState(false);
+    const [pw, setPw] = useState({ currentPassword: "", newPassword: "", confirm: "" });
+    const [pwSaving, setPwSaving] = useState(false);
+
+    const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+
+    const save = async () => {
+        setSaving(true);
+        try {
+            const res = await updateProfile(form);
+            setUser(res.user);
+            toast.success("Profile saved");
+        } catch (err) {
+            toast.error(err.message || "Could not save profile");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const onAvatar = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploading(true);
+        try {
+            const res = await uploadAvatar(file);
+            setUser(res.user);
+            toast.success("Photo updated");
+        } catch (err) {
+            toast.error(err.message || "Upload failed");
+        } finally {
+            setUploading(false);
+            if (fileRef.current) fileRef.current.value = "";
+        }
+    };
+
+    const savePassword = async () => {
+        if (pw.newPassword.length < 6) return toast.error("New password must be at least 6 characters.");
+        if (pw.newPassword !== pw.confirm) return toast.error("New passwords don't match.");
+        setPwSaving(true);
+        try {
+            await changePassword({ currentPassword: pw.currentPassword, newPassword: pw.newPassword });
+            toast.success("Password changed");
+            setPw({ currentPassword: "", newPassword: "", confirm: "" });
+            setPwOpen(false);
+        } catch (err) {
+            toast.error(err.message || "Could not change password");
+        } finally {
+            setPwSaving(false);
+        }
+    };
+
+    const stats = user?.stats || {};
+    const overview = [
+        { label: "Tests Taken", value: stats.testsTaken || 0, icon: ClipboardCheck, color: "text-blue-600 bg-blue-50" },
+        { label: "PYQs Solved", value: (stats.pyqsSolved || 0).toLocaleString(), icon: CheckCircle2, color: "text-amber-600 bg-amber-50" },
+        { label: "Study Hours", value: `${stats.studyHours || 0}h`, icon: Clock, color: "text-violet-600 bg-violet-50" },
+        { label: "Accuracy", value: `${stats.accuracy || 0}%`, icon: Target, color: "text-emerald-600 bg-emerald-50" },
+    ];
+    const isTopScorer = (stats.accuracy || 0) >= 80 && (stats.testsTaken || 0) >= 1;
+
+    return (
+        <div className="mx-auto max-w-5xl space-y-6">
+            <h1 className="text-2xl font-bold text-slate-900">My Profile</h1>
+
+            {/* Header card */}
+            <div className="flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row sm:items-center">
+                <div className="relative">
+                    {user?.avatar ? (
+                        <img src={user.avatar} alt={user.name} className="h-20 w-20 rounded-full object-cover" />
+                    ) : (
+                        <span className="grid h-20 w-20 place-items-center rounded-full bg-blue-100 text-2xl font-bold text-blue-700">
+                            {(user?.name || "U").charAt(0).toUpperCase()}
+                        </span>
+                    )}
+                    <button
+                        onClick={() => fileRef.current?.click()}
+                        className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full border-2 border-white bg-blue-600 text-white shadow hover:bg-blue-700"
+                        aria-label="Change photo"
+                    >
+                        {uploading ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
+                    </button>
+                    <input ref={fileRef} type="file" accept="image/*" hidden onChange={onAvatar} />
+                </div>
+                <div className="text-center sm:text-left">
+                    <h2 className="text-xl font-bold text-slate-900">{user?.name}</h2>
+                    <p className="text-sm text-slate-500">
+                        {[user?.branch, user?.college].filter(Boolean).join(" · ") || "Add your academic details below"}
+                    </p>
+                    <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
+                        {user?.targetExam && (
+                            <span className="rounded-full bg-blue-50 px-3 py-0.5 text-xs font-semibold text-blue-600">
+                                Target: {user.targetExam}
+                            </span>
+                        )}
+                        <span className="rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-semibold capitalize text-emerald-600">
+                            {user?.plan === "pro" ? "Pro User" : `${user?.role || "student"}`}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-3">
+                {/* Left: forms */}
+                <div className="space-y-6 lg:col-span-2">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6">
+                        <h3 className="mb-4 text-sm font-bold text-slate-800">Personal Details</h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <label className="block">
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Full Name</span>
+                                <IconField icon={GraduationCap} value={form.name} onChange={set("name")} placeholder="Your name" />
+                            </label>
+                            <label className="block">
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Email</span>
+                                <div className="relative">
+                                    <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                    <input className={cn(inputCls, "cursor-not-allowed bg-slate-50 text-slate-400")} value={user?.email || ""} readOnly />
+                                </div>
+                            </label>
+                            <label className="block">
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Phone</span>
+                                <IconField icon={Phone} value={form.phone} onChange={set("phone")} placeholder="+91 …" />
+                            </label>
+                            <label className="block">
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Target Exam</span>
+                                <IconField icon={Target} value={form.targetExam} onChange={set("targetExam")} placeholder="e.g. LEET 2026" />
+                            </label>
+                        </div>
+
+                        <h3 className="mb-4 mt-6 text-sm font-bold text-slate-800">Academic Information</h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <label className="block">
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">College Name</span>
+                                <IconField icon={Building2} value={form.college} onChange={set("college")} placeholder="Your college" />
+                            </label>
+                            <label className="block">
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Branch / Stream</span>
+                                <IconField icon={BookMarked} value={form.branch} onChange={set("branch")} placeholder="e.g. Computer Engineering" />
+                            </label>
+                            <label className="block">
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Year of Study</span>
+                                <IconField icon={CalendarDays} value={form.yearOfStudy} onChange={set("yearOfStudy")} placeholder="e.g. Final Year" />
+                            </label>
+                        </div>
+
+                        <div className="mt-6 flex items-center justify-between">
+                            <button
+                                onClick={() => setPwOpen((v) => !v)}
+                                className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-800"
+                            >
+                                <Lock size={14} /> Change Password
+                                <ChevronDown size={14} className={cn("transition-transform", pwOpen && "rotate-180")} />
+                            </button>
+                            <button
+                                onClick={save}
+                                disabled={saving}
+                                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                            >
+                                {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+                                Save Changes
+                            </button>
+                        </div>
+
+                        {pwOpen && (
+                            <div className="mt-4 grid gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4 sm:grid-cols-3">
+                                <input type="password" placeholder="Current password" className="h-10 rounded-lg border border-slate-200 px-3 text-sm focus:border-blue-400 focus:outline-none" value={pw.currentPassword} onChange={(e) => setPw({ ...pw, currentPassword: e.target.value })} />
+                                <input type="password" placeholder="New password" className="h-10 rounded-lg border border-slate-200 px-3 text-sm focus:border-blue-400 focus:outline-none" value={pw.newPassword} onChange={(e) => setPw({ ...pw, newPassword: e.target.value })} />
+                                <input type="password" placeholder="Confirm new" className="h-10 rounded-lg border border-slate-200 px-3 text-sm focus:border-blue-400 focus:outline-none" value={pw.confirm} onChange={(e) => setPw({ ...pw, confirm: e.target.value })} />
+                                <div className="sm:col-span-3 flex justify-end">
+                                    <button onClick={savePassword} disabled={pwSaving} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900 disabled:opacity-60">
+                                        {pwSaving ? "Updating…" : "Update Password"}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Right: overview + achievement */}
+                <div className="space-y-6">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6">
+                        <h3 className="mb-4 text-sm font-bold text-slate-800">Quick Overview</h3>
+                        <div className="space-y-3">
+                            {overview.map((o) => {
+                                const Icon = o.icon;
+                                return (
+                                    <div key={o.label} className="flex items-center gap-3">
+                                        <span className={cn("grid h-9 w-9 place-items-center rounded-lg", o.color)}>
+                                            <Icon size={16} />
+                                        </span>
+                                        <span className="text-sm text-slate-500">{o.label}</span>
+                                        <span className="ml-auto text-sm font-bold text-slate-800">{o.value}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white">
+                        <Award className="mb-2 h-6 w-6" />
+                        <p className="text-xs font-semibold uppercase tracking-wide text-blue-200">Achievement</p>
+                        <p className="mt-1 text-lg font-bold">{isTopScorer ? "Top 10% Scorer" : "Rising Star"}</p>
+                        <p className="mt-1 text-sm text-blue-100">
+                            {isTopScorer
+                                ? "You're consistently scoring above 80% in mock tests."
+                                : "Take mock tests and keep your accuracy high to earn badges."}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

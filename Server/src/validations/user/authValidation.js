@@ -38,9 +38,30 @@ const resetPasswordSchema = z.object({
         .max(72, "Password cannot be more than 72 characters"),
 });
 
+const optionalCapped = (max) => z.string().trim().max(max).optional().or(z.literal(""));
+
+const updateProfileSchema = z.object({
+    name: z.string().trim().min(2, "Name must be at least 2 characters").max(50).optional(),
+    phone: optionalCapped(20),
+    college: optionalCapped(120),
+    branch: optionalCapped(80),
+    yearOfStudy: optionalCapped(40),
+    targetExam: optionalCapped(60),
+});
+
+const changePasswordSchema = z.object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+        .string()
+        .min(6, "New password must be at least 6 characters")
+        .max(72, "Password too long"),
+});
+
 module.exports = {
     registerSchema,
     loginSchema,
     forgotPasswordSchema,
     resetPasswordSchema,
+    updateProfileSchema,
+    changePasswordSchema,
 };

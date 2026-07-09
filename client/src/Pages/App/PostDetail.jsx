@@ -90,6 +90,7 @@ export default function PostDetail() {
                     <button
                         onClick={onUpvote}
                         disabled={voting}
+                        aria-label="Upvote"
                         className={cn(
                             "flex shrink-0 flex-col items-center rounded-lg border px-3 py-1.5 text-xs font-semibold transition",
                             post.upvoted ? "border-blue-500 bg-blue-50 text-blue-600" : "border-slate-200 text-slate-500 hover:bg-slate-50"

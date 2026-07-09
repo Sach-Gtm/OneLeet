@@ -30,6 +30,7 @@ import AiTools from "@/Pages/App/AiTools";
 import Leaderboard from "@/Pages/App/Leaderboard";
 import Community from "@/Pages/App/Community";
 import PostDetail from "@/Pages/App/PostDetail";
+import Profile from "@/Pages/App/Profile";
 import ComingSoon from "@/Pages/App/ComingSoon";
 
 const AppRoutes = () => {
@@ -71,7 +72,7 @@ const AppRoutes = () => {
                     <Route path="/analytics" element={<ComingSoon title="Analytics" />} />
                     <Route path="/community" element={<Community />} />
                     <Route path="/community/:id" element={<PostDetail />} />
-                    <Route path="/profile" element={<ComingSoon title="Profile" />} />
+                    <Route path="/profile" element={<Profile />} />
                 </Route>
             </Routes>
         </Router>
