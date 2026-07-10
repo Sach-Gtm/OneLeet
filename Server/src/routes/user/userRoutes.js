@@ -4,6 +4,7 @@ const multer = require("multer");
 
 const authController = require("../../controllers/user/authController");
 const { verifyToken } = require("../../middlewares/authMiddleware");
+const { verifyTurnstile } = require("../../middlewares/turnstileMiddleware");
 const imageUploadLocal = require("../../middlewares/imageUploadLocal");
 const { validate } = require("../../validations/validate");
 const {
@@ -26,8 +27,8 @@ const handleAvatarUpload = (req, res, next) => {
     });
 };
 
-router.post("/register", validate(registerSchema), authController.register);
-router.post("/login", validate(loginSchema), authController.login);
+router.post("/register", verifyTurnstile, validate(registerSchema), authController.register);
+router.post("/login", verifyTurnstile, validate(loginSchema), authController.login);
 router.post("/verify-otp", validate(verifyOtpSchema), authController.verifyOtp);
 router.post("/resend-otp", validate(resendOtpSchema), authController.resendOtp);
 router.get("/email-health", authController.emailHealth);

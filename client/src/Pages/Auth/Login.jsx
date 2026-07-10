@@ -14,12 +14,14 @@ import { loginSchema } from "@/lib/validations/auth";
 import { loginUser } from "@/Api/AuthApis";
 import { useAuth } from "@/context/AuthContext";
 import { GOOGLE_ENABLED } from "@/lib/googleAuth";
+import Turnstile, { TURNSTILE_ENABLED } from "@/Components/Auth/Turnstile";
 
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
     const { refresh } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState("");
 
     const redirectTo = location.state?.from?.pathname || "/dashboard";
 
@@ -33,8 +35,12 @@ export default function Login() {
     });
 
     const onSubmit = async (values) => {
+        if (TURNSTILE_ENABLED && !captchaToken) {
+            toast.error("Please complete the CAPTCHA");
+            return;
+        }
         try {
-            await loginUser(values);
+            await loginUser({ ...values, turnstileToken: captchaToken });
             await refresh();
             toast.success("Welcome back!");
             navigate(redirectTo, { replace: true });
@@ -117,6 +123,8 @@ export default function Login() {
                             <p className="text-xs text-red-500">{errors.password.message}</p>
                         )}
                     </div>
+
+                    <Turnstile onToken={setCaptchaToken} />
 
                     <Button type="submit" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? (

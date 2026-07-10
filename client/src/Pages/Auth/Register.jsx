@@ -20,6 +20,7 @@ import AuthLayout from "@/Components/Auth/AuthLayout";
 import { registerSchema } from "@/lib/validations/auth";
 import { registerUser } from "@/Api/AuthApis";
 import { useAuth } from "@/context/AuthContext";
+import Turnstile, { TURNSTILE_ENABLED } from "@/Components/Auth/Turnstile";
 
 const roles = [
     { value: "student", label: "Student", icon: GraduationCap },
@@ -30,6 +31,7 @@ export default function Register() {
     const navigate = useNavigate();
     const { refresh } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState("");
 
     const {
         register,
@@ -52,10 +54,14 @@ export default function Register() {
     const role = watch("role");
 
     const onSubmit = async (values) => {
+        if (TURNSTILE_ENABLED && !captchaToken) {
+            toast.error("Please complete the CAPTCHA");
+            return;
+        }
         try {
             const { confirmPassword, ...payload } = values;
             void confirmPassword;
-            const res = await registerUser(payload);
+            const res = await registerUser({ ...payload, turnstileToken: captchaToken });
             // When email OTP is enabled the account isn't active yet — send the
             // user to the verification step instead of logging them straight in.
             if (res?.needsVerification) {
@@ -200,6 +206,8 @@ export default function Register() {
                             )}
                         </div>
                     </div>
+
+                    <Turnstile onToken={setCaptchaToken} />
 
                     <Button type="submit" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? (
