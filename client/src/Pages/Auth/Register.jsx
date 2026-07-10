@@ -73,9 +73,12 @@ export default function Register() {
 
     return (
         <AuthLayout
-            heading="Begin your journey to India's top engineering colleges."
-            subheading="Join thousands of students mastering their potential with OneLeet. Your future starts with a single click."
-            stats={[{ value: "10k+", label: "Students" }]}
+            heading="Your top-college journey starts here."
+            subheading="Join thousands of ambitious students turning focused effort into top ranks — and a brighter future."
+            stats={[
+                { value: "10k+", label: "Students" },
+                { value: "100+", label: "Top Colleges" },
+            ]}
         >
             <div className="space-y-6">
                 <div>
@@ -102,7 +105,7 @@ export default function Register() {
                                     className={cn(
                                         "flex items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-semibold transition-all",
                                         role === option.value
-                                            ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                                            ? "border-indigo-600 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600"
                                             : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
                                     )}
                                 >
@@ -213,7 +216,7 @@ export default function Register() {
 
                 <p className="text-center text-sm text-slate-500">
                     Already have an account?{" "}
-                    <Link to="/login" className="font-semibold text-blue-600 hover:underline">
+                    <Link to="/login" className="font-semibold text-indigo-600 hover:underline">
                         Login
                     </Link>
                 </p>

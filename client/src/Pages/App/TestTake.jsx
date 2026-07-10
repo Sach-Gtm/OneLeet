@@ -87,7 +87,7 @@ export default function TestTake() {
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
             </div>
         );
     }
@@ -97,7 +97,7 @@ export default function TestTake() {
                 <p className="text-sm font-medium text-slate-600">This test could not be loaded.</p>
                 <button
                     onClick={() => navigate("/tests")}
-                    className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                    className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
                 >
                     Back to Tests
                 </button>
@@ -130,7 +130,7 @@ export default function TestTake() {
                     <button
                         onClick={() => setShowConfirm(true)}
                         disabled={submitting}
-                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
+                        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
                     >
                         Submit
                     </button>
@@ -142,7 +142,7 @@ export default function TestTake() {
                 {test.questions.map((q, i) => (
                     <div key={q._id} className="rounded-2xl border border-slate-200 bg-white p-5">
                         <div className="flex gap-2">
-                            <span className="text-sm font-bold text-blue-600">Q{i + 1}.</span>
+                            <span className="text-sm font-bold text-indigo-600">Q{i + 1}.</span>
                             <p className="text-sm font-medium text-slate-800">{q.text}</p>
                         </div>
                         <div className="mt-3 space-y-2">
@@ -155,14 +155,14 @@ export default function TestTake() {
                                         className={cn(
                                             "flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm transition",
                                             selected
-                                                ? "border-blue-500 bg-blue-50 text-blue-800"
+                                                ? "border-indigo-500 bg-indigo-50 text-indigo-800"
                                                 : "border-slate-200 text-slate-600 hover:bg-slate-50"
                                         )}
                                     >
                                         <span
                                             className={cn(
                                                 "grid h-5 w-5 shrink-0 place-items-center rounded-full border text-[11px] font-bold",
-                                                selected ? "border-blue-500 bg-blue-500 text-white" : "border-slate-300 text-slate-400"
+                                                selected ? "border-indigo-500 bg-indigo-500 text-white" : "border-slate-300 text-slate-400"
                                             )}
                                         >
                                             {String.fromCharCode(65 + idx)}
@@ -199,7 +199,7 @@ export default function TestTake() {
                             <button
                                 onClick={handleSubmit}
                                 disabled={submitting}
-                                className="flex-1 rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                                className="flex-1 rounded-lg bg-indigo-600 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
                             >
                                 {submitting ? "Submitting…" : "Submit"}
                             </button>

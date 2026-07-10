@@ -81,7 +81,7 @@ export default function Navbar() {
                 <div
                     className={`
             mx-auto transition-all duration-500 relative
-            ${scrolled || mobileMenuOpen ? "max-w-[95%] sm:max-w-5xl bg-[#0a0a1a]/80 backdrop-blur-xl border border-white/10 shadow-2xl shadow-blue-900/10" : "max-w-7xl bg-transparent border-transparent"}
+            ${scrolled || mobileMenuOpen ? "max-w-[95%] sm:max-w-5xl bg-[#0a0a1a]/80 backdrop-blur-xl border border-white/10 shadow-2xl shadow-indigo-900/10" : "max-w-7xl bg-transparent border-transparent"}
             ${mobileMenuOpen ? "rounded-2xl" : "rounded-2xl"}
             px-4 sm:px-6 py-3 flex flex-col justify-center
           `}
@@ -90,7 +90,7 @@ export default function Navbar() {
                         <Link to="/" className="flex items-center gap-2 relative z-10 group">
                             
                             <span className="text-xl font-bold tracking-tight text-white">
-                                ONE <span className="bg-gradient-to-r from-blue-300 to-indigo-500 bg-clip-text text-transparent">LEET</span>
+                                ONE <span className="bg-gradient-to-r from-indigo-300 to-indigo-500 bg-clip-text text-transparent">LEET</span>
                             </span>
                         </Link>
 
@@ -114,7 +114,7 @@ export default function Navbar() {
                                             <motion.div
                                                 layoutId="navbar-pill"
                                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                                className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg shadow-blue-500/25 -z-10"
+                                                className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-indigo-600 rounded-full shadow-lg shadow-indigo-500/25 -z-10"
                                             />
                                         )}
                                         <span className="relative z-10 flex items-center gap-1.5">
@@ -199,7 +199,7 @@ export default function Navbar() {
                                                 className={`
                           p-3 rounded-xl flex items-center justify-between text-base font-medium transition-all
                           ${location.pathname === link.path
-                                                        ? "bg-gradient-to-r from-blue-600/20 to-indigo-600/20 text-blue-400 border border-blue-500/30"
+                                                        ? "bg-gradient-to-r from-indigo-600/20 to-indigo-600/20 text-indigo-400 border border-indigo-500/30"
                                                         : "text-gray-400 hover:text-white hover:bg-white/5"}
                         `}
                                             >

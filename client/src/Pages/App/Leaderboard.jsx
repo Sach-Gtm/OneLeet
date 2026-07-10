@@ -16,7 +16,7 @@ function Row({ entry, highlight }) {
         <div
             className={cn(
                 "grid grid-cols-[40px_1fr_auto] items-center gap-3 px-5 py-3.5 sm:grid-cols-[48px_1fr_80px_120px]",
-                highlight && "bg-blue-50/70"
+                highlight && "bg-indigo-50/70"
             )}
         >
             <div className="flex justify-center">
@@ -26,13 +26,13 @@ function Row({ entry, highlight }) {
                 {entry.avatar ? (
                     <img src={entry.avatar} alt={entry.name} className="h-8 w-8 rounded-full object-cover" />
                 ) : (
-                    <span className="grid h-8 w-8 place-items-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
                         {(entry.name || "S").charAt(0).toUpperCase()}
                     </span>
                 )}
-                <span className={cn("truncate text-sm", highlight ? "font-bold text-blue-700" : "font-medium text-slate-700")}>
+                <span className={cn("truncate text-sm", highlight ? "font-bold text-indigo-700" : "font-medium text-slate-700")}>
                     {entry.name}
-                    {entry.isCurrentUser && <span className="ml-1 text-blue-500">(You)</span>}
+                    {entry.isCurrentUser && <span className="ml-1 text-indigo-500">(You)</span>}
                 </span>
             </div>
             <div className="hidden text-right text-sm text-slate-400 sm:block">{entry.tests} tests</div>
@@ -58,7 +58,7 @@ export default function Leaderboard() {
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
             </div>
         );
     }
@@ -99,7 +99,7 @@ export default function Leaderboard() {
                     </div>
 
                     {me && !me.inTop && (
-                        <div className="mt-4 overflow-hidden rounded-2xl border border-blue-200 bg-white">
+                        <div className="mt-4 overflow-hidden rounded-2xl border border-indigo-200 bg-white">
                             <p className="border-b border-slate-100 px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                 Your position
                             </p>

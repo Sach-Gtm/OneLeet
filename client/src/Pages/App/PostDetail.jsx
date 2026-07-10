@@ -55,7 +55,7 @@ export default function PostDetail() {
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
             </div>
         );
     }
@@ -63,7 +63,7 @@ export default function PostDetail() {
         return (
             <div className="mx-auto max-w-md py-16 text-center">
                 <p className="text-sm font-medium text-slate-600">Discussion not found.</p>
-                <Link to="/community" className="mt-4 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                <Link to="/community" className="mt-4 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                     Back to Community
                 </Link>
             </div>
@@ -93,7 +93,7 @@ export default function PostDetail() {
                         aria-label="Upvote"
                         className={cn(
                             "flex shrink-0 flex-col items-center rounded-lg border px-3 py-1.5 text-xs font-semibold transition",
-                            post.upvoted ? "border-blue-500 bg-blue-50 text-blue-600" : "border-slate-200 text-slate-500 hover:bg-slate-50"
+                            post.upvoted ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-slate-200 text-slate-500 hover:bg-slate-50"
                         )}
                     >
                         <ArrowBigUp size={18} />
@@ -120,7 +120,7 @@ export default function PostDetail() {
                         <button
                             onClick={submitReply}
                             disabled={posting || !reply.trim()}
-                            className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
                         >
                             <Send size={14} /> {posting ? "Posting…" : "Reply"}
                         </button>

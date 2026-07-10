@@ -28,7 +28,7 @@ export default function Analytics() {
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
             </div>
         );
     }
@@ -42,7 +42,7 @@ export default function Analytics() {
     );
 
     const tiles = [
-        { label: "Tests Taken", value: stats.testsTaken || 0, icon: ClipboardCheck, color: "text-blue-600 bg-blue-50" },
+        { label: "Tests Taken", value: stats.testsTaken || 0, icon: ClipboardCheck, color: "text-indigo-600 bg-indigo-50" },
         { label: "Avg Accuracy", value: `${stats.accuracy || 0}%`, icon: Target, color: "text-emerald-600 bg-emerald-50" },
         { label: "Best Score", value: `${bestScorePct}%`, icon: TrendingUp, color: "text-amber-600 bg-amber-50" },
         { label: "Study Hours", value: `${stats.studyHours || 0}h`, icon: Clock, color: "text-violet-600 bg-violet-50" },
@@ -77,7 +77,7 @@ export default function Analytics() {
                         <BarChart3 className="mb-2 h-7 w-7 text-slate-300" />
                         <p className="text-sm font-medium text-slate-600">No test data yet</p>
                         <p className="mt-0.5 text-xs text-slate-400">
-                            Take a <Link to="/tests" className="font-semibold text-blue-600 hover:underline">mock test</Link> to start tracking.
+                            Take a <Link to="/tests" className="font-semibold text-indigo-600 hover:underline">mock test</Link> to start tracking.
                         </p>
                     </div>
                 ) : (
@@ -86,7 +86,7 @@ export default function Analytics() {
                             <div key={a._id || i} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
                                 <div className="relative flex w-full flex-1 items-end">
                                     <div
-                                        className="w-full rounded-t-md bg-gradient-to-t from-blue-500 to-indigo-500 transition-all"
+                                        className="w-full rounded-t-md bg-gradient-to-t from-indigo-500 to-indigo-500 transition-all"
                                         style={{ height: `${Math.max(4, a.accuracy || 0)}%` }}
                                         title={`${a.testTitle}: ${a.accuracy}% (${a.score}/${a.totalMarks})`}
                                     />

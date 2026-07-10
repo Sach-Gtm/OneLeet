@@ -53,8 +53,8 @@ export default function Login() {
 
     return (
         <AuthLayout
-            heading="You are one step closer to your dream engineering college."
-            subheading="Access premium mock tests, expert video lectures, and a community of toppers. Your journey begins here."
+            heading="Welcome back, future achiever."
+            subheading="Every focused session brings your dream college closer. Pick up right where you left off."
             stats={[
                 { value: "50k+", label: "Active Students" },
                 { value: "100+", label: "Top Colleges" },
@@ -88,7 +88,7 @@ export default function Login() {
                             <Label htmlFor="password">Password</Label>
                             <Link
                                 to="/forgot-password"
-                                className="text-xs font-semibold text-blue-600 hover:underline"
+                                className="text-xs font-semibold text-indigo-600 hover:underline"
                             >
                                 Forgot Password?
                             </Link>
@@ -147,7 +147,7 @@ export default function Login() {
                     Don&apos;t have an account?{" "}
                     <Link
                         to="/register"
-                        className="font-semibold text-blue-600 hover:underline"
+                        className="font-semibold text-indigo-600 hover:underline"
                     >
                         Register for free
                     </Link>

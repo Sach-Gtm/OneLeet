@@ -7,16 +7,16 @@ import { cn } from "@/lib/utils";
 // `buttonVariants` is exported so react-router <Link>s can be styled as buttons
 // without pulling in @radix-ui/react-slot.
 const buttonVariants = cva(
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-60 active:scale-[0.98] cursor-pointer",
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-60 active:scale-[0.98] cursor-pointer",
     {
         variants: {
             variant: {
-                default: "bg-blue-600 text-white shadow-sm hover:bg-blue-700",
-                outline: "border border-blue-200 bg-white text-blue-700 hover:bg-blue-50",
+                default: "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700",
+                outline: "border border-indigo-200 bg-white text-indigo-700 hover:bg-indigo-50",
                 secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200",
                 ghost: "text-slate-700 hover:bg-slate-100",
                 destructive: "bg-red-600 text-white hover:bg-red-700",
-                link: "text-blue-600 underline-offset-4 hover:underline",
+                link: "text-indigo-600 underline-offset-4 hover:underline",
             },
             size: {
                 default: "h-11 px-5 py-2",

@@ -71,7 +71,7 @@ export default function VerifyOtp() {
         >
             <div className="space-y-6">
                 <div className="flex flex-col items-center text-center">
-                    <span className="mb-3 grid h-12 w-12 place-items-center rounded-full bg-blue-100 text-blue-600">
+                    <span className="mb-3 grid h-12 w-12 place-items-center rounded-full bg-indigo-100 text-indigo-600">
                         <MailCheck className="h-6 w-6" />
                     </span>
                     <h2 className="text-2xl font-bold text-slate-900">
@@ -125,7 +125,7 @@ export default function VerifyOtp() {
                         type="button"
                         onClick={handleResend}
                         disabled={cooldown > 0}
-                        className="font-semibold text-blue-600 hover:underline disabled:cursor-not-allowed disabled:text-slate-400 disabled:no-underline"
+                        className="font-semibold text-indigo-600 hover:underline disabled:cursor-not-allowed disabled:text-slate-400 disabled:no-underline"
                     >
                         {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
                     </button>
@@ -135,7 +135,7 @@ export default function VerifyOtp() {
                     Wrong email?{" "}
                     <Link
                         to="/register"
-                        className="font-semibold text-blue-600 hover:underline"
+                        className="font-semibold text-indigo-600 hover:underline"
                     >
                         Go back
                     </Link>

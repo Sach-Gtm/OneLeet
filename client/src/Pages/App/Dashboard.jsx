@@ -60,7 +60,7 @@ function PrepRing({ value = 0 }) {
 }
 
 const STAT_META = [
-    { key: "testsTaken", label: "Tests Taken", icon: ClipboardCheck, color: "text-blue-600 bg-blue-50", format: (v) => v },
+    { key: "testsTaken", label: "Tests Taken", icon: ClipboardCheck, color: "text-indigo-600 bg-indigo-50", format: (v) => v },
     { key: "accuracy", label: "Accuracy", icon: Target, color: "text-emerald-600 bg-emerald-50", format: (v) => `${v}%` },
     { key: "pyqsSolved", label: "PYQs Solved", icon: CheckCircle2, color: "text-amber-600 bg-amber-50", format: (v) => v.toLocaleString() },
     { key: "studyHours", label: "Study Hours", icon: Clock, color: "text-violet-600 bg-violet-50", format: (v) => `${v}h` },
@@ -108,7 +108,7 @@ export default function Dashboard() {
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
             </div>
         );
     }
@@ -117,12 +117,12 @@ export default function Dashboard() {
         <div className="mx-auto max-w-6xl space-y-6">
             {/* Welcome + Overall Prep */}
             <div className="grid gap-6 lg:grid-cols-3">
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white lg:col-span-2">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white lg:col-span-2">
                     <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
                     <h1 className="text-2xl font-bold">
                         Welcome back, {firstName}! <span className="align-middle">👋</span>
                     </h1>
-                    <p className="mt-1 max-w-md text-sm text-blue-100">
+                    <p className="mt-1 max-w-md text-sm text-indigo-100">
                         {streak > 0
                             ? `You've maintained a ${streak}-day streak! Keep up the momentum to crack your dream college.`
                             : "Let's build your prep streak — start with a mock test or a set of PYQs today."}
@@ -130,7 +130,7 @@ export default function Dashboard() {
                     <div className="mt-5 flex flex-wrap gap-3">
                         <Link
                             to="/pyqs"
-                            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50"
+                            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-50"
                         >
                             <Play size={15} /> Start Practice
                         </Link>
@@ -224,7 +224,7 @@ export default function Dashboard() {
                         <ul className="space-y-3">
                             {recentActivity.map((item, i) => (
                                 <li key={i} className="flex items-start gap-3 text-sm">
-                                    <span className="mt-0.5 h-2 w-2 rounded-full bg-blue-500" />
+                                    <span className="mt-0.5 h-2 w-2 rounded-full bg-indigo-500" />
                                     <div>
                                         <p className="font-medium text-slate-700">{item.title}</p>
                                         <p className="text-xs text-slate-400">{item.time}</p>
@@ -254,7 +254,7 @@ export default function Dashboard() {
                                 </p>
                                 <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
                                     <div
-                                        className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-500"
+                                        className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-500"
                                         style={{ width: `${item.progress || 0}%` }}
                                     />
                                 </div>

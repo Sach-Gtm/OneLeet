@@ -46,20 +46,20 @@ function NewPostModal({ open, onClose, onCreated }) {
                 </div>
                 <div className="space-y-3">
                     <input
-                        className="h-11 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="h-11 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                         placeholder="Question or topic title"
                         value={form.title}
                         onChange={(e) => setForm({ ...form, title: e.target.value })}
                     />
                     <input
-                        className="h-11 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="h-11 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                         placeholder="Subject (optional) — e.g. Physics"
                         value={form.subject}
                         onChange={(e) => setForm({ ...form, subject: e.target.value })}
                     />
                     <textarea
                         rows={5}
-                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                         placeholder="Share the details…"
                         value={form.body}
                         onChange={(e) => setForm({ ...form, body: e.target.value })}
@@ -69,7 +69,7 @@ function NewPostModal({ open, onClose, onCreated }) {
                     <button onClick={onClose} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">
                         Cancel
                     </button>
-                    <button onClick={submit} disabled={saving} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60">
+                    <button onClick={submit} disabled={saving} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60">
                         {saving ? "Posting…" : "Post"}
                     </button>
                 </div>
@@ -124,7 +124,7 @@ export default function Community() {
                 </div>
                 <button
                     onClick={() => setModalOpen(true)}
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                    className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
                 >
                     <Plus size={16} /> New Post
                 </button>
@@ -140,7 +140,7 @@ export default function Community() {
                             setPage(1);
                         }}
                         placeholder="Search discussions…"
-                        className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                     />
                 </div>
                 <select
@@ -149,7 +149,7 @@ export default function Community() {
                         setSort(e.target.value);
                         setPage(1);
                     }}
-                    className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-blue-400 focus:outline-none"
+                    className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none"
                 >
                     <option value="newest">Newest</option>
                     <option value="top">Top voted</option>
@@ -158,7 +158,7 @@ export default function Community() {
 
             {loading ? (
                 <div className="flex h-64 items-center justify-center">
-                    <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                    <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
                 </div>
             ) : posts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
@@ -172,12 +172,12 @@ export default function Community() {
                         <Link
                             key={p._id}
                             to={`/community/${p._id}`}
-                            className="block rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-blue-200"
+                            className="block rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-indigo-200"
                         >
                             <div className="flex items-start justify-between gap-3">
                                 <h3 className="font-bold text-slate-900">{p.title}</h3>
                                 {p.subject && (
-                                    <span className="shrink-0 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600">
+                                    <span className="shrink-0 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
                                         {p.subject}
                                     </span>
                                 )}

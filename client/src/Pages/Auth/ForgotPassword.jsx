@@ -67,7 +67,7 @@ export default function ForgotPassword() {
                                 <p className="mb-1 font-semibold">Dev mode — reset link:</p>
                                 <Link
                                     to={devResetUrl.replace(/^https?:\/\/[^/]+/, "")}
-                                    className="break-all font-medium text-blue-600 hover:underline"
+                                    className="break-all font-medium text-indigo-600 hover:underline"
                                 >
                                     {devResetUrl}
                                 </Link>

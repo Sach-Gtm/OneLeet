@@ -37,7 +37,7 @@ const NotFound = () => {
                 <Link
                     to="/"
                     className="mt-8 inline-flex items-center gap-2 rounded-lg 
-                        bg-gradient-to-r from-blue-600 to-indigo-500
+                        bg-gradient-to-r from-indigo-600 to-indigo-500
                         text-white font-semibold px-6 py-3 text-sm shadow-xl
                         hover:opacity-90 transition-all duration-300"
                 >

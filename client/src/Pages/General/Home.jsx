@@ -23,7 +23,7 @@ const Home = () => {
             className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white drop-shadow-xl"
           >
             <span className="font-bold tracking-tight text-white">
-              ONE <span className="bg-gradient-to-r from-blue-300 to-indigo-500 bg-clip-text text-transparent">LEET</span>
+              ONE <span className="bg-gradient-to-r from-indigo-300 to-indigo-500 bg-clip-text text-transparent">LEET</span>
             </span>
           </motion.h1>
 
@@ -44,7 +44,7 @@ const Home = () => {
           >
             <Link
               to="/courses"
-              className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-500 px-5 py-2.5 sm:px-6 sm:py-3 text-white font-semibold shadow-xl hover:scale-[1.03] active:scale-[0.97] transition-all w-full sm:w-auto"
+              className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-5 py-2.5 sm:px-6 sm:py-3 text-white font-semibold shadow-xl hover:scale-[1.03] active:scale-[0.97] transition-all w-full sm:w-auto"
             >
               Start Learning
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />

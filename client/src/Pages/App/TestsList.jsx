@@ -34,7 +34,7 @@ export default function TestsList() {
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
             </div>
         );
     }
@@ -59,7 +59,7 @@ export default function TestsList() {
                     {tests.map((t) => (
                         <div key={t._id} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5">
                             {t.subject && (
-                                <span className="mb-2 w-fit rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600">
+                                <span className="mb-2 w-fit rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
                                     {t.subject}
                                 </span>
                             )}
@@ -77,7 +77,7 @@ export default function TestsList() {
                             </div>
                             <button
                                 onClick={() => navigate(`/tests/${t._id}`)}
-                                className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                                className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
                             >
                                 <Play size={15} /> Start Test
                             </button>

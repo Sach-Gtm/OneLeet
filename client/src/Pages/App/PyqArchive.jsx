@@ -62,7 +62,7 @@ function FilterSection({ label, options, selected, onToggle }) {
                                     type="checkbox"
                                     checked={checked}
                                     onChange={() => onToggle(value)}
-                                    className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                    className="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                                 />
                                 <span className="capitalize">{opt}</span>
                             </label>
@@ -208,7 +208,7 @@ export default function PyqArchive() {
                         Browse All-India LEET PYQs with filters.
                     </p>
                 </div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
                     <Sparkles size={13} /> AI Categorization
                 </span>
             </div>
@@ -222,7 +222,7 @@ export default function PyqArchive() {
                             {hasActiveFilters && (
                                 <button
                                     onClick={clearAll}
-                                    className="text-xs font-medium text-blue-600 hover:underline"
+                                    className="text-xs font-medium text-indigo-600 hover:underline"
                                 >
                                     Clear all
                                 </button>
@@ -256,7 +256,7 @@ export default function PyqArchive() {
                                     setPage(1);
                                 }}
                                 placeholder="Search by topic, year, or exam name..."
-                                className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                             />
                         </div>
                         <select
@@ -265,7 +265,7 @@ export default function PyqArchive() {
                                 setSort(e.target.value);
                                 setPage(1);
                             }}
-                            className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-blue-400 focus:outline-none"
+                            className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none"
                         >
                             <option value="newest">Sort by: Newest</option>
                             <option value="oldest">Sort by: Oldest</option>
@@ -276,7 +276,7 @@ export default function PyqArchive() {
 
                     {loading ? (
                         <div className="flex h-64 items-center justify-center">
-                            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                            <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
                         </div>
                     ) : pyqs.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
@@ -315,7 +315,7 @@ export default function PyqArchive() {
                                             className={cn(
                                                 "h-8 w-8 rounded-lg text-sm font-medium",
                                                 p === page
-                                                    ? "bg-blue-600 text-white"
+                                                    ? "bg-indigo-600 text-white"
                                                     : "border border-slate-200 text-slate-600 hover:bg-slate-50"
                                             )}
                                         >

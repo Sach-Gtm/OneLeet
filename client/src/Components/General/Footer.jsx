@@ -15,7 +15,7 @@ export default function Footer() {
 
             <div className="border-b border-white/5 bg-white/[0.02]">
                 <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="uppercase tracking-widest text-xs font-semibold text-blue-400">
+                    <p className="uppercase tracking-widest text-xs font-semibold text-indigo-400">
                         Get Connected With Us
                     </p>
 
@@ -42,7 +42,7 @@ export default function Footer() {
                             href="https://linkedin.com"
                             target="_blank"
                             rel="noreferrer"
-                            className="text-gray-400 hover:text-blue-500 transition-colors transform hover:scale-110"
+                            className="text-gray-400 hover:text-indigo-500 transition-colors transform hover:scale-110"
                             aria-label="LinkedIn"
                         >
                             <Linkedin size={20} />
@@ -64,9 +64,9 @@ export default function Footer() {
 
                 <div className="space-y-4">
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <span className="h-8 w-1 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full block"></span>
+                        <span className="h-8 w-1 bg-gradient-to-b from-indigo-500 to-indigo-600 rounded-full block"></span>
                         ONE{" "}
-                        <span className="bg-gradient-to-r from-blue-300 to-indigo-500 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-indigo-300 to-indigo-500 bg-clip-text text-transparent">
                             LEET
                         </span>
                     </h2>
@@ -78,27 +78,27 @@ export default function Footer() {
                 </div>
 
                 <div>
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-5 border-l-2 border-blue-500 pl-3">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-5 border-l-2 border-indigo-500 pl-3">
                         Navigate
                     </h3>
                     <ul className="space-y-3 text-sm">
                         <li>
-                            <Link to="/" className="text-gray-400 hover:text-blue-400 hover:pl-1 transition-all">
+                            <Link to="/" className="text-gray-400 hover:text-indigo-400 hover:pl-1 transition-all">
                                 Home
                             </Link>
                         </li>
                         <li>
-                            <Link to="/courses" className="text-gray-400 hover:text-blue-400 hover:pl-1 transition-all">
+                            <Link to="/courses" className="text-gray-400 hover:text-indigo-400 hover:pl-1 transition-all">
                                 Courses
                             </Link>
                         </li>
                         <li>
-                            <Link to="/team" className="text-gray-400 hover:text-blue-400 hover:pl-1 transition-all">
+                            <Link to="/team" className="text-gray-400 hover:text-indigo-400 hover:pl-1 transition-all">
                                 Meet the Team
                             </Link>
                         </li>
                         <li>
-                            <Link to="/privacy" className="text-gray-400 hover:text-blue-400 hover:pl-1 transition-all">
+                            <Link to="/privacy" className="text-gray-400 hover:text-indigo-400 hover:pl-1 transition-all">
                                 Privacy Policy
                             </Link>
                         </li>
@@ -135,9 +135,9 @@ export default function Footer() {
                     <div className="flex flex-col gap-3">
                         <a
                             href="mailto:admin@oneleet.in"
-                            className="group flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all"
+                            className="group flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 transition-all"
                         >
-                            <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                            <div className="h-8 w-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
                                 <Mail size={16} />
                             </div>
                             <span className="text-sm text-gray-300 group-hover:text-white">admin@oneleet.in</span>

@@ -58,7 +58,7 @@ function SidebarContent({ user, onNavigate, onLogout }) {
         cn(
             "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
             isActive
-                ? "bg-blue-50 text-blue-700"
+                ? "bg-indigo-50 text-indigo-700"
                 : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
         );
 
@@ -69,11 +69,11 @@ function SidebarContent({ user, onNavigate, onLogout }) {
                 onClick={onNavigate}
                 className="flex items-center gap-2 px-5 py-5"
             >
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-blue-600 text-white">
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-700 text-white">
                     <GraduationCap className="h-5 w-5" />
                 </span>
                 <span className="text-lg font-bold tracking-tight text-slate-900">
-                    LEET <span className="text-blue-600">Dream</span>
+                    One<span className="text-amber-500">Leet</span>
                 </span>
             </Link>
 
@@ -112,7 +112,7 @@ function SidebarContent({ user, onNavigate, onLogout }) {
                             className="h-9 w-9 rounded-full object-cover"
                         />
                     ) : (
-                        <span className="grid h-9 w-9 place-items-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+                        <span className="grid h-9 w-9 place-items-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
                             {(user?.name || "U").charAt(0).toUpperCase()}
                         </span>
                     )}
@@ -198,7 +198,7 @@ export default function AppShell() {
                         <input
                             type="text"
                             placeholder="Search for topics, tests, or notes..."
-                            className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                            className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                         />
                     </div>
                     <div className="ml-auto flex items-center gap-2">
@@ -216,7 +216,7 @@ export default function AppShell() {
                                 className="h-9 w-9 rounded-full object-cover"
                             />
                         ) : (
-                            <span className="grid h-9 w-9 place-items-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+                            <span className="grid h-9 w-9 place-items-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
                                 {(user?.name || "U").charAt(0).toUpperCase()}
                             </span>
                         )}
@@ -227,7 +227,7 @@ export default function AppShell() {
                     <Suspense
                         fallback={
                             <div className="flex h-64 items-center justify-center">
-                                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
                             </div>
                         }
                     >

@@ -7,12 +7,12 @@ function Flashcard({ card }) {
     return (
         <button
             onClick={() => setFlipped((v) => !v)}
-            className="flex min-h-[110px] w-full flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-blue-300"
+            className="flex min-h-[110px] w-full flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-indigo-300"
         >
             <p className={cn("text-sm", flipped ? "text-slate-600" : "font-semibold text-slate-800")}>
                 {flipped ? card.answer : card.question}
             </p>
-            <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-blue-500">
+            <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-indigo-500">
                 <RotateCw size={12} /> {flipped ? "Show question" : "Show answer"}
             </span>
         </button>
@@ -30,7 +30,7 @@ export default function NoteAiModal({ open, onClose, mode, noteTitle, loading, d
             <div className="relative z-10 flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
                 <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
                     <div className="flex items-center gap-2">
-                        <span className="grid h-8 w-8 place-items-center rounded-lg bg-blue-50 text-blue-600">
+                        <span className="grid h-8 w-8 place-items-center rounded-lg bg-indigo-50 text-indigo-600">
                             <Sparkles size={16} />
                         </span>
                         <div>
@@ -52,7 +52,7 @@ export default function NoteAiModal({ open, onClose, mode, noteTitle, loading, d
                 <div className="min-h-[160px] flex-1 overflow-y-auto p-5">
                     {loading ? (
                         <div className="flex h-40 flex-col items-center justify-center gap-2 text-slate-400">
-                            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                            <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
                             <p className="text-sm">Generating…</p>
                         </div>
                     ) : error ? (

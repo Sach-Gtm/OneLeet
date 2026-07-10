@@ -43,14 +43,14 @@ function Field({ label, children }) {
 }
 
 const inputCls =
-    "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
+    "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
 
 function RunButton({ loading, children, onClick }) {
     return (
         <button
             onClick={onClick}
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
         >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles size={15} />}
             {children}
@@ -110,7 +110,7 @@ function QuestionGen() {
                         <div key={i} className="rounded-xl border border-slate-200 bg-white p-4">
                             <div className="flex items-start justify-between gap-3">
                                 <p className="text-sm font-medium text-slate-800">
-                                    <span className="font-bold text-blue-600">Q{i + 1}. </span>{q.question}
+                                    <span className="font-bold text-indigo-600">Q{i + 1}. </span>{q.question}
                                 </p>
                                 {q.difficulty && (
                                     <span className={cn("shrink-0 rounded px-2 py-0.5 text-[10px] font-bold uppercase", DIFF_STYLE[q.difficulty] || DIFF_STYLE.moderate)}>
@@ -133,7 +133,7 @@ function QuestionGen() {
                                     </div>
                                 ))}
                             </div>
-                            <button onClick={() => setRevealed((r) => ({ ...r, [i]: !r[i] }))} className="mt-2 text-xs font-semibold text-blue-600 hover:underline">
+                            <button onClick={() => setRevealed((r) => ({ ...r, [i]: !r[i] }))} className="mt-2 text-xs font-semibold text-indigo-600 hover:underline">
                                 {revealed[i] ? "Hide answer" : "Show answer"}
                             </button>
                         </div>
@@ -171,7 +171,7 @@ function Predictor() {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder="Paste a question to estimate its difficulty…"
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
             </Field>
             <RunButton loading={loading} onClick={run}>Predict Difficulty</RunButton>
@@ -292,7 +292,7 @@ function Planner() {
                                 <ul className="mt-2 space-y-1">
                                     {(d.tasks || []).map((t, i) => (
                                         <li key={i} className="flex items-start gap-1.5 text-xs text-slate-500">
-                                            <ChevronRight size={12} className="mt-0.5 shrink-0 text-blue-400" /> {t}
+                                            <ChevronRight size={12} className="mt-0.5 shrink-0 text-indigo-400" /> {t}
                                         </li>
                                     ))}
                                 </ul>
@@ -344,7 +344,7 @@ export default function AiTools() {
                             onClick={() => setActive(t.key)}
                             className={cn(
                                 "-mb-px flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-semibold transition",
-                                active === t.key ? "border-blue-600 text-blue-600" : "border-transparent text-slate-500 hover:text-slate-700"
+                                active === t.key ? "border-indigo-600 text-indigo-600" : "border-transparent text-slate-500 hover:text-slate-700"
                             )}
                         >
                             <Icon size={16} /> {t.label}

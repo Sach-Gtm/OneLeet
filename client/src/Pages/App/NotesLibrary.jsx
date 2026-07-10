@@ -51,7 +51,7 @@ function FilterSection({ label, options, selected, onToggle }) {
                                 type="checkbox"
                                 checked={selected.includes(String(opt))}
                                 onChange={() => onToggle(String(opt))}
-                                className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                className="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                             />
                             <span className="capitalize">{opt}</span>
                         </label>
@@ -91,7 +91,7 @@ function NoteCard({ note, onSummary, onFlashcards }) {
 
             <button
                 onClick={openView}
-                className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
             >
                 <BookOpen size={15} /> View Note
             </button>
@@ -204,7 +204,7 @@ export default function NotesLibrary() {
                         className={cn(
                             "rounded-full px-4 py-1.5 text-sm font-medium capitalize transition",
                             subjectChip === s
-                                ? "bg-blue-600 text-white"
+                                ? "bg-indigo-600 text-white"
                                 : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                         )}
                     >
@@ -228,10 +228,10 @@ export default function NotesLibrary() {
                         ))}
                     </div>
 
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-4 text-white">
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-4 text-white">
                         <Zap className="mb-2 h-5 w-5" />
                         <p className="text-sm font-bold">AI Flashcards</p>
-                        <p className="mt-0.5 text-xs text-blue-100">
+                        <p className="mt-0.5 text-xs text-indigo-100">
                             Turn any note into a revision deck instantly.
                         </p>
                         <button
@@ -255,7 +255,7 @@ export default function NotesLibrary() {
                                     setPage(1);
                                 }}
                                 placeholder="Search topic, subject, or teacher..."
-                                className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                             />
                         </div>
                         <select
@@ -264,7 +264,7 @@ export default function NotesLibrary() {
                                 setSort(e.target.value);
                                 setPage(1);
                             }}
-                            className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-blue-400 focus:outline-none"
+                            className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none"
                         >
                             <option value="newest">Newest</option>
                             <option value="oldest">Oldest</option>
@@ -273,7 +273,7 @@ export default function NotesLibrary() {
 
                     {loading ? (
                         <div className="flex h-64 items-center justify-center">
-                            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                            <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
                         </div>
                     ) : notes.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
@@ -310,7 +310,7 @@ export default function NotesLibrary() {
                                             onClick={() => setPage(p)}
                                             className={cn(
                                                 "h-8 w-8 rounded-lg text-sm font-medium",
-                                                p === page ? "bg-blue-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50"
+                                                p === page ? "bg-indigo-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50"
                                             )}
                                         >
                                             {p}

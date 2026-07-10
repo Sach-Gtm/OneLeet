@@ -39,7 +39,7 @@ export default function TestResult() {
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
             </div>
         );
     }
@@ -47,7 +47,7 @@ export default function TestResult() {
         return (
             <div className="mx-auto max-w-md py-16 text-center">
                 <p className="text-sm font-medium text-slate-600">Result not found.</p>
-                <Link to="/tests" className="mt-4 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                <Link to="/tests" className="mt-4 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                     Back to Tests
                 </Link>
             </div>
@@ -63,19 +63,19 @@ export default function TestResult() {
     return (
         <div className="mx-auto max-w-3xl space-y-6">
             <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">Results</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">Results</p>
                 <h1 className="text-2xl font-bold text-slate-900">{attempt.test?.title || attempt.testTitle}</h1>
             </div>
 
             {/* Score summary */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white">
                 <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
                 <div className="flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <p className="text-sm text-blue-100">Your score</p>
+                        <p className="text-sm text-indigo-100">Your score</p>
                         <p className="text-4xl font-extrabold">
                             {attempt.score}
-                            <span className="text-2xl font-semibold text-blue-200">/{attempt.totalMarks}</span>
+                            <span className="text-2xl font-semibold text-indigo-200">/{attempt.totalMarks}</span>
                         </p>
                     </div>
                     <div className="flex gap-6">
@@ -83,13 +83,13 @@ export default function TestResult() {
                             <p className="flex items-center gap-1 text-2xl font-bold">
                                 <Target size={18} /> {attempt.accuracy}%
                             </p>
-                            <p className="text-xs text-blue-200">Accuracy</p>
+                            <p className="text-xs text-indigo-200">Accuracy</p>
                         </div>
                         <div>
                             <p className="flex items-center gap-1 text-2xl font-bold">
                                 <Clock size={18} /> {fmtDuration(attempt.durationTakenSeconds)}
                             </p>
-                            <p className="text-xs text-blue-200">Time taken</p>
+                            <p className="text-xs text-indigo-200">Time taken</p>
                         </div>
                     </div>
                 </div>
@@ -115,7 +115,7 @@ export default function TestResult() {
                         <div key={i} className="rounded-2xl border border-slate-200 bg-white p-5">
                             <div className="flex items-start justify-between gap-3">
                                 <p className="text-sm font-medium text-slate-800">
-                                    <span className="font-bold text-blue-600">Q{i + 1}. </span>
+                                    <span className="font-bold text-indigo-600">Q{i + 1}. </span>
                                     {q.text}
                                 </p>
                                 <span
@@ -178,7 +178,7 @@ export default function TestResult() {
                 {attempt.test?._id && (
                     <button
                         onClick={() => navigate(`/tests/${attempt.test._id}`)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                        className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
                     >
                         <RotateCw size={15} /> Retake Test
                     </button>
