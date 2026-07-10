@@ -5,6 +5,13 @@ function getStatus(req, res) {
     return res.status(200).json({ success: true, provider: aiService.activeProvider() });
 }
 
+// GET /api/ai/health — can the active AI provider actually be reached? Cheap
+// (no generation). Public so setup can be verified right after configuring a key.
+async function health(req, res) {
+    const ai = await aiService.health();
+    return res.status(200).json({ success: true, ai });
+}
+
 // POST /api/ai/questions
 async function generateQuestions(req, res, next) {
     try {
@@ -65,6 +72,7 @@ async function generateStudyPlan(req, res, next) {
 
 module.exports = {
     getStatus,
+    health,
     generateQuestions,
     predictDifficulty,
     analyzePerformance,

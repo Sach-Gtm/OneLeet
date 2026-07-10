@@ -40,6 +40,35 @@ async function callGemini(prompt, { json = false } = {}) {
     return data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
 
+// Cheap key/endpoint check — lists models (no generation cost). Used by the AI
+// health endpoint so a bad key is obvious without burning quota.
+async function verifyKey() {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) return { ok: false, error: "GEMINI_API_KEY is not set" };
+    if (!key.startsWith("AIza")) {
+        return {
+            ok: false,
+            error: `Key looks wrong (starts with "${key.slice(0, 3)}…"). Gemini API keys start with "AIza" — get one at aistudio.google.com/app/apikey`,
+        };
+    }
+    try {
+        const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`
+        );
+        if (!res.ok) {
+            const t = await res.text().catch(() => "");
+            return { ok: false, model: MODEL(), error: `${res.status}: ${t.slice(0, 160)}` };
+        }
+        const data = await res.json();
+        const modelAvailable = (data.models || []).some((m) =>
+            (m.name || "").includes(MODEL())
+        );
+        return { ok: true, model: MODEL(), modelAvailable };
+    } catch (e) {
+        return { ok: false, error: e.message };
+    }
+}
+
 async function summarizeNote({ title, subject, description, text } = {}) {
     const prompt =
         `You are a study assistant for the Indian LEET (Lateral Entry) engineering entrance exam. ` +
@@ -120,6 +149,7 @@ async function analyzePerformance({ stats } = {}) {
 }
 
 module.exports = {
+    verifyKey,
     summarizeNote,
     generateFlashcards,
     generateQuestions,

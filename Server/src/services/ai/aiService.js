@@ -29,6 +29,15 @@ module.exports = {
     // Which provider is actually serving requests right now.
     activeProvider: activeProviderName,
 
+    // Reports whether the active provider can actually be reached (used by the
+    // AI health endpoint). The stub is always healthy.
+    health: async () => {
+        const name = activeProviderName();
+        const provider = providers[name];
+        const detail = provider.verifyKey ? await provider.verifyKey() : { ok: true };
+        return { provider: name, ...detail };
+    },
+
     summarizeNote: (input) => getProvider().summarizeNote(input),
     generateFlashcards: (input) => getProvider().generateFlashcards(input),
     generateQuestions: (input) => getProvider().generateQuestions(input),
