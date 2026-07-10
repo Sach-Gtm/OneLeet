@@ -13,6 +13,7 @@ import GoogleLogin from "@/Components/Auth/GoogleLogin";
 import { loginSchema } from "@/lib/validations/auth";
 import { loginUser } from "@/Api/AuthApis";
 import { useAuth } from "@/context/AuthContext";
+import { GOOGLE_ENABLED } from "@/lib/googleAuth";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -120,13 +121,19 @@ export default function Login() {
                     </Button>
                 </form>
 
-                <div className="flex items-center gap-3">
-                    <div className="h-px flex-1 bg-slate-200" />
-                    <span className="text-xs text-slate-400">Or continue with</span>
-                    <div className="h-px flex-1 bg-slate-200" />
-                </div>
+                {GOOGLE_ENABLED && (
+                    <>
+                        <div className="flex items-center gap-3">
+                            <div className="h-px flex-1 bg-slate-200" />
+                            <span className="text-xs text-slate-400">
+                                Or continue with
+                            </span>
+                            <div className="h-px flex-1 bg-slate-200" />
+                        </div>
 
-                <GoogleLogin redirectTo={redirectTo} />
+                        <GoogleLogin redirectTo={redirectTo} />
+                    </>
+                )}
 
                 <p className="text-center text-sm text-slate-500">
                     Don&apos;t have an account?{" "}
