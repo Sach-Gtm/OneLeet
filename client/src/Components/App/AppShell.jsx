@@ -17,6 +17,7 @@ import {
     Menu,
     X,
     Loader2,
+    ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -62,6 +63,18 @@ function SidebarContent({ user, onNavigate, onLogout }) {
                 : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
         );
 
+    // Staff (admin/teacher) get an extra Admin section.
+    const isStaff = user?.role === "admin" || user?.role === "teacher";
+    const navGroups = isStaff
+        ? [
+              ...NAV,
+              {
+                  section: "Staff",
+                  items: [{ to: "/admin", label: "Admin", icon: ShieldCheck }],
+              },
+          ]
+        : NAV;
+
     return (
         <div className="flex h-full flex-col">
             <Link
@@ -78,7 +91,7 @@ function SidebarContent({ user, onNavigate, onLogout }) {
             </Link>
 
             <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2">
-                {NAV.map((group, i) => (
+                {navGroups.map((group, i) => (
                     <div key={i} className="space-y-1">
                         {group.section && (
                             <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">

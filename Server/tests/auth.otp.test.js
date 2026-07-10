@@ -84,7 +84,7 @@ async function withEmail(fn, enabled) {
 
         const login = await agent
             .post("/api/auth/login")
-            .send({ email: "grace@test.com", password: "secret123" });
+            .send({ identifier: "grace@test.com", password: "secret123" });
         assert.strictEqual(login.status, 200);
         ok("no-email: login works immediately");
     }, false);
@@ -111,7 +111,7 @@ async function withEmail(fn, enabled) {
 
         const earlyLogin = await agent
             .post("/api/auth/login")
-            .send({ email: "otto@test.com", password: "secret123" });
+            .send({ identifier: "otto@test.com", password: "secret123" });
         assert.strictEqual(earlyLogin.status, 403);
         assert.strictEqual(earlyLogin.body.needsVerification, true);
         ok("email-on: login blocked (403) until verified");
@@ -132,7 +132,7 @@ async function withEmail(fn, enabled) {
 
         const afterLogin = await agent
             .post("/api/auth/login")
-            .send({ email: "otto@test.com", password: "secret123" });
+            .send({ identifier: "otto@test.com", password: "secret123" });
         assert.strictEqual(afterLogin.status, 200);
         ok("email-on: login works after verification");
     }, true);

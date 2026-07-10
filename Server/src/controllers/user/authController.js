@@ -128,10 +128,14 @@ async function register(req, res, next) {
 // POST /api/auth/login
 async function login(req, res, next) {
     try {
-        const { email, password } = req.body;
+        const { identifier, password } = req.body;
+        const id = (identifier || "").trim();
 
-        // password has select:false, so ask for it explicitly.
-        const user = await User.findOne({ email }).select("+password");
+        // Match on email (case-insensitive) or phone. password has
+        // select:false, so ask for it explicitly.
+        const user = await User.findOne({
+            $or: [{ email: id.toLowerCase() }, { phone: id }],
+        }).select("+password");
 
         // Same generic message whether the user is missing, is a Google-only
         // account, or the password is wrong — don't leak which.

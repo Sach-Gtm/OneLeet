@@ -29,7 +29,7 @@ export default function Login() {
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(loginSchema),
-        defaultValues: { email: "", password: "" },
+        defaultValues: { identifier: "", password: "" },
     });
 
     const onSubmit = async (values) => {
@@ -43,7 +43,7 @@ export default function Login() {
             if (err.needsVerification) {
                 toast("Please verify your email to continue.");
                 navigate("/verify-otp", {
-                    state: { email: err.email || values.email },
+                    state: { email: err.email || values.identifier },
                 });
                 return;
             }
@@ -70,16 +70,18 @@ export default function Login() {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
                     <div className="space-y-1.5">
-                        <Label htmlFor="email">Email Address</Label>
+                        <Label htmlFor="identifier">Email or phone number</Label>
                         <Input
-                            id="email"
-                            type="email"
-                            autoComplete="email"
-                            placeholder="student@example.com"
-                            {...register("email")}
+                            id="identifier"
+                            type="text"
+                            autoComplete="username"
+                            placeholder="student@example.com or 9876543210"
+                            {...register("identifier")}
                         />
-                        {errors.email && (
-                            <p className="text-xs text-red-500">{errors.email.message}</p>
+                        {errors.identifier && (
+                            <p className="text-xs text-red-500">
+                                {errors.identifier.message}
+                            </p>
                         )}
                     </div>
 

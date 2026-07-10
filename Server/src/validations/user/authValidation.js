@@ -38,7 +38,11 @@ const verifyOtpSchema = z.object({
 const resendOtpSchema = z.object({ email: emailField });
 
 const loginSchema = z.object({
-    email: emailField,
+    // Email OR phone — students usually use email, admins use their phone.
+    identifier: z
+        .string({ required_error: "Enter your email or phone number" })
+        .trim()
+        .min(1, "Enter your email or phone number"),
     password: z.string({ required_error: "Password is required" }).min(1, "Password is required"),
 });
 

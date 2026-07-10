@@ -37,6 +37,7 @@ const Analytics = lazy(() => import("@/Pages/App/Analytics"));
 const Community = lazy(() => import("@/Pages/App/Community"));
 const PostDetail = lazy(() => import("@/Pages/App/PostDetail"));
 const Profile = lazy(() => import("@/Pages/App/Profile"));
+const AdminDashboard = lazy(() => import("@/Pages/App/AdminDashboard"));
 
 const FullscreenLoader = () => (
     <div className="flex min-h-screen items-center justify-center bg-slate-50">
@@ -86,6 +87,7 @@ const AppRoutes = () => {
                         <Route path="/community" element={<Community />} />
                         <Route path="/community/:id" element={<PostDetail />} />
                         <Route path="/profile" element={<Profile />} />
+                        <Route path="/admin" element={<AdminDashboard />} />
                     </Route>
                 </Routes>
             </Suspense>

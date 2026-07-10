@@ -9,7 +9,8 @@
     "seed:pyqs": "node scripts/seedPyqs.js",
     "seed:notes": "node scripts/seedNotes.js",
     "seed:tests": "node scripts/seedTests.js",
-    "test": "node tests/auth.otp.test.js"
+    "create:admin": "node scripts/createAdmin.js",
+    "test": "node tests/auth.otp.test.js && node tests/admin.test.js"
   },
   "keywords": [],
   "author": "",

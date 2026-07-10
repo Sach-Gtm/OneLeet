@@ -13,6 +13,7 @@ const attemptRoutes = require("./src/routes/test/attemptRoutes");
 const aiRoutes = require("./src/routes/ai/aiRoutes");
 const leaderboardRoutes = require("./src/routes/leaderboard/leaderboardRoutes");
 const communityRoutes = require("./src/routes/community/communityRoutes");
+const adminRoutes = require("./src/routes/admin/adminRoutes");
 
 // Builds and returns the configured Express app WITHOUT starting a server or
 // connecting to the database. server.js wires those up for real runs; tests
@@ -59,6 +60,7 @@ app.use("/api/attempts", attemptRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/community", communityRoutes);
+app.use("/api/admin", adminRoutes);
 
 // 404 for unmatched routes
 app.use((req, res) => {
