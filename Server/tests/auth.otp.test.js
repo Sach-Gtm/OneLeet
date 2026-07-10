@@ -23,6 +23,7 @@ require.cache[require.resolve("nodemailer")] = {
                 sent.push(msg);
                 return { messageId: "test" };
             },
+            verify: async () => true,
         }),
     },
 };
@@ -53,6 +54,8 @@ async function withEmail(fn, enabled) {
         delete require.cache[require.resolve(p)];
     }
     const app = require("../app");
+    // Prime the deliverability probe (OTP is gated on it) before running fn.
+    await require("../src/utils/email").refreshDeliverability();
     return fn(require("supertest")(app));
 }
 

@@ -6,7 +6,7 @@ const generateToken = require("../../utils/generateToken");
 const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
 const {
     sendMail,
-    isEmailConfigured,
+    canSendEmail,
     verifyTransport,
 } = require("../../utils/email");
 const {
@@ -74,9 +74,10 @@ async function register(req, res, next) {
             });
         }
 
-        // OTP verification only runs when email delivery is configured;
-        // otherwise the account is created verified so signup keeps working.
-        const otpEnabled = isEmailConfigured();
+        // OTP only runs when email can ACTUALLY be delivered from this host
+        // (checked at startup). A configured-but-unreachable transport falls
+        // back to no-OTP so signup never gets stuck.
+        const otpEnabled = canSendEmail();
 
         const user = await User.create({
             name,
