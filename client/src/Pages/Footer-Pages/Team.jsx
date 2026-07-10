@@ -1,107 +1,61 @@
-import React, { useState } from "react";
+import React from "react";
 import { Github, Linkedin } from "lucide-react";
 
+const members = [
+    {
+        name: "Sachin Gautam",
+        username: "@sachingautam",
+        tagline: "Founder & Full Stack Developer",
+        github: "https://github.com/sach-gtm",
+        linkedin: "https://www.linkedin.com/in/sachin-gautam-1484a2227/",
+    },
+];
+
 const Team = () => {
-    const [tilt, setTilt] = useState({});
-
-    const members = [
-        {
-            name: "Sachin Gautam",
-            username: "@sachingautam",
-            // rank: "Rank 54 @ipuLeet-2025",
-            tagline: "Founder & Full Stack Developer",
-            image: "https://res.cloudinary.com/dtgo1vvgs/image/upload/v1765217102/caa3166d46ae69f93dec818856d0a830_etcpk3.jpg",
-            github: "https://github.com/sach-gtm",
-            linkedin: "https://www.linkedin.com/in/sachin-gautam-1484a2227/"
-        }
-    ];
-
-    const handleMove = (e, index) => {
-        const card = e.currentTarget;
-        const rect = card.getBoundingClientRect();
-
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const rotateX = ((y - rect.height / 2) / 20).toFixed(2);
-        const rotateY = ((x - rect.width / 2) / 20).toFixed(2);
-
-        setTilt(prev => ({
-            ...prev,
-            [index]: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
-        }));
-    };
-
-    const handleLeave = (index) => {
-        setTilt(prev => ({
-            ...prev,
-            [index]: `rotateX(0deg) rotateY(0deg)`
-        }));
-    };
-
     return (
         <div className="relative min-h-screen w-full bg-black overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none bg-black/40 backdrop-blur-[6px] glass-noise" />
 
-            <div className="absolute inset-0 pointer-events-none bg-black/40 backdrop-blur-[6px] glass-noise"></div>
+            <div className="relative z-10 flex flex-col items-center px-4 pt-40 pb-20">
+                <div className="mb-12 text-center">
+                    <h1 className="text-3xl font-bold text-white md:text-4xl">
+                        The Team
+                    </h1>
+                    <p className="mx-auto mt-3 max-w-xl text-gray-400">
+                        The people building OneLeet.
+                    </p>
+                </div>
 
-            <div className="relative z-10 flex flex-col justify-center items-center pt-20 mt-30">
-                <div className="grid grid-cols-1 md:grid-cols-2 mt-10 max-w-5xl w-full px-4 cursor-pointer">
+                <div className="grid w-full max-w-md grid-cols-1 gap-6">
                     {members.map((m, index) => (
                         <div
                             key={index}
-                            className="flex flex-col items-center text-center"
+                            className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 text-center backdrop-blur-md"
                         >
-                            <div
-                                onMouseMove={(e) => handleMove(e, index)}
-                                onMouseLeave={() => handleLeave(index)}
-                                style={{
-                                    transform: tilt[index],
-                                    transition: "transform 0.2s ease-out",
-                                    perspective: "1000px",
-                                }}
-                                className="rounded-2xl"
-                            >
-                                <img
-                                    src={m.image}
-                                    alt={m.name}
-                                    className="
-                                        w-80 h-96 object-cover rounded-2xl shadow-xl
-                                        grayscale 
-                                        hover:grayscale-0
-                                        transition-all duration-500 ease-out
-                                    "
-                                />
-                            </div>
-
-                            <h2 className="mt-4 text-lg font-bold text-white">{m.name}</h2>
-
-                            <p className="text-gray-400 text-sm">{m.username}</p>
-
-                            <p className="text-yellow-400 font-semibold text-sm mt-1">
-                                {m.rank}
-                            </p>
-
-                            <p className="text-gray-300 mt-1 text-sm italic">
+                            <h2 className="text-xl font-bold text-white">
+                                {m.name}
+                            </h2>
+                            <p className="text-sm text-gray-400">{m.username}</p>
+                            <p className="mt-2 text-sm italic text-gray-300">
                                 {m.tagline}
                             </p>
 
-                            <div className="flex gap-4 mt-3">
+                            <div className="mt-5 flex justify-center gap-4">
                                 <a
                                     href={m.github}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
+                                    className="rounded-full bg-white/10 p-2 transition hover:bg-white/20"
                                 >
-                                    <Github className="w-5 h-5 text-white" />
+                                    <Github className="h-5 w-5 text-white" />
                                 </a>
-
                                 <a
                                     href={m.linkedin}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
+                                    className="rounded-full bg-white/10 p-2 transition hover:bg-white/20"
                                 >
-                                    <Linkedin className="w-5 h-5 text-white" />
+                                    <Linkedin className="h-5 w-5 text-white" />
                                 </a>
                             </div>
                         </div>
