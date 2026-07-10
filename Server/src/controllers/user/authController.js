@@ -4,7 +4,11 @@ const User = require("../../models/userModel");
 const cloudinary = require("../../config/cloudinary");
 const generateToken = require("../../utils/generateToken");
 const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
-const { sendMail, isEmailConfigured } = require("../../utils/email");
+const {
+    sendMail,
+    isEmailConfigured,
+    verifyTransport,
+} = require("../../utils/email");
 const {
     generateOtp,
     hashOtp,
@@ -88,11 +92,10 @@ async function register(req, res, next) {
         if (otpEnabled) {
             const otp = setOtp(user);
             await user.save({ validateBeforeSave: false });
-            try {
-                await sendOtpEmail(user, otp);
-            } catch (mailErr) {
-                console.error("[register] failed to send OTP:", mailErr.message);
-            }
+            // Send in the background — don't make the user wait on SMTP.
+            sendOtpEmail(user, otp).catch((mailErr) =>
+                console.error("[register] failed to send OTP:", mailErr.message)
+            );
             return res.status(201).json({
                 success: true,
                 needsVerification: true,
@@ -174,6 +177,14 @@ async function getMe(req, res) {
     return res.status(200).json({ success: true, user: req.user });
 }
 
+// GET /api/auth/email-health — confirms whether OTP/reset emails can actually
+// be delivered from this host (SMTP reachable + credentials valid). No secrets
+// are returned. Useful right after configuring EMAIL_USER/EMAIL_PASS.
+async function emailHealth(req, res) {
+    const result = await verifyTransport();
+    return res.status(200).json({ success: true, email: result });
+}
+
 // POST /api/auth/verify-otp — confirm the emailed code and log the user in.
 async function verifyOtp(req, res, next) {
     try {
@@ -251,11 +262,9 @@ async function resendOtp(req, res, next) {
 
         const otp = setOtp(user);
         await user.save({ validateBeforeSave: false });
-        try {
-            await sendOtpEmail(user, otp);
-        } catch (mailErr) {
-            console.error("[resend-otp] failed to send:", mailErr.message);
-        }
+        sendOtpEmail(user, otp).catch((mailErr) =>
+            console.error("[resend-otp] failed to send:", mailErr.message)
+        );
         return res.status(200).json(generic);
     } catch (error) {
         next(error);
@@ -430,6 +439,7 @@ module.exports = {
     register,
     login,
     getMe,
+    emailHealth,
     verifyOtp,
     resendOtp,
     forgotPassword,

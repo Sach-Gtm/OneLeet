@@ -20,9 +20,27 @@ function getTransporter() {
         transporter = nodemailer.createTransport({
             service: "gmail",
             auth: { user: EMAIL_USER, pass: EMAIL_PASS },
+            // Fail fast instead of hanging if the host blocks/slows SMTP ports.
+            connectionTimeout: 10000,
+            greetingTimeout: 8000,
+            socketTimeout: 15000,
         });
     }
     return transporter;
+}
+
+// Diagnostic: checks the SMTP connection + credentials without sending mail.
+// Used by the email-health endpoint so we can confirm delivery works from the
+// deployed host (some platforms block outbound SMTP).
+async function verifyTransport() {
+    const tx = getTransporter();
+    if (!tx) return { configured: false, canConnect: false };
+    try {
+        await tx.verify();
+        return { configured: true, canConnect: true };
+    } catch (e) {
+        return { configured: true, canConnect: false, error: e.message };
+    }
 }
 
 // Never throws to the caller's request flow: if email isn't configured we log
@@ -39,4 +57,4 @@ async function sendMail({ to, subject, html, text }) {
     return tx.sendMail({ from: EMAIL_FROM, to, subject, html, text });
 }
 
-module.exports = { sendMail, isEmailConfigured };
+module.exports = { sendMail, isEmailConfigured, verifyTransport };

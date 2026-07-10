@@ -30,6 +30,7 @@ router.post("/register", validate(registerSchema), authController.register);
 router.post("/login", validate(loginSchema), authController.login);
 router.post("/verify-otp", validate(verifyOtpSchema), authController.verifyOtp);
 router.post("/resend-otp", validate(resendOtpSchema), authController.resendOtp);
+router.get("/email-health", authController.emailHealth);
 router.post("/logout", authController.logout);
 router.get("/me", verifyToken, authController.getMe);
 router.patch("/me", verifyToken, validate(updateProfileSchema), authController.updateProfile);
