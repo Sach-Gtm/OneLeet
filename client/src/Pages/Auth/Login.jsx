@@ -39,6 +39,14 @@ export default function Login() {
             toast.success("Welcome back!");
             navigate(redirectTo, { replace: true });
         } catch (err) {
+            // Account exists but email isn't verified yet → go finish OTP.
+            if (err.needsVerification) {
+                toast("Please verify your email to continue.");
+                navigate("/verify-otp", {
+                    state: { email: err.email || values.email },
+                });
+                return;
+            }
             toast.error(err.message || "Login failed");
         }
     };

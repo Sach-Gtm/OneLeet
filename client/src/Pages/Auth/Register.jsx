@@ -55,7 +55,14 @@ export default function Register() {
         try {
             const { confirmPassword, ...payload } = values;
             void confirmPassword;
-            await registerUser(payload);
+            const res = await registerUser(payload);
+            // When email OTP is enabled the account isn't active yet — send the
+            // user to the verification step instead of logging them straight in.
+            if (res?.needsVerification) {
+                toast.success("Enter the code we emailed to finish signing up");
+                navigate("/verify-otp", { state: { email: payload.email } });
+                return;
+            }
             await refresh();
             toast.success("Account created — welcome to OneLeet!");
             navigate("/dashboard", { replace: true });
@@ -133,7 +140,7 @@ export default function Register() {
                             )}
                         </div>
                         <div className="space-y-1.5">
-                            <Label htmlFor="phone">Phone (optional)</Label>
+                            <Label htmlFor="phone">Phone</Label>
                             <Input
                                 id="phone"
                                 type="tel"

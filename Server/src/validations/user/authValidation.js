@@ -18,9 +18,24 @@ const registerSchema = z.object({
         .min(6, "Password must be at least 6 characters")
         .max(72, "Password cannot be more than 72 characters"),
     role: z.enum(["student", "teacher"]).default("student"),
-    phone: z.string().trim().max(20, "Phone number too long").optional().or(z.literal("")),
+    phone: z
+        .string({ required_error: "Phone number is required" })
+        .trim()
+        .min(10, "Enter a valid phone number")
+        .max(20, "Phone number too long")
+        .regex(/^\+?[0-9][0-9\s-]{8,}$/, "Enter a valid phone number"),
     avatar: z.string().url("Avatar must be a valid URL").optional().or(z.literal("")),
 });
+
+const verifyOtpSchema = z.object({
+    email: emailField,
+    otp: z
+        .string({ required_error: "Enter the 6-digit code" })
+        .trim()
+        .regex(/^\d{6}$/, "Code must be 6 digits"),
+});
+
+const resendOtpSchema = z.object({ email: emailField });
 
 const loginSchema = z.object({
     email: emailField,
@@ -64,4 +79,6 @@ module.exports = {
     resetPasswordSchema,
     updateProfileSchema,
     changePasswordSchema,
+    verifyOtpSchema,
+    resendOtpSchema,
 };

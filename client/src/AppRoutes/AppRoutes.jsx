@@ -21,6 +21,7 @@ const Team = lazy(() => import("@/Pages/Footer-Pages/Team"));
 
 const Login = lazy(() => import("@/Pages/Auth/Login"));
 const Register = lazy(() => import("@/Pages/Auth/Register"));
+const VerifyOtp = lazy(() => import("@/Pages/Auth/VerifyOtp"));
 const ForgotPassword = lazy(() => import("@/Pages/Auth/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/Pages/Auth/ResetPassword"));
 
@@ -60,6 +61,7 @@ const AppRoutes = () => {
                     {/* Auth — light, full-screen (no chrome) */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/verify-otp" element={<VerifyOtp />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
                     <Route path="/user/login" element={<Navigate to="/login" replace />} />

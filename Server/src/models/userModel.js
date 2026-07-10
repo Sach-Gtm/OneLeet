@@ -42,7 +42,7 @@ const UserSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["student", "teacher"],
+            enum: ["student", "teacher", "admin"],
             default: "student",
         },
         phone: {
@@ -50,6 +50,14 @@ const UserSchema = new mongoose.Schema(
             trim: true,
             maxlength: [20, "Phone number too long"],
         },
+
+        // Email OTP verification. Defaults to true so pre-existing accounts and
+        // Google sign-ins are never locked out; local registration sets it to
+        // false explicitly when OTP is enabled and flips it to true on verify.
+        isVerified: { type: Boolean, default: true },
+        otpHash: { type: String, select: false },
+        otpExpire: { type: Date, select: false },
+        otpLastSentAt: { type: Date, select: false },
         avatar: {
             type: String,
         },

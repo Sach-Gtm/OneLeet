@@ -12,6 +12,8 @@ const unwrap = (error) => {
         const e = new Error(message);
         e.errors = data.errors;
         e.status = error.response.status;
+        e.needsVerification = data.needsVerification;
+        e.email = data.email;
         throw e;
     }
     throw new Error("Network error or API is unavailable.");
@@ -38,6 +40,24 @@ export const loginUser = async (payload) => {
 export const getMe = async () => {
     const { data } = await api.get("/auth/me");
     return data;
+};
+
+export const verifyOtp = async (payload) => {
+    try {
+        const { data } = await api.post("/auth/verify-otp", payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const resendOtp = async (payload) => {
+    try {
+        const { data } = await api.post("/auth/resend-otp", payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
 };
 
 export const forgotPassword = async (payload) => {

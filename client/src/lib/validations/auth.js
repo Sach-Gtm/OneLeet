@@ -7,9 +7,9 @@ export const registerSchema = z
         phone: z
             .string()
             .trim()
+            .min(10, "Enter a valid phone number")
             .max(20, "Phone number too long")
-            .optional()
-            .or(z.literal("")),
+            .regex(/^\+?[0-9][0-9\s-]{8,}$/, "Enter a valid phone number"),
         role: z.enum(["student", "teacher"]),
         password: z.string().min(6, "Password must be at least 6 characters"),
         confirmPassword: z.string(),

@@ -4,6 +4,13 @@ const User = require("../../models/userModel");
 const cloudinary = require("../../config/cloudinary");
 const generateToken = require("../../utils/generateToken");
 const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
+const { sendMail, isEmailConfigured } = require("../../utils/email");
+const {
+    generateOtp,
+    hashOtp,
+    OTP_TTL_MS,
+    RESEND_COOLDOWN_MS,
+} = require("../../utils/otp");
 
 // Strip sensitive fields before returning a user in a response.
 const sanitize = (user) => {
@@ -11,6 +18,9 @@ const sanitize = (user) => {
     delete obj.password;
     delete obj.resetPasswordToken;
     delete obj.resetPasswordExpire;
+    delete obj.otpHash;
+    delete obj.otpExpire;
+    delete obj.otpLastSentAt;
     return obj;
 };
 
@@ -19,6 +29,33 @@ const setAuthCookie = (res, userId) => {
     res.cookie("token", token, buildCookieOptions(SEVEN_DAYS));
     return token;
 };
+
+// Sets a fresh OTP hash + expiry on the user and returns the raw code. Does not
+// save or send — the caller persists first, THEN emails, so a failed send never
+// leaves an account that can't be verified.
+function setOtp(user) {
+    const otp = generateOtp();
+    user.otpHash = hashOtp(otp);
+    user.otpExpire = Date.now() + OTP_TTL_MS;
+    user.otpLastSentAt = Date.now();
+    return otp;
+}
+
+async function sendOtpEmail(user, otp) {
+    const html = `
+        <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;padding:24px">
+          <h2 style="color:#1e293b">Verify your OneLeet account</h2>
+          <p style="color:#475569">Hi ${user.name || "there"}, use this code to verify your email:</p>
+          <p style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#2563eb;margin:16px 0">${otp}</p>
+          <p style="color:#64748b;font-size:14px">This code expires in 10 minutes. If you didn't sign up for OneLeet, you can ignore this email.</p>
+        </div>`;
+    await sendMail({
+        to: user.email,
+        subject: "Your OneLeet verification code",
+        html,
+        text: `Your OneLeet verification code is ${otp}. It expires in 10 minutes.`,
+    });
+}
 
 // POST /api/auth/register
 async function register(req, res, next) {
@@ -33,15 +70,37 @@ async function register(req, res, next) {
             });
         }
 
+        // OTP verification only runs when email delivery is configured;
+        // otherwise the account is created verified so signup keeps working.
+        const otpEnabled = isEmailConfigured();
+
         const user = await User.create({
             name,
             email,
             password,
-            role: role || "student",
-            phone: phone || undefined,
+            role: role === "teacher" ? "teacher" : "student",
+            phone,
             avatar: avatar || undefined,
             authProvider: "local",
+            isVerified: !otpEnabled,
         });
+
+        if (otpEnabled) {
+            const otp = setOtp(user);
+            await user.save({ validateBeforeSave: false });
+            try {
+                await sendOtpEmail(user, otp);
+            } catch (mailErr) {
+                console.error("[register] failed to send OTP:", mailErr.message);
+            }
+            return res.status(201).json({
+                success: true,
+                needsVerification: true,
+                email: user.email,
+                message:
+                    "We've sent a 6-digit verification code to your email. Enter it to activate your account.",
+            });
+        }
 
         const token = setAuthCookie(res, user._id);
 
@@ -85,6 +144,18 @@ async function login(req, res, next) {
                 .json({ success: false, message: "Invalid email or password" });
         }
 
+        // Only block accounts explicitly awaiting OTP (=== false). Legacy and
+        // Google accounts have isVerified true and pass straight through.
+        if (user.isVerified === false) {
+            return res.status(403).json({
+                success: false,
+                needsVerification: true,
+                email: user.email,
+                message:
+                    "Please verify your email to continue. Enter the code we emailed you, or request a new one.",
+            });
+        }
+
         const token = setAuthCookie(res, user._id);
 
         return res.status(200).json({
@@ -101,6 +172,94 @@ async function login(req, res, next) {
 // GET /api/auth/me  (requires verifyToken)
 async function getMe(req, res) {
     return res.status(200).json({ success: true, user: req.user });
+}
+
+// POST /api/auth/verify-otp — confirm the emailed code and log the user in.
+async function verifyOtp(req, res, next) {
+    try {
+        const { email, otp } = req.body;
+        const user = await User.findOne({ email }).select(
+            "+otpHash +otpExpire"
+        );
+
+        if (!user) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Invalid or expired code" });
+        }
+
+        // Already verified — treat as an idempotent success and log them in.
+        if (user.isVerified && !user.otpHash) {
+            const token = setAuthCookie(res, user._id);
+            return res
+                .status(200)
+                .json({ success: true, user: sanitize(user), token });
+        }
+
+        if (!user.otpHash || !user.otpExpire || user.otpExpire.getTime() < Date.now()) {
+            return res.status(400).json({
+                success: false,
+                message: "Your code has expired. Please request a new one.",
+            });
+        }
+
+        if (hashOtp(otp) !== user.otpHash) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Incorrect code. Please try again." });
+        }
+
+        user.isVerified = true;
+        user.otpHash = undefined;
+        user.otpExpire = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        const token = setAuthCookie(res, user._id);
+        return res.status(200).json({
+            success: true,
+            message: "Email verified — welcome to OneLeet!",
+            user: sanitize(user),
+            token,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// POST /api/auth/resend-otp — issue a fresh code, rate-limited per account.
+async function resendOtp(req, res, next) {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email }).select("+otpLastSentAt");
+
+        // Don't reveal whether the account exists / is already verified.
+        const generic = {
+            success: true,
+            message: "If your account needs verification, a new code has been sent.",
+        };
+        if (!user || user.isVerified) return res.status(200).json(generic);
+
+        if (
+            user.otpLastSentAt &&
+            Date.now() - user.otpLastSentAt.getTime() < RESEND_COOLDOWN_MS
+        ) {
+            return res.status(429).json({
+                success: false,
+                message: "Please wait a minute before requesting another code.",
+            });
+        }
+
+        const otp = setOtp(user);
+        await user.save({ validateBeforeSave: false });
+        try {
+            await sendOtpEmail(user, otp);
+        } catch (mailErr) {
+            console.error("[resend-otp] failed to send:", mailErr.message);
+        }
+        return res.status(200).json(generic);
+    } catch (error) {
+        next(error);
+    }
 }
 
 // POST /api/auth/forgot-password
@@ -126,12 +285,32 @@ async function forgotPassword(req, res, next) {
         user.resetPasswordExpire = Date.now() + 60 * 60 * 1000; // 1 hour
         await user.save({ validateBeforeSave: false });
 
-        const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+        const clientUrl = (process.env.CLIENT_URL || "http://localhost:5173")
+            .split(",")[0]
+            .trim();
         const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
 
-        // TODO: send `resetUrl` by email once an email provider is configured.
-        // Until then we log it, and in non-production also return it so the
-        // flow is testable end-to-end.
+        // Email the link when a provider is configured; otherwise log it so the
+        // flow stays testable. Email failures must not 500 (and must not leak
+        // whether the account exists), so swallow and log.
+        try {
+            await sendMail({
+                to: email,
+                subject: "Reset your OneLeet password",
+                html: `
+                    <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;padding:24px">
+                      <h2 style="color:#1e293b">Reset your password</h2>
+                      <p style="color:#475569">We received a request to reset your OneLeet password. This link expires in 1 hour.</p>
+                      <p style="margin:20px 0">
+                        <a href="${resetUrl}" style="background:#2563eb;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">Reset password</a>
+                      </p>
+                      <p style="color:#64748b;font-size:14px">If you didn't request this, you can safely ignore this email.</p>
+                    </div>`,
+                text: `Reset your OneLeet password (expires in 1 hour): ${resetUrl}`,
+            });
+        } catch (mailErr) {
+            console.error("[forgot-password] email send failed:", mailErr.message);
+        }
         console.log(`[forgot-password] reset link for ${email}: ${resetUrl}`);
 
         const payload = { success: true, message: genericMessage };
@@ -251,6 +430,8 @@ module.exports = {
     register,
     login,
     getMe,
+    verifyOtp,
+    resendOtp,
     forgotPassword,
     resetPassword,
     updateProfile,

@@ -9,7 +9,7 @@
     "seed:pyqs": "node scripts/seedPyqs.js",
     "seed:notes": "node scripts/seedNotes.js",
     "seed:tests": "node scripts/seedTests.js",
-    "test": "echo \"No automated tests configured yet\" && exit 0"
+    "test": "node tests/auth.otp.test.js"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +25,11 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.0.0",
     "multer": "^2.0.2",
+    "nodemailer": "^9.0.3",
     "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^11.2.0",
+    "supertest": "^7.2.2"
   }
 }
