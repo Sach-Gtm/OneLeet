@@ -2,7 +2,10 @@
 // SDK dependency. Activated when AI_PROVIDER=gemini and GEMINI_API_KEY is set.
 // NOTE: verified against the documented API shape; needs a real key to run.
 
-const MODEL = () => process.env.GEMINI_MODEL || "gemini-2.0-flash";
+// `gemini-flash-lite-latest` is an always-current alias with the most generous
+// free-tier quota — verified working with AI Studio (AQ.) keys. Override with
+// GEMINI_MODEL if you move to a paid tier / bigger model.
+const MODEL = () => process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
 
 const safeJsonParse = (text) => {
     if (!text) return null;
@@ -25,11 +28,16 @@ async function callGemini(prompt, { json = false } = {}) {
         ...(json ? { generationConfig: { responseMimeType: "application/json" } } : {}),
     };
 
-    const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-    });
+    // The "latest" aliases occasionally return 503 (overloaded) — retry once.
+    let res;
+    for (let attempt = 0; attempt < 2; attempt++) {
+        res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+        });
+        if (res.status !== 503) break;
+    }
 
     if (!res.ok) {
         const errText = await res.text().catch(() => "");
@@ -45,15 +53,13 @@ async function callGemini(prompt, { json = false } = {}) {
 async function verifyKey() {
     const key = process.env.GEMINI_API_KEY;
     if (!key) return { ok: false, error: "GEMINI_API_KEY is not set" };
-    if (!key.startsWith("AIza")) {
-        return {
-            ok: false,
-            error: `Key looks wrong (starts with "${key.slice(0, 3)}…"). Gemini API keys start with "AIza" — get one at aistudio.google.com/app/apikey`,
-        };
-    }
     try {
+        // A real generation is the only true test (it exercises quota + model),
+        // but that costs quota — so we probe the models list (free) to confirm
+        // the key authenticates, and report the configured model.
         const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`
+            "https://generativelanguage.googleapis.com/v1beta/models",
+            { headers: { "x-goog-api-key": key } }
         );
         if (!res.ok) {
             const t = await res.text().catch(() => "");
