@@ -11,9 +11,17 @@ import {
     Loader2,
     ChevronLeft,
     ChevronRight,
+    Send,
+    UserPlus,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { getAdminOverview, getStudents, setStudentPlan } from "@/Api/AdminApi";
+import {
+    getAdminOverview,
+    getStudents,
+    setStudentPlan,
+    setUserRole,
+} from "@/Api/AdminApi";
+import { sendNotification } from "@/Api/NotificationApi";
 
 const STAT_CARDS = [
     { key: "totalStudents", label: "Total Students", icon: Users, tint: "text-indigo-600 bg-indigo-50" },
@@ -50,7 +58,15 @@ export default function AdminDashboard() {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
 
+    // Send-notification form
+    const [notif, setNotif] = useState({ title: "", body: "" });
+    const [sending, setSending] = useState(false);
+    // Team-access form
+    const [team, setTeam] = useState({ email: "", role: "admin" });
+    const [granting, setGranting] = useState(false);
+
     const isStaff = user && (user.role === "admin" || user.role === "teacher");
+    const isAdmin = user && user.role === "admin";
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -91,6 +107,42 @@ export default function AdminDashboard() {
         }
     };
 
+    const handleSend = async (e) => {
+        e.preventDefault();
+        if (!notif.title.trim() || !notif.body.trim()) {
+            toast.error("Add a title and a message");
+            return;
+        }
+        setSending(true);
+        try {
+            await sendNotification(notif);
+            toast.success("Notification sent to everyone");
+            setNotif({ title: "", body: "" });
+        } catch (err) {
+            toast.error(err.message || "Could not send");
+        } finally {
+            setSending(false);
+        }
+    };
+
+    const handleGrant = async (e) => {
+        e.preventDefault();
+        if (!team.email.trim()) {
+            toast.error("Enter the teammate's email");
+            return;
+        }
+        setGranting(true);
+        try {
+            const res = await setUserRole(team.email.trim(), team.role);
+            toast.success(res.message || "Access updated");
+            setTeam({ email: "", role: "admin" });
+        } catch (err) {
+            toast.error(err.message || "Could not update access");
+        } finally {
+            setGranting(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div>
@@ -112,6 +164,81 @@ export default function AdminDashboard() {
                         suffix={c.suffix}
                     />
                 ))}
+            </div>
+
+            {/* Actions: broadcast a notification + grant team access */}
+            <div className="grid gap-4 lg:grid-cols-2">
+                <form
+                    onSubmit={handleSend}
+                    className="space-y-3 rounded-xl border border-slate-200 bg-white p-4"
+                >
+                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                        <Send className="h-4 w-4 text-indigo-600" /> Send a notification
+                    </div>
+                    <input
+                        value={notif.title}
+                        onChange={(e) => setNotif((n) => ({ ...n, title: e.target.value }))}
+                        placeholder="Title (e.g. New mock test added!)"
+                        maxLength={120}
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                    <textarea
+                        value={notif.body}
+                        onChange={(e) => setNotif((n) => ({ ...n, body: e.target.value }))}
+                        placeholder="Message shown in every student's notification bell..."
+                        maxLength={1000}
+                        rows={2}
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                    <button
+                        type="submit"
+                        disabled={sending}
+                        className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+                    >
+                        {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                        Send to all
+                    </button>
+                </form>
+
+                {isAdmin && (
+                    <form
+                        onSubmit={handleGrant}
+                        className="space-y-3 rounded-xl border border-slate-200 bg-white p-4"
+                    >
+                        <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                            <UserPlus className="h-4 w-4 text-amber-600" /> Team access
+                        </div>
+                        <p className="text-xs text-slate-500">
+                            The teammate must register first, then enter their email
+                            here to grant access.
+                        </p>
+                        <input
+                            value={team.email}
+                            onChange={(e) => setTeam((t) => ({ ...t, email: e.target.value }))}
+                            placeholder="teammate@example.com"
+                            className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                        />
+                        <div className="flex gap-2">
+                            <select
+                                value={team.role}
+                                onChange={(e) => setTeam((t) => ({ ...t, role: e.target.value }))}
+                                className="h-10 rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                            >
+                                <option value="admin">Admin</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="student">Student (revoke)</option>
+                            </select>
+                            <button
+                                type="submit"
+                                disabled={granting}
+                                className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
+                            >
+                                {granting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                                Update
+                            </button>
+                        </div>
+                    </form>
+                )}
             </div>
 
             {/* Search */}

@@ -35,3 +35,13 @@ export const setStudentPlan = async (id, plan) => {
         unwrap(error);
     }
 };
+
+// Promote/demote a teammate by email (admin only). role: student|teacher|admin
+export const setUserRole = async (email, role) => {
+    try {
+        const { data } = await api.patch("/admin/users/role", { email, role });
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};

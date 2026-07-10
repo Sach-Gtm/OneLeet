@@ -111,4 +111,45 @@ async function setStudentPlan(req, res, next) {
     }
 }
 
-module.exports = { overview, listStudents, setStudentPlan };
+// PATCH /api/admin/users/role — promote/demote a user by email. Admin-only
+// (enforced on the route). Used to grant teammates admin/teacher access.
+async function setUserRole(req, res, next) {
+    try {
+        const role = req.body.role;
+        const email = (req.body.email || "").toLowerCase().trim();
+        if (!["student", "teacher", "admin"].includes(role)) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Role must be student, teacher or admin" });
+        }
+        const target = await User.findOne({ email });
+        if (!target) {
+            return res.status(404).json({
+                success: false,
+                message: "No account found with that email — ask them to register first",
+            });
+        }
+        // Guard against accidentally locking yourself out.
+        if (target._id.toString() === req.user._id.toString()) {
+            return res
+                .status(400)
+                .json({ success: false, message: "You can't change your own role" });
+        }
+        target.role = role;
+        await target.save({ validateBeforeSave: false });
+        return res.status(200).json({
+            success: true,
+            message: `${target.name} is now ${role}`,
+            user: {
+                _id: target._id,
+                name: target.name,
+                email: target.email,
+                role: target.role,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = { overview, listStudents, setStudentPlan, setUserRole };

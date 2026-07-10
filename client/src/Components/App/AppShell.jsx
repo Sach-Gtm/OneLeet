@@ -1,4 +1,4 @@
-import { useState, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
 import {
     LayoutDashboard,
@@ -12,14 +12,15 @@ import {
     User,
     GraduationCap,
     Search,
-    Bell,
     LogOut,
     Menu,
     X,
     Loader2,
     ShieldCheck,
+    ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import NotificationBell from "@/Components/App/NotificationBell";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV = [
@@ -50,8 +51,10 @@ const NAV = [
 ];
 
 function planLabel(user) {
+    if (user?.role === "admin") return "Admin";
+    if (user?.role === "teacher") return "Teacher";
     if (user?.plan === "pro") return "Premium Student";
-    return user?.role === "teacher" ? "Teacher" : "Student";
+    return "Student";
 }
 
 function SidebarContent({ user, onNavigate, onLogout }) {
@@ -150,10 +153,97 @@ function SidebarContent({ user, onNavigate, onLogout }) {
     );
 }
 
+// Avatar + chevron in the topbar; clicking opens an account menu (Profile,
+// Admin for staff, and Log out).
+function UserMenu({ user, isStaff, onLogout }) {
+    const [open, setOpen] = useState(false);
+    const ref = useRef(null);
+
+    useEffect(() => {
+        if (!open) return;
+        const h = (e) => {
+            if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+        };
+        document.addEventListener("mousedown", h);
+        return () => document.removeEventListener("mousedown", h);
+    }, [open]);
+
+    const Avatar = user?.avatar ? (
+        <img
+            src={user.avatar}
+            alt={user.name}
+            className="h-9 w-9 rounded-full object-cover"
+        />
+    ) : (
+        <span className="grid h-9 w-9 place-items-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
+            {(user?.name || "U").charAt(0).toUpperCase()}
+        </span>
+    );
+
+    return (
+        <div className="relative" ref={ref}>
+            <button
+                onClick={() => setOpen((o) => !o)}
+                className="flex items-center gap-1 rounded-lg p-0.5 hover:bg-slate-100"
+                aria-label="Account menu"
+            >
+                {Avatar}
+                <ChevronDown
+                    size={16}
+                    className={cn(
+                        "text-slate-400 transition-transform",
+                        open && "rotate-180"
+                    )}
+                />
+            </button>
+
+            {open && (
+                <div className="absolute right-0 top-12 z-50 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+                    <div className="px-3 py-2">
+                        <p className="truncate text-sm font-semibold text-slate-800">
+                            {user?.name || "User"}
+                        </p>
+                        <p className="truncate text-xs text-slate-400">
+                            {user?.email}
+                        </p>
+                    </div>
+                    <div className="my-1 h-px bg-slate-100" />
+                    <Link
+                        to="/profile"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100"
+                    >
+                        <User size={16} /> Profile
+                    </Link>
+                    {isStaff && (
+                        <Link
+                            to="/admin"
+                            onClick={() => setOpen(false)}
+                            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100"
+                        >
+                            <ShieldCheck size={16} /> Admin
+                        </Link>
+                    )}
+                    <button
+                        onClick={() => {
+                            setOpen(false);
+                            onLogout();
+                        }}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                    >
+                        <LogOut size={16} /> Log out
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function AppShell() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const isStaff = user?.role === "admin" || user?.role === "teacher";
 
     const handleLogout = async () => {
         await logout();
@@ -215,24 +305,12 @@ export default function AppShell() {
                         />
                     </div>
                     <div className="ml-auto flex items-center gap-2">
-                        <button
-                            className="relative rounded-lg p-2 text-slate-500 hover:bg-slate-100"
-                            aria-label="Notifications"
-                        >
-                            <Bell size={18} />
-                            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
-                        </button>
-                        {user?.avatar ? (
-                            <img
-                                src={user.avatar}
-                                alt={user.name}
-                                className="h-9 w-9 rounded-full object-cover"
-                            />
-                        ) : (
-                            <span className="grid h-9 w-9 place-items-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
-                                {(user?.name || "U").charAt(0).toUpperCase()}
-                            </span>
-                        )}
+                        <NotificationBell />
+                        <UserMenu
+                            user={user}
+                            isStaff={isStaff}
+                            onLogout={handleLogout}
+                        />
                     </div>
                 </header>
 

@@ -11,5 +11,7 @@ router.use(verifyToken, requireRole("admin", "teacher"));
 router.get("/overview", admin.overview);
 router.get("/students", admin.listStudents);
 router.patch("/students/:id/plan", admin.setStudentPlan);
+// Role changes are admin-only (teachers can view but not grant access).
+router.patch("/users/role", requireRole("admin"), admin.setUserRole);
 
 module.exports = router;
