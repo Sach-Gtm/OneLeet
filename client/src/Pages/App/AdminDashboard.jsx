@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -14,6 +14,7 @@ import {
     Send,
     UserPlus,
     X,
+    FileUp,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -23,6 +24,7 @@ import {
     setUserRole,
 } from "@/Api/AdminApi";
 import { sendNotification } from "@/Api/NotificationApi";
+import { uploadPyq } from "@/Api/PyqApi";
 
 const STAT_CARDS = [
     { key: "totalStudents", label: "Total Students", icon: Users, tint: "text-indigo-600 bg-indigo-50" },
@@ -67,6 +69,20 @@ export default function AdminDashboard() {
     const [granting, setGranting] = useState(false);
     // Full passport-photo viewer (admin identity check)
     const [photoView, setPhotoView] = useState(null);
+    // PYQ paper upload (staff)
+    const [pyqForm, setPyqForm] = useState({
+        title: "",
+        year: "",
+        stateExam: "",
+        subject: "",
+        branch: "",
+        topic: "",
+        difficulty: "moderate",
+        tag: "conceptual",
+    });
+    const [pyqFile, setPyqFile] = useState(null);
+    const [uploadingPyq, setUploadingPyq] = useState(false);
+    const pyqFileRef = useRef(null);
 
     const isStaff = user && (user.role === "admin" || user.role === "teacher");
     const isAdmin = user && user.role === "admin";
@@ -143,6 +159,52 @@ export default function AdminDashboard() {
             toast.error(err.message || "Could not update access");
         } finally {
             setGranting(false);
+        }
+    };
+
+    const setPyqField = (k) => (e) =>
+        setPyqForm((f) => ({ ...f, [k]: e.target.value }));
+
+    const handlePyqUpload = async (e) => {
+        e.preventDefault();
+        if (
+            !pyqForm.title.trim() ||
+            !pyqForm.year ||
+            !pyqForm.stateExam.trim() ||
+            !pyqForm.subject.trim()
+        ) {
+            toast.error("Title, year, exam and subject are required.");
+            return;
+        }
+        if (pyqFile && pyqFile.size > 10 * 1024 * 1024) {
+            toast.error("PDF must be 10 MB or smaller.");
+            return;
+        }
+        setUploadingPyq(true);
+        try {
+            const fd = new FormData();
+            Object.entries(pyqForm).forEach(([k, v]) => {
+                if (v) fd.append(k, v);
+            });
+            if (pyqFile) fd.append("pdfFile", pyqFile);
+            await uploadPyq(fd);
+            toast.success("Paper added to the archive");
+            setPyqForm({
+                title: "",
+                year: "",
+                stateExam: "",
+                subject: "",
+                branch: "",
+                topic: "",
+                difficulty: "moderate",
+                tag: "conceptual",
+            });
+            setPyqFile(null);
+            if (pyqFileRef.current) pyqFileRef.current.value = "";
+        } catch (err) {
+            toast.error(err.message || "Could not upload the paper");
+        } finally {
+            setUploadingPyq(false);
         }
     };
 
@@ -243,6 +305,97 @@ export default function AdminDashboard() {
                     </form>
                 )}
             </div>
+
+            {/* Upload a PYQ paper (staff) */}
+            <form
+                onSubmit={handlePyqUpload}
+                className="space-y-3 rounded-xl border border-slate-200 bg-white p-4"
+            >
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                    <FileUp className="h-4 w-4 text-emerald-600" /> Upload a PYQ paper
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <input
+                        value={pyqForm.title}
+                        onChange={setPyqField("title")}
+                        placeholder="Title (e.g. IPU LEET 2024)"
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                    <input
+                        type="number"
+                        value={pyqForm.year}
+                        onChange={setPyqField("year")}
+                        placeholder="Year (e.g. 2024)"
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                    <input
+                        value={pyqForm.stateExam}
+                        onChange={setPyqField("stateExam")}
+                        placeholder="Exam (e.g. IPU / All India)"
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                    <input
+                        value={pyqForm.subject}
+                        onChange={setPyqField("subject")}
+                        placeholder="Subject (e.g. Mathematics)"
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                    <input
+                        value={pyqForm.branch}
+                        onChange={setPyqField("branch")}
+                        placeholder="Branch (optional)"
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                    <input
+                        value={pyqForm.topic}
+                        onChange={setPyqField("topic")}
+                        placeholder="Topic (optional)"
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                    <select
+                        value={pyqForm.difficulty}
+                        onChange={setPyqField("difficulty")}
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    >
+                        <option value="easy">Easy</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                    <select
+                        value={pyqForm.tag}
+                        onChange={setPyqField("tag")}
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    >
+                        <option value="conceptual">Conceptual</option>
+                        <option value="numerical">Numerical</option>
+                        <option value="theory">Theory</option>
+                    </select>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                    <input
+                        ref={pyqFileRef}
+                        type="file"
+                        accept="application/pdf,.pdf"
+                        onChange={(e) => setPyqFile(e.target.files?.[0] || null)}
+                        className="text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200"
+                    />
+                    <span className="text-xs text-slate-400">
+                        PDF up to 10&nbsp;MB — students can view &amp; download it.
+                    </span>
+                    <button
+                        type="submit"
+                        disabled={uploadingPyq}
+                        className="ml-auto inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+                    >
+                        {uploadingPyq ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <FileUp className="h-4 w-4" />
+                        )}
+                        Upload paper
+                    </button>
+                </div>
+            </form>
 
             {/* Search */}
             <div className="relative max-w-sm">

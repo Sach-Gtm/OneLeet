@@ -26,7 +26,7 @@ router.get("/:id", verifyToken, pyqController.getPyqById);
 router.post(
     "/",
     verifyToken,
-    requireRole("teacher"),
+    requireRole("teacher", "admin"),
     handleUpload,
     pyqController.uploadPyq
 );
