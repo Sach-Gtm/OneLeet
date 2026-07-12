@@ -1,16 +1,20 @@
 // Verifies a Cloudflare Turnstile token on sensitive auth routes (login,
-// register). Graceful: when TURNSTILE_SECRET is unset the check is skipped, so
-// the app works without CAPTCHA until you configure it — then it turns on.
+// register). CAPTCHA is OPT-IN: it only enforces when TURNSTILE_ENABLED="true"
+// AND a secret is configured. This prevents a stray secret from blocking every
+// login when the frontend widget isn't set up to send a token — turn it on only
+// once BOTH the backend secret (TURNSTILE_SECRET) and the frontend site key
+// (VITE_TURNSTILE_SITE_KEY) are in place, then set TURNSTILE_ENABLED=true.
 //
 // The frontend sends the token as `turnstileToken` in the body (or an
 // `x-turnstile-token` header). This runs BEFORE request validation, which
 // strips the field.
 const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET;
+const TURNSTILE_ENABLED = process.env.TURNSTILE_ENABLED === "true";
 const VERIFY_URL =
     "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 async function verifyTurnstile(req, res, next) {
-    if (!TURNSTILE_SECRET) return next(); // CAPTCHA not configured → skip
+    if (!TURNSTILE_ENABLED || !TURNSTILE_SECRET) return next(); // CAPTCHA off → skip
 
     const token =
         (req.body && req.body.turnstileToken) ||
