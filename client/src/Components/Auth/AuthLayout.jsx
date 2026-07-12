@@ -1,139 +1,91 @@
 import { Link } from "react-router-dom";
-import { GraduationCap, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { GraduationCap, Sparkles, Trophy, FileText, Bot } from "lucide-react";
+import ShaderHero from "@/Components/General/ShaderHero";
 
-// Aspirational, self-contained SVG hero — growth bars rising along a golden
-// trajectory to a graduation cap. Pure vectors (no external image), themed in
-// the app's indigo + gold palette so it scales crisply on every screen.
-function AspirationArt() {
+// A weightless, gently-floating chip — the "antigravity" motion on the brand
+// panel. Fades in, then bobs up and down forever on its own rhythm.
+function FloatingChip({ icon: Icon, label, sub, className, delay = 0, dur = 4.5 }) {
     return (
-        <svg
-            viewBox="0 0 320 220"
-            className="h-auto w-full max-w-sm"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
+        <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: [0, -12, 0] }}
+            transition={{
+                opacity: { duration: 0.7, delay },
+                y: { duration: dur, repeat: Infinity, ease: "easeInOut", delay },
+            }}
+            className={`absolute flex items-center gap-2.5 rounded-2xl border border-white/70 bg-white/80 px-3.5 py-2.5 shadow-lg shadow-indigo-200/50 backdrop-blur-md ${className}`}
         >
-            <defs>
-                <radialGradient id="al-glow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.55" />
-                    <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
-                </radialGradient>
-                <linearGradient id="al-bar" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
-                    <stop offset="100%" stopColor="#ffffff" stopOpacity="0.5" />
-                </linearGradient>
-            </defs>
-
-            <circle cx="160" cy="80" r="72" fill="url(#al-glow)" />
-
-            <g>
-                <rect x="70" y="150" width="26" height="40" rx="6" fill="url(#al-bar)" />
-                <rect x="110" y="128" width="26" height="62" rx="6" fill="url(#al-bar)" />
-                <rect x="150" y="104" width="26" height="86" rx="6" fill="url(#al-bar)" />
-                <rect x="190" y="150" width="26" height="40" rx="6" fill="url(#al-bar)" />
-            </g>
-            <line
-                x1="56"
-                y1="190"
-                x2="264"
-                y2="190"
-                stroke="#ffffff"
-                strokeOpacity="0.25"
-                strokeWidth="2"
-            />
-
-            <path
-                d="M70 168 C120 150 150 120 210 70"
-                stroke="#fbbf24"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeDasharray="2 9"
-            />
-
-            <g transform="translate(160 66)">
-                <circle r="34" fill="#4f46e5" stroke="#fbbf24" strokeWidth="2.5" />
-                <path d="M-22 -2 L0 -12 L22 -2 L0 8 Z" fill="#ffffff" />
-                <path
-                    d="M-13 3 L-13 12 C-13 19 13 19 13 12 L13 3 L0 9 Z"
-                    fill="#ffffff"
-                    fillOpacity="0.85"
-                />
-                <path
-                    d="M22 -2 L22 12"
-                    stroke="#fbbf24"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                />
-                <circle cx="22" cy="14" r="2.6" fill="#fbbf24" />
-            </g>
-
-            <g fill="#fde68a">
-                <path d="M250 40 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" />
-                <path d="M60 88 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" opacity="0.85" />
-                <path d="M272 118 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" opacity="0.7" />
-            </g>
-        </svg>
+            <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
+                <Icon className="h-4 w-4" />
+            </span>
+            <div className="text-left">
+                <div className="text-xs font-bold text-slate-800">{label}</div>
+                {sub && <div className="text-[10px] text-slate-500">{sub}</div>}
+            </div>
+        </motion.div>
     );
 }
 
 // Shared split-panel shell for the light auth screens (login / register /
-// forgot / reset). Left = aspirational brand hero (hidden on mobile), right =
-// the form.
+// forgot / reset). Left = animated brand panel (hidden on mobile), right = form.
 export default function AuthLayout({ heading, subheading, stats = [], children }) {
     return (
         <div className="grid min-h-screen w-full bg-white lg:grid-cols-2">
-            {/* Brand panel */}
-            <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-indigo-700 via-indigo-800 to-violet-900 p-12 text-white lg:flex">
-                {/* warm gold + indigo ambient glows */}
-                <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-amber-400/20 blur-3xl" />
-                <div className="pointer-events-none absolute -left-24 bottom-10 h-72 w-72 rounded-full bg-indigo-400/20 blur-3xl" />
-                <div className="pointer-events-none absolute bottom-0 right-12 h-56 w-56 rounded-full bg-amber-500/10 blur-2xl" />
+            {/* Brand panel — light, animated, weightless */}
+            <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-12 lg:flex">
+                {/* Live pastel aurora + a soft wash to keep text crisp */}
+                <ShaderHero className="absolute inset-0" />
+                <div className="pointer-events-none absolute inset-0 bg-white/25" />
 
-                <Link to="/" className="relative z-10 flex items-center gap-2">
-                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/15 backdrop-blur">
+                <Link to="/" className="relative z-20 flex items-center gap-2">
+                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md">
                         <GraduationCap className="h-5 w-5" />
                     </span>
-                    <span className="text-lg font-bold tracking-tight">
-                        One<span className="text-amber-400">Leet</span>
-                    </span>
+                    <div className="leading-tight">
+                        <span className="block text-lg font-bold tracking-tight text-slate-900">
+                            One<span className="text-indigo-600">Leet</span>
+                        </span>
+                        <span className="block text-[10px] font-medium text-slate-400">
+                            A StaplerLabs product
+                        </span>
+                    </div>
                 </Link>
 
-                <div className="relative z-10 space-y-7">
-                    <div className="flex justify-center">
-                        <AspirationArt />
-                    </div>
-
-                    <div className="space-y-4">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-300 ring-1 ring-amber-400/30">
-                            <Sparkles className="h-3.5 w-3.5" /> Where rank-holders are
-                            made
-                        </span>
-                        <h1 className="text-3xl font-extrabold leading-tight xl:text-4xl">
-                            {heading}
-                        </h1>
-                        {subheading && (
-                            <p className="max-w-sm text-base leading-relaxed text-indigo-100/85">
-                                {subheading}
-                            </p>
-                        )}
-                        {stats.length > 0 && (
-                            <div className="flex gap-8 pt-1">
-                                {stats.map((s) => (
-                                    <div key={s.label}>
-                                        <div className="text-3xl font-bold text-amber-400">
-                                            {s.value}
-                                        </div>
-                                        <div className="text-xs uppercase tracking-wider text-indigo-200">
-                                            {s.label}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                {/* Floating chips (decorative, behind the copy) */}
+                <div className="pointer-events-none absolute inset-0 z-10">
+                    <FloatingChip icon={Trophy} label="Rank 54" sub="IPU LEET 2025" className="right-12 top-24" delay={0.1} dur={4.6} />
+                    <FloatingChip icon={FileText} label="Real PYQs" sub="Years of papers" className="left-14 top-44" delay={0.35} dur={5.4} />
+                    <FloatingChip icon={Bot} label="AI practice" sub="Unlimited questions" className="right-20 top-64" delay={0.6} dur={4.2} />
                 </div>
 
-                <p className="relative z-10 text-xs text-indigo-200/70">
+                <div className="relative z-20 max-w-sm space-y-4">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-white/70 px-3 py-1 text-xs font-semibold text-indigo-700 shadow-sm backdrop-blur">
+                        <Sparkles className="h-3.5 w-3.5" /> Where rank-holders are made
+                    </span>
+                    <h1 className="text-3xl font-extrabold leading-tight text-slate-900 xl:text-4xl">
+                        {heading}
+                    </h1>
+                    {subheading && (
+                        <p className="max-w-sm text-base leading-relaxed text-slate-600">
+                            {subheading}
+                        </p>
+                    )}
+                    {stats.length > 0 && (
+                        <div className="flex gap-8 pt-1">
+                            {stats.map((s) => (
+                                <div key={s.label}>
+                                    <div className="text-3xl font-bold text-indigo-600">{s.value}</div>
+                                    <div className="text-xs uppercase tracking-wider text-slate-500">
+                                        {s.label}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <p className="relative z-20 text-xs text-slate-500">
                     Trusted by thousands of LEET aspirants across India.
                 </p>
             </div>
@@ -144,13 +96,18 @@ export default function AuthLayout({ heading, subheading, stats = [], children }
                     {/* Compact brand for mobile (brand panel is hidden) */}
                     <Link
                         to="/"
-                        className="mb-8 flex items-center justify-center gap-2 lg:hidden"
+                        className="mb-8 flex flex-col items-center justify-center gap-1 lg:hidden"
                     >
-                        <span className="grid h-9 w-9 place-items-center rounded-xl bg-indigo-600 text-white">
-                            <GraduationCap className="h-5 w-5" />
-                        </span>
-                        <span className="text-lg font-bold tracking-tight text-slate-900">
-                            One<span className="text-amber-500">Leet</span>
+                        <div className="flex items-center gap-2">
+                            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
+                                <GraduationCap className="h-5 w-5" />
+                            </span>
+                            <span className="text-lg font-bold tracking-tight text-slate-900">
+                                One<span className="text-indigo-600">Leet</span>
+                            </span>
+                        </div>
+                        <span className="text-[10px] font-medium text-slate-400">
+                            A StaplerLabs product
                         </span>
                     </Link>
                     {children}

@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 import { Renderer, Program, Mesh, Triangle } from "ogl";
 
-// A GPU-rendered "aurora" background for the landing hero. The colour field is
-// generated live in a fragment shader (domain-warped simplex noise), animated
-// over time and nudged by the pointer. It runs entirely on the GPU, degrades
-// to the dark layout behind it if WebGL is unavailable, and freezes for users
-// who prefer reduced motion.
+// A GPU-rendered "aurora" wash for the light theme. A soft pastel colour field
+// is generated live in a fragment shader (domain-warped simplex noise), animated
+// over time and nudged by the pointer — an airy, weightless backdrop that keeps
+// dark text fully readable. Runs entirely on the GPU, degrades gracefully when
+// WebGL is unavailable, and freezes for users who prefer reduced motion.
 const vertex = /* glsl */ `
     attribute vec2 position;
     void main() {
@@ -70,19 +70,19 @@ const fragment = /* glsl */ `
                       fbm(p + 1.6 * q + vec2(8.3, 2.8) - t));
         float f = fbm(p + 1.6 * r);
 
-        vec3 base   = vec3(0.035, 0.035, 0.094);
-        vec3 indigo = vec3(0.310, 0.275, 0.898);
-        vec3 violet = vec3(0.486, 0.227, 0.929);
-        vec3 amber  = vec3(0.961, 0.620, 0.043);
+        // Soft, airy pastels on near-white.
+        vec3 base   = vec3(0.965, 0.967, 1.000);
+        vec3 indigo = vec3(0.647, 0.678, 0.988);
+        vec3 violet = vec3(0.808, 0.706, 0.976);
+        vec3 peach  = vec3(0.996, 0.847, 0.706);
 
         vec3 col = base;
-        col = mix(col, indigo, clamp(smoothstep(-0.1, 0.85, f) * 0.55, 0.0, 1.0));
-        col = mix(col, violet, clamp(smoothstep(0.05, 1.2, length(q)) * 0.38, 0.0, 1.0));
-        col = mix(col, amber,  clamp(smoothstep(0.82, 1.35, f + 0.35 * r.x) * 0.2, 0.0, 1.0));
+        col = mix(col, indigo, clamp(smoothstep(-0.1, 0.95, f) * 0.55, 0.0, 1.0));
+        col = mix(col, violet, clamp(smoothstep(0.05, 1.25, length(q)) * 0.5, 0.0, 1.0));
+        col = mix(col, peach,  clamp(smoothstep(0.7, 1.35, f + 0.35 * r.x) * 0.45, 0.0, 1.0));
 
-        // Vignette + overall dim keep the mood premium and overlaid text readable.
-        float vig = smoothstep(1.3, 0.2, length(uv - 0.5));
-        col *= 0.34 + 0.52 * vig;
+        // Lift toward white so it stays a gentle, premium haze behind text.
+        col = mix(vec3(1.0), col, 0.62);
 
         gl_FragColor = vec4(col, 1.0);
     }
@@ -116,7 +116,7 @@ export default function ShaderHero({ className = "" }) {
             });
             mesh = new Mesh(gl, { geometry, program });
         } catch {
-            // WebGL unavailable — leave the dark layout background showing.
+            // WebGL unavailable — leave the light layout background showing.
             return;
         }
 

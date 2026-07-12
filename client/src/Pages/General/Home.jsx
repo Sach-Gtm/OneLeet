@@ -30,7 +30,7 @@ const conversation = [
     },
     {
         q: "Coaching is way too expensive for me.",
-        a: "So we made ours free. Every paper, every mock, every note — no paywall, ever.",
+        a: "You don't need pricey coaching to crack this. Real papers, mocks, and an AI coach — all in one place, built around you.",
     },
     {
         q: "What if I've already left it too late?",
@@ -43,9 +43,9 @@ export default function Home() {
         <>
             {/* Hero */}
             <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 pb-16 pt-28 text-center sm:px-6 sm:pt-32">
-                {/* Live GPU shader background. Falls back to the dark layout behind it. */}
+                {/* Live GPU shader wash (falls back to the light layout behind it). */}
                 <ShaderHero className="absolute inset-0 -z-10" />
-                <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-transparent to-[#05050f]" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-white" />
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -53,19 +53,19 @@ export default function Home() {
                     transition={{ duration: 0.6 }}
                     className="mx-auto max-w-3xl space-y-6"
                 >
-                    <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-semibold text-amber-300 backdrop-blur-sm">
-                        <Sparkles className="h-3.5 w-3.5" /> 100% free · Built for LEET aspirants
+                    <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white/70 px-4 py-1.5 text-xs font-semibold text-indigo-700 shadow-sm backdrop-blur-sm">
+                        <Sparkles className="h-3.5 w-3.5" /> Built for LEET aspirants
                     </span>
 
-                    <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-xl sm:text-5xl md:text-6xl">
+                    <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
                         Your diploma got you here.
                         <br className="hidden sm:block" />{" "}
-                        <span className="bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
                             We&apos;ll get you to the top.
                         </span>
                     </h1>
 
-                    <p className="mx-auto max-w-xl text-base leading-relaxed text-gray-300 sm:text-lg">
+                    <p className="mx-auto max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
                         Everything for your Lateral Entry Entrance Test, in one place —
                         real papers, exam-pattern mocks, and an AI coach that adapts to
                         you.
@@ -74,20 +74,20 @@ export default function Home() {
                     <div className="flex flex-col justify-center gap-3 pt-2 sm:flex-row">
                         <Link
                             to="/register"
-                            className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-7 py-3 font-semibold text-white shadow-xl transition-all hover:scale-[1.03] active:scale-[0.97]"
+                            className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-7 py-3 font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.03] active:scale-[0.97]"
                         >
-                            Start free
+                            Get started
                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Link>
                         <Link
                             to="/login"
-                            className="rounded-lg border border-white/20 bg-white/10 px-7 py-3 text-center font-semibold text-white backdrop-blur-xl transition-all hover:bg-white/20"
+                            className="rounded-lg border border-slate-200 bg-white px-7 py-3 text-center font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50"
                         >
                             I already have an account
                         </Link>
                     </div>
 
-                    <p className="pt-3 text-sm font-medium text-gray-400">
+                    <p className="pt-3 text-sm font-medium text-slate-500">
                         Built by a LEET rank-holder who sat exactly where you&apos;re sitting now.
                     </p>
                 </motion.div>
@@ -95,7 +95,7 @@ export default function Home() {
 
             {/* Real talk — the questions in a student's head, answered */}
             <section className="mx-auto max-w-2xl px-4 pb-20 sm:px-6">
-                <h2 className="mb-8 text-center text-2xl font-bold text-white sm:text-3xl">
+                <h2 className="mb-8 text-center text-2xl font-bold text-slate-900 sm:text-3xl">
                     The questions in your head — answered.
                 </h2>
                 <div className="space-y-5">
@@ -109,12 +109,12 @@ export default function Home() {
                             className="space-y-2"
                         >
                             <div className="flex justify-end">
-                                <p className="max-w-[80%] rounded-2xl rounded-br-md bg-white/10 px-4 py-2.5 text-sm text-gray-200 backdrop-blur-sm">
+                                <p className="max-w-[80%] rounded-2xl rounded-br-md border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm">
                                     {c.q}
                                 </p>
                             </div>
                             <div className="flex justify-start">
-                                <p className="max-w-[85%] rounded-2xl rounded-bl-md bg-gradient-to-br from-indigo-600 to-violet-700 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-indigo-900/30">
+                                <p className="max-w-[85%] rounded-2xl rounded-bl-md bg-gradient-to-br from-indigo-600 to-violet-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-indigo-600/20">
                                     {c.a}
                                 </p>
                             </div>
@@ -131,13 +131,13 @@ export default function Home() {
                         return (
                             <div
                                 key={f.title}
-                                className="group rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:border-amber-400/30 hover:bg-white/[0.07]"
+                                className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
                             >
-                                <span className="mb-4 inline-grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-700 text-white">
+                                <span className="mb-4 inline-grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-sm">
                                     <Icon className="h-5 w-5" />
                                 </span>
-                                <h3 className="text-lg font-semibold text-white">{f.title}</h3>
-                                <p className="mt-1.5 text-sm leading-relaxed text-gray-400">
+                                <h3 className="text-lg font-semibold text-slate-900">{f.title}</h3>
+                                <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
                                     {f.desc}
                                 </p>
                             </div>
@@ -146,15 +146,15 @@ export default function Home() {
                 </div>
 
                 {/* Closing CTA */}
-                <div className="mt-14 flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-600/20 to-violet-700/10 p-8 text-center backdrop-blur-sm">
-                    <h3 className="text-xl font-bold text-white sm:text-2xl">
+                <div className="mt-14 flex flex-col items-center gap-4 rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-violet-50 p-8 text-center">
+                    <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">
                         Your top college is one decision away.
                     </h3>
                     <Link
                         to="/register"
-                        className="group flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 px-7 py-3 font-bold text-slate-900 shadow-xl transition-all hover:scale-[1.03] active:scale-[0.97]"
+                        className="group flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-7 py-3 font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.03] active:scale-[0.97]"
                     >
-                        Start preparing — free
+                        Start preparing
                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </div>

@@ -167,7 +167,7 @@ export default function Login() {
                         to="/register"
                         className="font-semibold text-indigo-600 hover:underline"
                     >
-                        Register for free
+                        Create an account
                     </Link>
                 </p>
             </div>

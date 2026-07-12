@@ -1,12 +1,11 @@
 import { Outlet } from "react-router-dom";
-import { StarsBackground } from "@/Components/animate-ui/components/backgrounds/stars";
 import Navbar from "@/Components/General/Navbar";
 
-// Dark marketing shell (star background + navbar) for the public pages.
+// Light marketing shell (soft gradient + navbar) for the public pages.
 export default function MarketingLayout() {
     return (
-        <div className="relative min-h-screen w-full overflow-hidden">
-            <StarsBackground className="absolute inset-0 -z-10" />
+        <div className="relative min-h-screen w-full overflow-hidden bg-white text-slate-900">
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-white via-white to-indigo-50/40" />
             <Navbar />
             <div className="relative z-10">
                 <Outlet />
