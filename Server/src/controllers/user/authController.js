@@ -344,7 +344,11 @@ async function forgotPassword(req, res, next) {
         } catch (mailErr) {
             console.error("[forgot-password] email send failed:", mailErr.message);
         }
-        console.log(`[forgot-password] reset link for ${email}: ${resetUrl}`);
+        // Log the reset link ONLY outside production — a live reset token in
+        // hosted logs would be an account-takeover vector.
+        if (process.env.NODE_ENV !== "production") {
+            console.log(`[forgot-password] reset link for ${email}: ${resetUrl}`);
+        }
 
         const payload = { success: true, message: genericMessage };
         if (process.env.NODE_ENV !== "production") payload.resetUrl = resetUrl;

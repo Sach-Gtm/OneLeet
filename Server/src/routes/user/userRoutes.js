@@ -5,6 +5,7 @@ const multer = require("multer");
 const authController = require("../../controllers/user/authController");
 const { verifyToken } = require("../../middlewares/authMiddleware");
 const { verifyTurnstile } = require("../../middlewares/turnstileMiddleware");
+const { rateLimit } = require("../../middlewares/rateLimiter");
 const imageUploadLocal = require("../../middlewares/imageUploadLocal");
 const passportUploadMemory = require("../../middlewares/passportUploadMemory");
 const { validate } = require("../../validations/validate");
@@ -41,10 +42,11 @@ const handlePassportUpload = (req, res, next) => {
     });
 };
 
-router.post("/register", verifyTurnstile, validate(registerSchema), authController.register);
-router.post("/login", verifyTurnstile, validate(loginSchema), authController.login);
-router.post("/verify-otp", validate(verifyOtpSchema), authController.verifyOtp);
-router.post("/resend-otp", validate(resendOtpSchema), authController.resendOtp);
+// Brute-force / abuse protection: per-IP fixed windows on the auth surface.
+router.post("/register", rateLimit("register", 20, 60 * 60), verifyTurnstile, validate(registerSchema), authController.register);
+router.post("/login", rateLimit("login", 25, 15 * 60), verifyTurnstile, validate(loginSchema), authController.login);
+router.post("/verify-otp", rateLimit("verify-otp", 20, 15 * 60), validate(verifyOtpSchema), authController.verifyOtp);
+router.post("/resend-otp", rateLimit("resend-otp", 10, 15 * 60), validate(resendOtpSchema), authController.resendOtp);
 router.get("/email-health", authController.emailHealth);
 router.get("/media-health", authController.mediaHealth);
 router.post("/logout", authController.logout);
@@ -65,11 +67,13 @@ router.post(
 );
 router.post(
     "/forgot-password",
+    rateLimit("forgot-password", 8, 15 * 60),
     validate(forgotPasswordSchema),
     authController.forgotPassword
 );
 router.post(
     "/reset-password/:token",
+    rateLimit("reset-password", 15, 15 * 60),
     validate(resetPasswordSchema),
     authController.resetPassword
 );

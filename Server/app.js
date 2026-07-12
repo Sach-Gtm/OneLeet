@@ -23,6 +23,28 @@ const questionRoutes = require("./src/routes/content/questionRoutes");
 // import this directly and drive it with an in-memory database.
 const app = express();
 
+// Behind Render's proxy: trust the first hop so req.ip is the real client IP
+// (used by the rate limiter and Turnstile's remoteip), not the proxy's.
+app.set("trust proxy", 1);
+app.disable("x-powered-by");
+
+// Baseline security headers (helmet-style, no extra dependency). The API only
+// serves JSON, so a restrictive CSP and frame denial are safe defaults.
+app.use((req, res, next) => {
+    res.set({
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "no-referrer",
+        "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+        "Cross-Origin-Resource-Policy": "same-site",
+    });
+    if (process.env.NODE_ENV === "production") {
+        res.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    }
+    next();
+});
+
 // CLIENT_URL may be a single origin or a comma-separated list (e.g. localhost
 // for dev + the Vercel URL for prod). Falls back to the Vite dev server.
 const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
@@ -85,10 +107,15 @@ app.use((err, req, res, next) => {
         return res.status(409).json({ success: false, message: "Duplicate value" });
     }
 
-    return res.status(err.status || 500).json({
-        success: false,
-        message: err.message || "Internal server error",
-    });
+    // In production, never echo internal error details (stack hints, driver
+    // messages, file paths) to the client — log them, return a generic message.
+    const status = err.status || 500;
+    const isProd = process.env.NODE_ENV === "production";
+    const message =
+        status >= 500 && isProd
+            ? "Something went wrong on our side. Please try again."
+            : err.message || "Internal server error";
+    return res.status(status).json({ success: false, message });
 });
 
 module.exports = app;
