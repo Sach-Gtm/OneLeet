@@ -1,0 +1,174 @@
+import { useEffect, useRef } from "react";
+import { Renderer, Program, Mesh, Triangle } from "ogl";
+
+// A GPU-rendered "aurora" background for the landing hero. The colour field is
+// generated live in a fragment shader (domain-warped simplex noise), animated
+// over time and nudged by the pointer. It runs entirely on the GPU, degrades
+// to the dark layout behind it if WebGL is unavailable, and freezes for users
+// who prefer reduced motion.
+const vertex = /* glsl */ `
+    attribute vec2 position;
+    void main() {
+        gl_Position = vec4(position, 0.0, 1.0);
+    }
+`;
+
+const fragment = /* glsl */ `
+    precision highp float;
+    uniform float uTime;
+    uniform vec2 uResolution;
+    uniform vec2 uMouse;
+
+    // Ashima 2D simplex noise.
+    vec3 permute(vec3 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
+    float snoise(vec2 v) {
+        const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                            -0.577350269189626, 0.024390243902439);
+        vec2 i  = floor(v + dot(v, C.yy));
+        vec2 x0 = v - i + dot(i, C.xx);
+        vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+        vec4 x12 = x0.xyxy + C.xxzz;
+        x12.xy -= i1;
+        i = mod(i, 289.0);
+        vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+        vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+        m = m * m; m = m * m;
+        vec3 x = 2.0 * fract(p * C.www) - 1.0;
+        vec3 h = abs(x) - 0.5;
+        vec3 ox = floor(x + 0.5);
+        vec3 a0 = x - ox;
+        m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+        vec3 g;
+        g.x = a0.x * x0.x + h.x * x0.y;
+        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+        return 130.0 * dot(m, g);
+    }
+
+    float fbm(vec2 p) {
+        float v = 0.0;
+        float a = 0.5;
+        for (int i = 0; i < 4; i++) {
+            v += a * snoise(p);
+            p *= 2.0;
+            a *= 0.5;
+        }
+        return v;
+    }
+
+    void main() {
+        vec2 uv = gl_FragCoord.xy / uResolution.xy;
+        float aspect = uResolution.x / max(uResolution.y, 1.0);
+        vec2 p = uv;
+        p.x *= aspect;
+
+        float t = uTime * 0.04;
+        vec2 m = (uMouse - 0.5) * 0.4;
+
+        // Domain warp for that organic, flowing look.
+        vec2 q = vec2(fbm(p + vec2(0.0, t)), fbm(p + vec2(5.2, 1.3) - t));
+        vec2 r = vec2(fbm(p + 1.6 * q + vec2(1.7, 9.2) + m),
+                      fbm(p + 1.6 * q + vec2(8.3, 2.8) - t));
+        float f = fbm(p + 1.6 * r);
+
+        vec3 base   = vec3(0.035, 0.035, 0.094);
+        vec3 indigo = vec3(0.310, 0.275, 0.898);
+        vec3 violet = vec3(0.486, 0.227, 0.929);
+        vec3 amber  = vec3(0.961, 0.620, 0.043);
+
+        vec3 col = base;
+        col = mix(col, indigo, clamp(smoothstep(-0.1, 0.85, f) * 0.55, 0.0, 1.0));
+        col = mix(col, violet, clamp(smoothstep(0.05, 1.2, length(q)) * 0.38, 0.0, 1.0));
+        col = mix(col, amber,  clamp(smoothstep(0.82, 1.35, f + 0.35 * r.x) * 0.2, 0.0, 1.0));
+
+        // Vignette + overall dim keep the mood premium and overlaid text readable.
+        float vig = smoothstep(1.3, 0.2, length(uv - 0.5));
+        col *= 0.34 + 0.52 * vig;
+
+        gl_FragColor = vec4(col, 1.0);
+    }
+`;
+
+export default function ShaderHero({ className = "" }) {
+    const ref = useRef(null);
+
+    useEffect(() => {
+        const container = ref.current;
+        if (!container) return;
+
+        let renderer, program, mesh, gl, raf;
+        try {
+            renderer = new Renderer({
+                dpr: Math.min(window.devicePixelRatio || 1, 1.25),
+                alpha: false,
+                antialias: false,
+            });
+            gl = renderer.gl;
+
+            const geometry = new Triangle(gl);
+            program = new Program(gl, {
+                vertex,
+                fragment,
+                uniforms: {
+                    uTime: { value: 0 },
+                    uResolution: { value: [1, 1] },
+                    uMouse: { value: [0.5, 0.5] },
+                },
+            });
+            mesh = new Mesh(gl, { geometry, program });
+        } catch {
+            // WebGL unavailable — leave the dark layout background showing.
+            return;
+        }
+
+        gl.canvas.style.width = "100%";
+        gl.canvas.style.height = "100%";
+        gl.canvas.style.display = "block";
+        container.appendChild(gl.canvas);
+
+        const resize = () => {
+            const w = container.clientWidth || 1;
+            const h = container.clientHeight || 1;
+            renderer.setSize(w, h);
+            program.uniforms.uResolution.value = [
+                gl.drawingBufferWidth,
+                gl.drawingBufferHeight,
+            ];
+        };
+        resize();
+        window.addEventListener("resize", resize);
+
+        const onPointer = (e) => {
+            const rect = container.getBoundingClientRect();
+            program.uniforms.uMouse.value = [
+                (e.clientX - rect.left) / Math.max(rect.width, 1),
+                1 - (e.clientY - rect.top) / Math.max(rect.height, 1),
+            ];
+        };
+        window.addEventListener("pointermove", onPointer);
+
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduce) {
+            program.uniforms.uTime.value = 12.0;
+            renderer.render({ scene: mesh });
+        } else {
+            const start = performance.now();
+            const loop = (now) => {
+                program.uniforms.uTime.value = (now - start) / 1000;
+                renderer.render({ scene: mesh });
+                raf = requestAnimationFrame(loop);
+            };
+            raf = requestAnimationFrame(loop);
+        }
+
+        return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener("resize", resize);
+            window.removeEventListener("pointermove", onPointer);
+            const ext = gl.getExtension("WEBGL_lose_context");
+            if (ext) ext.loseContext();
+            if (gl.canvas.parentNode) gl.canvas.parentNode.removeChild(gl.canvas);
+        };
+    }, []);
+
+    return <div ref={ref} className={className} aria-hidden="true" />;
+}
