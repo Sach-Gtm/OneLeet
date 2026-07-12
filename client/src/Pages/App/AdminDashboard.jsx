@@ -15,6 +15,7 @@ import {
     UserPlus,
     X,
     FileUp,
+    ListChecks,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -25,6 +26,7 @@ import {
 } from "@/Api/AdminApi";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
+import { createQuestion, getQuestions } from "@/Api/QuestionApi";
 
 const STAT_CARDS = [
     { key: "totalStudents", label: "Total Students", icon: Users, tint: "text-indigo-600 bg-indigo-50" },
@@ -83,6 +85,12 @@ export default function AdminDashboard() {
     const [pyqFile, setPyqFile] = useState(null);
     const [uploadingPyq, setUploadingPyq] = useState(false);
     const pyqFileRef = useRef(null);
+    // Add-a-question (staff)
+    const [qForm, setQForm] = useState({ text: "", subject: "", topic: "", difficulty: "moderate", explanation: "" });
+    const [qOptions, setQOptions] = useState(["", "", "", ""]);
+    const [qCorrect, setQCorrect] = useState(0);
+    const [qBusy, setQBusy] = useState(false);
+    const [qCount, setQCount] = useState(null);
 
     const isStaff = user && (user.role === "admin" || user.role === "teacher");
     const isAdmin = user && user.role === "admin";
@@ -106,6 +114,13 @@ export default function AdminDashboard() {
     useEffect(() => {
         if (isStaff) load();
     }, [isStaff, load]);
+
+    useEffect(() => {
+        if (!isStaff) return;
+        getQuestions({ limit: 1 })
+            .then((r) => setQCount(r.total ?? 0))
+            .catch(() => {});
+    }, [isStaff]);
 
     // Hooks must run unconditionally; gate AFTER them.
     if (user && !isStaff) return <Navigate to="/dashboard" replace />;
@@ -205,6 +220,49 @@ export default function AdminDashboard() {
             toast.error(err.message || "Could not upload the paper");
         } finally {
             setUploadingPyq(false);
+        }
+    };
+
+    const setQField = (k) => (e) => setQForm((f) => ({ ...f, [k]: e.target.value }));
+    const setOption = (i) => (e) =>
+        setQOptions((opts) => opts.map((o, idx) => (idx === i ? e.target.value : o)));
+
+    const handleAddQuestion = async (e) => {
+        e.preventDefault();
+        if (!qForm.text.trim()) return toast.error("Enter the question text.");
+        const kept = [];
+        let correct = -1;
+        qOptions.forEach((o, i) => {
+            const v = o.trim();
+            if (v) {
+                if (i === qCorrect) correct = kept.length;
+                kept.push(v);
+            }
+        });
+        if (kept.length < 2) return toast.error("Add at least 2 answer options.");
+        if (correct < 0) return toast.error("The option you marked correct is empty.");
+        setQBusy(true);
+        try {
+            await createQuestion({
+                text: qForm.text,
+                options: kept,
+                correctIndex: correct,
+                subject: qForm.subject,
+                topic: qForm.topic,
+                difficulty: qForm.difficulty,
+                explanation: qForm.explanation,
+            });
+            toast.success("Question added to the bank");
+            setQForm({ text: "", subject: "", topic: "", difficulty: "moderate", explanation: "" });
+            setQOptions(["", "", "", ""]);
+            setQCorrect(0);
+            getQuestions({ limit: 1 })
+                .then((r) => setQCount(r.total ?? 0))
+                .catch(() => {});
+        } catch (err) {
+            toast.error(err.message);
+        } finally {
+            setQBusy(false);
         }
     };
 
@@ -395,6 +453,70 @@ export default function AdminDashboard() {
                         Upload paper
                     </button>
                 </div>
+            </form>
+
+            {/* Add a question (staff) */}
+            <form onSubmit={handleAddQuestion} className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                        <ListChecks className="h-4 w-4 text-indigo-600" /> Add a question
+                    </div>
+                    {qCount != null && (
+                        <span className="text-xs font-medium text-slate-400">{qCount} in the bank</span>
+                    )}
+                </div>
+                <textarea
+                    value={qForm.text}
+                    onChange={setQField("text")}
+                    placeholder="Question text…"
+                    rows={2}
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                />
+                <div className="grid gap-2 sm:grid-cols-2">
+                    {qOptions.map((opt, i) => (
+                        <label key={i} className="flex items-center gap-2 rounded-lg border border-slate-200 px-2.5 py-1.5">
+                            <input
+                                type="radio"
+                                name="correct-option"
+                                checked={qCorrect === i}
+                                onChange={() => setQCorrect(i)}
+                                className="h-4 w-4 shrink-0 text-indigo-600 focus:ring-indigo-500"
+                                title="Mark as the correct answer"
+                            />
+                            <input
+                                value={opt}
+                                onChange={setOption(i)}
+                                placeholder={`Option ${i + 1}`}
+                                className="w-full bg-transparent text-sm focus:outline-none"
+                            />
+                        </label>
+                    ))}
+                </div>
+                <p className="text-xs text-slate-400">Tick the circle next to the correct option.</p>
+                <div className="grid gap-3 sm:grid-cols-3">
+                    <input value={qForm.subject} onChange={setQField("subject")} placeholder="Subject" className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                    <input value={qForm.topic} onChange={setQField("topic")} placeholder="Topic (optional)" className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                    <select value={qForm.difficulty} onChange={setQField("difficulty")} className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                        <option value="easy">Easy</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+                <textarea
+                    value={qForm.explanation}
+                    onChange={setQField("explanation")}
+                    placeholder="Explanation (optional — shown after answering)"
+                    rows={2}
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                />
+                <button
+                    type="submit"
+                    disabled={qBusy}
+                    className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+                >
+                    {qBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ListChecks className="h-4 w-4" />}
+                    Add question
+                </button>
             </form>
 
             {/* Search */}
