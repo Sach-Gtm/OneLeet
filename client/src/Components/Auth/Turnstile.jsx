@@ -1,9 +1,14 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 // Cloudflare Turnstile CAPTCHA. Renders only when VITE_TURNSTILE_SITE_KEY is
 // configured — otherwise it's a no-op, so login/register work without it until
 // you turn it on. Reports the solved token via onToken (and "" when it
 // expires/errors so the form can re-require it).
+//
+// Turnstile tokens are SINGLE-USE: once the backend verifies one, it can't be
+// verified again (Cloudflare returns "timeout-or-duplicate"). So after any
+// failed submit the parent must call reset() (exposed via ref) to mint a fresh
+// token before the user retries.
 const SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || "";
 export const TURNSTILE_ENABLED = Boolean(SITE_KEY);
 
@@ -24,12 +29,27 @@ function loadScript() {
     return scriptPromise;
 }
 
-export default function Turnstile({ onToken }) {
+const Turnstile = forwardRef(function Turnstile({ onToken }, ref) {
     const boxRef = useRef(null);
     const widgetId = useRef(null);
     // Keep the latest callback without re-rendering the widget.
     const cbRef = useRef(onToken);
     cbRef.current = onToken;
+
+    // Let the parent mint a fresh token after a failed submit (tokens are
+    // single-use, so retrying with the same one always fails).
+    useImperativeHandle(ref, () => ({
+        reset() {
+            if (widgetId.current && window.turnstile) {
+                try {
+                    window.turnstile.reset(widgetId.current);
+                } catch {
+                    // widget not ready
+                }
+            }
+            cbRef.current?.("");
+        },
+    }));
 
     useEffect(() => {
         if (!SITE_KEY) return;
@@ -59,4 +79,6 @@ export default function Turnstile({ onToken }) {
 
     if (!SITE_KEY) return null;
     return <div ref={boxRef} className="flex justify-center" />;
-}
+});
+
+export default Turnstile;

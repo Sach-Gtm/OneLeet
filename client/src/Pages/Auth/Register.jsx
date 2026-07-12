@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,6 +32,7 @@ export default function Register() {
     const { refresh } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [captchaToken, setCaptchaToken] = useState("");
+    const turnstileRef = useRef(null);
 
     const {
         register,
@@ -73,6 +74,9 @@ export default function Register() {
             toast.success("Account created — welcome to OneLeet!");
             navigate("/dashboard", { replace: true });
         } catch (err) {
+            // Single-use CAPTCHA token — reset so a retry mints a fresh one.
+            setCaptchaToken("");
+            turnstileRef.current?.reset();
             toast.error(err.message || "Registration failed");
         }
     };
@@ -207,7 +211,7 @@ export default function Register() {
                         </div>
                     </div>
 
-                    <Turnstile onToken={setCaptchaToken} />
+                    <Turnstile ref={turnstileRef} onToken={setCaptchaToken} />
 
                     <Button type="submit" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? (

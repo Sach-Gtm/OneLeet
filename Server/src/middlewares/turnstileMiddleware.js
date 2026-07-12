@@ -30,6 +30,13 @@ async function verifyTurnstile(req, res, next) {
         const r = await fetch(VERIFY_URL, { method: "POST", body: params });
         const data = await r.json();
         if (!data.success) {
+            // Surface Cloudflare's reason in the logs so misconfigurations are
+            // debuggable (e.g. hostname-mismatch → the widget's allowed
+            // hostnames don't include this domain; invalid-input-secret → the
+            // Secret Key doesn't match the Site Key; timeout-or-duplicate → the
+            // token was already used or expired). No secrets are logged.
+            const codes = data["error-codes"] || [];
+            console.warn("[turnstile] verification failed:", codes.join(", "));
             return res.status(400).json({
                 success: false,
                 message: "CAPTCHA verification failed. Please try again.",

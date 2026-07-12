@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +22,7 @@ export default function Login() {
     const { refresh } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [captchaToken, setCaptchaToken] = useState("");
+    const turnstileRef = useRef(null);
 
     const redirectTo = location.state?.from?.pathname || "/dashboard";
 
@@ -45,6 +46,10 @@ export default function Login() {
             toast.success("Welcome back!");
             navigate(redirectTo, { replace: true });
         } catch (err) {
+            // The CAPTCHA token is single-use — reset the widget so the next
+            // attempt sends a fresh one instead of a spent/expired token.
+            setCaptchaToken("");
+            turnstileRef.current?.reset();
             // Account exists but email isn't verified yet → go finish OTP.
             if (err.needsVerification) {
                 toast("Please verify your email to continue.");
@@ -124,7 +129,7 @@ export default function Login() {
                         )}
                     </div>
 
-                    <Turnstile onToken={setCaptchaToken} />
+                    <Turnstile ref={turnstileRef} onToken={setCaptchaToken} />
 
                     <Button type="submit" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? (
