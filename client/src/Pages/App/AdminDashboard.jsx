@@ -13,6 +13,7 @@ import {
     ChevronRight,
     Send,
     UserPlus,
+    X,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -64,6 +65,8 @@ export default function AdminDashboard() {
     // Team-access form
     const [team, setTeam] = useState({ email: "", role: "admin" });
     const [granting, setGranting] = useState(false);
+    // Full passport-photo viewer (admin identity check)
+    const [photoView, setPhotoView] = useState(null);
 
     const isStaff = user && (user.role === "admin" || user.role === "teacher");
     const isAdmin = user && user.role === "admin";
@@ -288,11 +291,18 @@ export default function AdminDashboard() {
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
                                                 {s.passportPhoto?.url || s.avatar ? (
-                                                    <img
-                                                        src={s.passportPhoto?.url || s.avatar}
-                                                        alt={s.name}
-                                                        className="h-9 w-9 shrink-0 rounded-full object-cover"
-                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setPhotoView(s)}
+                                                        title="View full photo"
+                                                        className="shrink-0 rounded-full transition hover:ring-2 hover:ring-indigo-400"
+                                                    >
+                                                        <img
+                                                            src={s.passportPhoto?.url || s.avatar}
+                                                            alt={s.name}
+                                                            className="h-9 w-9 rounded-full object-cover"
+                                                        />
+                                                    </button>
                                                 ) : (
                                                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
                                                         {(s.name || "U").charAt(0).toUpperCase()}
@@ -376,6 +386,38 @@ export default function AdminDashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* Full passport-photo viewer (click a student's photo to verify identity) */}
+            {photoView && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+                    onClick={() => setPhotoView(null)}
+                >
+                    <div
+                        className="relative w-full max-w-sm rounded-2xl bg-white p-4 shadow-xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setPhotoView(null)}
+                            className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"
+                            aria-label="Close"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                        <img
+                            src={photoView.passportPhoto?.url || photoView.avatar}
+                            alt={photoView.name}
+                            className="mx-auto max-h-[70vh] w-auto rounded-lg object-contain"
+                        />
+                        <div className="mt-3 text-center">
+                            <div className="font-semibold text-slate-800">
+                                {photoView.name}
+                            </div>
+                            <div className="text-xs text-slate-400">{photoView.email}</div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
