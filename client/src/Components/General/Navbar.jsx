@@ -87,7 +87,7 @@ export default function Navbar() {
                 >
                     <div className="flex items-center justify-between w-full">
                         <Link to="/" className="flex items-center gap-2 relative z-10 group">
-                            <Logo size={30} textClass="text-xl" />
+                            <Logo size={30} textClass="text-xl" animated />
                         </Link>
 
                         <div
