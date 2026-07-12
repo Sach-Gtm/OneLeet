@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import Logo from "@/Components/General/Logo";
 
 export default function Navbar() {
     const location = useLocation();
@@ -88,10 +89,7 @@ export default function Navbar() {
                 >
                     <div className="flex items-center justify-between w-full">
                         <Link to="/" className="flex items-center gap-2 relative z-10 group">
-                            
-                            <span className="text-xl font-bold tracking-tight text-slate-900">
-                                ONE <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">LEET</span>
-                            </span>
+                            <Logo size={30} textClass="text-xl" />
                         </Link>
 
                         <div

@@ -7,6 +7,7 @@ import {
     MessageCircle,
     Twitter,
 } from "lucide-react";
+import Logo from "@/Components/General/Logo";
 
 export default function Footer() {
     return (
@@ -36,13 +37,7 @@ export default function Footer() {
 
             <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-12 sm:grid-cols-2 sm:gap-8 sm:py-16 lg:grid-cols-4">
                 <div className="space-y-4">
-                    <h2 className="flex items-center gap-2 text-2xl font-bold text-slate-900">
-                        <span className="block h-8 w-1 rounded-full bg-gradient-to-b from-indigo-500 to-violet-600" />
-                        ONE{" "}
-                        <span className="bg-gradient-to-r from-indigo-500 to-violet-600 bg-clip-text text-transparent">
-                            LEET
-                        </span>
-                    </h2>
+                    <Logo size={34} textClass="text-2xl" />
 
                     <p className="max-w-xs text-sm leading-relaxed text-slate-500">
                         Your one-stop platform for the Lateral Entry Entrance Test —

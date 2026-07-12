@@ -13,12 +13,12 @@ import Footer from "@/Components/General/Footer";
 import ShaderHero from "@/Components/General/ShaderHero";
 
 const features = [
-    { icon: FileText, title: "Real past papers", desc: "Actual LEET papers — practise what the exam really asks." },
-    { icon: ClipboardCheck, title: "Exam-pattern mocks", desc: "Timed tests, instant scoring, every mistake explained." },
-    { icon: Sparkles, title: "AI practice", desc: "Unlimited questions on any topic, any difficulty, in seconds." },
-    { icon: BookOpen, title: "Smart notes", desc: "High-yield notes and flashcards for last-mile revision." },
-    { icon: Trophy, title: "Leaderboard", desc: "Measure yourself against real aspirants, every day." },
-    { icon: Users, title: "Mentors", desc: "Guidance from students who actually cracked LEET." },
+    { icon: FileText, title: "Real past papers", desc: "Actual LEET papers — practise what the exam really asks.", tint: "bg-indigo-50 border-indigo-100", iconBg: "bg-indigo-500" },
+    { icon: ClipboardCheck, title: "Exam-pattern mocks", desc: "Timed tests, instant scoring, every mistake explained.", tint: "bg-rose-50 border-rose-100", iconBg: "bg-rose-500" },
+    { icon: Sparkles, title: "AI practice", desc: "Unlimited questions on any topic, any difficulty, in seconds.", tint: "bg-violet-50 border-violet-100", iconBg: "bg-violet-500" },
+    { icon: BookOpen, title: "Smart notes", desc: "High-yield notes and flashcards for last-mile revision.", tint: "bg-amber-50 border-amber-100", iconBg: "bg-amber-500" },
+    { icon: Trophy, title: "Leaderboard", desc: "Measure yourself against real aspirants, every day.", tint: "bg-emerald-50 border-emerald-100", iconBg: "bg-emerald-500" },
+    { icon: Users, title: "Mentors", desc: "Guidance from students who actually cracked LEET.", tint: "bg-sky-50 border-sky-100", iconBg: "bg-sky-500" },
 ];
 
 // Short, honest exchanges — the way a student actually asks, and the way
@@ -131,13 +131,13 @@ export default function Home() {
                         return (
                             <div
                                 key={f.title}
-                                className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
+                                className={`group rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-md ${f.tint}`}
                             >
-                                <span className="mb-4 inline-grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-sm">
+                                <span className={`mb-4 inline-grid h-11 w-11 place-items-center rounded-xl text-white shadow-sm ${f.iconBg}`}>
                                     <Icon className="h-5 w-5" />
                                 </span>
                                 <h3 className="text-lg font-semibold text-slate-900">{f.title}</h3>
-                                <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+                                <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
                                     {f.desc}
                                 </p>
                             </div>

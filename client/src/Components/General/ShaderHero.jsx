@@ -151,11 +151,21 @@ export default function ShaderHero({ className = "" }) {
             program.uniforms.uTime.value = 12.0;
             renderer.render({ scene: mesh });
         } else {
+            // Play an intro that eases to a gentle stop, then hold the frame —
+            // "runs on open, then settles". Re-runs whenever this remounts
+            // (e.g. navigating login → register opens a fresh page).
+            const DURATION = 9000;
             const start = performance.now();
+            let last = start;
+            let elapsed = 0;
             const loop = (now) => {
-                program.uniforms.uTime.value = (now - start) / 1000;
+                const prog = Math.min((now - start) / DURATION, 1);
+                const speed = 0.5 + 0.5 * Math.cos(prog * Math.PI); // 1 → 0 ease
+                elapsed += (now - last) * speed;
+                last = now;
+                program.uniforms.uTime.value = elapsed / 1000;
                 renderer.render({ scene: mesh });
-                raf = requestAnimationFrame(loop);
+                if (prog < 1) raf = requestAnimationFrame(loop);
             };
             raf = requestAnimationFrame(loop);
         }

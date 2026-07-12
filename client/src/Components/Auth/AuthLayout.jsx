@@ -1,19 +1,17 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { GraduationCap, Sparkles, Trophy, FileText, Bot } from "lucide-react";
+import { Sparkles, Trophy, FileText, Bot } from "lucide-react";
 import ShaderHero from "@/Components/General/ShaderHero";
+import { LogoMark } from "@/Components/General/Logo";
 
-// A weightless, gently-floating chip — the "antigravity" motion on the brand
-// panel. Fades in, then bobs up and down forever on its own rhythm.
-function FloatingChip({ icon: Icon, label, sub, className, delay = 0, dur = 4.5 }) {
+// A weightless chip that floats up into place on mount, then holds still — the
+// "antigravity" intro. It replays whenever the page mounts (login → register).
+function FloatingChip({ icon: Icon, label, sub, className, delay = 0 }) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: [0, -12, 0] }}
-            transition={{
-                opacity: { duration: 0.7, delay },
-                y: { duration: dur, repeat: Infinity, ease: "easeInOut", delay },
-            }}
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: [28, -10, 3, 0] }}
+            transition={{ duration: 1.1, delay, ease: "easeOut" }}
             className={`absolute flex items-center gap-2.5 rounded-2xl border border-white/70 bg-white/80 px-3.5 py-2.5 shadow-lg shadow-indigo-200/50 backdrop-blur-md ${className}`}
         >
             <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
@@ -38,13 +36,12 @@ export default function AuthLayout({ heading, subheading, stats = [], children }
                 <ShaderHero className="absolute inset-0" />
                 <div className="pointer-events-none absolute inset-0 bg-white/25" />
 
-                <Link to="/" className="relative z-20 flex items-center gap-2">
-                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md">
-                        <GraduationCap className="h-5 w-5" />
-                    </span>
+                <Link to="/" className="relative z-20 flex items-center gap-2.5">
+                    <LogoMark size={46} animated />
                     <div className="leading-tight">
-                        <span className="block text-lg font-bold tracking-tight text-slate-900">
-                            One<span className="text-indigo-600">Leet</span>
+                        <span className="block text-lg font-extrabold tracking-tight">
+                            <span className="text-[#EC7A54]">One</span>
+                            <span className="text-[#3FB0D6]">Leet</span>
                         </span>
                         <span className="block text-[10px] font-medium text-slate-400">
                             A StaplerLabs product
@@ -99,11 +96,10 @@ export default function AuthLayout({ heading, subheading, stats = [], children }
                         className="mb-8 flex flex-col items-center justify-center gap-1 lg:hidden"
                     >
                         <div className="flex items-center gap-2">
-                            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
-                                <GraduationCap className="h-5 w-5" />
-                            </span>
-                            <span className="text-lg font-bold tracking-tight text-slate-900">
-                                One<span className="text-indigo-600">Leet</span>
+                            <LogoMark size={36} animated />
+                            <span className="text-lg font-extrabold tracking-tight">
+                                <span className="text-[#EC7A54]">One</span>
+                                <span className="text-[#3FB0D6]">Leet</span>
                             </span>
                         </div>
                         <span className="text-[10px] font-medium text-slate-400">
