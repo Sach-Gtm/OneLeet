@@ -74,10 +74,12 @@ export default function Register() {
             toast.success("Account created — welcome to OneLeet!");
             navigate("/dashboard", { replace: true });
         } catch (err) {
-            // Single-use CAPTCHA token — reset so a retry mints a fresh one.
+            toast.error(err.message || "Registration failed");
+        } finally {
+            // Single-use CAPTCHA token — reset after every submit so a retry (or
+            // a second attempt without a page refresh) always mints a fresh one.
             setCaptchaToken("");
             turnstileRef.current?.reset();
-            toast.error(err.message || "Registration failed");
         }
     };
 

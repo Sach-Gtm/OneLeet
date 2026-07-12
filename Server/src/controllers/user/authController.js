@@ -190,6 +190,25 @@ async function emailHealth(req, res) {
     return res.status(200).json({ success: true, email: result });
 }
 
+// GET /api/auth/media-health — reports whether Cloudinary (photo uploads) is
+// configured on this host. No secrets are returned; the cloud name is public
+// (it appears in every image URL). Handy right after setting CLOUDINARY_* env
+// vars on the server to confirm they took effect.
+function mediaHealth(req, res) {
+    const configured = Boolean(
+        process.env.CLOUDINARY_CLOUD_NAME &&
+            process.env.CLOUDINARY_API_KEY &&
+            process.env.CLOUDINARY_API_SECRET
+    );
+    return res.status(200).json({
+        success: true,
+        cloudinary: {
+            configured,
+            cloudName: process.env.CLOUDINARY_CLOUD_NAME || null,
+        },
+    });
+}
+
 // POST /api/auth/verify-otp — confirm the emailed code and log the user in.
 async function verifyOtp(req, res, next) {
     try {
@@ -505,6 +524,7 @@ module.exports = {
     login,
     getMe,
     emailHealth,
+    mediaHealth,
     verifyOtp,
     resendOtp,
     forgotPassword,

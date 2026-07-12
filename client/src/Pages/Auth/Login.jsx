@@ -46,10 +46,6 @@ export default function Login() {
             toast.success("Welcome back!");
             navigate(redirectTo, { replace: true });
         } catch (err) {
-            // The CAPTCHA token is single-use — reset the widget so the next
-            // attempt sends a fresh one instead of a spent/expired token.
-            setCaptchaToken("");
-            turnstileRef.current?.reset();
             // Account exists but email isn't verified yet → go finish OTP.
             if (err.needsVerification) {
                 toast("Please verify your email to continue.");
@@ -59,6 +55,13 @@ export default function Login() {
                 return;
             }
             toast.error(err.message || "Login failed");
+        } finally {
+            // Turnstile tokens are single-use — the backend consumes the token on
+            // every submit (success OR failure). Reset the widget so the next
+            // submit in this same page session (e.g. logging in again with a
+            // different email without a page refresh) always sends a fresh token.
+            setCaptchaToken("");
+            turnstileRef.current?.reset();
         }
     };
 
