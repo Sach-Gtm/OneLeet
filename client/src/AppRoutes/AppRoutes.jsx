@@ -17,6 +17,8 @@ import AppShell from "@/Components/App/AppShell";
 const NotFound = lazy(() => import("@/Components/General/NotFound"));
 const Mentors = lazy(() => import("@/Pages/Navbar-Pages/Mentors"));
 const PrivacyPolicy = lazy(() => import("@/Pages/Footer-Pages/PrivacyPolicy"));
+const BugReport = lazy(() => import("@/Pages/Footer-Pages/BugReport"));
+const Contribute = lazy(() => import("@/Pages/Footer-Pages/Contribute"));
 
 const Login = lazy(() => import("@/Pages/Auth/Login"));
 const Register = lazy(() => import("@/Pages/Auth/Register"));
@@ -54,6 +56,8 @@ const AppRoutes = () => {
                         <Route path="/" element={<Home />} />
                         <Route path="/mentor" element={<Mentors />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
+                        <Route path="/bug-report" element={<BugReport />} />
+                        <Route path="/contribute" element={<Contribute />} />
                         <Route path="*" element={<NotFound />} />
                     </Route>
 
