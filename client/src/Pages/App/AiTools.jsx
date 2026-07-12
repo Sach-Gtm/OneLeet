@@ -9,6 +9,8 @@ import {
     Lightbulb,
     Target,
     ChevronRight,
+    CheckCircle2,
+    XCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -63,12 +65,14 @@ function QuestionGen() {
     const [form, setForm] = useState({ subject: "Digital Electronics", topic: "Logic Gates", difficulty: "easy", count: 5 });
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
-    const [revealed, setRevealed] = useState({});
+    // answers[i] = the option index the user picked for question i (undefined
+    // until they answer — each question locks after the first pick).
+    const [answers, setAnswers] = useState({});
 
     const run = async () => {
         setLoading(true);
         setResult(null);
-        setRevealed({});
+        setAnswers({});
         try {
             setResult(await generateQuestions(form));
         } catch {
@@ -77,6 +81,16 @@ function QuestionGen() {
             setLoading(false);
         }
     };
+
+    const pick = (qi, idx) =>
+        setAnswers((a) => (a[qi] !== undefined ? a : { ...a, [qi]: idx }));
+
+    const answeredCount = Object.keys(answers).length;
+    const correctCount = result
+        ? Object.entries(answers).filter(
+              ([qi, sel]) => result.questions[qi] && sel === result.questions[qi].answerIndex
+          ).length
+        : 0;
 
     return (
         <div className="space-y-5">
@@ -106,38 +120,82 @@ function QuestionGen() {
 
             {result && (
                 <div className="space-y-3">
-                    {result.questions.map((q, i) => (
-                        <div key={i} className="rounded-xl border border-slate-200 bg-white p-4">
-                            <div className="flex items-start justify-between gap-3">
-                                <p className="text-sm font-medium text-slate-800">
-                                    <span className="font-bold text-indigo-600">Q{i + 1}. </span>{q.question}
-                                </p>
-                                {q.difficulty && (
-                                    <span className={cn("shrink-0 rounded px-2 py-0.5 text-[10px] font-bold uppercase", DIFF_STYLE[q.difficulty] || DIFF_STYLE.moderate)}>
-                                        {q.difficulty}
-                                    </span>
+                    {/* Live score bar */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-2.5">
+                        <p className="text-sm font-semibold text-indigo-800">
+                            Tap an option to answer — instant marking.
+                        </p>
+                        <span className={cn(
+                            "rounded-full px-3 py-1 text-xs font-bold",
+                            answeredCount === result.questions.length
+                                ? "bg-indigo-600 text-white"
+                                : "bg-white text-indigo-700 ring-1 ring-indigo-200"
+                        )}>
+                            {answeredCount === result.questions.length
+                                ? `Score: ${correctCount} / ${result.questions.length}`
+                                : `${correctCount} correct · ${answeredCount}/${result.questions.length} answered`}
+                        </span>
+                    </div>
+
+                    {result.questions.map((q, i) => {
+                        const sel = answers[i]; // undefined until answered
+                        const answered = sel !== undefined;
+                        return (
+                            <div key={i} className="rounded-xl border border-slate-200 bg-white p-4">
+                                <div className="flex items-start justify-between gap-3">
+                                    <p className="text-sm font-medium text-slate-800">
+                                        <span className="font-bold text-indigo-600">Q{i + 1}. </span>{q.question}
+                                    </p>
+                                    {q.difficulty && (
+                                        <span className={cn("shrink-0 rounded px-2 py-0.5 text-[10px] font-bold uppercase", DIFF_STYLE[q.difficulty] || DIFF_STYLE.moderate)}>
+                                            {q.difficulty}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
+                                    {(q.options || []).map((opt, idx) => {
+                                        const isCorrect = idx === q.answerIndex;
+                                        const isPicked = sel === idx;
+                                        return (
+                                            <button
+                                                key={idx}
+                                                type="button"
+                                                onClick={() => pick(i, idx)}
+                                                disabled={answered}
+                                                className={cn(
+                                                    "flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm transition",
+                                                    !answered &&
+                                                        "border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50 cursor-pointer",
+                                                    answered && isCorrect &&
+                                                        "border-emerald-400 bg-emerald-50 font-semibold text-emerald-800",
+                                                    answered && isPicked && !isCorrect &&
+                                                        "border-red-300 bg-red-50 text-red-700",
+                                                    answered && !isPicked && !isCorrect &&
+                                                        "border-slate-100 text-slate-400"
+                                                )}
+                                            >
+                                                <span>{String.fromCharCode(65 + idx)}. {opt}</span>
+                                                {answered && isCorrect && <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />}
+                                                {answered && isPicked && !isCorrect && <XCircle size={16} className="shrink-0 text-red-500" />}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                {answered && (
+                                    <p className={cn(
+                                        "mt-2.5 rounded-lg px-3 py-2 text-xs font-medium",
+                                        sel === q.answerIndex
+                                            ? "bg-emerald-50 text-emerald-700"
+                                            : "bg-red-50 text-red-700"
+                                    )}>
+                                        {sel === q.answerIndex
+                                            ? "✓ Correct — well done!"
+                                            : `✗ Not quite. The correct answer is ${String.fromCharCode(65 + q.answerIndex)}. ${q.options?.[q.answerIndex] ?? ""}`}
+                                    </p>
                                 )}
                             </div>
-                            <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
-                                {(q.options || []).map((opt, idx) => (
-                                    <div
-                                        key={idx}
-                                        className={cn(
-                                            "rounded-lg border px-3 py-1.5 text-sm",
-                                            revealed[i] && idx === q.answerIndex
-                                                ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                                                : "border-slate-200 text-slate-600"
-                                        )}
-                                    >
-                                        {String.fromCharCode(65 + idx)}. {opt}
-                                    </div>
-                                ))}
-                            </div>
-                            <button onClick={() => setRevealed((r) => ({ ...r, [i]: !r[i] }))} className="mt-2 text-xs font-semibold text-indigo-600 hover:underline">
-                                {revealed[i] ? "Hide answer" : "Show answer"}
-                            </button>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
