@@ -1,26 +1,29 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, Trophy, FileText, Bot } from "lucide-react";
+import { Sparkles, TrendingUp } from "lucide-react";
 import ShaderHero from "@/Components/General/ShaderHero";
+import GrowthCanvas from "@/Components/General/GrowthCanvas";
 import { LogoMark } from "@/Components/General/Logo";
 
-// A weightless chip that floats up into place on mount, then holds still — the
-// "antigravity" intro. It replays whenever the page mounts (login → register).
-function FloatingChip({ icon: Icon, label, sub, className, delay = 0 }) {
+// A StaplerLabs-style analytics card — a self-drawing growth chart that floats
+// into place on mount, then holds. Custom-built, on-brand, and it replays each
+// time the page mounts (login → register).
+function ProgressCard() {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: [28, -10, 3, 0] }}
-            transition={{ duration: 1.1, delay, ease: "easeOut" }}
-            className={`absolute flex items-center gap-2.5 rounded-2xl border border-white/70 bg-white/80 px-3.5 py-2.5 shadow-lg shadow-indigo-200/50 backdrop-blur-md ${className}`}
+            initial={{ opacity: 0, y: 26, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+            className="absolute right-10 top-24 z-10 w-72 rounded-2xl border border-white/70 bg-white/85 p-4 shadow-xl shadow-indigo-200/50 backdrop-blur-md"
         >
-            <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
-                <Icon className="h-4 w-4" />
-            </span>
-            <div className="text-left">
-                <div className="text-xs font-bold text-slate-800">{label}</div>
-                {sub && <div className="text-[10px] text-slate-500">{sub}</div>}
+            <div className="mb-2 flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-700">Your progress</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                    <TrendingUp className="h-3 w-3" /> Rising
+                </span>
             </div>
+            <GrowthCanvas className="block h-36 w-full" />
+            <p className="mt-2 text-[11px] text-slate-400">Every focused session moves you up.</p>
         </motion.div>
     );
 }
@@ -49,12 +52,8 @@ export default function AuthLayout({ heading, subheading, stats = [], children }
                     </div>
                 </Link>
 
-                {/* Floating chips (decorative, behind the copy) */}
-                <div className="pointer-events-none absolute inset-0 z-10">
-                    <FloatingChip icon={Trophy} label="Rank 54" sub="IPU LEET 2025" className="right-12 top-24" delay={0.1} dur={4.6} />
-                    <FloatingChip icon={FileText} label="Real PYQs" sub="Years of papers" className="left-14 top-44" delay={0.35} dur={5.4} />
-                    <FloatingChip icon={Bot} label="AI practice" sub="Unlimited questions" className="right-20 top-64" delay={0.6} dur={4.2} />
-                </div>
+                {/* Custom analytics card (replaces the old stat chips) */}
+                <ProgressCard />
 
                 <div className="relative z-20 max-w-sm space-y-4">
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-white/70 px-3 py-1 text-xs font-semibold text-indigo-700 shadow-sm backdrop-blur">
