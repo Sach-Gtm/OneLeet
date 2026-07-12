@@ -35,7 +35,7 @@ class ErrorBoundary extends Component {
     render() {
         if (this.state.hasError) {
             return (
-                <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 p-6 text-center">
+                <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#FAF9F6] p-6 text-center">
                     <h1 className="text-xl font-semibold text-slate-800">
                         Something went wrong
                     </h1>

@@ -41,7 +41,7 @@ const Profile = lazy(() => import("@/Pages/App/Profile"));
 const AdminDashboard = lazy(() => import("@/Pages/App/AdminDashboard"));
 
 const FullscreenLoader = () => (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50">
+    <div className="flex min-h-screen items-center justify-center bg-[#FAF9F6]">
         <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
     </div>
 );

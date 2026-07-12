@@ -10,7 +10,6 @@ import {
     Trophy,
     Users,
     User,
-    GraduationCap,
     Search,
     LogOut,
     Menu,
@@ -22,6 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
 import { useAuth } from "@/context/AuthContext";
+import Logo from "@/Components/General/Logo";
 
 const NAV = [
     {
@@ -85,12 +85,7 @@ function SidebarContent({ user, onNavigate, onLogout }) {
                 onClick={onNavigate}
                 className="flex items-center gap-2 px-5 py-5"
             >
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-700 text-white">
-                    <GraduationCap className="h-5 w-5" />
-                </span>
-                <span className="text-lg font-bold tracking-tight text-slate-900">
-                    One<span className="text-amber-500">Leet</span>
-                </span>
+                <Logo size={32} textClass="text-lg" />
             </Link>
 
             <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2">
@@ -251,7 +246,7 @@ export default function AppShell() {
     };
 
     return (
-        <div className="flex min-h-screen bg-slate-50">
+        <div className="flex min-h-screen bg-[#FAF9F6]">
             {/* Desktop sidebar */}
             <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:block">
                 <div className="sticky top-0 h-screen">
