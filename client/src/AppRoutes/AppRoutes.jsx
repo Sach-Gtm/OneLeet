@@ -17,7 +17,6 @@ import AppShell from "@/Components/App/AppShell";
 const NotFound = lazy(() => import("@/Components/General/NotFound"));
 const Mentors = lazy(() => import("@/Pages/Navbar-Pages/Mentors"));
 const PrivacyPolicy = lazy(() => import("@/Pages/Footer-Pages/PrivacyPolicy"));
-const Team = lazy(() => import("@/Pages/Footer-Pages/Team"));
 
 const Login = lazy(() => import("@/Pages/Auth/Login"));
 const Register = lazy(() => import("@/Pages/Auth/Register"));
@@ -50,12 +49,11 @@ const AppRoutes = () => {
         <Router>
             <Suspense fallback={<FullscreenLoader />}>
                 <Routes>
-                    {/* Public marketing pages — dark themed shell */}
+                    {/* Public marketing pages — light themed shell */}
                     <Route element={<MarketingLayout />}>
                         <Route path="/" element={<Home />} />
                         <Route path="/mentor" element={<Mentors />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
-                        <Route path="/team" element={<Team />} />
                         <Route path="*" element={<NotFound />} />
                     </Route>
 

@@ -70,7 +70,6 @@ export default function Footer() {
                     <ul className="space-y-3 text-sm">
                         <li><Link to="/" className="text-slate-500 transition-all hover:pl-1 hover:text-indigo-600">Home</Link></li>
                         <li><Link to="/courses" className="text-slate-500 transition-all hover:pl-1 hover:text-indigo-600">Courses</Link></li>
-                        <li><Link to="/team" className="text-slate-500 transition-all hover:pl-1 hover:text-indigo-600">Meet the Team</Link></li>
                         <li><Link to="/privacy" className="text-slate-500 transition-all hover:pl-1 hover:text-indigo-600">Privacy Policy</Link></li>
                     </ul>
                 </div>

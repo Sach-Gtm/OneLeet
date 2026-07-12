@@ -8,7 +8,6 @@ import {
     StickyNote,
     FileQuestion,
     Users,
-    Bot,
     LogIn,
     LogOut,
     AlertTriangle,
@@ -36,7 +35,6 @@ export default function Navbar() {
         { name: "PYQs", path: "/pyqs", icon: <FileQuestion size={16} /> },
         { name: "Notes", path: "/notes", icon: <StickyNote size={16} /> },
         { name: "Tests", path: "/tests", icon: <BookOpen size={16} /> },
-        { name: "Our Team", path: "/team", icon: <Bot size={16} /> },
         { name: "Mentors", path: "/mentor", icon: <Users size={16} /> },
     ];
 
