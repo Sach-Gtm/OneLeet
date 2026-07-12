@@ -7,11 +7,22 @@ import {
     MessageCircle,
     Twitter,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import Logo from "@/Components/General/Logo";
+
+// No socials yet — clicking one drops a cheeky nudge instead of a dead link.
+const FUNNY_LINES = [
+    "No socials yet — we're too busy building. Go study! 📚",
+    "Coming soon. For now, go crack some PYQs 😉",
+    "Nothing here yet. Back to the mocks, champ! 💪",
+    "Socials loading… meanwhile, one more mock test? 🚀",
+];
+const comingSoon = () =>
+    toast(FUNNY_LINES[Math.floor(Math.random() * FUNNY_LINES.length)], { icon: "🔒" });
 
 export default function Footer() {
     return (
-        <footer className="mt-24 w-full border-t border-slate-200 bg-slate-50 text-slate-600">
+        <footer className="mt-24 w-full border-t border-slate-200 bg-[#FAF9F6] text-slate-600">
             <div className="border-b border-slate-200 bg-white">
                 <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 sm:flex-row">
                     <p className="text-xs font-semibold uppercase tracking-widest text-indigo-600">
@@ -19,18 +30,18 @@ export default function Footer() {
                     </p>
 
                     <div className="flex items-center gap-6">
-                        <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="text-slate-400 transition-colors hover:scale-110 hover:text-green-500" aria-label="WhatsApp">
+                        <button type="button" onClick={comingSoon} className="text-slate-400 transition-colors hover:scale-110 hover:text-green-500" aria-label="WhatsApp">
                             <MessageCircle size={20} />
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-slate-400 transition-colors hover:scale-110 hover:text-pink-500" aria-label="Instagram">
+                        </button>
+                        <button type="button" onClick={comingSoon} className="text-slate-400 transition-colors hover:scale-110 hover:text-pink-500" aria-label="Instagram">
                             <Instagram size={20} />
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-slate-400 transition-colors hover:scale-110 hover:text-indigo-600" aria-label="LinkedIn">
+                        </button>
+                        <button type="button" onClick={comingSoon} className="text-slate-400 transition-colors hover:scale-110 hover:text-indigo-600" aria-label="LinkedIn">
                             <Linkedin size={20} />
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noreferrer" className="text-slate-400 transition-colors hover:scale-110 hover:text-sky-500" aria-label="Twitter">
+                        </button>
+                        <button type="button" onClick={comingSoon} className="text-slate-400 transition-colors hover:scale-110 hover:text-sky-500" aria-label="Twitter">
                             <Twitter size={20} />
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>

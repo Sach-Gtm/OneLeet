@@ -1,69 +1,71 @@
-import React from "react";
 import { Github, Linkedin } from "lucide-react";
 
 const members = [
     {
         name: "Sachin Gautam",
         username: "@sachingautam",
-        tagline: "Founder & Full Stack Developer",
+        tagline: "Founder & Full-Stack Developer",
+        initials: "SG",
         github: "https://github.com/sach-gtm",
         linkedin: "https://www.linkedin.com/in/sachin-gautam-1484a2227/",
     },
 ];
 
-const Team = () => {
+export default function Team() {
     return (
-        <div className="relative min-h-screen w-full bg-black overflow-hidden">
-            <div className="absolute inset-0 pointer-events-none bg-black/40 backdrop-blur-[6px] glass-noise" />
-
-            <div className="relative z-10 flex flex-col items-center px-4 pt-40 pb-20">
-                <div className="mb-12 text-center">
-                    <h1 className="text-3xl font-bold text-white md:text-4xl">
-                        The Team
-                    </h1>
-                    <p className="mx-auto mt-3 max-w-xl text-gray-400">
-                        The people building OneLeet.
-                    </p>
-                </div>
-
-                <div className="grid w-full max-w-md grid-cols-1 gap-6">
-                    {members.map((m, index) => (
-                        <div
-                            key={index}
-                            className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 text-center backdrop-blur-md"
-                        >
-                            <h2 className="text-xl font-bold text-white">
-                                {m.name}
-                            </h2>
-                            <p className="text-sm text-gray-400">{m.username}</p>
-                            <p className="mt-2 text-sm italic text-gray-300">
-                                {m.tagline}
-                            </p>
-
-                            <div className="mt-5 flex justify-center gap-4">
-                                <a
-                                    href={m.github}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="rounded-full bg-white/10 p-2 transition hover:bg-white/20"
-                                >
-                                    <Github className="h-5 w-5 text-white" />
-                                </a>
-                                <a
-                                    href={m.linkedin}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="rounded-full bg-white/10 p-2 transition hover:bg-white/20"
-                                >
-                                    <Linkedin className="h-5 w-5 text-white" />
-                                </a>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+        <div className="mx-auto max-w-4xl px-4 pb-24 pt-32 sm:px-6">
+            <div className="mb-12 text-center">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-white px-3 py-1 text-xs font-semibold text-indigo-700 shadow-sm">
+                    The people behind OneLeet
+                </span>
+                <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">The Team</h1>
+                <p className="mx-auto mt-3 max-w-xl text-slate-500">
+                    A small team building the tool we wish we&apos;d had — set on getting
+                    more diploma students into the colleges they deserve.
+                </p>
             </div>
+
+            <div className="mx-auto grid max-w-md grid-cols-1 gap-6">
+                {members.map((m) => (
+                    <div
+                        key={m.name}
+                        className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
+                    >
+                        <span className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 text-2xl font-bold text-white shadow-md">
+                            {m.initials}
+                        </span>
+                        <h2 className="mt-4 text-xl font-bold text-slate-900">{m.name}</h2>
+                        <p className="text-sm text-slate-400">{m.username}</p>
+                        <p className="mt-1 text-sm font-medium text-indigo-600">{m.tagline}</p>
+
+                        <div className="mt-5 flex justify-center gap-3">
+                            <a
+                                href={m.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-full border border-slate-200 bg-slate-50 p-2.5 text-slate-600 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900"
+                                aria-label="GitHub"
+                            >
+                                <Github className="h-5 w-5" />
+                            </a>
+                            <a
+                                href={m.linkedin}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-full border border-slate-200 bg-slate-50 p-2.5 text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600"
+                                aria-label="LinkedIn"
+                            >
+                                <Linkedin className="h-5 w-5" />
+                            </a>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <p className="mt-12 text-center text-sm text-slate-400">
+                OneLeet is built and operated by{" "}
+                <span className="font-semibold text-slate-600">StaplerLabs Private Limited</span>.
+            </p>
         </div>
     );
-};
-
-export default Team;
+}
