@@ -286,11 +286,26 @@ export default function AdminDashboard() {
                                 data.students.map((s) => (
                                     <tr key={s._id} className="hover:bg-slate-50">
                                         <td className="px-4 py-3">
-                                            <div className="font-semibold text-slate-800">
-                                                {s.name}
-                                            </div>
-                                            <div className="text-xs text-slate-400">
-                                                {new Date(s.createdAt).toLocaleDateString()}
+                                            <div className="flex items-center gap-3">
+                                                {s.passportPhoto?.url || s.avatar ? (
+                                                    <img
+                                                        src={s.passportPhoto?.url || s.avatar}
+                                                        alt={s.name}
+                                                        className="h-9 w-9 shrink-0 rounded-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
+                                                        {(s.name || "U").charAt(0).toUpperCase()}
+                                                    </span>
+                                                )}
+                                                <div>
+                                                    <div className="font-semibold text-slate-800">
+                                                        {s.name}
+                                                    </div>
+                                                    <div className="text-xs text-slate-400">
+                                                        {new Date(s.createdAt).toLocaleDateString()}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-slate-600">

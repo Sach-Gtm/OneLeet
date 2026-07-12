@@ -410,6 +410,20 @@ async function changePassword(req, res, next) {
     }
 }
 
+// Streams an in-memory file buffer to Cloudinary. Used by the passport-photo
+// upload, which keeps the file in memory (multer memoryStorage) instead of on
+// disk, so it works on Render's ephemeral/read-only filesystem. Wraps
+// Cloudinary's callback API in a promise.
+function uploadBufferToCloudinary(buffer, options) {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(options, (err, result) => {
+            if (err) return reject(err);
+            resolve(result);
+        });
+        stream.end(buffer);
+    });
+}
+
 // POST /api/auth/me/avatar — upload a profile photo to Cloudinary
 async function uploadAvatar(req, res, next) {
     try {
@@ -434,6 +448,52 @@ async function uploadAvatar(req, res, next) {
     }
 }
 
+// POST /api/auth/me/passport-photo — upload the mandatory passport-size photo.
+// The file is held in memory and streamed straight to Cloudinary (nothing
+// touches local disk). Enforced at 1 MB by the upload middleware.
+async function uploadPassportPhoto(req, res, next) {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "No photo uploaded" });
+        }
+
+        const result = await uploadBufferToCloudinary(req.file.buffer, {
+            folder: "oneleet/passport-photos",
+            resource_type: "image",
+            // Passport ratio (~35×45mm), centred on the face.
+            transformation: [{ width: 413, height: 531, crop: "fill", gravity: "face" }],
+        });
+
+        // Best-effort cleanup of the previous photo so replacements don't orphan
+        // Cloudinary assets. Never block the response on it.
+        const prevId = req.user.passportPhoto && req.user.passportPhoto.publicId;
+        if (prevId) {
+            cloudinary.uploader
+                .destroy(prevId)
+                .catch((e) =>
+                    console.warn("[passport-photo] old asset cleanup failed:", e.message)
+                );
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                passportPhoto: { url: result.secure_url, publicId: result.public_id },
+                avatar: result.secure_url, // mirror so existing avatar UI shows it
+            },
+            { returnDocument: "after" }
+        ).select("-password");
+
+        return res.status(200).json({
+            success: true,
+            message: "Passport photo uploaded",
+            user,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 // POST /api/auth/logout
 function logout(req, res) {
     res.cookie("token", "", { ...buildCookieOptions(), expires: new Date(0) });
@@ -452,5 +512,6 @@ module.exports = {
     updateProfile,
     changePassword,
     uploadAvatar,
+    uploadPassportPhoto,
     logout,
 };

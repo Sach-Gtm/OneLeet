@@ -118,6 +118,19 @@ export const uploadAvatar = async (file) => {
     }
 };
 
+export const uploadPassportPhoto = async (file) => {
+    const formData = new FormData();
+    formData.append("photo", file);
+    try {
+        const { data } = await api.post("/auth/me/passport-photo", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 export const logoutUser = async () => {
     try {
         const { data } = await api.post("/auth/logout");

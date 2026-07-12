@@ -16,11 +16,16 @@ import {
     CheckCircle2,
     Clock,
     ChevronDown,
+    ShieldCheck,
+    AlertTriangle,
+    Upload,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
-import { updateProfile, changePassword, uploadAvatar } from "@/Api/AuthApis";
+import { updateProfile, changePassword, uploadPassportPhoto } from "@/Api/AuthApis";
+
+const MAX_PHOTO_BYTES = 1024 * 1024; // 1 MB
 
 const inputCls =
     "h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
@@ -69,14 +74,26 @@ export default function Profile() {
         }
     };
 
-    const onAvatar = async (e) => {
+    const onPhoto = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        // Validate client-side for an instant, clear error. The server enforces
+        // the same 1 MB limit and image-only rule.
+        if (!file.type.startsWith("image/")) {
+            toast.error("Please choose an image file (JPG or PNG).");
+            if (fileRef.current) fileRef.current.value = "";
+            return;
+        }
+        if (file.size > MAX_PHOTO_BYTES) {
+            toast.error("Photo must be 1 MB or smaller. Please compress it and try again.");
+            if (fileRef.current) fileRef.current.value = "";
+            return;
+        }
         setUploading(true);
         try {
-            const res = await uploadAvatar(file);
+            const res = await uploadPassportPhoto(file);
             setUser(res.user);
-            toast.success("Photo updated");
+            toast.success("Passport photo uploaded");
         } catch (err) {
             toast.error(err.message || "Upload failed");
         } finally {
@@ -101,6 +118,10 @@ export default function Profile() {
         }
     };
 
+    const isStudent = user?.role !== "teacher" && user?.role !== "admin";
+    const photoUrl = user?.passportPhoto?.url || user?.avatar || "";
+    const needsPhoto = isStudent && !user?.passportPhoto?.url;
+
     const stats = user?.stats || {};
     const overview = [
         { label: "Tests Taken", value: stats.testsTaken || 0, icon: ClipboardCheck, color: "text-indigo-600 bg-indigo-50" },
@@ -114,11 +135,30 @@ export default function Profile() {
         <div className="mx-auto max-w-5xl space-y-6">
             <h1 className="text-2xl font-bold text-slate-900">My Profile</h1>
 
+            {needsPhoto && (
+                <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center">
+                    <AlertTriangle className="h-5 w-5 shrink-0 text-amber-500" />
+                    <div className="text-sm">
+                        <p className="font-semibold text-amber-800">Passport photo required</p>
+                        <p className="text-amber-700">
+                            Upload a clear passport-size photo (under 1&nbsp;MB) to complete
+                            your profile — it&apos;s needed for your exam ID and results.
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => fileRef.current?.click()}
+                        className="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600 sm:ml-auto"
+                    >
+                        Upload now
+                    </button>
+                </div>
+            )}
+
             {/* Header card */}
             <div className="flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row sm:items-center">
                 <div className="relative">
-                    {user?.avatar ? (
-                        <img src={user.avatar} alt={user.name} className="h-20 w-20 rounded-full object-cover" />
+                    {photoUrl ? (
+                        <img src={photoUrl} alt={user?.name} className="h-20 w-20 rounded-full object-cover" />
                     ) : (
                         <span className="grid h-20 w-20 place-items-center rounded-full bg-indigo-100 text-2xl font-bold text-indigo-700">
                             {(user?.name || "U").charAt(0).toUpperCase()}
@@ -131,7 +171,7 @@ export default function Profile() {
                     >
                         {uploading ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
                     </button>
-                    <input ref={fileRef} type="file" accept="image/*" hidden onChange={onAvatar} />
+                    <input ref={fileRef} type="file" accept="image/*" hidden onChange={onPhoto} />
                 </div>
                 <div className="text-center sm:text-left">
                     <h2 className="text-xl font-bold text-slate-900">{user?.name}</h2>
@@ -229,6 +269,53 @@ export default function Profile() {
 
                 {/* Right: overview + achievement */}
                 <div className="space-y-6">
+                    {isStudent && (
+                        <div className="rounded-2xl border border-slate-200 bg-white p-6">
+                            <div className="mb-3 flex items-center gap-2">
+                                <ShieldCheck size={16} className="text-indigo-600" />
+                                <h3 className="text-sm font-bold text-slate-800">Passport Photo</h3>
+                                {user?.passportPhoto?.url ? (
+                                    <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600">
+                                        <CheckCircle2 size={12} /> Uploaded
+                                    </span>
+                                ) : (
+                                    <span className="ml-auto rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-600">
+                                        Required
+                                    </span>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="h-24 w-[72px] shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                                    {photoUrl ? (
+                                        <img src={photoUrl} alt="Passport" className="h-full w-full object-cover" />
+                                    ) : (
+                                        <div className="grid h-full w-full place-items-center text-slate-300">
+                                            <Camera size={20} />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="text-xs text-slate-500">
+                                    <p>Clear, front-facing photo on a plain background.</p>
+                                    <p className="mt-1">
+                                        JPG or PNG, <span className="font-semibold">max 1 MB</span>.
+                                    </p>
+                                    <button
+                                        onClick={() => fileRef.current?.click()}
+                                        disabled={uploading}
+                                        className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+                                    >
+                                        {uploading ? (
+                                            <Loader2 size={13} className="animate-spin" />
+                                        ) : (
+                                            <Upload size={13} />
+                                        )}
+                                        {user?.passportPhoto?.url ? "Replace photo" : "Upload photo"}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="rounded-2xl border border-slate-200 bg-white p-6">
                         <h3 className="mb-4 text-sm font-bold text-slate-800">Quick Overview</h3>
                         <div className="space-y-3">

@@ -65,7 +65,9 @@ async function listStudents(req, res, next) {
                 .sort({ createdAt: -1 })
                 .skip((page - 1) * limit)
                 .limit(limit)
-                .select("name email phone college branch plan isVerified stats createdAt"),
+                .select(
+                    "name email phone college branch plan isVerified stats createdAt avatar passportPhoto"
+                ),
             User.countDocuments(filter),
         ]);
 

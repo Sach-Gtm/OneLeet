@@ -13,6 +13,7 @@ import {
     BookOpen,
     Loader2,
     ArrowRight,
+    Camera,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
@@ -113,8 +114,32 @@ export default function Dashboard() {
         );
     }
 
+    const needsPhoto =
+        user && user.role !== "teacher" && user.role !== "admin" && !user?.passportPhoto?.url;
+
     return (
         <div className="mx-auto max-w-6xl space-y-6">
+            {needsPhoto && (
+                <Link
+                    to="/profile"
+                    className="flex items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 transition hover:bg-amber-100"
+                >
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-amber-100 text-amber-600">
+                        <Camera size={18} />
+                    </span>
+                    <div className="text-sm">
+                        <p className="font-semibold text-amber-800">
+                            Action required: upload your passport photo
+                        </p>
+                        <p className="text-amber-700">
+                            A clear passport-size photo (under 1&nbsp;MB) is needed to complete
+                            your profile. Tap to upload.
+                        </p>
+                    </div>
+                    <ArrowRight size={16} className="ml-auto shrink-0 text-amber-500" />
+                </Link>
+            )}
+
             {/* Welcome + Overall Prep */}
             <div className="grid gap-6 lg:grid-cols-3">
                 <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white lg:col-span-2">

@@ -62,6 +62,15 @@ const UserSchema = new mongoose.Schema(
             type: String,
         },
 
+        // Mandatory passport-size photo for students (used for ID / exam
+        // registration). Stored on Cloudinary; publicId lets us delete the
+        // previous asset when the photo is replaced. Kept separate from
+        // `avatar` (which may be any casual/Google picture).
+        passportPhoto: {
+            url: { type: String },
+            publicId: { type: String },
+        },
+
         // Academic info (shown on the profile page)
         college: { type: String, trim: true, maxlength: [120, "College name too long"] },
         branch: { type: String, trim: true, maxlength: [80, "Branch name too long"] },
