@@ -8,19 +8,19 @@ import { LogoMark } from "@/Components/General/Logo";
 // were gently corrected from common short-forms), and every fact is written to
 // be TRUE and defensible — aspiration, not a placement guarantee.
 //
-// PHOTO-READY: add `image: "<url>"` to any college and the slide will use that
-// photograph instead of the branded gradient (the text scrim already sits on
-// top, so legibility is preserved). Until then, each shows an on-brand gradient
-// with a large monogram so it looks intentional, loads instantly, and carries
-// no image-licensing risk.
+// Most carry a real campus photo (`image`) — self-hosted in /public/colleges,
+// sourced from Wikimedia Commons under CC licences (credited in the UI). The
+// slide layers the photo over a brand gradient that also serves as the graceful
+// fallback: colleges without a good free photo just show the gradient, and any
+// photo that fails to load reveals the gradient beneath it.
 const COLLEGES = [
-    { name: "Delhi Technological University", initials: "DTU", place: "Delhi", tag: "Govt · Flagship",
+    { name: "Delhi Technological University", initials: "DTU", place: "Delhi", tag: "Govt · Flagship", image: "/colleges/dtu.jpg",
       fact: "Delhi's flagship engineering university. Through JEE, a seat here is a top-percentile war and years of coaching. LEET gets you the same DTU degree — a different door to the same dream." },
-    { name: "Netaji Subhas University of Technology", initials: "NSUT", place: "Delhi", tag: "Govt · Top-tier",
+    { name: "Netaji Subhas University of Technology", initials: "NSUT", place: "Delhi", tag: "Govt · Top-tier", image: "/colleges/nsut.jpg",
       fact: "Formerly NSIT — among Delhi's most sought-after colleges, with elite recruiters and a powerhouse alumni network. You reach it through LEET, skipping the brutal JEE cut-off." },
-    { name: "Jadavpur University", initials: "JU", place: "Kolkata", tag: "Govt · Iconic",
+    { name: "Jadavpur University", initials: "JU", place: "Kolkata", tag: "Govt · Iconic", image: "/colleges/ju.jpg",
       fact: "One of India's most respected public universities. World-class faculty, deep research and strong placements — at almost no fees." },
-    { name: "Maharaja Agrasen Institute of Technology", initials: "MAIT", place: "Delhi", tag: "GGSIPU",
+    { name: "Maharaja Agrasen Institute of Technology", initials: "MAIT", place: "Delhi", tag: "GGSIPU", image: "/colleges/mait.jpg",
       fact: "A top IPU college with strong IT & core placements and a lively campus in Rohini. LEET is your lateral gateway in." },
     { name: "Maharaja Surajmal Institute of Technology", initials: "MSIT", place: "Delhi", tag: "GGSIPU",
       fact: "A well-loved IPU college with solid placements and a huge, warm alumni base. Enter via LEET — no JEE marathon required." },
@@ -30,35 +30,35 @@ const COLLEGES = [
       fact: "IPU's future-facing school built for AI, robotics and automation. A modern, fast-rising campus — and LEET-friendly." },
     { name: "Dr. A.P.J. Abdul Kalam Technical University", initials: "AKTU", place: "Lucknow, UP", tag: "Largest tech university",
       fact: "India's largest technical university, with 700+ affiliated colleges. A LEET seat plugs you into a massive recruiter network across UP." },
-    { name: "Harcourt Butler Technical University", initials: "HBTU", place: "Kanpur, UP", tag: "Century-old · Govt",
+    { name: "Harcourt Butler Technical University", initials: "HBTU", place: "Kanpur, UP", tag: "Century-old · Govt", image: "/colleges/hbtu.jpg",
       fact: "A century-old government institute — and where PhysicsWallah's Alakh Pandey studied engineering. Real legacy and strong core branches, reachable through LEET." },
-    { name: "College of Engineering, Pune", initials: "COEP", place: "Pune", tag: "Est. 1854 · Govt",
+    { name: "College of Engineering, Pune", initials: "COEP", place: "Pune", tag: "Est. 1854 · Govt", image: "/colleges/coep.jpg",
       fact: "Among India's oldest and finest engineering schools, founded in 1854. Blue-chip placements and fierce alumni pride." },
     { name: "J.C. Bose University (YMCA)", initials: "YMCA", place: "Faridabad", tag: "State University · NCR",
       fact: "Haryana's top state technical university, minutes from Delhi-NCR's recruiters. Strong core engineering and steady placements." },
     { name: "Bhagalpur College of Engineering", initials: "BCE", place: "Bhagalpur, Bihar", tag: "Govt · Affordable",
       fact: "A government college with low fees, a degree that counts, and a dependable placement record. Big value, small price." },
-    { name: "Veermata Jijabai Technological Institute", initials: "VJTI", place: "Mumbai", tag: "Est. 1887 · Govt",
+    { name: "Veermata Jijabai Technological Institute", initials: "VJTI", place: "Mumbai", tag: "Est. 1887 · Govt", image: "/colleges/vjti.jpg",
       fact: "Mumbai's legendary institute, with elite placements and iconic alumni. JEE seats here are cut-throat — LEET is your way in." },
-    { name: "MIT, Pune", initials: "MIT", place: "Pune", tag: "Private · Modern",
+    { name: "MIT, Pune", initials: "MIT", place: "Pune", tag: "Private · Modern", image: "/colleges/mitpune.jpg",
       fact: "A large, modern private campus with strong industry links and heavy recruiter footfall across Pune's IT belt." },
-    { name: "Birla Institute of Technology, Mesra", initials: "BIT", place: "Ranchi", tag: "National brand",
+    { name: "Birla Institute of Technology, Mesra", initials: "BIT", place: "Ranchi", tag: "National brand", image: "/colleges/bitmesra.jpg",
       fact: "A national name in tech, with strong core & IT recruiters and a powerful, well-connected alumni network." },
-    { name: "BIT Sindri", initials: "BIT", place: "Dhanbad, Jharkhand", tag: "Est. 1949 · Govt-aided",
+    { name: "BIT Sindri", initials: "BIT", place: "Dhanbad, Jharkhand", tag: "Est. 1949 · Govt-aided", image: "/colleges/bitsindri.jpg",
       fact: "A historic, respected institute with affordable fees and a solid placement record — a genuine legacy name in the East." },
     { name: "Muzaffarpur Institute of Technology", initials: "MIT", place: "Muzaffarpur, Bihar", tag: "Govt · Affordable",
       fact: "A government college under Bihar's technical university, with low fees and reliable placements. Strong value for money." },
-    { name: "Maulana Abul Kalam Azad University of Technology", initials: "MAKAUT", place: "West Bengal", tag: "State University",
+    { name: "Maulana Abul Kalam Azad University of Technology", initials: "MAKAUT", place: "West Bengal", tag: "State University", image: "/colleges/makaut.jpg",
       fact: "West Bengal's big technical university, with wide reach across the state and a growing recruiter base." },
-    { name: "Manipal Institute of Technology", initials: "MIT", place: "Manipal", tag: "Private · Global brand",
+    { name: "Manipal Institute of Technology", initials: "MIT", place: "Manipal", tag: "Private · Global brand", image: "/colleges/manipal.jpg",
       fact: "One of India's top private institutes, with a world-class campus and blue-chip placements. A brand that opens doors." },
     { name: "Thapar Institute of Engineering & Technology", initials: "TIET", place: "Patiala", tag: "Private · Top-ranked",
       fact: "A consistently top-ranked private university, with strong MNC placements and a serious research culture." },
-    { name: "Vellore Institute of Technology", initials: "VIT", place: "Vellore", tag: "Private · Powerhouse",
+    { name: "Vellore Institute of Technology", initials: "VIT", place: "Vellore", tag: "Private · Powerhouse", image: "/colleges/vit.jpg",
       fact: "A private powerhouse — massive recruiter drives, high placement volume, and a truly global campus feel." },
-    { name: "Sant Longowal Institute of Engineering & Technology", initials: "SLIET", place: "Longowal, Punjab", tag: "Central Govt · LEET",
+    { name: "Sant Longowal Institute of Engineering & Technology", initials: "SLIET", place: "Longowal, Punjab", tag: "Central Govt · LEET", image: "/colleges/sliet.jpg",
       fact: "A centrally-funded institute built around lateral entry — LEET is literally its front door. A central-government degree at low fees." },
-    { name: "Gujarat Government Colleges (LD, VGEC…)", initials: "GEC", place: "Gujarat", tag: "Govt · Ultra-low fees",
+    { name: "Gujarat Government Colleges (LD, VGEC…)", initials: "GEC", place: "Gujarat", tag: "Govt · Ultra-low fees", image: "/colleges/ldce.jpg",
       fact: "Top Gujarat govt colleges like LD & VGEC charge roughly ₹1,500 a year — and tuition is free for girls. An elite education without the price tag." },
 ];
 
@@ -95,19 +95,29 @@ export default function CollegeShowcase({ heading }) {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.9, ease: "easeInOut" }}
                 >
-                    {/* full-bleed backdrop: photo if provided, else a live gradient.
-                        Slow zoom keeps it moving. */}
-                    <motion.div
-                        className="absolute inset-0 bg-cover bg-center"
-                        style={
-                            c.image
-                                ? { backgroundImage: `url(${c.image})` }
-                                : { backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }
-                        }
-                        initial={{ scale: reduce ? 1 : 1.14 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: SLIDE_MS / 1000 + 1.2, ease: "linear" }}
+                    {/* gradient base — also the graceful fallback if a photo fails */}
+                    <div
+                        className="absolute inset-0"
+                        style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}
                     />
+                    {/* real campus photo on top, if we have one. Slow zoom keeps it
+                        moving; if it ever fails to load it hides itself and the
+                        gradient beneath shows through. */}
+                    {c.image && (
+                        <motion.img
+                            src={c.image}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-0 h-full w-full object-cover"
+                            loading="lazy"
+                            onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                            }}
+                            initial={{ scale: reduce ? 1 : 1.14 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: SLIDE_MS / 1000 + 1.2, ease: "linear" }}
+                        />
+                    )}
                     {/* giant translucent monogram for texture */}
                     <div className="absolute inset-0 flex items-center justify-center">
                         <span className="select-none text-[13rem] font-black leading-none text-white/10 xl:text-[16rem]">
@@ -159,24 +169,29 @@ export default function CollegeShowcase({ heading }) {
                     )}
                 </div>
 
-                {/* progress dots + counter */}
-                <div className="flex items-center gap-3">
-                    <div className="flex flex-1 flex-wrap gap-1.5">
-                        {COLLEGES.map((_, idx) => (
-                            <button
-                                key={idx}
-                                type="button"
-                                aria-label={`Show ${COLLEGES[idx].initials}`}
-                                onClick={() => setI(idx)}
-                                className={`h-1.5 rounded-full transition-all ${
-                                    idx === i ? "w-6 bg-white" : "w-1.5 bg-white/40 hover:bg-white/70"
-                                }`}
-                            />
-                        ))}
+                {/* progress dots + counter + photo credit */}
+                <div className="space-y-2.5">
+                    <div className="flex items-center gap-3">
+                        <div className="flex flex-1 flex-wrap gap-1.5">
+                            {COLLEGES.map((_, idx) => (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    aria-label={`Show ${COLLEGES[idx].initials}`}
+                                    onClick={() => setI(idx)}
+                                    className={`h-1.5 rounded-full transition-all ${
+                                        idx === i ? "w-6 bg-white" : "w-1.5 bg-white/40 hover:bg-white/70"
+                                    }`}
+                                />
+                            ))}
+                        </div>
+                        <span className="shrink-0 text-xs font-semibold tabular-nums text-white/70">
+                            {String(i + 1).padStart(2, "0")} / {COLLEGES.length}
+                        </span>
                     </div>
-                    <span className="shrink-0 text-xs font-semibold tabular-nums text-white/70">
-                        {String(i + 1).padStart(2, "0")} / {COLLEGES.length}
-                    </span>
+                    <p className="text-[9px] text-white/40">
+                        Campus photos · Wikimedia Commons (CC)
+                    </p>
                 </div>
             </div>
         </div>
