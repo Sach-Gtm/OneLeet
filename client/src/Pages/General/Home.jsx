@@ -11,7 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import Footer from "@/Components/General/Footer";
 import ShaderHero from "@/Components/General/ShaderHero";
-import CircuitCanvas from "@/Components/General/CircuitCanvas";
+import JourneyReveal from "@/Components/General/JourneyReveal";
 
 const features = [
     { icon: FileText, title: "Real past papers", desc: "Actual LEET papers — practise what the exam really asks.", tint: "bg-indigo-50 border-indigo-100", iconBg: "bg-indigo-500" },
@@ -124,20 +124,26 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Living circuit — a wordless nod to the maker's edge: things that
-                get built, and work. Feeling over words, so no caption. */}
+            {/* The journey — 10th → Diploma → B.Tech → gates opening to the
+                companies it can lead to. Aspiration, not a placement claim. */}
             <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+                <div className="mb-6 text-center">
+                    <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+                        From 10th to your dream company.
+                    </h2>
+                    <p className="mx-auto mt-2 max-w-xl text-sm text-slate-600 sm:text-base">
+                        Class 10 → Diploma → B.Tech through LEET. From there, the doors
+                        you always dreamed of start to open.
+                    </p>
+                </div>
                 <motion.div
                     initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
                     transition={{ duration: 0.5 }}
-                    className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white/60 shadow-sm"
+                    className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white/70 p-2 shadow-sm sm:p-4"
                 >
-                    <CircuitCanvas className="block h-32 w-full sm:h-40" />
-                    {/* soft edge fade so the traces melt into the panel */}
-                    <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white/80 to-transparent" />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white/80 to-transparent" />
+                    <JourneyReveal className="block h-auto w-full" />
                 </motion.div>
             </section>
 
