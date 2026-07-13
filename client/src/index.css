@@ -2,6 +2,39 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* -------------------------------------------------------------------------
+   OneLeet brand palette. The app was built on Tailwind's indigo/violet; we
+   remap those two scales to the brand colours so the whole site — every
+   button, link, gradient, chip and accent — turns blue (primary) + saffron/
+   orange (accent) in one place, matching the logo. "indigo" => brand blue,
+   "violet" => brand saffron. (Names kept so existing classes just work.)
+   ------------------------------------------------------------------------- */
+@theme {
+  --color-indigo-50: #edfafe;
+  --color-indigo-100: #d3f2fb;
+  --color-indigo-200: #ace4f6;
+  --color-indigo-300: #74cfec;
+  --color-indigo-400: #3fb0d6; /* brand blue (OneLeet "Leet") */
+  --color-indigo-500: #2298c1;
+  --color-indigo-600: #147a9e; /* primary — readable with white text */
+  --color-indigo-700: #166381;
+  --color-indigo-800: #18526a;
+  --color-indigo-900: #184558;
+  --color-indigo-950: #0b2c3a;
+
+  --color-violet-50: #fdf3ee;
+  --color-violet-100: #fbe2d6;
+  --color-violet-200: #f6c4ad;
+  --color-violet-300: #f19e78;
+  --color-violet-400: #ec7a54; /* brand saffron/orange (OneLeet "One") */
+  --color-violet-500: #e05c33;
+  --color-violet-600: #cb4826; /* accent — readable with white text */
+  --color-violet-700: #a83a20;
+  --color-violet-800: #883220;
+  --color-violet-900: #6f2c1e;
+  --color-violet-950: #3c140c;
+}
 * {
   font-family: "Mulish", sans-serif;
   font-optical-sizing: auto;
