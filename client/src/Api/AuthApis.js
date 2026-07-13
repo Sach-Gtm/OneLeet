@@ -1,4 +1,4 @@
-import api from "./axios";
+import api, { setToken, clearToken } from "./axios";
 
 // Normalises axios errors so callers can `catch (err) { err.message }` and also
 // read `err.errors` (array of field messages from the zod validator).
@@ -22,6 +22,7 @@ const unwrap = (error) => {
 export const registerUser = async (payload) => {
     try {
         const { data } = await api.post("/auth/register", payload);
+        if (data?.token) setToken(data.token);
         return data;
     } catch (error) {
         unwrap(error);
@@ -31,6 +32,7 @@ export const registerUser = async (payload) => {
 export const loginUser = async (payload) => {
     try {
         const { data } = await api.post("/auth/login", payload);
+        if (data?.token) setToken(data.token);
         return data;
     } catch (error) {
         unwrap(error);
@@ -45,6 +47,7 @@ export const getMe = async () => {
 export const verifyOtp = async (payload) => {
     try {
         const { data } = await api.post("/auth/verify-otp", payload);
+        if (data?.token) setToken(data.token);
         return data;
     } catch (error) {
         unwrap(error);
@@ -81,6 +84,7 @@ export const resetPassword = async (token, payload) => {
 export const loginwithGoogle = async (formData) => {
     try {
         const { data } = await api.post("/auth/google-login", formData);
+        if (data?.token) setToken(data.token);
         return data;
     } catch (error) {
         unwrap(error);
@@ -132,6 +136,9 @@ export const uploadPassportPhoto = async (file) => {
 };
 
 export const logoutUser = async () => {
+    // Clear the local token first so we're logged out even if the network call
+    // fails (and so a stale token never lingers).
+    clearToken();
     try {
         const { data } = await api.post("/auth/logout");
         return data;

@@ -37,7 +37,9 @@ app.use((req, res, next) => {
         "Referrer-Policy": "no-referrer",
         "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
         "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-        "Cross-Origin-Resource-Policy": "same-site",
+        // NB: no Cross-Origin-Resource-Policy here — the API is deliberately
+        // consumed cross-site by the Vercel frontend, so CORP must not restrict
+        // it (CORS already governs access).
     });
     if (process.env.NODE_ENV === "production") {
         res.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
