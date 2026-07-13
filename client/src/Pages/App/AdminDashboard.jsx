@@ -16,6 +16,14 @@ import {
     X,
     FileUp,
     ListChecks,
+    Inbox,
+    Bug,
+    Gift,
+    Phone,
+    Paperclip,
+    Trash2,
+    Check,
+    RefreshCw,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -27,6 +35,22 @@ import {
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
+import { getInbox, markInboxRead, deleteInboxItem } from "@/Api/ContactApi";
+
+// Per-type presentation for the requests inbox.
+const INBOX_TYPES = {
+    bug: { label: "Bug", icon: Bug, tint: "text-rose-600 bg-rose-50 border-rose-200" },
+    contribution: { label: "Contribution", icon: Gift, tint: "text-violet-600 bg-violet-50 border-violet-200" },
+    callback: { label: "Callback", icon: Phone, tint: "text-emerald-600 bg-emerald-50 border-emerald-200" },
+};
+
+function timeAgo(iso) {
+    const d = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (d < 60) return "just now";
+    if (d < 3600) return `${Math.floor(d / 60)}m ago`;
+    if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
+    return `${Math.floor(d / 86400)}d ago`;
+}
 
 const STAT_CARDS = [
     { key: "totalStudents", label: "Total Students", icon: Users, tint: "text-indigo-600 bg-indigo-50" },
@@ -91,6 +115,10 @@ export default function AdminDashboard() {
     const [qCorrect, setQCorrect] = useState(0);
     const [qBusy, setQBusy] = useState(false);
     const [qCount, setQCount] = useState(null);
+    // Requests inbox (bug reports / contributions / callbacks)
+    const [inbox, setInbox] = useState({ items: [], unread: 0, counts: {}, total: 0 });
+    const [inboxFilter, setInboxFilter] = useState("");
+    const [inboxLoading, setInboxLoading] = useState(false);
 
     const isStaff = user && (user.role === "admin" || user.role === "teacher");
     const isAdmin = user && user.role === "admin";
@@ -121,6 +149,41 @@ export default function AdminDashboard() {
             .then((r) => setQCount(r.total ?? 0))
             .catch(() => {});
     }, [isStaff]);
+
+    const loadInbox = useCallback(async () => {
+        setInboxLoading(true);
+        try {
+            const res = await getInbox({ type: inboxFilter, page: 1 });
+            setInbox(res || { items: [], unread: 0, counts: {}, total: 0 });
+        } catch (err) {
+            toast.error(err.message || "Couldn't load requests");
+        } finally {
+            setInboxLoading(false);
+        }
+    }, [inboxFilter]);
+
+    useEffect(() => {
+        if (isStaff) loadInbox();
+    }, [isStaff, loadInbox]);
+
+    const toggleInboxRead = async (item) => {
+        try {
+            await markInboxRead(item._id, !item.read);
+            loadInbox();
+        } catch (err) {
+            toast.error(err.message || "Couldn't update");
+        }
+    };
+
+    const removeInboxItem = async (item) => {
+        try {
+            await deleteInboxItem(item._id);
+            toast.success("Removed");
+            loadInbox();
+        } catch (err) {
+            toast.error(err.message || "Couldn't remove");
+        }
+    };
 
     // Hooks must run unconditionally; gate AFTER them.
     if (user && !isStaff) return <Navigate to="/dashboard" replace />;
@@ -287,6 +350,138 @@ export default function AdminDashboard() {
                         suffix={c.suffix}
                     />
                 ))}
+            </div>
+
+            {/* Requests inbox — every bug report, contribution & callback lands here */}
+            <div className="rounded-xl border border-slate-200 bg-white p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                        <Inbox className="h-4 w-4 text-indigo-600" /> Requests
+                        {inbox.unread > 0 && (
+                            <span className="rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                                {inbox.unread} new
+                            </span>
+                        )}
+                    </div>
+                    <button
+                        type="button"
+                        onClick={loadInbox}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                    >
+                        <RefreshCw className={`h-3.5 w-3.5 ${inboxLoading ? "animate-spin" : ""}`} /> Refresh
+                    </button>
+                </div>
+
+                <div className="mb-3 flex flex-wrap gap-2">
+                    {[
+                        { key: "", label: "All", count: inbox.total },
+                        { key: "bug", label: "Bugs", count: inbox.counts?.bug || 0 },
+                        { key: "contribution", label: "Contributions", count: inbox.counts?.contribution || 0 },
+                        { key: "callback", label: "Callbacks", count: inbox.counts?.callback || 0 },
+                    ].map((f) => (
+                        <button
+                            key={f.key || "all"}
+                            type="button"
+                            onClick={() => setInboxFilter(f.key)}
+                            className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                                inboxFilter === f.key
+                                    ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+                                    : "border-slate-200 text-slate-500 hover:bg-slate-50"
+                            }`}
+                        >
+                            {f.label}
+                            {f.count ? ` · ${f.count}` : ""}
+                        </button>
+                    ))}
+                </div>
+
+                {inboxLoading && inbox.items.length === 0 ? (
+                    <div className="flex justify-center py-8">
+                        <Loader2 className="h-5 w-5 animate-spin text-indigo-600" />
+                    </div>
+                ) : inbox.items.length === 0 ? (
+                    <div className="rounded-lg border border-dashed border-slate-200 py-10 text-center text-sm text-slate-400">
+                        No requests yet. Bug reports, contributions and callback requests
+                        will show up here.
+                    </div>
+                ) : (
+                    <ul className="max-h-[26rem] space-y-2 overflow-y-auto pr-1">
+                        {inbox.items.map((it) => {
+                            const meta = INBOX_TYPES[it.type] || INBOX_TYPES.bug;
+                            const Icon = meta.icon;
+                            return (
+                                <li
+                                    key={it._id}
+                                    className={`rounded-lg border p-3 ${
+                                        it.read
+                                            ? "border-slate-200 bg-white"
+                                            : "border-indigo-200 bg-indigo-50/40"
+                                    }`}
+                                >
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${meta.tint}`}>
+                                                    <Icon className="h-3 w-3" /> {meta.label}
+                                                </span>
+                                                {!it.read && <span className="h-2 w-2 rounded-full bg-indigo-600" />}
+                                                <span className="text-xs text-slate-400">{timeAgo(it.createdAt)}</span>
+                                            </div>
+                                            <div className="mt-1.5 text-sm font-semibold text-slate-800">
+                                                {it.name || "Anonymous"}
+                                                {it.subject && (
+                                                    <span className="ml-2 text-xs font-normal text-slate-500">· {it.subject}</span>
+                                                )}
+                                            </div>
+                                            {(it.email || it.phone) && (
+                                                <div className="text-xs text-slate-500">
+                                                    {it.email && (
+                                                        <a href={`mailto:${it.email}`} className="hover:text-indigo-600">{it.email}</a>
+                                                    )}
+                                                    {it.email && it.phone && " · "}
+                                                    {it.phone && (
+                                                        <a href={`tel:${it.phone}`} className="hover:text-indigo-600">{it.phone}</a>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {it.message && (
+                                                <p className="mt-1.5 whitespace-pre-wrap text-sm text-slate-600">{it.message}</p>
+                                            )}
+                                            {it.attachmentUrl && (
+                                                <a
+                                                    href={it.attachmentUrl}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:underline"
+                                                >
+                                                    <Paperclip className="h-3 w-3" /> View attachment
+                                                </a>
+                                            )}
+                                        </div>
+                                        <div className="flex shrink-0 flex-col gap-1.5">
+                                            <button
+                                                type="button"
+                                                onClick={() => toggleInboxRead(it)}
+                                                title={it.read ? "Mark as unread" : "Mark as read"}
+                                                className="grid h-7 w-7 place-items-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+                                            >
+                                                <Check className={`h-3.5 w-3.5 ${it.read ? "text-emerald-600" : ""}`} />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeInboxItem(it)}
+                                                title="Delete"
+                                                className="grid h-7 w-7 place-items-center rounded-md border border-slate-200 text-slate-500 hover:bg-rose-50 hover:text-rose-600"
+                                            >
+                                                <Trash2 className="h-3.5 w-3.5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
             </div>
 
             {/* Actions: broadcast a notification + grant team access */}

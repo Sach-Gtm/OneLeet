@@ -1,9 +1,23 @@
 const { sendMail } = require("../../utils/email");
 const { uploadBufferToCloudinary } = require("../../utils/cloudinaryUpload");
+const ContactSubmission = require("../../models/contactModel");
 
-// Where form submissions are delivered. Set CONTACT_EMAIL to an inbox you
-// actually read; falls back to the site address.
+// Where form submissions are ALSO emailed. Set CONTACT_EMAIL to an inbox you
+// actually read; falls back to the site address. Note: every submission is
+// stored in the database and browsable in the admin dashboard regardless, so
+// nothing is lost even if email isn't configured or a message bounces.
 const ADMIN_EMAIL = process.env.CONTACT_EMAIL || "admin@oneleet.in";
+
+// Persist a submission so it always shows up in the admin inbox. Wrapped so a
+// DB hiccup can't fail the user's request (they're still emailed + logged).
+async function saveSubmission(fields) {
+    try {
+        return await ContactSubmission.create(fields);
+    } catch (e) {
+        console.error("[contact] db save failed:", e.message);
+        return null;
+    }
+}
 
 const esc = (s) =>
     String(s == null ? "" : s).replace(
@@ -61,6 +75,7 @@ async function bugReport(req, res, next) {
             return res.status(400).json({ success: false, message: "Please describe the bug." });
         }
         const attachmentUrl = await uploadAttachment(req.file, "oneleet/bug-reports");
+        await saveSubmission({ type: "bug", name, email, message: description, attachmentUrl });
         await notify({
             subject: "🐛 New bug report — OneLeet",
             rows: [["Name", name], ["Email", email], ["Description", description]],
@@ -80,6 +95,7 @@ async function contribution(req, res, next) {
             return res.status(400).json({ success: false, message: "Please tell us what you're contributing." });
         }
         const attachmentUrl = await uploadAttachment(req.file, "oneleet/contributions");
+        await saveSubmission({ type: "contribution", name, email, subject: type, message: description, attachmentUrl });
         await notify({
             subject: "🎁 New contribution — OneLeet",
             rows: [["Name", name], ["Email", email], ["Type", type], ["Details", description]],
@@ -98,6 +114,7 @@ async function callback(req, res, next) {
         if (!name || !name.trim() || !phone || !phone.trim()) {
             return res.status(400).json({ success: false, message: "Name and phone number are required." });
         }
+        await saveSubmission({ type: "callback", name, phone, message: reason });
         await notify({
             subject: "📞 Callback request — OneLeet",
             rows: [["Name", name], ["Phone", phone], ["Reason", reason]],
@@ -108,4 +125,83 @@ async function callback(req, res, next) {
     }
 }
 
-module.exports = { bugReport, contribution, callback };
+// ---- Admin inbox (staff only) ----------------------------------------------
+
+// GET /api/contact/inbox?type=&page=  — list submissions, newest first, with an
+// overall unread count and per-type tallies for the dashboard badges.
+async function listInbox(req, res, next) {
+    try {
+        const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+        const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 20));
+        const filter = {};
+        if (["bug", "contribution", "callback"].includes(req.query.type)) {
+            filter.type = req.query.type;
+        }
+
+        const [items, total, unread, byType] = await Promise.all([
+            ContactSubmission.find(filter)
+                .sort({ createdAt: -1 })
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .lean(),
+            ContactSubmission.countDocuments(filter),
+            ContactSubmission.countDocuments({ read: false }),
+            ContactSubmission.aggregate([
+                { $group: { _id: "$type", count: { $sum: 1 } } },
+            ]),
+        ]);
+
+        const counts = byType.reduce((acc, r) => ({ ...acc, [r._id]: r.count }), {});
+        return res.status(200).json({
+            success: true,
+            items,
+            total,
+            unread,
+            counts,
+            page,
+            pages: Math.max(1, Math.ceil(total / limit)),
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// PATCH /api/contact/inbox/:id/read  — mark one submission read (or unread).
+async function markInboxRead(req, res, next) {
+    try {
+        const read = req.body?.read !== false; // default true
+        const doc = await ContactSubmission.findByIdAndUpdate(
+            req.params.id,
+            { read },
+            { new: true }
+        );
+        if (!doc) {
+            return res.status(404).json({ success: false, message: "Not found" });
+        }
+        return res.status(200).json({ success: true, item: doc });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// DELETE /api/contact/inbox/:id  — remove a handled submission.
+async function deleteInbox(req, res, next) {
+    try {
+        const doc = await ContactSubmission.findByIdAndDelete(req.params.id);
+        if (!doc) {
+            return res.status(404).json({ success: false, message: "Not found" });
+        }
+        return res.status(200).json({ success: true });
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = {
+    bugReport,
+    contribution,
+    callback,
+    listInbox,
+    markInboxRead,
+    deleteInbox,
+};

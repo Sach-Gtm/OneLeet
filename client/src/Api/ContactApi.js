@@ -35,3 +35,31 @@ export const submitCallback = async (payload) => {
         unwrap(e);
     }
 };
+
+// ---- Admin inbox (staff only) ----
+export const getInbox = async ({ type = "", page = 1 } = {}) => {
+    try {
+        const { data } = await api.get("/contact/inbox", { params: { type, page } });
+        return data;
+    } catch (e) {
+        unwrap(e);
+    }
+};
+
+export const markInboxRead = async (id, read = true) => {
+    try {
+        const { data } = await api.patch(`/contact/inbox/${id}/read`, { read });
+        return data;
+    } catch (e) {
+        unwrap(e);
+    }
+};
+
+export const deleteInboxItem = async (id) => {
+    try {
+        const { data } = await api.delete(`/contact/inbox/${id}`);
+        return data;
+    } catch (e) {
+        unwrap(e);
+    }
+};
