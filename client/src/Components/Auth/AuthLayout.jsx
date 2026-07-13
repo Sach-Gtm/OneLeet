@@ -1,125 +1,23 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Sparkles, TrendingUp } from "lucide-react";
-import ShaderHero from "@/Components/General/ShaderHero";
-import GrowthCanvas from "@/Components/General/GrowthCanvas";
-import NetworkCanvas from "@/Components/General/NetworkCanvas";
 import { LogoMark } from "@/Components/General/Logo";
-
-// A little floating glass card in the brand panel. Two flavours, chosen by the
-// screen: a self-drawing growth chart (login) and a living network of minds
-// (register). Both are custom Canvas 2D, on-brand, and replay on every mount.
-function BrandCard({ children }) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 26, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
-            className="absolute right-10 top-24 z-10 w-72 rounded-2xl border border-white/70 bg-white/85 p-4 shadow-xl shadow-indigo-200/50 backdrop-blur-md"
-        >
-            {children}
-        </motion.div>
-    );
-}
-
-// Login: a StaplerLabs-style analytics card — a growth chart that draws itself
-// into place, then holds.
-function ProgressCard() {
-    return (
-        <BrandCard>
-            <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-700">Your progress</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                    <TrendingUp className="h-3 w-3" /> Rising
-                </span>
-            </div>
-            <GrowthCanvas className="block h-36 w-full" />
-            <p className="mt-2 text-[11px] text-slate-400">Every focused session moves you up.</p>
-        </BrandCard>
-    );
-}
-
-// Register: a drifting constellation of connected nodes — a wordless "you're
-// joining a network of sharp, curious minds" feeling. No claim spelled out;
-// the picture does the talking.
-function NetworkCard() {
-    return (
-        <BrandCard>
-            <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-700">You&apos;re in good company</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-700">
-                    <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" /> Live
-                </span>
-            </div>
-            <NetworkCanvas className="block h-36 w-full" />
-            <p className="mt-2 text-[11px] text-slate-400">Curious, self-driven minds — just like yours.</p>
-        </BrandCard>
-    );
-}
+import CollegeShowcase from "@/Components/Auth/CollegeShowcase";
 
 // Shared split-panel shell for the light auth screens (login / register /
-// forgot / reset). Left = animated brand panel (hidden on mobile), right = form.
-// `variant` picks the floating canvas card: "progress" (default) or "network".
-export default function AuthLayout({ heading, subheading, stats = [], variant = "progress", children }) {
+// forgot / reset). Left = a moving showcase of the colleges LEET can open the
+// door to (hidden on mobile). Right = the form. Extra props (subheading, stats,
+// variant) passed by some screens are intentionally ignored here now.
+export default function AuthLayout({ heading, children }) {
     return (
         <div className="grid min-h-screen w-full bg-white lg:grid-cols-2">
-            {/* Brand panel — light, animated, weightless */}
-            <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-12 lg:flex">
-                {/* Live pastel aurora + a soft wash to keep text crisp */}
-                <ShaderHero className="absolute inset-0" />
-                <div className="pointer-events-none absolute inset-0 bg-white/25" />
-
-                <Link to="/" className="relative z-20 flex items-center gap-2.5">
-                    <LogoMark size={46} animated />
-                    <div className="leading-tight">
-                        <span className="block text-lg font-extrabold tracking-tight">
-                            <span className="text-[#EC7A54]">One</span>
-                            <span className="text-[#3FB0D6]">Leet</span>
-                        </span>
-                        <span className="block text-[10px] font-medium text-slate-400">
-                            A StaplerLabs product
-                        </span>
-                    </div>
-                </Link>
-
-                {/* Custom brand canvas card — grows/connects depending on screen */}
-                {variant === "network" ? <NetworkCard /> : <ProgressCard />}
-
-                <div className="relative z-20 max-w-sm space-y-4">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-white/70 px-3 py-1 text-xs font-semibold text-indigo-700 shadow-sm backdrop-blur">
-                        <Sparkles className="h-3.5 w-3.5" /> Where rank-holders are made
-                    </span>
-                    <h1 className="text-3xl font-extrabold leading-tight text-slate-900 xl:text-4xl">
-                        {heading}
-                    </h1>
-                    {subheading && (
-                        <p className="max-w-sm text-base leading-relaxed text-slate-600">
-                            {subheading}
-                        </p>
-                    )}
-                    {stats.length > 0 && (
-                        <div className="flex gap-8 pt-1">
-                            {stats.map((s) => (
-                                <div key={s.label}>
-                                    <div className="text-3xl font-bold text-indigo-600">{s.value}</div>
-                                    <div className="text-xs uppercase tracking-wider text-slate-500">
-                                        {s.label}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                <p className="relative z-20 text-xs text-slate-500">
-                    Trusted by thousands of LEET aspirants across India.
-                </p>
+            {/* College showcase panel (desktop only) */}
+            <div className="relative hidden overflow-hidden lg:block">
+                <CollegeShowcase heading={heading} />
             </div>
 
             {/* Form panel */}
             <div className="flex items-center justify-center px-6 py-10 sm:px-10">
                 <div className="w-full max-w-md">
-                    {/* Compact brand for mobile (brand panel is hidden) */}
+                    {/* Compact brand for mobile (showcase panel is hidden) */}
                     <Link
                         to="/"
                         className="mb-8 flex flex-col items-center justify-center gap-1 lg:hidden"
