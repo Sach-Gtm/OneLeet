@@ -11,7 +11,6 @@ import { Label } from "@/Components/ui/label";
 import AuthLayout from "@/Components/Auth/AuthLayout";
 import GoogleLogin from "@/Components/Auth/GoogleLogin";
 import { loginSchema } from "@/lib/validations/auth";
-import { loginUser } from "@/Api/AuthApis";
 import { useAuth } from "@/context/AuthContext";
 import { GOOGLE_ENABLED } from "@/lib/googleAuth";
 import Turnstile, { TURNSTILE_ENABLED } from "@/Components/Auth/Turnstile";
@@ -19,7 +18,7 @@ import Turnstile, { TURNSTILE_ENABLED } from "@/Components/Auth/Turnstile";
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { refresh } = useAuth();
+    const { login } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [captchaToken, setCaptchaToken] = useState("");
     const turnstileRef = useRef(null);
@@ -41,8 +40,7 @@ export default function Login() {
             return;
         }
         try {
-            await loginUser({ ...values, turnstileToken: captchaToken });
-            await refresh();
+            await login({ ...values, turnstileToken: captchaToken });
             toast.success("Welcome back!");
             navigate(redirectTo, { replace: true });
         } catch (err) {

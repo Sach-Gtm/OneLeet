@@ -19,11 +19,36 @@ const API_URL =
 // Bearer header; the backend's auth middleware accepts either. This makes login
 // work on every device/browser regardless of third-party-cookie policy.
 const TOKEN_KEY = "oneleet_token";
+// Also hold the token in memory. Managed/"School" Chrome profiles and privacy
+// extensions can silently no-op (or wipe) localStorage; the in-memory copy keeps
+// the current session authenticated even when persistence is blocked, and every
+// localStorage access is wrapped so a throw (private mode) never breaks login.
+let memToken = null;
 export const setToken = (t) => {
-    if (t) localStorage.setItem(TOKEN_KEY, t);
+    if (!t) return;
+    memToken = t;
+    try {
+        localStorage.setItem(TOKEN_KEY, t);
+    } catch {
+        /* storage blocked — memToken still carries the session */
+    }
 };
-export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
-export const getToken = () => localStorage.getItem(TOKEN_KEY);
+export const clearToken = () => {
+    memToken = null;
+    try {
+        localStorage.removeItem(TOKEN_KEY);
+    } catch {
+        /* ignore */
+    }
+};
+export const getToken = () => {
+    if (memToken) return memToken;
+    try {
+        return localStorage.getItem(TOKEN_KEY);
+    } catch {
+        return null;
+    }
+};
 
 const api = axios.create({
     baseURL: API_URL,
