@@ -3,12 +3,13 @@ import { motion } from "framer-motion";
 import { Sparkles, TrendingUp } from "lucide-react";
 import ShaderHero from "@/Components/General/ShaderHero";
 import GrowthCanvas from "@/Components/General/GrowthCanvas";
+import NetworkCanvas from "@/Components/General/NetworkCanvas";
 import { LogoMark } from "@/Components/General/Logo";
 
-// A StaplerLabs-style analytics card — a self-drawing growth chart that floats
-// into place on mount, then holds. Custom-built, on-brand, and it replays each
-// time the page mounts (login → register).
-function ProgressCard() {
+// A little floating glass card in the brand panel. Two flavours, chosen by the
+// screen: a self-drawing growth chart (login) and a living network of minds
+// (register). Both are custom Canvas 2D, on-brand, and replay on every mount.
+function BrandCard({ children }) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 26, scale: 0.96 }}
@@ -16,6 +17,16 @@ function ProgressCard() {
             transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
             className="absolute right-10 top-24 z-10 w-72 rounded-2xl border border-white/70 bg-white/85 p-4 shadow-xl shadow-indigo-200/50 backdrop-blur-md"
         >
+            {children}
+        </motion.div>
+    );
+}
+
+// Login: a StaplerLabs-style analytics card — a growth chart that draws itself
+// into place, then holds.
+function ProgressCard() {
+    return (
+        <BrandCard>
             <div className="mb-2 flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-700">Your progress</span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
@@ -24,13 +35,32 @@ function ProgressCard() {
             </div>
             <GrowthCanvas className="block h-36 w-full" />
             <p className="mt-2 text-[11px] text-slate-400">Every focused session moves you up.</p>
-        </motion.div>
+        </BrandCard>
+    );
+}
+
+// Register: a drifting constellation of connected nodes — a wordless "you're
+// joining a network of sharp, curious minds" feeling. No claim spelled out;
+// the picture does the talking.
+function NetworkCard() {
+    return (
+        <BrandCard>
+            <div className="mb-2 flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-700">You&apos;re in good company</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" /> Live
+                </span>
+            </div>
+            <NetworkCanvas className="block h-36 w-full" />
+            <p className="mt-2 text-[11px] text-slate-400">Curious, self-driven minds — just like yours.</p>
+        </BrandCard>
     );
 }
 
 // Shared split-panel shell for the light auth screens (login / register /
 // forgot / reset). Left = animated brand panel (hidden on mobile), right = form.
-export default function AuthLayout({ heading, subheading, stats = [], children }) {
+// `variant` picks the floating canvas card: "progress" (default) or "network".
+export default function AuthLayout({ heading, subheading, stats = [], variant = "progress", children }) {
     return (
         <div className="grid min-h-screen w-full bg-white lg:grid-cols-2">
             {/* Brand panel — light, animated, weightless */}
@@ -52,8 +82,8 @@ export default function AuthLayout({ heading, subheading, stats = [], children }
                     </div>
                 </Link>
 
-                {/* Custom analytics card (replaces the old stat chips) */}
-                <ProgressCard />
+                {/* Custom brand canvas card — grows/connects depending on screen */}
+                {variant === "network" ? <NetworkCard /> : <ProgressCard />}
 
                 <div className="relative z-20 max-w-sm space-y-4">
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-white/70 px-3 py-1 text-xs font-semibold text-indigo-700 shadow-sm backdrop-blur">

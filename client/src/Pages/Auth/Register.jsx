@@ -85,6 +85,7 @@ export default function Register() {
 
     return (
         <AuthLayout
+            variant="network"
             heading="Your top-college journey starts here."
             subheading="Join thousands of ambitious students turning focused effort into top ranks — and a brighter future."
             stats={[
