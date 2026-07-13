@@ -8,10 +8,9 @@ import { LogoMark } from "@/Components/General/Logo";
 // were gently corrected from common short-forms), and every fact is written to
 // be TRUE and defensible — aspiration, not a placement guarantee.
 //
-// Most carry a real campus photo (`image`) — self-hosted in /public/colleges,
-// sourced from Wikimedia Commons under CC licences (credited in the UI). The
-// slide layers the photo over a brand gradient that also serves as the graceful
-// fallback: colleges without a good free photo just show the gradient, and any
+// Most carry a real campus photo (`image`), self-hosted in /public/colleges.
+// The slide layers the photo over a brand gradient that also serves as the
+// graceful fallback: colleges without a photo just show the gradient, and any
 // photo that fails to load reveals the gradient beneath it.
 const COLLEGES = [
     { name: "Delhi Technological University", initials: "DTU", place: "Delhi", tag: "Govt · Flagship", image: "/colleges/dtu.jpg",
@@ -22,19 +21,19 @@ const COLLEGES = [
       fact: "One of India's most respected public universities. World-class faculty, deep research and strong placements — at almost no fees." },
     { name: "Maharaja Agrasen Institute of Technology", initials: "MAIT", place: "Delhi", tag: "GGSIPU", image: "/colleges/mait.jpg",
       fact: "A top IPU college with strong IT & core placements and a lively campus in Rohini. LEET is your lateral gateway in." },
-    { name: "Maharaja Surajmal Institute of Technology", initials: "MSIT", place: "Delhi", tag: "GGSIPU",
+    { name: "Maharaja Surajmal Institute of Technology", initials: "MSIT", place: "Delhi", tag: "GGSIPU", image: "/colleges/msit.jpg",
       fact: "A well-loved IPU college with solid placements and a huge, warm alumni base. Enter via LEET — no JEE marathon required." },
-    { name: "Guru Gobind Singh Indraprastha University", initials: "IPU", place: "Dwarka, Delhi", tag: "State University",
+    { name: "Guru Gobind Singh Indraprastha University", initials: "IPU", place: "Dwarka, Delhi", tag: "State University", image: "/colleges/ipu.jpg",
       fact: "Delhi's own state university — many branches, strong recruiters and low fees. LEET opens the main Dwarka campus to you." },
     { name: "University School of Automation & Robotics", initials: "USAR", place: "Delhi", tag: "GGSIPU · New-age",
       fact: "IPU's future-facing school built for AI, robotics and automation. A modern, fast-rising campus — and LEET-friendly." },
-    { name: "Dr. A.P.J. Abdul Kalam Technical University", initials: "AKTU", place: "Lucknow, UP", tag: "Largest tech university",
+    { name: "Dr. A.P.J. Abdul Kalam Technical University", initials: "AKTU", place: "Lucknow, UP", tag: "Largest tech university", image: "/colleges/aktu.jpg",
       fact: "India's largest technical university, with 700+ affiliated colleges. A LEET seat plugs you into a massive recruiter network across UP." },
     { name: "Harcourt Butler Technical University", initials: "HBTU", place: "Kanpur, UP", tag: "Century-old · Govt", image: "/colleges/hbtu.jpg",
       fact: "A century-old government institute — and where PhysicsWallah's Alakh Pandey studied engineering. Real legacy and strong core branches, reachable through LEET." },
     { name: "College of Engineering, Pune", initials: "COEP", place: "Pune", tag: "Est. 1854 · Govt", image: "/colleges/coep.jpg",
       fact: "Among India's oldest and finest engineering schools, founded in 1854. Blue-chip placements and fierce alumni pride." },
-    { name: "J.C. Bose University (YMCA)", initials: "YMCA", place: "Faridabad", tag: "State University · NCR",
+    { name: "J.C. Bose University (YMCA)", initials: "YMCA", place: "Faridabad", tag: "State University · NCR", image: "/colleges/ymca.jpg",
       fact: "Haryana's top state technical university, minutes from Delhi-NCR's recruiters. Strong core engineering and steady placements." },
     { name: "Bhagalpur College of Engineering", initials: "BCE", place: "Bhagalpur, Bihar", tag: "Govt · Affordable",
       fact: "A government college with low fees, a degree that counts, and a dependable placement record. Big value, small price." },
@@ -189,9 +188,6 @@ export default function CollegeShowcase({ heading }) {
                             {String(i + 1).padStart(2, "0")} / {COLLEGES.length}
                         </span>
                     </div>
-                    <p className="text-[9px] text-white/40">
-                        Campus photos · Wikimedia Commons (CC)
-                    </p>
                 </div>
             </div>
         </div>
