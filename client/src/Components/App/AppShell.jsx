@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Suspense } from "react";
-import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation, Navigate, Link } from "react-router-dom";
 import {
     LayoutDashboard,
     FileQuestion,
@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "@/Components/General/Logo";
+import { isProfileComplete } from "@/lib/profile";
 
 const NAV = [
     {
@@ -237,8 +238,14 @@ function UserMenu({ user, isStaff, onLogout }) {
 export default function AppShell() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [mobileOpen, setMobileOpen] = useState(false);
     const isStaff = user?.role === "admin" || user?.role === "teacher";
+
+    // Profile is mandatory: until every required field is filled, keep the user
+    // on /profile (they can still log out from the header). Once complete, the
+    // whole app opens up.
+    const gated = user && !isProfileComplete(user) && location.pathname !== "/profile";
 
     const handleLogout = async () => {
         await logout();
@@ -317,7 +324,7 @@ export default function AppShell() {
                             </div>
                         }
                     >
-                        <Outlet />
+                        {gated ? <Navigate to="/profile" replace /> : <Outlet />}
                     </Suspense>
                 </main>
             </div>

@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { updateProfile, changePassword, uploadPassportPhoto } from "@/Api/AuthApis";
+import { missingProfileFields } from "@/lib/profile";
 
 const MAX_PHOTO_BYTES = 1024 * 1024; // 1 MB
 
@@ -61,7 +62,17 @@ export default function Profile() {
 
     const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
+    const staffUser = user?.role === "teacher" || user?.role === "admin";
+    const requiredKeys = staffUser
+        ? ["name", "phone"]
+        : ["name", "phone", "college", "branch", "yearOfStudy", "targetExam"];
+
     const save = async () => {
+        const blanks = requiredKeys.filter((k) => !String(form[k] || "").trim());
+        if (blanks.length) {
+            toast.error("Please fill in all required fields.");
+            return;
+        }
         setSaving(true);
         try {
             const res = await updateProfile(form);
@@ -120,7 +131,9 @@ export default function Profile() {
 
     const isStudent = user?.role !== "teacher" && user?.role !== "admin";
     const photoUrl = user?.passportPhoto?.url || user?.avatar || "";
-    const needsPhoto = isStudent && !user?.passportPhoto?.url;
+    const missing = missingProfileFields(user);
+    const incomplete = missing.length > 0;
+    const req = <span className="text-red-500">*</span>;
 
     const stats = user?.stats || {};
     const overview = [
@@ -135,22 +148,29 @@ export default function Profile() {
         <div className="mx-auto max-w-5xl space-y-6">
             <h1 className="text-2xl font-bold text-slate-900">My Profile</h1>
 
-            {needsPhoto && (
+            {incomplete && (
                 <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center">
                     <AlertTriangle className="h-5 w-5 shrink-0 text-amber-500" />
                     <div className="text-sm">
-                        <p className="font-semibold text-amber-800">Passport photo required</p>
+                        <p className="font-semibold text-amber-800">
+                            Complete your profile to continue
+                        </p>
                         <p className="text-amber-700">
-                            Upload a clear passport-size photo (under 1&nbsp;MB) to complete
-                            your profile — it&apos;s needed for your exam ID and results.
+                            All fields are required. Still needed:{" "}
+                            <span className="font-semibold">
+                                {missing.map((m) => m.label).join(", ")}
+                            </span>
+                            .
                         </p>
                     </div>
-                    <button
-                        onClick={() => fileRef.current?.click()}
-                        className="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600 sm:ml-auto"
-                    >
-                        Upload now
-                    </button>
+                    {missing.some((m) => m.key === "passportPhoto") && (
+                        <button
+                            onClick={() => fileRef.current?.click()}
+                            className="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600 sm:ml-auto"
+                        >
+                            Upload photo
+                        </button>
+                    )}
                 </div>
             )}
 
@@ -198,7 +218,7 @@ export default function Profile() {
                         <h3 className="mb-4 text-sm font-bold text-slate-800">Personal Details</h3>
                         <div className="grid gap-4 sm:grid-cols-2">
                             <label className="block">
-                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Full Name</span>
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Full Name {req}</span>
                                 <IconField icon={GraduationCap} value={form.name} onChange={set("name")} placeholder="Your name" />
                             </label>
                             <label className="block">
@@ -209,11 +229,11 @@ export default function Profile() {
                                 </div>
                             </label>
                             <label className="block">
-                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Phone</span>
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Phone {req}</span>
                                 <IconField icon={Phone} value={form.phone} onChange={set("phone")} placeholder="+91 …" />
                             </label>
                             <label className="block">
-                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Target Exam</span>
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Target Exam {req}</span>
                                 <IconField icon={Target} value={form.targetExam} onChange={set("targetExam")} placeholder="e.g. LEET 2026" />
                             </label>
                         </div>
@@ -221,15 +241,15 @@ export default function Profile() {
                         <h3 className="mb-4 mt-6 text-sm font-bold text-slate-800">Academic Information</h3>
                         <div className="grid gap-4 sm:grid-cols-2">
                             <label className="block">
-                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">College Name</span>
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">College Name {req}</span>
                                 <IconField icon={Building2} value={form.college} onChange={set("college")} placeholder="Your college" />
                             </label>
                             <label className="block">
-                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Branch / Stream</span>
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Branch / Stream {req}</span>
                                 <IconField icon={BookMarked} value={form.branch} onChange={set("branch")} placeholder="e.g. Computer Engineering" />
                             </label>
                             <label className="block">
-                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Year of Study</span>
+                                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Year of Study {req}</span>
                                 <IconField icon={CalendarDays} value={form.yearOfStudy} onChange={set("yearOfStudy")} placeholder="e.g. Final Year" />
                             </label>
                         </div>
