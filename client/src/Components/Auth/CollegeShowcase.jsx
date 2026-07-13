@@ -13,7 +13,7 @@ import { LogoMark } from "@/Components/General/Logo";
 // graceful fallback: colleges without a photo just show the gradient, and any
 // photo that fails to load reveals the gradient beneath it.
 const COLLEGES = [
-    { name: "Delhi Technological University", initials: "DTU", place: "Delhi", tag: "Govt · Flagship", image: "/colleges/dtu.jpg",
+    { name: "Delhi Technological University", initials: "DTU", place: "Delhi", tag: "Govt · Flagship", image: "/colleges/dtu.webp",
       fact: "Delhi's flagship engineering university. Through JEE, a seat here is a top-percentile war and years of coaching. LEET gets you the same DTU degree — a different door to the same dream." },
     { name: "Netaji Subhas University of Technology", initials: "NSUT", place: "Delhi", tag: "Govt · Top-tier", image: "/colleges/nsut.jpg",
       fact: "Formerly NSIT — among Delhi's most sought-after colleges, with elite recruiters and a powerhouse alumni network. You reach it through LEET, skipping the brutal JEE cut-off." },
