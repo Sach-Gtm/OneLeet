@@ -17,6 +17,12 @@ export default function AuthLayout({ heading, children }) {
             {/* Form panel */}
             <div className="flex items-center justify-center px-6 py-10 sm:px-10">
                 <div className="w-full max-w-md">
+                    {/* Mobile-only college showcase banner — the full panel is
+                        desktop-only, so on phones we show a compact rotating
+                        version so the campus imagery still greets you. */}
+                    <div className="relative mb-6 h-48 overflow-hidden rounded-2xl shadow-sm lg:hidden">
+                        <CollegeShowcase heading={heading} compact />
+                    </div>
                     {/* Compact brand for mobile (showcase panel is hidden) */}
                     <Link
                         to="/"

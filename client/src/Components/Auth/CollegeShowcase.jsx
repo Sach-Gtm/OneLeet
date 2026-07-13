@@ -70,7 +70,7 @@ const GRADIENTS = [
 
 const SLIDE_MS = 4500;
 
-export default function CollegeShowcase({ heading }) {
+export default function CollegeShowcase({ heading, compact = false }) {
     const [i, setI] = useState(0);
     const reduce = useReducedMotion();
 
@@ -132,16 +132,18 @@ export default function CollegeShowcase({ heading }) {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-black/15" />
 
                     {/* the facts, over the image with maintained transparency */}
-                    <div className="absolute inset-x-0 bottom-0 z-10 px-10 pb-24 pt-10 xl:px-12">
-                        <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/90 backdrop-blur-sm">
+                    <div className={`absolute inset-x-0 bottom-0 z-10 ${compact ? "px-5 pb-11 pt-8" : "px-10 pb-24 pt-10 xl:px-12"}`}>
+                        <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/90 backdrop-blur-sm">
                             <MapPin className="h-3 w-3" /> {c.place} · {c.tag}
                         </span>
-                        <h2 className="text-3xl font-extrabold leading-tight text-white drop-shadow-sm xl:text-4xl">
+                        <h2 className={`font-extrabold leading-tight text-white drop-shadow-sm ${compact ? "text-lg" : "text-3xl xl:text-4xl"}`}>
                             {c.name}
                         </h2>
-                        <p className="mt-3 max-w-md text-sm leading-relaxed text-white/85 xl:text-base">
-                            {c.fact}
-                        </p>
+                        {!compact && (
+                            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/85 xl:text-base">
+                                {c.fact}
+                            </p>
+                        )}
                     </div>
                 </motion.div>
             </AnimatePresence>
@@ -149,24 +151,26 @@ export default function CollegeShowcase({ heading }) {
             {/* --- static overlays (persist across slides) --- */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" style={{ height: "30%" }} />
 
-            <div className="relative z-20 flex h-full flex-col justify-between p-10 xl:p-12">
+            <div className={`relative z-20 flex h-full flex-col justify-between ${compact ? "p-5" : "p-10 xl:p-12"}`}>
                 <div className="space-y-4">
-                    <Link to="/" className="flex items-center gap-2.5">
-                        <LogoMark size={44} animated />
-                        <div className="leading-tight">
-                            <span className="block text-lg font-extrabold tracking-tight">
-                                <span className="text-[#EC7A54]">One</span>
-                                <span className="text-[#5ec8ea]">Leet</span>
-                            </span>
-                            <span className="block text-[10px] font-medium text-white/60">
-                                A StaplerLabs product
-                            </span>
-                        </div>
-                    </Link>
+                    {!compact && (
+                        <Link to="/" className="flex items-center gap-2.5">
+                            <LogoMark size={44} animated />
+                            <div className="leading-tight">
+                                <span className="block text-lg font-extrabold tracking-tight">
+                                    <span className="text-[#EC7A54]">One</span>
+                                    <span className="text-[#5ec8ea]">Leet</span>
+                                </span>
+                                <span className="block text-[10px] font-medium text-white/60">
+                                    A StaplerLabs product
+                                </span>
+                            </div>
+                        </Link>
+                    )}
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold text-white/90 backdrop-blur-sm">
                         <Sparkles className="h-3.5 w-3.5" /> Where LEET can take you
                     </span>
-                    {heading && (
+                    {!compact && heading && (
                         <h1 className="max-w-[16rem] text-2xl font-extrabold leading-tight text-white drop-shadow-md xl:text-[1.7rem]">
                             {heading}
                         </h1>
@@ -176,20 +180,22 @@ export default function CollegeShowcase({ heading }) {
                 {/* progress dots + counter + photo credit */}
                 <div className="space-y-2.5">
                     <div className="flex items-center gap-3">
-                        <div className="flex flex-1 flex-wrap gap-1.5">
-                            {COLLEGES.map((_, idx) => (
-                                <button
-                                    key={idx}
-                                    type="button"
-                                    aria-label={`Show ${COLLEGES[idx].initials}`}
-                                    onClick={() => setI(idx)}
-                                    className={`h-1.5 rounded-full transition-all ${
-                                        idx === i ? "w-6 bg-white" : "w-1.5 bg-white/40 hover:bg-white/70"
-                                    }`}
-                                />
-                            ))}
-                        </div>
-                        <span className="shrink-0 text-xs font-semibold tabular-nums text-white/70">
+                        {!compact && (
+                            <div className="flex flex-1 flex-wrap gap-1.5">
+                                {COLLEGES.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        type="button"
+                                        aria-label={`Show ${COLLEGES[idx].initials}`}
+                                        onClick={() => setI(idx)}
+                                        className={`h-1.5 rounded-full transition-all ${
+                                            idx === i ? "w-6 bg-white" : "w-1.5 bg-white/40 hover:bg-white/70"
+                                        }`}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                        <span className={`shrink-0 text-xs font-semibold tabular-nums text-white/70 ${compact ? "ml-auto" : ""}`}>
                             {String(i + 1).padStart(2, "0")} / {COLLEGES.length}
                         </span>
                     </div>
