@@ -123,8 +123,13 @@ export default function CollegeShowcase({ heading }) {
                             {c.initials}
                         </span>
                     </div>
-                    {/* scrims: keep top logo + bottom text readable, image still shows through */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/45" />
+                    {/* Brand overlay in the OneLeet colours: ~50% blue + ~25%
+                        saffron/orange + ~25% black. One cohesive brand tone over
+                        every campus photo, text kept crisp, image still showing
+                        through. The black leans to the bottom to hold the text. */}
+                    <div className="absolute inset-0 bg-[#3FB0D6]/50" />
+                    <div className="absolute inset-0 bg-[#EC7A54]/25" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-black/15" />
 
                     {/* the facts, over the image with maintained transparency */}
                     <div className="absolute inset-x-0 bottom-0 z-10 px-10 pb-24 pt-10 xl:px-12">
