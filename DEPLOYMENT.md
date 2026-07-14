@@ -2,9 +2,11 @@
 
 Stack in production:
 
+- **Domain:** `oneleet.in` (GoDaddy) — website on the apex + `www`, API on
+  `api.oneleet.in`. See **§7** for the DNS/custom-domain wiring.
 - **Database:** MongoDB Atlas (free M0 tier)
-- **Backend (Express API):** Render (free web service)
-- **Frontend (React/Vite):** Vercel
+- **Backend (Express API):** Render (free web service) — `api.oneleet.in`
+- **Frontend (React/Vite):** Vercel — `oneleet.in`
 - **Media:** Cloudinary (already used)
 
 **Why Render over Railway:** Render still has a genuinely free web-service
@@ -54,7 +56,8 @@ its free allowance is now a limited trial credit.)
    | `MONGO_URI` | the Atlas string from step 1 |
    | `JWT_SECRET` | a long random string (e.g. from `openssl rand -hex 32`) |
    | `JWT_EXPIRES_IN` | `7d` |
-   | `CLIENT_URL` | `https://REPLACE-AFTER-VERCEL.vercel.app` (fix in step 4) |
+   | `CLIENT_URL` | `https://oneleet.in,https://www.oneleet.in,https://oneleet.vercel.app` (put the primary domain first — password-reset emails use it) |
+   | `COOKIE_DOMAIN` | *(optional)* `.oneleet.in` — only once the site is fully served from oneleet.in and the API is `api.oneleet.in`. Upgrades the auth cookie to first-party `SameSite=Lax`. Leave unset for the cross-site `.vercel.app` setup. |
    | `CLOUDINARY_CLOUD_NAME` | from your Cloudinary dashboard |
    | `CLOUDINARY_API_KEY` | from Cloudinary |
    | `CLOUDINARY_API_SECRET` | from Cloudinary |
@@ -80,7 +83,7 @@ its free allowance is now a limited trial credit.)
 
    | Key | Value |
    |-----|-------|
-   | `VITE_API_URL` | `https://oneleet-api.onrender.com/api` (your Render URL + `/api`) |
+   | `VITE_API_URL` | `https://api.oneleet.in/api` (your API domain + `/api`; falls back to the Render URL in code if unset) |
    | `VITE_GOOGLE_CLIENT_ID` | your Google OAuth Web client ID |
 
 4. **Deploy.** Copy the resulting URL, e.g. `https://oneleet.vercel.app`.
@@ -99,8 +102,10 @@ its free allowance is now a limited trial credit.)
 
 1. https://console.cloud.google.com → APIs & Services → Credentials.
 2. Create/edit your **OAuth 2.0 Web client**.
-3. **Authorized JavaScript origins:** add `https://oneleet.vercel.app`
-   (and `http://localhost:5173` for local dev).
+3. **Authorized JavaScript origins:** add `https://oneleet.in`,
+   `https://www.oneleet.in`, `https://oneleet.vercel.app`, and
+   `http://localhost:5173` (local dev). (Google sign-in uses the client-side
+   token flow, so there are **no** redirect URIs to configure — origins only.)
 4. Use that client ID as `VITE_GOOGLE_CLIENT_ID` in Vercel.
 
 ## 6. Post-deploy checklist
@@ -112,6 +117,48 @@ its free allowance is now a limited trial credit.)
 - [ ] Take a mock test → results + dashboard stats update
 - [ ] AI Tools: chip shows "Powered by Gemini" (if `GEMINI_API_KEY` is set)
 - [ ] "Continue with Google" works (if the client ID + origins are set)
+
+## 7. Custom domain (oneleet.in, bought on GoDaddy)
+
+Website → `oneleet.in` + `www` (Vercel); API → `api.oneleet.in` (Render). The
+app reads all URLs from env vars, so this is DNS + dashboard config — no code
+changes beyond the optional `COOKIE_DOMAIN` upgrade below.
+
+**A. GoDaddy → your domain → DNS → Manage DNS.** Add/edit these records (use the
+exact targets Vercel/Render show you in their "add domain" screens if they
+differ — those dashboards are the source of truth):
+
+| Type | Name | Value | Purpose |
+|------|------|-------|---------|
+| A | `@` | `76.76.21.21` | apex `oneleet.in` → Vercel |
+| CNAME | `www` | `cname.vercel-dns.com` | `www` → Vercel |
+| CNAME | `api` | `oneleet-api.onrender.com` | `api` → Render (API) |
+
+Keep GoDaddy's nameservers (don't switch to Vercel's) so email MX records can
+stay here later.
+
+**B. Vercel → Project → Settings → Domains.** Add `oneleet.in` (set primary) and
+`www.oneleet.in` (redirect → apex). Vercel auto-issues the HTTPS certificate
+once DNS resolves.
+
+**C. Render → service → Settings → Custom Domains.** Add `api.oneleet.in`.
+Render verifies the CNAME and issues its certificate. Then set the Vercel env
+`VITE_API_URL=https://api.oneleet.in/api` and redeploy the frontend.
+
+**D. Render → Environment.** Set `CLIENT_URL` (comma-separated, primary first):
+`https://oneleet.in,https://www.oneleet.in,https://oneleet.vercel.app`.
+
+**E. Google Cloud Console** → OAuth client → add the new JS origins (see §5).
+
+**F. First-party cookie upgrade (optional, do last).** Once every visitor lands
+on `oneleet.in` (not the `.vercel.app` URL), set `COOKIE_DOMAIN=.oneleet.in` on
+Render and drop the `.vercel.app` entry from `CLIENT_URL`. The auth cookie
+becomes first-party `SameSite=Lax; Domain=.oneleet.in`, which browsers treat far
+more reliably than the cross-site `None` cookie. (Login already works regardless
+via the Bearer token; this just strengthens the cookie path.)
+
+**DNS propagation** is usually minutes, occasionally up to ~48h. Check status at
+https://dnschecker.org for `oneleet.in`, `www`, and `api`.
 
 ## Troubleshooting
 
