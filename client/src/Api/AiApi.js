@@ -5,6 +5,12 @@ export const getAiStatus = async () => {
     return data;
 };
 
+// Most-searched topics on OneLeet in the last 24h (topic names only).
+export const getTrending = async () => {
+    const { data } = await api.get("/ai/trending");
+    return data.topics || [];
+};
+
 export const generateQuestions = async (payload) => {
     const { data } = await api.post("/ai/questions", payload);
     return data;

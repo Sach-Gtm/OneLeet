@@ -48,6 +48,16 @@ export const setUserRole = async (email, role) => {
     }
 };
 
+// One student's full activity: profile, recent tests, AI topics, time.
+export const getStudentActivity = async (id) => {
+    try {
+        const { data } = await api.get(`/admin/students/${id}/activity`);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // The mentor/admin roster ("who is admin and mentor").
 export const getStaff = async () => {
     try {

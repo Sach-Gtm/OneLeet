@@ -11,6 +11,7 @@ import {
     ChevronRight,
     CheckCircle2,
     XCircle,
+    Flame,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,37 @@ import {
     predictDifficulty,
     analyzePerformance,
     generateStudyPlan,
+    getTrending,
 } from "@/Api/AiApi";
+
+// "Most searched topics in the last 24h" — OneLeet's own data, topic names only.
+function TrendingTopics() {
+    const [topics, setTopics] = useState([]);
+    useEffect(() => {
+        getTrending()
+            .then(setTopics)
+            .catch(() => setTopics([]));
+    }, []);
+    if (topics.length === 0) return null;
+    return (
+        <div className="mb-6 rounded-2xl border border-orange-100 bg-gradient-to-br from-orange-50/70 to-amber-50/40 p-4">
+            <div className="mb-2.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-orange-600">
+                <Flame size={14} /> Trending on OneLeet · last 24h
+            </div>
+            <div className="flex flex-wrap gap-2">
+                {topics.map((t, i) => (
+                    <span
+                        key={t.topic}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-white px-3 py-1 text-sm font-medium text-slate-700"
+                    >
+                        <span className="text-xs font-bold text-orange-400">#{i + 1}</span>
+                        {t.topic}
+                    </span>
+                ))}
+            </div>
+        </div>
+    );
+}
 
 const TOOLS = [
     { key: "questions", label: "Question Gen", icon: Wand2 },
@@ -392,6 +423,8 @@ export default function AiTools() {
                     </span>
                 )}
             </div>
+
+            <TrendingTopics />
 
             <div className="mb-6 flex flex-wrap gap-2 border-b border-slate-200">
                 {TOOLS.map((t) => {

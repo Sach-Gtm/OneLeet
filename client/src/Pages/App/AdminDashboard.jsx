@@ -26,6 +26,7 @@ import {
     RefreshCw,
     ShieldCheck,
     UserX,
+    LineChart,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -36,6 +37,7 @@ import {
     getStaff,
     removeUser,
 } from "@/Api/AdminApi";
+import StudentActivityModal from "@/Components/App/StudentActivityModal";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
@@ -126,6 +128,8 @@ export default function AdminDashboard() {
     const [inboxLoading, setInboxLoading] = useState(false);
     // Team roster (who is admin / mentor)
     const [staff, setStaff] = useState([]);
+    // Per-student activity modal (which student's id is open)
+    const [activityView, setActivityView] = useState(null);
 
     // Permission tiers (UI gate only — the API enforces the real rules):
     //   canCreate         — mentors + admins + super admin (content, notifs)
@@ -905,14 +909,23 @@ export default function AdminDashboard() {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <button
-                                                onClick={() => handleRemove(s, "student")}
-                                                title="Remove this student"
-                                                className="inline-grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-400 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
-                                            >
-                                                <UserX className="h-4 w-4" />
-                                            </button>
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center justify-center gap-1.5">
+                                                <button
+                                                    onClick={() => setActivityView(s._id)}
+                                                    title="View activity"
+                                                    className="inline-grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-400 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
+                                                >
+                                                    <LineChart className="h-4 w-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleRemove(s, "student")}
+                                                    title="Remove this student"
+                                                    className="inline-grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-400 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+                                                >
+                                                    <UserX className="h-4 w-4" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -1034,6 +1047,14 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {activityView && (
+                <StudentActivityModal
+                    key={activityView}
+                    studentId={activityView}
+                    onClose={() => setActivityView(null)}
+                />
             )}
         </div>
     );
