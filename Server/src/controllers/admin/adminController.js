@@ -1,5 +1,10 @@
+const mongoose = require("mongoose");
 const User = require("../../models/userModel");
 const Attempt = require("../../models/attemptModel");
+
+// A malformed :id would otherwise make Mongoose throw a CastError → 500. Treat
+// it as a plain not-found instead.
+const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 // GET /api/admin/overview — headline numbers for the admin dashboard.
 async function overview(req, res, next) {
@@ -94,6 +99,9 @@ async function setStudentPlan(req, res, next) {
                 .status(400)
                 .json({ success: false, message: "Plan must be 'free' or 'pro'" });
         }
+        if (!isValidId(req.params.id)) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
         const student = await User.findOneAndUpdate(
             { _id: req.params.id, role: "student" },
             { plan },
@@ -187,6 +195,9 @@ async function setUserRole(req, res, next) {
 // ghost row with no name.
 async function removeUser(req, res, next) {
     try {
+        if (!isValidId(req.params.id)) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
         const target = await User.findById(req.params.id);
         if (!target) {
             return res.status(404).json({ success: false, message: "User not found" });

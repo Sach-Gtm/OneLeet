@@ -12,27 +12,10 @@ const GoogleLogin = ({ redirectTo = "/", onError }) => {
     const handleGoogleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {
-                const googleUserInfo = await fetch(
-                    "https://www.googleapis.com/oauth2/v3/userinfo",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${tokenResponse.access_token}`,
-                        },
-                    }
-                );
-
-                if (!googleUserInfo.ok) {
-                    throw new Error("Failed to fetch user info from Google");
-                }
-
-                const userData = await googleUserInfo.json();
-
-                await loginwithGoogle({
-                    googleId: userData.sub,
-                    email: userData.email,
-                    name: userData.name || userData.given_name || "",
-                    avatar: userData.picture || null,
-                });
+                // Hand the access token to our backend, which verifies it with
+                // Google and derives the identity there. We never send an email
+                // the client could tamper with.
+                await loginwithGoogle({ accessToken: tokenResponse.access_token });
 
                 // Cookie is set by the backend; refresh pulls the user in.
                 await refresh();

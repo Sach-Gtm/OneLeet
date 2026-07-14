@@ -17,6 +17,7 @@ delete process.env.BREVO_API_KEY;
 const app = require("../app");
 const request = require("supertest")(app);
 const User = require("../src/models/userModel");
+const bootstrapSuperadmin = require("../src/config/bootstrapSuperadmin");
 
 let passed = 0;
 const ok = (l) => {
@@ -39,14 +40,25 @@ const login = async (identifier, password) => {
         name: "Boss", email: "boss@oneleet.local", phone: "9990001111",
         password: "adminpass", role: "admin", isVerified: true, authProvider: "local",
     });
-    // Super Admin is defined by email — the model auto-promotes it regardless of
-    // the role we pass here.
-    const superDoc = await User.create({
-        name: "Sachin", email: "sachin.gautam8292@gmail.com", phone: "9111122223",
-        password: "superpass", role: "student", isVerified: true, authProvider: "local",
+    // Self-registration must NOT grant the Super Admin role even for the known
+    // super-admin address — otherwise anyone could claim it. Registering it
+    // yields a plain student...
+    await request.post("/api/auth/register").send({
+        name: "Sachin", email: "sachin.gautam8292@gmail.com",
+        password: "superpass", phone: "9111122223",
     });
-    assert.strictEqual(superDoc.role, "superadmin", "email should auto-promote to superadmin");
-    ok("super-admin email is auto-promoted by the model");
+    assert.strictEqual(
+        (await User.findOne({ email: "sachin.gautam8292@gmail.com" })).role,
+        "student"
+    );
+    ok("registering the super-admin email does NOT grant the role");
+    // ...it is provisioned out-of-band by the startup bootstrap.
+    await bootstrapSuperadmin();
+    assert.strictEqual(
+        (await User.findOne({ email: "sachin.gautam8292@gmail.com" })).role,
+        "superadmin"
+    );
+    ok("bootstrap promotes the super-admin email out-of-band");
 
     // Login by PHONE
     const byPhone = await request

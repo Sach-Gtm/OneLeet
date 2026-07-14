@@ -1,6 +1,7 @@
 const User = require("../../models/userModel");
 const generateToken = require("../../utils/generateToken");
 const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
+const { SUPERADMIN_EMAIL } = require("../../config/roles");
 
 const sanitize = (user) => {
     const obj = user.toObject ? user.toObject() : { ...user };
@@ -10,35 +11,56 @@ const sanitize = (user) => {
     return obj;
 };
 
+// Exchange the client's Google access token for the VERIFIED identity. Only
+// Google can mint a token that resolves here, so the returned email/sub are
+// trustworthy — unlike anything the client puts in the request body.
+async function fetchGoogleIdentity(accessToken) {
+    const resp = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (!resp.ok) return null;
+    const info = await resp.json();
+    if (!info || !info.sub || !info.email) return null;
+    // Google marks whether it has verified ownership of the address.
+    if (info.email_verified === false) return null;
+    return {
+        googleId: info.sub,
+        email: String(info.email).toLowerCase().trim(),
+        name: (info.name || info.given_name || "").trim(),
+        avatar: info.picture || undefined,
+    };
+}
+
 // POST /api/auth/google-login
 async function googleAuth(req, res, next) {
     try {
-        let { name, email, googleId, avatar } = req.body;
-
-        if (!email || !googleId) {
-            return res.status(400).json({
+        const identity = await fetchGoogleIdentity(req.body.accessToken);
+        if (!identity) {
+            return res.status(401).json({
                 success: false,
-                message: "Email and Google ID are required",
+                message: "Could not verify your Google sign-in. Please try again.",
             });
         }
+        const { googleId, email, name, avatar } = identity;
 
-        email = email.toLowerCase().trim();
-        if (name) name = name.trim();
+        // The Super Admin is provisioned by a Google-VERIFIED matching email
+        // (safe: the address ownership is proven by Google above).
+        const superadminEmail = email === SUPERADMIN_EMAIL;
 
         let user = await User.findOne({ email });
 
         if (user) {
-            // Link an existing local account to Google on first Google sign-in.
+            // Bind the Google identity on first Google sign-in.
             if (!user.googleId) {
                 user.googleId = googleId;
                 user.authProvider = "google";
-                if (avatar && !user.avatar) user.avatar = avatar;
-                await user.save();
             }
+            if (avatar && !user.avatar) user.avatar = avatar;
+            if (superadminEmail && user.role !== "superadmin") user.role = "superadmin";
+            await user.save({ validateBeforeSave: false });
 
             const token = generateToken(user._id);
             res.cookie("token", token, buildCookieOptions(SEVEN_DAYS));
-
             return res.status(200).json({
                 success: true,
                 message: "Google login successful",
@@ -47,13 +69,13 @@ async function googleAuth(req, res, next) {
             });
         }
 
-        // New Google user
+        // New Google user.
         const newUser = await User.create({
             name,
             email,
             googleId,
             avatar,
-            role: "student",
+            role: superadminEmail ? "superadmin" : "student",
             authProvider: "google",
         });
 
