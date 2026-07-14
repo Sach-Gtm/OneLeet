@@ -14,6 +14,7 @@ router.use(verifyToken, requireAdmin);
 
 router.get("/overview", admin.overview);
 router.get("/students", admin.listStudents);
+router.get("/students/:id/activity", admin.studentActivity);
 router.get("/staff", admin.listStaff);
 
 // Premium is a Super-Admin-only lever.

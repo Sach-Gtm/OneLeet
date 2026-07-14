@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const User = require("../../models/userModel");
 const Attempt = require("../../models/attemptModel");
+const AiQuery = require("../../models/aiQueryModel");
+const { timeSummary } = require("../activity/activityController");
 
 // A malformed :id would otherwise make Mongoose throw a CastError → 500. Treat
 // it as a plain not-found instead.
@@ -248,6 +250,60 @@ async function listStaff(req, res, next) {
     }
 }
 
+// GET /api/admin/students/:id/activity — a full picture of one student for the
+// admin: profile, recent tests, what they've asked the AI (recent + top
+// topics), and time spent. Admins + super admin only (route-gated).
+async function studentActivity(req, res, next) {
+    try {
+        if (!isValidId(req.params.id)) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+        const student = await User.findOne({ _id: req.params.id, role: "student" }).select(
+            "name email phone college branch yearOfStudy targetExam plan stats avatar passportPhoto createdAt"
+        );
+        if (!student) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+
+        const [attempts, aiRecent, aiTopics, time] = await Promise.all([
+            Attempt.find({ user: student._id })
+                .sort({ submittedAt: -1 })
+                .limit(10)
+                .select("testTitle score totalMarks accuracy submittedAt durationTakenSeconds"),
+            AiQuery.find({ user: student._id })
+                .sort({ createdAt: -1 })
+                .limit(10)
+                .select("tool subject topic difficulty createdAt"),
+            AiQuery.aggregate([
+                { $match: { user: student._id, topic: { $nin: ["", null] } } },
+                {
+                    $group: {
+                        _id: { $toLower: "$topic" },
+                        label: { $first: "$topic" },
+                        count: { $sum: 1 },
+                    },
+                },
+                { $sort: { count: -1 } },
+                { $limit: 8 },
+            ]),
+            timeSummary(student._id),
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            student,
+            attempts,
+            ai: {
+                recent: aiRecent,
+                topTopics: aiTopics.map((t) => ({ topic: t.label, count: t.count })),
+            },
+            time,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     overview,
     listStudents,
@@ -255,4 +311,5 @@ module.exports = {
     setUserRole,
     removeUser,
     listStaff,
+    studentActivity,
 };

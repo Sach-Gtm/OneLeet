@@ -1,4 +1,45 @@
 const aiService = require("../../services/ai/aiService");
+const AiQuery = require("../../models/aiQueryModel");
+
+// Fire-and-forget: record what was asked so we can show "most searched topics
+// in the last 24h" and, per student, what they've explored. Never blocks or
+// fails the AI response. `topic` holds the searched term (topic, else subject).
+function logAiQuery(req, { tool, subject = "", topic = "", difficulty = "" }) {
+    AiQuery.create({
+        user: req.user?._id || null,
+        tool,
+        subject: String(subject || "").slice(0, 120),
+        topic: String(topic || subject || "").slice(0, 120),
+        difficulty: String(difficulty || "").slice(0, 20),
+    }).catch(() => {});
+}
+
+// GET /api/ai/trending — the topics OneLeet users have asked the AI about most
+// in the last 24 hours (topic names only, from our own data).
+async function trending(req, res, next) {
+    try {
+        const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const rows = await AiQuery.aggregate([
+            { $match: { createdAt: { $gte: since }, topic: { $nin: ["", null] } } },
+            {
+                $group: {
+                    _id: { $toLower: "$topic" },
+                    label: { $first: "$topic" },
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { count: -1 } },
+            { $limit: 8 },
+        ]);
+        return res.status(200).json({
+            success: true,
+            windowHours: 24,
+            topics: rows.map((r) => ({ topic: r.label, count: r.count })),
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 
 // GET /api/ai/status — which provider is live (drives the UI's mode indicator)
 function getStatus(req, res) {
@@ -20,6 +61,7 @@ async function generateQuestions(req, res, next) {
             return res.status(400).json({ success: false, message: "Provide a subject or topic" });
         }
         const n = Math.min(Math.max(parseInt(count, 10) || 5, 1), 20);
+        logAiQuery(req, { tool: "questions", subject, topic, difficulty });
         const result = await aiService.generateQuestions({ subject, topic, difficulty, count: n });
         return res.status(200).json({ success: true, ...result });
     } catch (error) {
@@ -77,4 +119,5 @@ module.exports = {
     predictDifficulty,
     analyzePerformance,
     generateStudyPlan,
+    trending,
 };
