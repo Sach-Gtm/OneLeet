@@ -4,14 +4,17 @@ const { SUPERADMIN_EMAIL } = require("./roles");
 // Provision the Super Admin OUT OF BAND at startup, so the role is never
 // derived from a client-supplied email on a public endpoint.
 //
-// Address: SUPERADMIN_EMAIL env (operator override) → the built-in config email.
-//   • Account already exists  → promote it to superadmin (idempotent).
+// The safety invariant: superadmin is only ever assigned to a FRESH account.
+// A pre-existing account is NEVER promoted — it could have been squatted (a
+// stranger self-registering the address while OTP is off), and promoting it
+// would also escalate any session token that account already holds. So:
 //   • No account + SUPERADMIN_PASSWORD set → create a password-login superadmin.
-//   • No account + no password → no-op (Google sign-in with the verified
-//     matching address can still provision it — see googleAuthController).
+//   • Account already exists → do nothing but warn. Provision on a fresh
+//     address (or via a verified Google sign-in to an unused address).
+//   • No account + no password → no-op.
 //
-// Run this once at boot, BEFORE opening public registration, so the operator
-// claims the address first.
+// Set SUPERADMIN_PASSWORD and deploy BEFORE the address is ever registered, so
+// the operator claims it first.
 async function bootstrapSuperadmin() {
     try {
         const email = (process.env.SUPERADMIN_EMAIL || SUPERADMIN_EMAIL || "")
@@ -22,9 +25,11 @@ async function bootstrapSuperadmin() {
         const existing = await User.findOne({ email });
         if (existing) {
             if (existing.role !== "superadmin") {
-                existing.role = "superadmin";
-                await existing.save({ validateBeforeSave: false });
-                console.log(`[bootstrap] promoted ${email} to superadmin`);
+                console.warn(
+                    `[bootstrap] ${email} already exists as role="${existing.role}"; ` +
+                        "NOT auto-promoting (could be a squatted account). Provision the " +
+                        "Super Admin on a fresh address or via verified Google sign-in."
+                );
             }
             return;
         }

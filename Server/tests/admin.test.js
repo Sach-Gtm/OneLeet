@@ -41,24 +41,33 @@ const login = async (identifier, password) => {
         password: "adminpass", role: "admin", isVerified: true, authProvider: "local",
     });
     // Self-registration must NOT grant the Super Admin role even for the known
-    // super-admin address — otherwise anyone could claim it. Registering it
-    // yields a plain student...
+    // super-admin address. Registering it yields a plain student...
     await request.post("/api/auth/register").send({
-        name: "Sachin", email: "sachin.gautam8292@gmail.com",
-        password: "superpass", phone: "9111122223",
+        name: "Squatter", email: "sachin.gautam8292@gmail.com",
+        password: "squatpw", phone: "9111122223",
     });
     assert.strictEqual(
         (await User.findOne({ email: "sachin.gautam8292@gmail.com" })).role,
         "student"
     );
     ok("registering the super-admin email does NOT grant the role");
-    // ...it is provisioned out-of-band by the startup bootstrap.
+    // ...and the bootstrap must NOT promote that pre-existing (possibly
+    // squatted) account — superadmin is only ever assigned at fresh creation.
+    await bootstrapSuperadmin();
+    assert.strictEqual(
+        (await User.findOne({ email: "sachin.gautam8292@gmail.com" })).role,
+        "student"
+    );
+    ok("bootstrap refuses to promote a pre-existing account (no squatter escalation)");
+    // The Super Admin is provisioned as a FRESH account from operator env.
+    await User.deleteOne({ email: "sachin.gautam8292@gmail.com" });
+    process.env.SUPERADMIN_PASSWORD = "superpass";
     await bootstrapSuperadmin();
     assert.strictEqual(
         (await User.findOne({ email: "sachin.gautam8292@gmail.com" })).role,
         "superadmin"
     );
-    ok("bootstrap promotes the super-admin email out-of-band");
+    ok("bootstrap creates the super-admin fresh from env (SUPERADMIN_PASSWORD)");
 
     // Login by PHONE
     const byPhone = await request

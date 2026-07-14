@@ -50,13 +50,15 @@ async function googleAuth(req, res, next) {
         let user = await User.findOne({ email });
 
         if (user) {
-            // Bind the Google identity on first Google sign-in.
+            // Bind the Google identity on first Google sign-in. We do NOT change
+            // the role of a pre-existing account here — superadmin is only ever
+            // assigned at fresh creation (below), so no already-issued session
+            // for a squatted account can be escalated.
             if (!user.googleId) {
                 user.googleId = googleId;
                 user.authProvider = "google";
             }
             if (avatar && !user.avatar) user.avatar = avatar;
-            if (superadminEmail && user.role !== "superadmin") user.role = "superadmin";
             await user.save({ validateBeforeSave: false });
 
             const token = generateToken(user._id);

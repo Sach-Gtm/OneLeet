@@ -69,12 +69,15 @@ its free allowance is now a limited trial credit.)
    (Don't set `PORT` — Render injects it and the app reads `process.env.PORT`.)
 
    > **Super Admin provisioning.** The Super Admin role is never granted by
-   > signing up — registration always creates a student. The account is
-   > provisioned two safe ways: (a) the startup bootstrap above (set
-   > `SUPERADMIN_PASSWORD` so the account is claimed at boot), or (b) signing in
-   > with Google using the real `sachin.gautam8292@gmail.com` account (the server
-   > verifies the address with Google before granting the role). Mentors and
-   > admins are then appointed in-app from the Admin dashboard.
+   > signing up, and never by promoting an existing account — it's only ever
+   > assigned to a **freshly created** account, so a squatted address can't be
+   > escalated. Provision it one of two ways on a **not-yet-registered** address:
+   > (a) set `SUPERADMIN_PASSWORD` and deploy — the startup bootstrap creates the
+   > account at boot (log in with `sachin.gautam8292@gmail.com` + that password);
+   > or (b) sign in with Google using the real `sachin.gautam8292@gmail.com` for
+   > the first time (the server verifies the address with Google). If the address
+   > was already registered as a normal user, delete that account first. Mentors
+   > and admins are then appointed in-app from the Admin dashboard.
 5. **Create Web Service.** When it's live, copy the URL, e.g.
    `https://oneleet-api.onrender.com`. Health check: open
    `https://oneleet-api.onrender.com/api/health` → should return `{"status":"ok"}`.
