@@ -64,7 +64,7 @@ async function sendOtpEmail(user, otp) {
 // POST /api/auth/register
 async function register(req, res, next) {
     try {
-        const { name, email, password, role, phone, avatar } = req.body;
+        const { name, email, password, phone, avatar } = req.body;
 
         const existing = await User.findOne({ email });
         if (existing) {
@@ -83,7 +83,9 @@ async function register(req, res, next) {
             name,
             email,
             password,
-            role: role === "teacher" ? "teacher" : "student",
+            // Always a student on self-signup; mentors/admins are promoted by an
+            // admin. (The Super Admin email is auto-promoted in the User model.)
+            role: "student",
             phone,
             avatar: avatar || undefined,
             authProvider: "local",

@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 
 const { verifyToken } = require("../../middlewares/authMiddleware");
-const { requireRole } = require("../../middlewares/roleMiddleware");
+const { requireStaff } = require("../../middlewares/roleMiddleware");
 const pdfUploadLocal = require("../../middlewares/pdfUploadLocal");
 const pyqController = require("../../controllers/content/pyqController");
 
@@ -22,11 +22,11 @@ router.get("/", verifyToken, pyqController.getPyqs);
 router.get("/filters", verifyToken, pyqController.getFilters);
 router.get("/:id", verifyToken, pyqController.getPyqById);
 
-// Upload (teachers only)
+// Upload (mentors, admins, super admin)
 router.post(
     "/",
     verifyToken,
-    requireRole("teacher", "admin"),
+    requireStaff,
     handleUpload,
     pyqController.uploadPyq
 );

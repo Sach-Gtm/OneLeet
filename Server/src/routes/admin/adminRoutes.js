@@ -2,16 +2,27 @@ const express = require("express");
 const router = express.Router();
 
 const { verifyToken } = require("../../middlewares/authMiddleware");
-const { requireRole } = require("../../middlewares/roleMiddleware");
+const {
+    requireAdmin,
+    requireSuperadmin,
+} = require("../../middlewares/roleMiddleware");
 const admin = require("../../controllers/admin/adminController");
 
-// Everything here is for staff only (admins + teachers).
-router.use(verifyToken, requireRole("admin", "teacher"));
+// Student data + the team roster are admin / super-admin only. Mentors
+// (teachers) are deliberately excluded from all of it.
+router.use(verifyToken, requireAdmin);
 
 router.get("/overview", admin.overview);
 router.get("/students", admin.listStudents);
-router.patch("/students/:id/plan", admin.setStudentPlan);
-// Role changes are admin-only (teachers can view but not grant access).
-router.patch("/users/role", requireRole("admin"), admin.setUserRole);
+router.get("/staff", admin.listStaff);
+
+// Premium is a Super-Admin-only lever.
+router.patch("/students/:id/plan", requireSuperadmin, admin.setStudentPlan);
+
+// Role changes and removals are gated to admins here, then further narrowed by
+// the *target's* role inside the controller (an admin may only manage students;
+// only the Super Admin may touch mentor/admin accounts).
+router.patch("/users/role", admin.setUserRole);
+router.delete("/users/:id", admin.removeUser);
 
 module.exports = router;

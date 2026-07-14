@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { SUPERADMIN_EMAIL } = require("../config/roles");
 
 // Denormalised prep stats surfaced on the dashboard / profile. These start at
 // zero and will be updated by the Tests / PYQ features as they land.
@@ -42,7 +43,7 @@ const UserSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["student", "teacher", "admin"],
+            enum: ["student", "teacher", "admin", "superadmin"],
             default: "student",
         },
         phone: {
@@ -103,6 +104,15 @@ const UserSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+// The Super Admin is defined by email, not by whoever happens to sign up first.
+// Force the role on any save so the account is always superadmin regardless of
+// how it was created (local register, Google, or an accidental demotion).
+UserSchema.pre("save", function () {
+    if (this.email && this.email.toLowerCase() === SUPERADMIN_EMAIL) {
+        this.role = "superadmin";
+    }
+});
 
 // Hash the password whenever it is set/changed. Google-only accounts have no
 // password, so guard on presence. (Mongoose 9 async hooks resolve via the

@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { updateProfile, changePassword, uploadPassportPhoto } from "@/Api/AuthApis";
 import { missingProfileFields } from "@/lib/profile";
+import { isStaff, roleLabel } from "@/lib/roles";
 
 const MAX_PHOTO_BYTES = 1024 * 1024; // 1 MB
 
@@ -62,7 +63,7 @@ export default function Profile() {
 
     const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
-    const staffUser = user?.role === "teacher" || user?.role === "admin";
+    const staffUser = isStaff(user);
     const requiredKeys = staffUser
         ? ["name", "phone"]
         : ["name", "phone", "college", "branch", "yearOfStudy", "targetExam"];
@@ -129,7 +130,7 @@ export default function Profile() {
         }
     };
 
-    const isStudent = user?.role !== "teacher" && user?.role !== "admin";
+    const studentUser = !staffUser;
     const photoUrl = user?.passportPhoto?.url || user?.avatar || "";
     const missing = missingProfileFields(user);
     const incomplete = missing.length > 0;
@@ -204,8 +205,8 @@ export default function Profile() {
                                 Target: {user.targetExam}
                             </span>
                         )}
-                        <span className="rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-semibold capitalize text-emerald-600">
-                            {user?.plan === "pro" ? "Pro User" : `${user?.role || "student"}`}
+                        <span className="rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-semibold text-emerald-600">
+                            {roleLabel(user)}
                         </span>
                     </div>
                 </div>
@@ -289,7 +290,7 @@ export default function Profile() {
 
                 {/* Right: overview + achievement */}
                 <div className="space-y-6">
-                    {isStudent && (
+                    {studentUser && (
                         <div className="rounded-2xl border border-slate-200 bg-white p-6">
                             <div className="mb-3 flex items-center gap-2">
                                 <ShieldCheck size={16} className="text-indigo-600" />

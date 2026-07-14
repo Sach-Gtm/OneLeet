@@ -17,7 +17,9 @@ const registerSchema = z.object({
         .string({ required_error: "Password is required" })
         .min(6, "Password must be at least 6 characters")
         .max(72, "Password cannot be more than 72 characters"),
-    role: z.enum(["student", "teacher"]).default("student"),
+    // Registration is students only. Mentor / admin roles are granted
+    // deliberately by an admin, never self-selected — any `role` sent here is
+    // ignored (see the register controller).
     phone: z
         .string({ required_error: "Phone number is required" })
         .trim()

@@ -1,5 +1,8 @@
-// Integration tests for the admin panel: phone-or-email login, admin-only
-// access to the staff API, and the premium toggle. Run: node tests/admin.test.js
+// Integration tests for the admin panel and the role/permission model:
+// phone-or-email login, the four-tier hierarchy (student / teacher-mentor /
+// admin / superadmin), who can see student data, who can change roles, who can
+// remove accounts, and the super-admin-only premium toggle.
+// Run: node tests/admin.test.js
 const assert = require("assert");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
@@ -21,6 +24,11 @@ const ok = (l) => {
     passed++;
 };
 const auth = (t) => ["Authorization", `Bearer ${t}`];
+const idOf = async (email) => (await User.findOne({ email }).select("_id"))._id.toString();
+const login = async (identifier, password) => {
+    const r = await request.post("/api/auth/login").send({ identifier, password });
+    return r.body.token;
+};
 
 (async () => {
     const mongod = await MongoMemoryServer.create();
@@ -28,14 +36,17 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
 
     // Admin created out-of-band (as the create:admin script does).
     await User.create({
-        name: "Boss",
-        email: "boss@oneleet.local",
-        phone: "9990001111",
-        password: "adminpass",
-        role: "admin",
-        isVerified: true,
-        authProvider: "local",
+        name: "Boss", email: "boss@oneleet.local", phone: "9990001111",
+        password: "adminpass", role: "admin", isVerified: true, authProvider: "local",
     });
+    // Super Admin is defined by email — the model auto-promotes it regardless of
+    // the role we pass here.
+    const superDoc = await User.create({
+        name: "Sachin", email: "sachin.gautam8292@gmail.com", phone: "9111122223",
+        password: "superpass", role: "student", isVerified: true, authProvider: "local",
+    });
+    assert.strictEqual(superDoc.role, "superadmin", "email should auto-promote to superadmin");
+    ok("super-admin email is auto-promoted by the model");
 
     // Login by PHONE
     const byPhone = await request
@@ -61,19 +72,19 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(bad.status, 401);
     ok("wrong password rejected (401)");
 
-    // A student registers
+    // A student registers — and even if they try to self-select "teacher",
+    // registration forces them to student (mentors are granted by an admin).
     const reg = await request.post("/api/auth/register").send({
-        name: "Pupil",
-        email: "pupil@test.com",
-        password: "secret123",
-        phone: "8887776665",
+        name: "Pupil", email: "pupil@test.com", password: "secret123",
+        phone: "8887776665", role: "teacher",
     });
     assert.strictEqual(reg.status, 201);
     const studentToken = reg.body.token;
     assert.ok(studentToken);
-    ok("student registers");
+    assert.strictEqual((await User.findOne({ email: "pupil@test.com" })).role, "student");
+    ok("student registers (self-selected 'teacher' is ignored → student)");
 
-    // Admin sees overview
+    // Admin sees overview (only pupil so far)
     const ov = await request.get("/api/admin/overview").set(...auth(adminToken));
     assert.strictEqual(ov.status, 200);
     assert.strictEqual(ov.body.overview.totalStudents, 1);
@@ -93,21 +104,94 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     ok("admin can search students by phone");
 
     // Student is FORBIDDEN from the admin API
-    const forbidden = await request
-        .get("/api/admin/students")
-        .set(...auth(studentToken));
+    const forbidden = await request.get("/api/admin/students").set(...auth(studentToken));
     assert.strictEqual(forbidden.status, 403);
     ok("student is blocked from admin API (403)");
 
-    // Admin toggles premium
-    const studentId = list.body.students.find((s) => s.email === "pupil@test.com")._id;
-    const plan = await request
-        .patch(`/api/admin/students/${studentId}/plan`)
-        .set(...auth(adminToken))
-        .send({ plan: "pro" });
-    assert.strictEqual(plan.status, 200);
-    assert.strictEqual(plan.body.student.plan, "pro");
-    ok("admin moves a student to premium");
+    // Super Admin logs in
+    const superToken = await login("sachin.gautam8292@gmail.com", "superpass");
+    assert.ok(superToken);
+    ok("super-admin logs in");
+
+    // Two more students for the role/premium/removal checks.
+    await request.post("/api/auth/register").send({
+        name: "Pupil Two", email: "pupil2@test.com", password: "secret123", phone: "8887770002",
+    });
+    await request.post("/api/auth/register").send({
+        name: "Pupil Three", email: "pupil3@test.com", password: "secret123", phone: "8887770003",
+    });
+
+    // Admin CAN turn a student into a mentor (teacher).
+    const promote = await request.patch("/api/admin/users/role")
+        .set(...auth(adminToken)).send({ email: "pupil@test.com", role: "teacher" });
+    assert.strictEqual(promote.status, 200);
+    assert.strictEqual(promote.body.user.role, "teacher");
+    ok("admin promotes a student to mentor");
+
+    // That mentor must NOT see student data.
+    const mentorBlocked = await request.get("/api/admin/students").set(...auth(studentToken));
+    assert.strictEqual(mentorBlocked.status, 403);
+    ok("mentor is blocked from student data (403)");
+
+    // Admin may NOT grant admin.
+    const grantAdmin = await request.patch("/api/admin/users/role")
+        .set(...auth(adminToken)).send({ email: "pupil2@test.com", role: "admin" });
+    assert.strictEqual(grantAdmin.status, 403);
+    ok("admin cannot grant admin access (403)");
+
+    // Admin may NOT touch a mentor/admin account.
+    const touchMentor = await request.patch("/api/admin/users/role")
+        .set(...auth(adminToken)).send({ email: "pupil@test.com", role: "student" });
+    assert.strictEqual(touchMentor.status, 403);
+    ok("admin cannot re-role a mentor (403)");
+
+    // Super Admin CAN grant admin.
+    const superGrant = await request.patch("/api/admin/users/role")
+        .set(...auth(superToken)).send({ email: "pupil3@test.com", role: "admin" });
+    assert.strictEqual(superGrant.status, 200);
+    ok("super-admin grants admin access");
+
+    // Staff roster ("who is admin and mentor").
+    const staff = await request.get("/api/admin/staff").set(...auth(adminToken));
+    assert.strictEqual(staff.status, 200);
+    const emails = staff.body.staff.map((s) => s.email);
+    assert.ok(emails.includes("sachin.gautam8292@gmail.com"));
+    assert.ok(emails.includes("boss@oneleet.local"));
+    assert.ok(emails.includes("pupil@test.com")); // the mentor
+    assert.ok(emails.includes("pupil3@test.com")); // the new admin
+    ok("staff roster lists mentors + admins + super-admin");
+
+    // Premium is super-admin only.
+    const s2 = await idOf("pupil2@test.com");
+    const adminPremium = await request.patch(`/api/admin/students/${s2}/plan`)
+        .set(...auth(adminToken)).send({ plan: "pro" });
+    assert.strictEqual(adminPremium.status, 403);
+    ok("admin cannot toggle premium (403)");
+
+    const superPremium = await request.patch(`/api/admin/students/${s2}/plan`)
+        .set(...auth(superToken)).send({ plan: "pro" });
+    assert.strictEqual(superPremium.status, 200);
+    assert.strictEqual(superPremium.body.student.plan, "pro");
+    ok("super-admin moves a student to premium");
+
+    // Removal rules.
+    const mentorId = await idOf("pupil@test.com");
+    const adminRemoveMentor = await request.delete(`/api/admin/users/${mentorId}`)
+        .set(...auth(adminToken));
+    assert.strictEqual(adminRemoveMentor.status, 403);
+    ok("admin cannot remove a mentor (403)");
+
+    const superRemoveMentor = await request.delete(`/api/admin/users/${mentorId}`)
+        .set(...auth(superToken));
+    assert.strictEqual(superRemoveMentor.status, 200);
+    assert.strictEqual(await User.findById(mentorId), null);
+    ok("super-admin removes a mentor");
+
+    const adminRemoveStudent = await request.delete(`/api/admin/users/${s2}`)
+        .set(...auth(adminToken));
+    assert.strictEqual(adminRemoveStudent.status, 200);
+    assert.strictEqual(await User.findById(s2), null);
+    ok("admin removes a student");
 
     await mongoose.disconnect();
     await mongod.stop();

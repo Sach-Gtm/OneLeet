@@ -36,10 +36,33 @@ export const setStudentPlan = async (id, plan) => {
     }
 };
 
-// Promote/demote a teammate by email (admin only). role: student|teacher|admin
+// Promote/demote a teammate by email. role: student|teacher|admin. Admins may
+// only manage students; granting admin / touching staff is super-admin only
+// (enforced by the API).
 export const setUserRole = async (email, role) => {
     try {
         const { data } = await api.patch("/admin/users/role", { email, role });
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// The mentor/admin roster ("who is admin and mentor").
+export const getStaff = async () => {
+    try {
+        const { data } = await api.get("/admin/staff");
+        return data.staff || [];
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Remove an account. Admins may remove students only; the super admin may
+// remove anyone (enforced by the API).
+export const removeUser = async (id) => {
+    try {
+        const { data } = await api.delete(`/admin/users/${id}`);
         return data;
     } catch (error) {
         unwrap(error);

@@ -1,4 +1,5 @@
 const User = require("../../models/userModel");
+const Attempt = require("../../models/attemptModel");
 
 // GET /api/admin/overview — headline numbers for the admin dashboard.
 async function overview(req, res, next) {
@@ -113,8 +114,11 @@ async function setStudentPlan(req, res, next) {
     }
 }
 
-// PATCH /api/admin/users/role — promote/demote a user by email. Admin-only
-// (enforced on the route). Used to grant teammates admin/teacher access.
+// PATCH /api/admin/users/role — promote/demote a user by email.
+//   • Super Admin may set any account to student / teacher / admin.
+//   • Admin may only manage students — they can turn a student into a mentor
+//     (teacher) but can't grant admin, and can't touch mentor/admin accounts.
+// The Super Admin account itself can never be re-roled through this endpoint.
 async function setUserRole(req, res, next) {
     try {
         const role = req.body.role;
@@ -137,6 +141,28 @@ async function setUserRole(req, res, next) {
                 .status(400)
                 .json({ success: false, message: "You can't change your own role" });
         }
+        if (target.role === "superadmin") {
+            return res.status(403).json({
+                success: false,
+                message: "The Super Admin account can't be changed",
+            });
+        }
+        const isSuper = req.user.role === "superadmin";
+        if (!isSuper) {
+            // Admins are limited to student accounts and can't mint new admins.
+            if (target.role !== "student") {
+                return res.status(403).json({
+                    success: false,
+                    message: "Only the Super Admin can change mentor or admin accounts",
+                });
+            }
+            if (role === "admin") {
+                return res.status(403).json({
+                    success: false,
+                    message: "Only the Super Admin can grant admin access",
+                });
+            }
+        }
         target.role = role;
         await target.save({ validateBeforeSave: false });
         return res.status(200).json({
@@ -154,4 +180,68 @@ async function setUserRole(req, res, next) {
     }
 }
 
-module.exports = { overview, listStudents, setStudentPlan, setUserRole };
+// DELETE /api/admin/users/:id — remove an account.
+//   • Super Admin may remove anyone (except themselves / another Super Admin).
+//   • Admin may remove students only ("revoke a student profile").
+// Their test attempts are removed too, so leaderboards/analytics don't show a
+// ghost row with no name.
+async function removeUser(req, res, next) {
+    try {
+        const target = await User.findById(req.params.id);
+        if (!target) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        if (target._id.toString() === req.user._id.toString()) {
+            return res
+                .status(400)
+                .json({ success: false, message: "You can't remove your own account" });
+        }
+        if (target.role === "superadmin") {
+            return res
+                .status(403)
+                .json({ success: false, message: "The Super Admin account can't be removed" });
+        }
+        const isSuper = req.user.role === "superadmin";
+        if (!isSuper && target.role !== "student") {
+            return res.status(403).json({
+                success: false,
+                message: "Only the Super Admin can remove mentor or admin accounts",
+            });
+        }
+        await Promise.all([
+            User.deleteOne({ _id: target._id }),
+            Attempt.deleteMany({ user: target._id }),
+        ]);
+        return res.status(200).json({
+            success: true,
+            message: `${target.name} has been removed`,
+            id: target._id,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// GET /api/admin/staff — the mentor/admin roster ("who is admin and mentor").
+// Read-only for admins; the Super Admin uses it to manage the team.
+async function listStaff(req, res, next) {
+    try {
+        const staff = await User.find({
+            role: { $in: ["teacher", "admin", "superadmin"] },
+        })
+            .sort({ role: -1, createdAt: -1 })
+            .select("name email role avatar createdAt");
+        return res.status(200).json({ success: true, staff });
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = {
+    overview,
+    listStudents,
+    setStudentPlan,
+    setUserRole,
+    removeUser,
+    listStaff,
+};

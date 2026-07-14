@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -21,6 +21,7 @@ import { Button } from "@/Components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { getDashboard } from "@/Api/DashboardApi";
 import NetworkCanvas from "@/Components/General/NetworkCanvas";
+import { isStudent } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
 function CountUp({ value = 0, format = (v) => v, duration = 1000 }) {
@@ -133,8 +134,7 @@ export default function Dashboard() {
         );
     }
 
-    const needsPhoto =
-        user && user.role !== "teacher" && user.role !== "admin" && !user?.passportPhoto?.url;
+    const needsPhoto = user && isStudent(user) && !user?.passportPhoto?.url;
 
     return (
         <div className="mx-auto max-w-6xl space-y-6">

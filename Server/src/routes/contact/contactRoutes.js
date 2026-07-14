@@ -5,7 +5,7 @@ const attachmentUploadMemory = require("../../middlewares/attachmentUploadMemory
 const contactController = require("../../controllers/contact/contactController");
 const { rateLimit } = require("../../middlewares/rateLimiter");
 const { verifyToken } = require("../../middlewares/authMiddleware");
-const { requireRole } = require("../../middlewares/roleMiddleware");
+const { requireAdmin } = require("../../middlewares/roleMiddleware");
 
 // The public submission endpoints send email + upload to Cloudinary, so cap them
 // hard per IP — otherwise a bot could drain the email quota / spam the inbox.
@@ -30,8 +30,9 @@ router.post("/bug", submitLimit, handleAttachment, contactController.bugReport);
 router.post("/contribution", submitLimit, handleAttachment, contactController.contribution);
 router.post("/callback", submitLimit, contactController.callback);
 
-// Staff inbox: browse and manage everything that came in.
-router.use("/inbox", verifyToken, requireRole("admin", "teacher"));
+// Inbox: browse and manage everything that came in. Admins + Super Admin only
+// — mentors must not see bug reports, callbacks or contributions.
+router.use("/inbox", verifyToken, requireAdmin);
 router.get("/inbox", contactController.listInbox);
 router.patch("/inbox/:id/read", contactController.markInboxRead);
 router.delete("/inbox/:id", contactController.deleteInbox);

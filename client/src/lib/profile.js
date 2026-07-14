@@ -1,6 +1,10 @@
 // Which profile fields every user must fill before they can use the app. Name
 // and phone are collected at signup; the academic fields + passport photo are
-// completed on the Profile page. Staff (admin/teacher) only need name + phone.
+// completed on the Profile page. Staff (mentor/admin/super admin) only need
+// name + phone.
+import { isStaff } from "@/lib/roles";
+
+export { isStaff };
 
 export const PROFILE_FIELDS = [
     { key: "name", label: "Full name", staff: true },
@@ -10,10 +14,6 @@ export const PROFILE_FIELDS = [
     { key: "yearOfStudy", label: "Year of study", staff: false },
     { key: "targetExam", label: "Target exam", staff: false },
 ];
-
-export function isStaff(user) {
-    return user?.role === "admin" || user?.role === "teacher";
-}
 
 // Returns the list of still-missing required fields ({key,label}) for this user.
 export function missingProfileFields(user) {
