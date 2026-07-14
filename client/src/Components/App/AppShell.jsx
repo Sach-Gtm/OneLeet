@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "@/Components/General/Logo";
+import Footer from "@/Components/General/Footer";
 import { isProfileComplete } from "@/lib/profile";
 
 const NAV = [
@@ -248,8 +249,13 @@ export default function AppShell() {
     const gated = user && !isProfileComplete(user) && location.pathname !== "/profile";
 
     const handleLogout = async () => {
+        // Leave the protected area FIRST, then clear auth. The moment `user`
+        // goes null, the ProtectedRoute wrapping this shell renders its own
+        // <Navigate to="/login">, which would beat an after-the-fact
+        // navigate("/"). Landing on the public home page before logout runs
+        // sidesteps that guard, so logout goes home — never to the login form.
+        navigate("/", { replace: true });
         await logout();
-        navigate("/login", { replace: true });
     };
 
     return (
@@ -327,6 +333,9 @@ export default function AppShell() {
                         {gated ? <Navigate to="/profile" replace /> : <Outlet />}
                     </Suspense>
                 </main>
+                {/* Site footer on every logged-in page too (not on login/register,
+                    which don't use this shell). */}
+                <Footer />
             </div>
         </div>
     );

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
     ClipboardCheck,
     Target,
@@ -19,7 +20,28 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { getDashboard } from "@/Api/DashboardApi";
+import NetworkCanvas from "@/Components/General/NetworkCanvas";
 
+// Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
+function CountUp({ value = 0, format = (v) => v, duration = 1000 }) {
+    const [n, setN] = useState(0);
+    useEffect(() => {
+        if (!value) return setN(0);
+        let raf;
+        const start = performance.now();
+        const tick = (now) => {
+            const t = Math.min((now - start) / duration, 1);
+            setN(value * (1 - Math.pow(1 - t, 3)));
+            if (t < 1) raf = requestAnimationFrame(tick);
+            else setN(value);
+        };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+    }, [value, duration]);
+    return <>{format(Math.round(n))}</>;
+}
+
+// Circular prep gauge whose arc sweeps in on mount, in brand blue.
 function PrepRing({ value = 0 }) {
     const radius = 46;
     const circumference = 2 * Math.PI * radius;
@@ -27,15 +49,8 @@ function PrepRing({ value = 0 }) {
     return (
         <div className="relative h-28 w-28">
             <svg className="h-28 w-28 -rotate-90" viewBox="0 0 110 110">
-                <circle
-                    cx="55"
-                    cy="55"
-                    r={radius}
-                    fill="none"
-                    stroke="#e2e8f0"
-                    strokeWidth="9"
-                />
-                <circle
+                <circle cx="55" cy="55" r={radius} fill="none" stroke="#e2e8f0" strokeWidth="9" />
+                <motion.circle
                     cx="55"
                     cy="55"
                     r={radius}
@@ -44,17 +59,21 @@ function PrepRing({ value = 0 }) {
                     strokeWidth="9"
                     strokeLinecap="round"
                     strokeDasharray={circumference}
-                    strokeDashoffset={offset}
+                    initial={{ strokeDashoffset: circumference }}
+                    animate={{ strokeDashoffset: offset }}
+                    transition={{ duration: 1.2, ease: "easeOut", delay: 0.15 }}
                 />
                 <defs>
                     <linearGradient id="prepGradient" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="#3b82f6" />
-                        <stop offset="100%" stopColor="#6366f1" />
+                        <stop offset="0%" stopColor="#3FB0D6" />
+                        <stop offset="100%" stopColor="#147a9e" />
                     </linearGradient>
                 </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-bold text-slate-900">{value}%</span>
+                <span className="text-2xl font-bold text-slate-900">
+                    <CountUp value={value} format={(v) => `${v}%`} duration={1200} />
+                </span>
             </div>
         </div>
     );
@@ -142,7 +161,12 @@ export default function Dashboard() {
 
             {/* Welcome + Overall Prep */}
             <div className="grid gap-6 lg:grid-cols-3">
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white lg:col-span-2">
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white lg:col-span-2"
+                >
                     <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
                     <h1 className="text-2xl font-bold">
                         Welcome back, {firstName}! <span className="align-middle">👋</span>
@@ -166,7 +190,7 @@ export default function Dashboard() {
                             <CalendarDays size={15} /> Study Planner
                         </Link>
                     </div>
-                </div>
+                </motion.div>
 
                 <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6">
                     <PrepRing value={stats.overallPrep || 0} />
@@ -184,13 +208,16 @@ export default function Dashboard() {
 
             {/* Stat cards */}
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                {STAT_META.map((meta) => {
+                {STAT_META.map((meta, idx) => {
                     const Icon = meta.icon;
                     const value = stats[meta.key] || 0;
                     return (
-                        <div
+                        <motion.div
                             key={meta.key}
-                            className="rounded-2xl border border-slate-200 bg-white p-5"
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: idx * 0.08, ease: "easeOut" }}
+                            className="rounded-2xl border border-slate-200 bg-white p-5 transition-shadow hover:shadow-md"
                         >
                             <span
                                 className={cn(
@@ -201,12 +228,12 @@ export default function Dashboard() {
                                 <Icon size={18} />
                             </span>
                             <p className="mt-3 text-2xl font-bold text-slate-900">
-                                {meta.format(value)}
+                                <CountUp value={value} format={meta.format} />
                             </p>
                             <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
                                 {meta.label}
                             </p>
-                        </div>
+                        </motion.div>
                     );
                 })}
             </div>
@@ -214,24 +241,28 @@ export default function Dashboard() {
             {/* AI insight + Recent activity */}
             <div className="grid gap-6 lg:grid-cols-3">
                 <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-900 p-6 text-white lg:col-span-2">
+                    {/* living constellation backdrop */}
+                    <NetworkCanvas className="pointer-events-none absolute inset-0 h-full w-full opacity-70" />
                     <div className="pointer-events-none absolute -right-8 -bottom-8 h-40 w-40 rounded-full bg-indigo-500/20 blur-2xl" />
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">
-                        <Sparkles size={13} /> AI Insight
-                    </span>
-                    <h2 className="mt-3 text-xl font-bold">
-                        Personalised coaching, powered by AI
-                    </h2>
-                    <p className="mt-1 max-w-md text-sm text-slate-300">
-                        Once you take a few mock tests, OneLeet&apos;s AI will pinpoint your
-                        weak topics and curate a focused revision plan. Generate practice
-                        questions and analyse your performance in AI Tools.
-                    </p>
-                    <Link
-                        to="/ai-tools"
-                        className="mt-5 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
-                    >
-                        Explore AI Tools <ArrowRight size={15} />
-                    </Link>
+                    <div className="relative">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
+                            <Sparkles size={13} /> AI Insight
+                        </span>
+                        <h2 className="mt-3 text-xl font-bold">
+                            Personalised coaching, powered by AI
+                        </h2>
+                        <p className="mt-1 max-w-md text-sm text-slate-300">
+                            Once you take a few mock tests, OneLeet&apos;s AI will pinpoint your
+                            weak topics and curate a focused revision plan. Generate practice
+                            questions and analyse your performance in AI Tools.
+                        </p>
+                        <Link
+                            to="/ai-tools"
+                            className="mt-5 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+                        >
+                            Explore AI Tools <ArrowRight size={15} />
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 bg-white p-6">

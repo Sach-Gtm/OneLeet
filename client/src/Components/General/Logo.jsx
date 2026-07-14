@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { motion } from "framer-motion";
 
 // OneLeet brand mark: three rising bars (blue → grey → orange growth) topped by
@@ -17,6 +18,11 @@ const BAR = [
 const POP = [0.34, 1.56, 0.64, 1];
 
 export function LogoMark({ size = 34, animated = false, className = "" }) {
+    // Unique per instance — otherwise multiple LogoMarks on one page share the
+    // same gradient ids and the browser resolves url(#ol-bar-0) to the wrong
+    // (often hidden) SVG, making the gradient bars vanish.
+    const uid = useId().replace(/:/g, "");
+    const gid = (i) => `ol-bar-${uid}-${i}`;
     return (
         <svg
             width={size}
@@ -29,7 +35,7 @@ export function LogoMark({ size = 34, animated = false, className = "" }) {
         >
             <defs>
                 {BAR.map((b, i) => (
-                    <linearGradient key={i} id={`ol-bar-${i}`} x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient key={i} id={gid(i)} x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor={b.from} />
                         <stop offset="100%" stopColor={b.to} />
                     </linearGradient>
@@ -38,7 +44,7 @@ export function LogoMark({ size = 34, animated = false, className = "" }) {
 
             {BAR.map((b, i) => {
                 const top = BASE_Y - b.h;
-                const common = { x: b.x, width: b.w, rx: b.w / 2, fill: `url(#ol-bar-${i})` };
+                const common = { x: b.x, width: b.w, rx: b.w / 2, fill: `url(#${gid(i)})` };
                 return animated ? (
                     <motion.rect
                         key={i}
