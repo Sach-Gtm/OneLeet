@@ -13,6 +13,7 @@ import Home from "../Pages/General/Home";
 import MarketingLayout from "@/Components/General/MarketingLayout";
 import ProtectedRoute from "@/Components/Auth/ProtectedRoute";
 import AppShell from "@/Components/App/AppShell";
+import ActivityTracker from "@/Components/App/ActivityTracker";
 
 const NotFound = lazy(() => import("@/Components/General/NotFound"));
 const Mentors = lazy(() => import("@/Pages/Navbar-Pages/Mentors"));
@@ -49,6 +50,7 @@ const FullscreenLoader = () => (
 const AppRoutes = () => {
     return (
         <Router>
+            <ActivityTracker />
             <Suspense fallback={<FullscreenLoader />}>
                 <Routes>
                     {/* Public marketing pages — light themed shell */}
