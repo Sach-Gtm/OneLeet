@@ -1,0 +1,45 @@
+# OneLeet — https://www.oneleet.in
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /studio
+Disallow: /profile
+Disallow: /analytics
+Disallow: /leaderboard
+Disallow: /community
+Disallow: /tests/
+Disallow: /ai-tools
+Disallow: /verify-otp
+Disallow: /reset-password
+Disallow: /forgot-password
+
+# AI answer engines — explicitly allowed
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: Bytespider
+Allow: /
+User-agent: Amazonbot
+Allow: /
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://www.oneleet.in/sitemap.xml

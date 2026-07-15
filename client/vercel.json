@@ -1,4 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "comment": "Serve the pre-rendered static SEO pages (/leet, /guides) and the root SEO files straight from the filesystem; send everything else to the SPA shell.",
+      "source": "/((?!leet/|leet$|guides/|guides$|sitemap\\.xml$|robots\\.txt$|llms\\.txt$|og-image\\.png$).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(leet|guides)/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800" }
+      ]
+    }
+  ]
 }

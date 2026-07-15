@@ -1,4 +1,5 @@
 import { CheckCircle2 } from "lucide-react";
+import { useSeo } from "@/lib/useSeo";
 
 const mentors = [
     { name: "Sachin Gautam", handle: "@sachingautam", exam: "IPU LEET 2025", initials: "SG" },
@@ -6,6 +7,12 @@ const mentors = [
 ];
 
 export default function Mentors() {
+    useSeo({
+        title: "LEET Mentors — Learn from students who cracked it | OneLeet",
+        description:
+            "Meet OneLeet's mentors — LEET qualifiers who've sat exactly where you are and know what it takes to get into 2nd year B.Tech through lateral entry.",
+        path: "/mentor",
+    });
     return (
         <div className="mx-auto max-w-5xl px-4 pb-24 pt-32 sm:px-6">
             <div className="mb-12 text-center">
