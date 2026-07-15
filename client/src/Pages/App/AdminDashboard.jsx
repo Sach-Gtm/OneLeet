@@ -40,6 +40,7 @@ import {
 import StudentActivityModal from "@/Components/App/StudentActivityModal";
 import CompetitionAdmin from "@/Components/App/CompetitionAdmin";
 import AiUsageAdmin from "@/Components/App/AiUsageAdmin";
+import BlocklistAdmin from "@/Components/App/BlocklistAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
@@ -238,7 +239,11 @@ export default function AdminDashboard() {
     const handleRemove = async (target, kind) => {
         const who = kind === "staff" ? `${target.name} (${roleLabel(target)})` : target.name;
         const extra = kind === "student" ? " and their results" : "";
-        if (!window.confirm(`Remove ${who}? This permanently deletes their account${extra}.`))
+        if (
+            !window.confirm(
+                `Remove ${who}? This permanently deletes their account${extra} and blocks their email from signing up again. You can unblock it later under "Blocked accounts".`
+            )
+        )
             return;
         try {
             await removeUser(target._id);
@@ -629,6 +634,9 @@ export default function AdminDashboard() {
 
             {/* AI spend & usage dashboard (admins + super admin) */}
             {canManageStudents && <AiUsageAdmin />}
+
+            {/* Account block-list (super admin only) */}
+            {isSuper && <BlocklistAdmin />}
 
             {/* Upload a PYQ paper (staff) */}
             <form

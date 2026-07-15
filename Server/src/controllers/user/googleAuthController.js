@@ -2,6 +2,7 @@ const User = require("../../models/userModel");
 const generateToken = require("../../utils/generateToken");
 const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
 const { SUPERADMIN_EMAIL } = require("../../config/roles");
+const { isEmailBlocked } = require("../../utils/blocklist");
 
 const sanitize = (user) => {
     const obj = user.toObject ? user.toObject() : { ...user };
@@ -42,6 +43,14 @@ async function googleAuth(req, res, next) {
             });
         }
         const { googleId, email, name, avatar } = identity;
+
+        // Blocked (e.g. removed) emails can't sign up or sign in via Google either.
+        if (await isEmailBlocked(email)) {
+            return res.status(403).json({
+                success: false,
+                message: "This account has been blocked. If you think this is a mistake, contact help@oneleet.in.",
+            });
+        }
 
         // The Super Admin is provisioned by a Google-VERIFIED matching email
         // (safe: the address ownership is proven by Google above).

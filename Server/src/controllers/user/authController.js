@@ -15,6 +15,7 @@ const {
     OTP_TTL_MS,
     RESEND_COOLDOWN_MS,
 } = require("../../utils/otp");
+const { isEmailBlocked } = require("../../utils/blocklist");
 
 // Strip sensitive fields before returning a user in a response.
 const sanitize = (user) => {
@@ -65,6 +66,15 @@ async function sendOtpEmail(user, otp) {
 async function register(req, res, next) {
     try {
         const { name, email, password, phone, avatar } = req.body;
+
+        // Blocked (e.g. previously removed) emails can't create a new account.
+        if (await isEmailBlocked(email)) {
+            return res.status(403).json({
+                success: false,
+                message:
+                    "This email can't be used to register. If you think this is a mistake, contact help@oneleet.in.",
+            });
+        }
 
         const existing = await User.findOne({ email });
         if (existing) {
@@ -152,6 +162,14 @@ async function login(req, res, next) {
             return res
                 .status(401)
                 .json({ success: false, message: "Invalid email or password" });
+        }
+
+        // A blocked email can't sign in even if a stale account lingers.
+        if (await isEmailBlocked(user.email)) {
+            return res.status(403).json({
+                success: false,
+                message: "This account has been blocked. If you think this is a mistake, contact help@oneleet.in.",
+            });
         }
 
         // Only block accounts explicitly awaiting OTP (=== false). Legacy and

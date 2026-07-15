@@ -3,7 +3,9 @@ const User = require("../../models/userModel");
 const Attempt = require("../../models/attemptModel");
 const Test = require("../../models/testModel");
 const AiQuery = require("../../models/aiQueryModel");
+const Blocklist = require("../../models/blocklistModel");
 const aiRuntime = require("../../services/ai/aiRuntime");
+const { SUPERADMIN_EMAIL } = require("../../config/roles");
 const { timeSummary } = require("../activity/activityController");
 
 // A malformed :id would otherwise make Mongoose throw a CastError → 500. Treat
@@ -227,9 +229,22 @@ async function removeUser(req, res, next) {
             User.deleteOne({ _id: target._id }),
             Attempt.deleteMany({ user: target._id }),
         ]);
+        // Block the email so the removed person can't just re-register as a
+        // student and slip back in. A Super Admin can lift this later.
+        await Blocklist.updateOne(
+            { email: target.email },
+            {
+                $setOnInsert: {
+                    email: String(target.email).toLowerCase().trim(),
+                    reason: `Removed by ${req.user.name || "an administrator"}`,
+                    createdBy: req.user._id,
+                },
+            },
+            { upsert: true }
+        ).catch(() => {});
         return res.status(200).json({
             success: true,
-            message: `${target.name} has been removed`,
+            message: `${target.name} has been removed and blocked from re-registering`,
             id: target._id,
         });
     } catch (error) {
@@ -416,6 +431,60 @@ async function exportAchievements(req, res, next) {
     }
 }
 
+// GET /api/admin/blocklist — emails blocked from holding an account.
+async function listBlocklist(req, res, next) {
+    try {
+        const items = await Blocklist.find()
+            .sort({ createdAt: -1 })
+            .limit(300)
+            .populate("createdBy", "name");
+        return res.status(200).json({ success: true, blocklist: items });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// POST /api/admin/blocklist — manually block an email from registering.
+async function blockEmail(req, res, next) {
+    try {
+        const email = String(req.body.email || "").toLowerCase().trim();
+        if (!email) {
+            return res.status(400).json({ success: false, message: "An email is required" });
+        }
+        if (email === SUPERADMIN_EMAIL) {
+            return res.status(400).json({ success: false, message: "The Super Admin email can't be blocked" });
+        }
+        await Blocklist.updateOne(
+            { email },
+            {
+                $setOnInsert: {
+                    email,
+                    reason: String(req.body.reason || "Blocked by an administrator").slice(0, 200),
+                    createdBy: req.user._id,
+                },
+            },
+            { upsert: true }
+        );
+        return res.status(200).json({ success: true, message: `${email} is now blocked` });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// POST /api/admin/blocklist/unblock — lift a block so the email can register again.
+async function unblockEmail(req, res, next) {
+    try {
+        const email = String(req.body.email || "").toLowerCase().trim();
+        if (!email) {
+            return res.status(400).json({ success: false, message: "An email is required" });
+        }
+        await Blocklist.deleteOne({ email });
+        return res.status(200).json({ success: true, message: `${email} has been unblocked` });
+    } catch (error) {
+        next(error);
+    }
+}
+
 // GET /api/admin/ai-usage — AI spend dashboard: today + this-month calls, cache
 // hit-rate, estimated cost, per-feature breakdown and the heaviest users.
 async function aiUsage(req, res, next) {
@@ -440,4 +509,7 @@ module.exports = {
     resetHallOfFame,
     exportAchievements,
     aiUsage,
+    listBlocklist,
+    blockEmail,
+    unblockEmail,
 };

@@ -109,6 +109,34 @@ export const resetHallOfFame = async () => {
     }
 };
 
+// Account block-list (super admin only).
+export const getBlocklist = async () => {
+    try {
+        const { data } = await api.get("/admin/blocklist");
+        return data.blocklist || [];
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const blockEmail = async (email, reason) => {
+    try {
+        const { data } = await api.post("/admin/blocklist", { email, reason });
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const unblockEmail = async (email) => {
+    try {
+        const { data } = await api.post("/admin/blocklist/unblock", { email });
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // AI spend dashboard: today/month calls, cache-hit rate, est cost, breakdowns.
 export const getAiUsage = async () => {
     try {
