@@ -17,6 +17,7 @@ import {
     Loader2,
     ShieldCheck,
     ChevronDown,
+    Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
@@ -73,7 +74,10 @@ function SidebarContent({ user, onNavigate, onLogout }) {
               ...NAV,
               {
                   section: "Staff",
-                  items: [{ to: "/admin", label: "Admin", icon: ShieldCheck }],
+                  items: [
+                      { to: "/studio", label: "Content Studio", icon: Wand2 },
+                      { to: "/admin", label: "Admin", icon: ShieldCheck },
+                  ],
               },
           ]
         : NAV;
