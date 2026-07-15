@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
     Wand2,
     Gauge,
@@ -12,17 +12,56 @@ import {
     CheckCircle2,
     XCircle,
     Flame,
+    Coins,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import {
     getAiStatus,
+    getAiQuota,
     generateQuestions,
     predictDifficulty,
     analyzePerformance,
     generateStudyPlan,
     getTrending,
 } from "@/Api/AiApi";
+
+// Show the server's message (incl. the friendly "out of AI for today" text).
+function aiError(e, fallback) {
+    toast.error(e?.message || fallback, e?.status === 429 ? { duration: 5000, icon: "🪙" } : undefined);
+}
+
+// Daily AI-usage meter + upgrade nudge. Hidden for unlimited (staff) accounts.
+function QuotaMeter({ quota }) {
+    if (!quota || quota.unlimited) return null;
+    const { used, limit, remaining, plan } = quota;
+    const out = remaining <= 0;
+    const low = remaining <= 1;
+    return (
+        <div
+            className={cn(
+                "mb-5 flex flex-wrap items-center gap-2 rounded-xl border px-3.5 py-2.5 text-sm",
+                out ? "border-red-200 bg-red-50" : low ? "border-amber-200 bg-amber-50" : "border-slate-200 bg-white"
+            )}
+        >
+            <Coins size={16} className={out ? "text-red-500" : low ? "text-amber-500" : "text-indigo-500"} />
+            <span className="font-semibold text-slate-700">
+                {out
+                    ? "You're out of AI generations for today"
+                    : `${remaining} of ${limit} AI generations left today`}
+            </span>
+            <span className="text-xs text-slate-400">· {used} used</span>
+            {plan !== "pro" && (
+                <a
+                    href="mailto:help@oneleet.in?subject=OneLeet%20Premium"
+                    className="ml-auto rounded-lg bg-indigo-600 px-2.5 py-1 text-xs font-semibold text-white transition hover:bg-indigo-700"
+                >
+                    Get premium · 100/day
+                </a>
+            )}
+        </div>
+    );
+}
 
 // "Most searched topics in the last 24h" — OneLeet's own data, topic names only.
 function TrendingTopics() {
@@ -92,7 +131,7 @@ function RunButton({ loading, children, onClick }) {
 }
 
 /* ---------------- Question Generator ---------------- */
-function QuestionGen() {
+function QuestionGen({ onRan }) {
     const [form, setForm] = useState({ subject: "Digital Electronics", topic: "Logic Gates", difficulty: "easy", count: 5 });
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
@@ -106,10 +145,11 @@ function QuestionGen() {
         setAnswers({});
         try {
             setResult(await generateQuestions(form));
-        } catch {
-            toast.error("Could not generate questions.");
+        } catch (e) {
+            aiError(e, "Could not generate questions.");
         } finally {
             setLoading(false);
+            onRan?.();
         }
     };
 
@@ -234,7 +274,7 @@ function QuestionGen() {
 }
 
 /* ---------------- Difficulty Predictor ---------------- */
-function Predictor() {
+function Predictor({ onRan }) {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
@@ -245,10 +285,11 @@ function Predictor() {
         setResult(null);
         try {
             setResult(await predictDifficulty({ questionText: text }));
-        } catch {
-            toast.error("Could not predict difficulty.");
+        } catch (e) {
+            aiError(e, "Could not predict difficulty.");
         } finally {
             setLoading(false);
+            onRan?.();
         }
     };
 
@@ -282,7 +323,7 @@ function Predictor() {
 }
 
 /* ---------------- Performance Analyzer ---------------- */
-function Analyzer() {
+function Analyzer({ onRan }) {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
 
@@ -291,10 +332,11 @@ function Analyzer() {
         setResult(null);
         try {
             setResult(await analyzePerformance());
-        } catch {
-            toast.error("Could not analyze performance.");
+        } catch (e) {
+            aiError(e, "Could not analyze performance.");
         } finally {
             setLoading(false);
+            onRan?.();
         }
     };
 
@@ -336,7 +378,7 @@ function Analyzer() {
 }
 
 /* ---------------- Study Planner ---------------- */
-function Planner() {
+function Planner({ onRan }) {
     const [form, setForm] = useState({ days: 7, hoursPerDay: 2, weakAreas: "" });
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
@@ -347,10 +389,11 @@ function Planner() {
         try {
             const weakAreas = form.weakAreas.split(",").map((s) => s.trim()).filter(Boolean);
             setResult(await generateStudyPlan({ days: form.days, hoursPerDay: form.hoursPerDay, weakAreas }));
-        } catch {
-            toast.error("Could not generate a plan.");
+        } catch (e) {
+            aiError(e, "Could not generate a plan.");
         } finally {
             setLoading(false);
+            onRan?.();
         }
     };
 
@@ -397,12 +440,20 @@ function Planner() {
 export default function AiTools() {
     const [active, setActive] = useState("questions");
     const [provider, setProvider] = useState(null);
+    const [quota, setQuota] = useState(null);
+
+    const refreshQuota = useCallback(() => {
+        getAiQuota()
+            .then(setQuota)
+            .catch(() => {});
+    }, []);
 
     useEffect(() => {
         getAiStatus()
             .then((res) => setProvider(res.provider))
             .catch(() => setProvider(null));
-    }, []);
+        refreshQuota();
+    }, [refreshQuota]);
 
     return (
         <div className="mx-auto max-w-5xl">
@@ -426,6 +477,8 @@ export default function AiTools() {
 
             <TrendingTopics />
 
+            <QuotaMeter quota={quota} />
+
             <div className="mb-6 flex flex-wrap gap-2 border-b border-slate-200">
                 {TOOLS.map((t) => {
                     const Icon = t.icon;
@@ -444,10 +497,10 @@ export default function AiTools() {
                 })}
             </div>
 
-            {active === "questions" && <QuestionGen />}
-            {active === "predictor" && <Predictor />}
-            {active === "analyzer" && <Analyzer />}
-            {active === "planner" && <Planner />}
+            {active === "questions" && <QuestionGen onRan={refreshQuota} />}
+            {active === "predictor" && <Predictor onRan={refreshQuota} />}
+            {active === "analyzer" && <Analyzer onRan={refreshQuota} />}
+            {active === "planner" && <Planner onRan={refreshQuota} />}
         </div>
     );
 }

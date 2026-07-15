@@ -3,6 +3,7 @@ const User = require("../../models/userModel");
 const Attempt = require("../../models/attemptModel");
 const Test = require("../../models/testModel");
 const AiQuery = require("../../models/aiQueryModel");
+const aiRuntime = require("../../services/ai/aiRuntime");
 const { timeSummary } = require("../activity/activityController");
 
 // A malformed :id would otherwise make Mongoose throw a CastError → 500. Treat
@@ -415,6 +416,17 @@ async function exportAchievements(req, res, next) {
     }
 }
 
+// GET /api/admin/ai-usage — AI spend dashboard: today + this-month calls, cache
+// hit-rate, estimated cost, per-feature breakdown and the heaviest users.
+async function aiUsage(req, res, next) {
+    try {
+        const summary = await aiRuntime.usageSummary();
+        return res.status(200).json({ success: true, ...summary });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     overview,
     listStudents,
@@ -427,4 +439,5 @@ module.exports = {
     resetStudentAchievements,
     resetHallOfFame,
     exportAchievements,
+    aiUsage,
 };

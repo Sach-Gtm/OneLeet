@@ -109,6 +109,16 @@ export const resetHallOfFame = async () => {
     }
 };
 
+// AI spend dashboard: today/month calls, cache-hit rate, est cost, breakdowns.
+export const getAiUsage = async () => {
+    try {
+        const { data } = await api.get("/admin/ai-usage");
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // Download the achievements CSV (triggers a browser download).
 export const exportAchievements = async () => {
     try {

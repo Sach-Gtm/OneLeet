@@ -20,6 +20,9 @@ router.get("/staff", admin.listStaff);
 // Competitive leaderboards + achievement records.
 router.get("/leaderboards", admin.leaderboards);
 router.get("/achievements/export", admin.exportAchievements);
+
+// AI spend dashboard.
+router.get("/ai-usage", admin.aiUsage);
 router.patch("/students/:id/achievements/reset", admin.resetStudentAchievements);
 
 // Premium and the full Hall-of-Fame wipe are Super-Admin-only levers.

@@ -11,6 +11,7 @@ const aiLimit = rateLimit("ai-generate", 30, 15 * 60);
 router.get("/health", ai.health);
 router.get("/status", verifyToken, ai.getStatus);
 router.get("/trending", verifyToken, ai.trending);
+router.get("/quota", verifyToken, ai.quota);
 router.post("/questions", verifyToken, aiLimit, ai.generateQuestions);
 router.post("/predict-difficulty", verifyToken, aiLimit, ai.predictDifficulty);
 router.post("/analyze", verifyToken, aiLimit, ai.analyzePerformance);

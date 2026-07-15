@@ -5,7 +5,18 @@
 // `gemini-flash-lite-latest` is an always-current alias with the most generous
 // free-tier quota — verified working with AI Studio (AQ.) keys. Override with
 // GEMINI_MODEL if you move to a paid tier / bigger model.
-const MODEL = () => process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
+const BASE_MODEL = () => process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
+
+// Model routing: "simple" tasks (MCQs, difficulty, flashcards, summaries) use
+// the cheapest model; "smart" tasks (full drafts, study plans, analysis) MAY use
+// a stronger one — but ONLY if you opt in via AI_MODEL_SMART. Everything defaults
+// to the cheap base model, so there's no extra cost unless you choose it.
+function modelForTier(tier) {
+    if (tier === "smart") {
+        return process.env.AI_MODEL_SMART || process.env.AI_MODEL_SIMPLE || BASE_BASE_MODEL();
+    }
+    return process.env.AI_MODEL_SIMPLE || BASE_BASE_MODEL();
+}
 
 const safeJsonParse = (text) => {
     if (!text) return null;
@@ -18,11 +29,11 @@ const safeJsonParse = (text) => {
     }
 };
 
-async function callGemini(prompt, { json = false } = {}) {
+async function callGemini(prompt, { json = false, tier = "simple" } = {}) {
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("GEMINI_API_KEY is not configured");
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL()}:generateContent?key=${key}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelForTier(tier)}:generateContent?key=${key}`;
     const body = {
         contents: [{ parts: [{ text: prompt }] }],
         ...(json ? { generationConfig: { responseMimeType: "application/json" } } : {}),
@@ -63,13 +74,13 @@ async function verifyKey() {
         );
         if (!res.ok) {
             const t = await res.text().catch(() => "");
-            return { ok: false, model: MODEL(), error: `${res.status}: ${t.slice(0, 160)}` };
+            return { ok: false, model: BASE_MODEL(), error: `${res.status}: ${t.slice(0, 160)}` };
         }
         const data = await res.json();
         const modelAvailable = (data.models || []).some((m) =>
-            (m.name || "").includes(MODEL())
+            (m.name || "").includes(BASE_MODEL())
         );
-        return { ok: true, model: MODEL(), modelAvailable };
+        return { ok: true, model: BASE_MODEL(), modelAvailable };
     } catch (e) {
         return { ok: false, error: e.message };
     }
@@ -124,7 +135,7 @@ async function draftAssessment({ text, subject, topic, mode = "test", count = 5,
         `one-line description. ${source} ` +
         `Respond ONLY as JSON: {"title": string, "description": string, "questions": ` +
         `[{"text": string, "options": string[4], "correctIndex": number, "marks": number, "explanation": string}]}.`;
-    const raw = await callGemini(prompt, { json: true });
+    const raw = await callGemini(prompt, { json: true, tier: "smart" });
     const parsed = safeJsonParse(raw) || {};
     return {
         provider: "gemini",
@@ -155,7 +166,7 @@ async function generateStudyPlan({ targetExam = "LEET", days = 7, hoursPerDay = 
         `Create a ${days}-day study plan for a student targeting ${targetExam}, studying about ` +
         `${hoursPerDay} hours/day. ${weakAreas.length ? `Prioritise these weak areas: ${weakAreas.join(", ")}. ` : ""}` +
         `Respond ONLY as JSON: {"summary": string, "plan": [{"day": number, "focus": string, "hours": number, "tasks": string[]}]}.`;
-    const raw = await callGemini(prompt, { json: true });
+    const raw = await callGemini(prompt, { json: true, tier: "smart" });
     const parsed = safeJsonParse(raw) || { summary: raw, plan: [] };
     return {
         provider: "gemini",
@@ -170,7 +181,7 @@ async function analyzePerformance({ stats } = {}) {
         `A LEET aspirant has these prep stats: ${JSON.stringify(stats || {})}. ` +
         `Give a short performance analysis with focus areas and recommendations. ` +
         `Respond ONLY as JSON: {"summary": string, "focusAreas": string[], "recommendations": string[]}.`;
-    const raw = await callGemini(prompt, { json: true });
+    const raw = await callGemini(prompt, { json: true, tier: "smart" });
     const parsed = safeJsonParse(raw) || { summary: raw, focusAreas: [], recommendations: [] };
     return {
         provider: "gemini",

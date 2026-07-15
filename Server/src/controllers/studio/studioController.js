@@ -3,6 +3,7 @@ const Test = require("../../models/testModel");
 const Question = require("../../models/questionModel");
 const AiQuery = require("../../models/aiQueryModel");
 const ai = require("../../services/ai/aiService");
+const runtime = require("../../services/ai/aiRuntime");
 
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 const notFound = (res) => res.status(404).json({ success: false, message: "Not found" });
@@ -54,13 +55,22 @@ function normalizeQuestions(list, { subject = "", topic = "" } = {}) {
 async function aiDraft(req, res, next) {
     try {
         const b = req.body || {};
-        const draft = await ai.draftAssessment({
-            text: b.text,
-            subject: b.subject,
-            topic: b.topic,
-            mode: b.mode,
+        const params = {
+            text: b.text || "",
+            subject: b.subject || "",
+            topic: b.topic || "",
+            mode: b.mode === "practice" ? "practice" : "test",
             count: Math.min(Math.max(parseInt(b.count, 10) || 5, 1), 20),
-            difficulty: b.difficulty,
+            difficulty: b.difficulty || "moderate",
+        };
+        // Staff are unlimited (dailyLimitFor → null), but drafts are still cached
+        // and logged so the cost dashboard captures Studio spend too.
+        const { result: draft, cacheHit } = await runtime.runAiFeature({
+            user: req.user,
+            feature: "draft",
+            cacheParams: params,
+            inputText: params.text,
+            generate: () => ai.draftAssessment(params),
         });
         AiQuery.create({
             user: req.user._id,
@@ -69,8 +79,11 @@ async function aiDraft(req, res, next) {
             topic: b.topic || "",
             difficulty: b.difficulty || "",
         }).catch(() => {});
-        return res.status(200).json({ success: true, draft });
+        return res.status(200).json({ success: true, cached: cacheHit, draft });
     } catch (err) {
+        if (err && err.status === 429) {
+            return res.status(429).json({ success: false, message: err.message, quota: err.quota });
+        }
         next(err);
     }
 }
