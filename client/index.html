@@ -6,22 +6,87 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#3FB0D6" />
-    <title>OneLeet — AI-powered LEET / Lateral Entry exam preparation</title>
+
+    <title>OneLeet — AI-powered LEET / Lateral Entry Entrance Test preparation</title>
     <meta
       name="description"
-      content="OneLeet helps diploma students crack the LEET / Lateral Entry Entrance Test with past papers, notes, AI practice questions and mock tests — for UP, Bihar, Delhi, Haryana, Rajasthan, Madhya Pradesh, Punjab, Maharashtra and Gujarat."
+      content="Crack LEET (Lateral Entry Entrance Test) and get into the 2nd year of B.Tech after your diploma. Free past papers, exam-pattern mock tests, notes and AI practice — for Bihar, UP, Delhi, Haryana, Punjab, Rajasthan, MP, Maharashtra, Gujarat and more."
     />
-    <meta property="og:title" content="OneLeet — AI-powered LEET exam preparation" />
+    <link rel="canonical" href="https://www.oneleet.in/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:site_name" content="OneLeet" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OneLeet — AI-powered LEET / Lateral Entry preparation" />
     <meta
       property="og:description"
-      content="Past papers, notes, AI practice and mock tests for the Lateral Entry Entrance Test."
+      content="Your diploma-to-B.Tech shortcut. Real past papers, exam-pattern mock tests and AI practice for the Lateral Entry Entrance Test."
     />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/favicon.svg" />
-    <meta name="twitter:card" content="summary" />
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-    </style>
+    <meta property="og:url" content="https://www.oneleet.in/" />
+    <meta property="og:image" content="https://www.oneleet.in/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_IN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OneLeet — AI-powered LEET / Lateral Entry preparation" />
+    <meta
+      name="twitter:description"
+      content="Your diploma-to-B.Tech shortcut. Real past papers, mock tests and AI practice for LEET."
+    />
+    <meta name="twitter:image" content="https://www.oneleet.in/og-image.png" />
+
+    <!-- Fonts: preconnect + display=swap so text paints immediately (better LCP than @import) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    />
+
+    <!-- Entity graph: who OneLeet is + site search action. Mirrors the static SEO pages. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "EducationalOrganization",
+            "@id": "https://www.oneleet.in/#organization",
+            "name": "OneLeet",
+            "alternateName": "OneLeet — LEET Preparation",
+            "url": "https://www.oneleet.in/",
+            "logo": "https://www.oneleet.in/favicon.svg",
+            "image": "https://www.oneleet.in/og-image.png",
+            "description": "OneLeet is an AI-powered preparation platform for the LEET / Lateral Entry Entrance Test, helping diploma holders get into the 2nd year of B.Tech with real past papers, exam-pattern mock tests, notes and AI practice.",
+            "email": "help@oneleet.in",
+            "areaServed": "IN",
+            "knowsAbout": [
+              "LEET",
+              "Lateral Entry Entrance Test",
+              "Lateral entry into B.Tech",
+              "Diploma to B.Tech",
+              "Engineering entrance preparation"
+            ],
+            "parentOrganization": { "@type": "Organization", "name": "StaplerLabs Private Limited" }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.oneleet.in/#website",
+            "url": "https://www.oneleet.in/",
+            "name": "OneLeet",
+            "publisher": { "@id": "https://www.oneleet.in/#organization" },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://www.oneleet.in/leet/?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

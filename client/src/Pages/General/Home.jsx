@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import Footer from "@/Components/General/Footer";
 import ShaderHero from "@/Components/General/ShaderHero";
 import JourneyReveal from "@/Components/General/JourneyReveal";
+import { useSeo } from "@/lib/useSeo";
 
 const features = [
     { icon: FileText, title: "Real past papers", desc: "Actual LEET papers — practise what the exam really asks.", tint: "bg-indigo-50 border-indigo-100", iconBg: "bg-indigo-500" },
@@ -40,6 +41,12 @@ const conversation = [
 ];
 
 export default function Home() {
+    useSeo({
+        title: "OneLeet — AI-powered LEET / Lateral Entry Entrance Test preparation",
+        description:
+            "Crack LEET and get into 2nd year B.Tech after your diploma. Free past papers, exam-pattern mock tests, notes and AI practice for every state.",
+        path: "/",
+    });
     return (
         <>
             {/* Hero */}
