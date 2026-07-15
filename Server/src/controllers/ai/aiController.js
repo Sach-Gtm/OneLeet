@@ -1,5 +1,15 @@
 const aiService = require("../../services/ai/aiService");
+const runtime = require("../../services/ai/aiRuntime");
 const AiQuery = require("../../models/aiQueryModel");
+
+// AI generation ran out of daily quota → a friendly 429 (with the quota snapshot
+// so the UI can prompt an upgrade). Everything else flows to the error handler.
+function fail(res, next, e) {
+    if (e && e.status === 429) {
+        return res.status(429).json({ success: false, message: e.message, quota: e.quota });
+    }
+    return next(e);
+}
 
 // Fire-and-forget: record what was asked so we can show "most searched topics
 // in the last 24h" and, per student, what they've explored. Never blocks or
@@ -53,6 +63,15 @@ async function health(req, res) {
     return res.status(200).json({ success: true, ai });
 }
 
+// GET /api/ai/quota — the caller's remaining daily AI generations (UI meter).
+async function quota(req, res, next) {
+    try {
+        return res.status(200).json({ success: true, quota: await runtime.quotaFor(req.user) });
+    } catch (error) {
+        next(error);
+    }
+}
+
 // POST /api/ai/questions
 async function generateQuestions(req, res, next) {
     try {
@@ -62,10 +81,15 @@ async function generateQuestions(req, res, next) {
         }
         const n = Math.min(Math.max(parseInt(count, 10) || 5, 1), 20);
         logAiQuery(req, { tool: "questions", subject, topic, difficulty });
-        const result = await aiService.generateQuestions({ subject, topic, difficulty, count: n });
-        return res.status(200).json({ success: true, ...result });
+        const { result, cacheHit } = await runtime.runAiFeature({
+            user: req.user,
+            feature: "questions",
+            cacheParams: { subject, topic, difficulty, count: n },
+            generate: () => aiService.generateQuestions({ subject, topic, difficulty, count: n }),
+        });
+        return res.status(200).json({ success: true, cached: cacheHit, ...result });
     } catch (error) {
-        next(error);
+        return fail(res, next, error);
     }
 }
 
@@ -76,23 +100,33 @@ async function predictDifficulty(req, res, next) {
         if (!questionText || !questionText.trim()) {
             return res.status(400).json({ success: false, message: "questionText is required" });
         }
-        const result = await aiService.predictDifficulty({ questionText });
-        return res.status(200).json({ success: true, ...result });
+        const { result, cacheHit } = await runtime.runAiFeature({
+            user: req.user,
+            feature: "predict-difficulty",
+            cacheParams: { questionText: questionText.trim() },
+            inputText: questionText,
+            generate: () => aiService.predictDifficulty({ questionText }),
+        });
+        return res.status(200).json({ success: true, cached: cacheHit, ...result });
     } catch (error) {
-        next(error);
+        return fail(res, next, error);
     }
 }
 
 // POST /api/ai/analyze — uses the caller's own stats
 async function analyzePerformance(req, res, next) {
     try {
-        const result = await aiService.analyzePerformance({
-            stats: req.user.stats,
-            targetExam: req.user.targetExam,
+        const stats = req.user.stats || {};
+        const { result, cacheHit } = await runtime.runAiFeature({
+            user: req.user,
+            feature: "analyze",
+            cacheParams: { stats, targetExam: req.user.targetExam || "" },
+            generate: () =>
+                aiService.analyzePerformance({ stats, targetExam: req.user.targetExam }),
         });
-        return res.status(200).json({ success: true, ...result });
+        return res.status(200).json({ success: true, cached: cacheHit, ...result });
     } catch (error) {
-        next(error);
+        return fail(res, next, error);
     }
 }
 
@@ -100,21 +134,27 @@ async function analyzePerformance(req, res, next) {
 async function generateStudyPlan(req, res, next) {
     try {
         const { days = 7, hoursPerDay = 2, weakAreas = [] } = req.body || {};
-        const result = await aiService.generateStudyPlan({
-            targetExam: req.user.targetExam || "LEET",
-            days: Math.min(Math.max(parseInt(days, 10) || 7, 1), 30),
-            hoursPerDay: Math.min(Math.max(parseInt(hoursPerDay, 10) || 2, 1), 12),
-            weakAreas: Array.isArray(weakAreas) ? weakAreas : [],
+        const d = Math.min(Math.max(parseInt(days, 10) || 7, 1), 30);
+        const h = Math.min(Math.max(parseInt(hoursPerDay, 10) || 2, 1), 12);
+        const areas = Array.isArray(weakAreas) ? weakAreas : [];
+        const targetExam = req.user.targetExam || "LEET";
+        const { result, cacheHit } = await runtime.runAiFeature({
+            user: req.user,
+            feature: "study-plan",
+            cacheParams: { targetExam, days: d, hoursPerDay: h, weakAreas: areas },
+            generate: () =>
+                aiService.generateStudyPlan({ targetExam, days: d, hoursPerDay: h, weakAreas: areas }),
         });
-        return res.status(200).json({ success: true, ...result });
+        return res.status(200).json({ success: true, cached: cacheHit, ...result });
     } catch (error) {
-        next(error);
+        return fail(res, next, error);
     }
 }
 
 module.exports = {
     getStatus,
     health,
+    quota,
     generateQuestions,
     predictDifficulty,
     analyzePerformance,
