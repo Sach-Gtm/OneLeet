@@ -12,6 +12,7 @@ import {
     Lock,
     Loader2,
     Award,
+    Trophy,
     ClipboardCheck,
     CheckCircle2,
     Clock,
@@ -144,6 +145,8 @@ export default function Profile() {
         { label: "Accuracy", value: `${stats.accuracy || 0}%`, icon: Target, color: "text-emerald-600 bg-emerald-50" },
     ];
     const isTopScorer = (stats.accuracy || 0) >= 80 && (stats.testsTaken || 0) >= 1;
+    const ach = user?.achievements || {};
+    const totalPodiums = (ach.rank1 || 0) + (ach.rank2 || 0) + (ach.rank3 || 0);
 
     return (
         <div className="mx-auto max-w-5xl space-y-6">
@@ -364,6 +367,35 @@ export default function Profile() {
                                 ? "You're consistently scoring above 80% in mock tests."
                                 : "Take mock tests and keep your accuracy high to earn badges."}
                         </p>
+                    </div>
+
+                    {/* Competition achievements — permanent Top-3 finishes. */}
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6">
+                        <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-800">
+                            <Trophy className="h-4 w-4 text-amber-500" /> Competition Achievements
+                        </h3>
+                        {totalPodiums === 0 ? (
+                            <p className="text-sm text-slate-400">
+                                No podium finishes yet. Finish in the Top 3 of a competitive test to
+                                earn 🥇 🥈 🥉 badges.
+                            </p>
+                        ) : (
+                            <div className="grid grid-cols-3 gap-3 text-center">
+                                {[
+                                    ["🥇", "Rank 1", ach.rank1],
+                                    ["🥈", "Rank 2", ach.rank2],
+                                    ["🥉", "Rank 3", ach.rank3],
+                                ].map(([emoji, label, count]) => (
+                                    <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                        <div className="text-2xl leading-none">{emoji}</div>
+                                        <div className="mt-1 text-lg font-extrabold text-slate-800">
+                                            {count || 0}
+                                        </div>
+                                        <div className="text-[11px] font-medium text-slate-400">{label}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

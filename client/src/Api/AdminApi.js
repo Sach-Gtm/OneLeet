@@ -78,3 +78,50 @@ export const removeUser = async (id) => {
         unwrap(error);
     }
 };
+
+// Every competitive (scheduled, graded) test with its leaderboard status.
+export const getAdminLeaderboards = async () => {
+    try {
+        const { data } = await api.get("/admin/leaderboards");
+        return data.leaderboards || [];
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Zero one student's Top-3 achievement counters.
+export const resetStudentAchievements = async (id) => {
+    try {
+        const { data } = await api.patch(`/admin/students/${id}/achievements/reset`);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Wipe every student's achievement counters (clears the Hall of Fame). Super-admin only.
+export const resetHallOfFame = async () => {
+    try {
+        const { data } = await api.post("/admin/hall-of-fame/reset");
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Download the achievements CSV (triggers a browser download).
+export const exportAchievements = async () => {
+    try {
+        const res = await api.get("/admin/achievements/export", { responseType: "blob" });
+        const url = URL.createObjectURL(new Blob([res.data], { type: "text/csv" }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "oneleet-achievements.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        unwrap(error);
+    }
+};

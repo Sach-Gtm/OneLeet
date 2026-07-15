@@ -26,10 +26,16 @@ const AttemptSchema = new mongoose.Schema(
         durationTakenSeconds: { type: Number, default: 0 },
         startedAt: { type: Date },
         submittedAt: { type: Date },
+        // Final leaderboard position within this attempt's test, written once the
+        // test's leaderboard is finalised. Only each user's best attempt per test
+        // is ranked; every other attempt (and any non-competitive test) stays null.
+        rank: { type: Number, default: null },
     },
     { timestamps: true }
 );
 
 AttemptSchema.index({ user: 1, submittedAt: -1 });
+// Finalisation groups attempts by test and picks each user's best.
+AttemptSchema.index({ test: 1, score: -1 });
 
 module.exports = mongoose.model("Attempt", AttemptSchema);

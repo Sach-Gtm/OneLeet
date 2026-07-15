@@ -8,8 +8,11 @@ import {
     Flame,
     Sparkles,
     Crown,
+    Trophy,
+    RotateCcw,
 } from "lucide-react";
-import { getStudentActivity } from "@/Api/AdminApi";
+import toast from "react-hot-toast";
+import { getStudentActivity, resetStudentAchievements } from "@/Api/AdminApi";
 import { timeAgo } from "@/lib/format";
 
 const fmtTime = (min) => {
@@ -24,6 +27,23 @@ export default function StudentActivityModal({ studentId, onClose }) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [resetting, setResetting] = useState(false);
+
+    const resetAchievements = async () => {
+        if (!window.confirm("Reset this student's achievement counters to zero?")) return;
+        setResetting(true);
+        try {
+            await resetStudentAchievements(studentId);
+            setData((d) =>
+                d ? { ...d, student: { ...d.student, achievements: { rank1: 0, rank2: 0, rank3: 0 } } } : d
+            );
+            toast.success("Achievements reset");
+        } catch (e) {
+            toast.error(e.message || "Couldn't reset");
+        } finally {
+            setResetting(false);
+        }
+    };
 
     useEffect(() => {
         let active = true;
@@ -115,6 +135,30 @@ export default function StudentActivityModal({ studentId, onClose }) {
                                     </div>
                                 );
                             })}
+                        </div>
+
+                        {/* Competition achievements + reset */}
+                        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                            <Trophy className="h-4 w-4 text-amber-500" />
+                            <span className="text-xs font-semibold text-slate-600">Achievements</span>
+                            <span className="text-sm text-slate-700">
+                                🥇 {s.achievements?.rank1 || 0} · 🥈 {s.achievements?.rank2 || 0} · 🥉{" "}
+                                {s.achievements?.rank3 || 0}
+                            </span>
+                            {(s.achievements?.rank1 || s.achievements?.rank2 || s.achievements?.rank3) > 0 && (
+                                <button
+                                    onClick={resetAchievements}
+                                    disabled={resetting}
+                                    className="ml-auto inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-500 hover:bg-slate-50 disabled:opacity-60"
+                                >
+                                    {resetting ? (
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : (
+                                        <RotateCcw className="h-3 w-3" />
+                                    )}
+                                    Reset
+                                </button>
+                            )}
                         </div>
 
                         {/* Time chart */}

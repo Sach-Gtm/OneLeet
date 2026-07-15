@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("../../models/userModel");
 const Attempt = require("../../models/attemptModel");
+const Test = require("../../models/testModel");
 const AiQuery = require("../../models/aiQueryModel");
 const { timeSummary } = require("../activity/activityController");
 
@@ -74,7 +75,7 @@ async function listStudents(req, res, next) {
                 .skip((page - 1) * limit)
                 .limit(limit)
                 .select(
-                    "name email phone college branch plan isVerified stats createdAt avatar passportPhoto"
+                    "name email phone college branch plan isVerified stats achievements createdAt avatar passportPhoto"
                 ),
             User.countDocuments(filter),
         ]);
@@ -259,7 +260,7 @@ async function studentActivity(req, res, next) {
             return res.status(404).json({ success: false, message: "Student not found" });
         }
         const student = await User.findOne({ _id: req.params.id, role: "student" }).select(
-            "name email phone college branch yearOfStudy targetExam plan stats avatar passportPhoto createdAt"
+            "name email phone college branch yearOfStudy targetExam plan stats achievements avatar passportPhoto createdAt"
         );
         if (!student) {
             return res.status(404).json({ success: false, message: "Student not found" });
@@ -304,6 +305,116 @@ async function studentActivity(req, res, next) {
     }
 }
 
+// GET /api/admin/leaderboards — every competitive (scheduled, graded) test with
+// its leaderboard status and participant count. The admin's "view all
+// leaderboard records" screen.
+async function leaderboards(req, res, next) {
+    try {
+        const tests = await Test.find({ mode: "test", closeAt: { $ne: null } })
+            .sort({ closeAt: -1 })
+            .limit(100)
+            .select("title closeAt leaderboardPublished leaderboardPublishedAt");
+        const ids = tests.map((t) => t._id);
+        const counts = await Attempt.aggregate([
+            { $match: { test: { $in: ids } } },
+            { $group: { _id: "$test", participants: { $addToSet: "$user" } } },
+            { $project: { participants: { $size: "$participants" } } },
+        ]);
+        const countMap = new Map(counts.map((c) => [String(c._id), c.participants]));
+        const out = tests.map((t) => ({
+            _id: t._id,
+            title: t.title,
+            closeAt: t.closeAt,
+            published: t.leaderboardPublished,
+            publishedAt: t.leaderboardPublishedAt || null,
+            participants: countMap.get(String(t._id)) || 0,
+        }));
+        return res.status(200).json({ success: true, leaderboards: out });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// PATCH /api/admin/students/:id/achievements/reset — zero one student's Top-3
+// counters. (They never reset on their own — only here.)
+async function resetStudentAchievements(req, res, next) {
+    try {
+        if (!isValidId(req.params.id)) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+        const student = await User.findByIdAndUpdate(
+            req.params.id,
+            { $set: { "achievements.rank1": 0, "achievements.rank2": 0, "achievements.rank3": 0 } },
+            { returnDocument: "after" }
+        ).select("name email achievements");
+        if (!student) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+        return res.status(200).json({
+            success: true,
+            message: `Cleared achievements for ${student.name}`,
+            student,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// POST /api/admin/hall-of-fame/reset — wipe EVERY user's Top-3 counters, clearing
+// the Hall of Fame and all profile badges. Destructive → Super-Admin only.
+async function resetHallOfFame(req, res, next) {
+    try {
+        const r = await User.updateMany(
+            {},
+            { $set: { "achievements.rank1": 0, "achievements.rank2": 0, "achievements.rank3": 0 } }
+        );
+        return res.status(200).json({
+            success: true,
+            message: "Hall of Fame and all achievement counters have been reset",
+            modified: r.modifiedCount ?? 0,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// GET /api/admin/achievements/export — CSV of every student's achievement +
+// headline stats, for offline records.
+async function exportAchievements(req, res, next) {
+    try {
+        const students = await User.find({ role: "student" })
+            .sort({ "achievements.rank1": -1, "achievements.rank2": -1, "achievements.rank3": -1 })
+            .select("name email achievements stats createdAt");
+        const esc = (v) => {
+            const s = String(v ?? "");
+            return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+        };
+        const header = [
+            "Name", "Email", "Rank1", "Rank2", "Rank3", "TestsTaken", "Accuracy", "Joined",
+        ];
+        const rows = students.map((u) =>
+            [
+                u.name,
+                u.email,
+                u.achievements?.rank1 || 0,
+                u.achievements?.rank2 || 0,
+                u.achievements?.rank3 || 0,
+                u.stats?.testsTaken || 0,
+                u.stats?.accuracy || 0,
+                u.createdAt ? new Date(u.createdAt).toISOString().slice(0, 10) : "",
+            ]
+                .map(esc)
+                .join(",")
+        );
+        const csv = [header.join(","), ...rows].join("\n");
+        res.setHeader("Content-Type", "text/csv; charset=utf-8");
+        res.setHeader("Content-Disposition", 'attachment; filename="oneleet-achievements.csv"');
+        return res.status(200).send(csv);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     overview,
     listStudents,
@@ -312,4 +423,8 @@ module.exports = {
     removeUser,
     listStaff,
     studentActivity,
+    leaderboards,
+    resetStudentAchievements,
+    resetHallOfFame,
+    exportAchievements,
 };

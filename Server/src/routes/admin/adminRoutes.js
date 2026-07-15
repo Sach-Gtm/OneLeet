@@ -17,8 +17,14 @@ router.get("/students", admin.listStudents);
 router.get("/students/:id/activity", admin.studentActivity);
 router.get("/staff", admin.listStaff);
 
-// Premium is a Super-Admin-only lever.
+// Competitive leaderboards + achievement records.
+router.get("/leaderboards", admin.leaderboards);
+router.get("/achievements/export", admin.exportAchievements);
+router.patch("/students/:id/achievements/reset", admin.resetStudentAchievements);
+
+// Premium and the full Hall-of-Fame wipe are Super-Admin-only levers.
 router.patch("/students/:id/plan", requireSuperadmin, admin.setStudentPlan);
+router.post("/hall-of-fame/reset", requireSuperadmin, admin.resetHallOfFame);
 
 // Role changes and removals are gated to admins here, then further narrowed by
 // the *target's* role inside the controller (an admin may only manage students;

@@ -15,6 +15,7 @@ import {
     Dumbbell,
     Clock,
     CheckCircle2,
+    Trophy,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff } from "@/lib/roles";
@@ -36,6 +37,19 @@ const blankQuestion = () => ({
     explanation: "",
 });
 
+// Convert a stored Date/ISO into the value a <input type="datetime-local">
+// expects (local "YYYY-MM-DDTHH:mm"), and back.
+const toLocalInput = (d) => {
+    if (!d) return "";
+    const dt = new Date(d);
+    if (Number.isNaN(dt.getTime())) return "";
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(
+        dt.getHours()
+    )}:${pad(dt.getMinutes())}`;
+};
+const fromLocalInput = (v) => (v ? new Date(v).toISOString() : null);
+
 const MODES = [
     { key: "test", label: "Test", icon: GraduationCap, hint: "Timed & graded — answers hidden until it closes, then ranking" },
     { key: "practice", label: "Practice", icon: Dumbbell, hint: "Answer is revealed the moment the student picks an option" },
@@ -45,7 +59,14 @@ export default function Studio() {
     const { user } = useAuth();
 
     const [mode, setMode] = useState("test");
-    const [meta, setMeta] = useState({ title: "", subject: "", description: "", durationMinutes: 30 });
+    const [meta, setMeta] = useState({
+        title: "",
+        subject: "",
+        description: "",
+        durationMinutes: 30,
+        openAt: "",
+        closeAt: "",
+    });
     const [questions, setQuestions] = useState([blankQuestion()]);
     const [editingId, setEditingId] = useState(null);
 
@@ -78,7 +99,7 @@ export default function Studio() {
 
     const resetEditor = () => {
         setEditingId(null);
-        setMeta({ title: "", subject: "", description: "", durationMinutes: 30 });
+        setMeta({ title: "", subject: "", description: "", durationMinutes: 30, openAt: "", closeAt: "" });
         setQuestions([blankQuestion()]);
         setSource("");
         setTopic("");
@@ -143,6 +164,10 @@ export default function Studio() {
         description: meta.description,
         mode,
         durationMinutes: Number(meta.durationMinutes) || 30,
+        // A close time makes it a competitive test (frozen leaderboard). Practice
+        // sets never carry a window.
+        openAt: mode === "test" ? fromLocalInput(meta.openAt) : null,
+        closeAt: mode === "test" ? fromLocalInput(meta.closeAt) : null,
         questions: questions.map((q) => ({
             text: q.text,
             options: q.options.map((o) => o.trim()).filter(Boolean),
@@ -193,6 +218,8 @@ export default function Studio() {
                 subject: t.subject || "",
                 description: t.description || "",
                 durationMinutes: t.durationMinutes || 30,
+                openAt: toLocalInput(t.openAt),
+                closeAt: toLocalInput(t.closeAt),
             });
             setQuestions(
                 (t.questions || []).map((q) => ({
@@ -342,17 +369,55 @@ export default function Studio() {
                     />
                 </div>
                 {mode === "test" && (
-                    <div className="mt-3 flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-slate-400" />
-                        <input
-                            type="number"
-                            min={1}
-                            value={meta.durationMinutes}
-                            onChange={(e) => setMeta((m) => ({ ...m, durationMinutes: e.target.value }))}
-                            className="h-9 w-24 rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none"
-                        />
-                        <span className="text-sm text-slate-500">minutes</span>
-                    </div>
+                    <>
+                        <div className="mt-3 flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-slate-400" />
+                            <input
+                                type="number"
+                                min={1}
+                                value={meta.durationMinutes}
+                                onChange={(e) => setMeta((m) => ({ ...m, durationMinutes: e.target.value }))}
+                                className="h-9 w-24 rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none"
+                            />
+                            <span className="text-sm text-slate-500">minutes per attempt</span>
+                        </div>
+
+                        {/* Optional competitive window. A close time turns this into a
+                            competitive test: the leaderboard freezes until 5 minutes
+                            after it closes, then finalises with ranks + achievements. */}
+                        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                            <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-slate-600">
+                                <Trophy className="h-3.5 w-3.5 text-amber-500" /> Competitive window
+                                <span className="font-normal text-slate-400">(optional)</span>
+                            </div>
+                            <div className="grid gap-2 sm:grid-cols-2">
+                                <label className="text-xs text-slate-500">
+                                    Opens
+                                    <input
+                                        type="datetime-local"
+                                        value={meta.openAt}
+                                        onChange={(e) => setMeta((m) => ({ ...m, openAt: e.target.value }))}
+                                        className="mt-1 h-9 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none"
+                                    />
+                                </label>
+                                <label className="text-xs text-slate-500">
+                                    Closes
+                                    <input
+                                        type="datetime-local"
+                                        value={meta.closeAt}
+                                        onChange={(e) => setMeta((m) => ({ ...m, closeAt: e.target.value }))}
+                                        className="mt-1 h-9 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none"
+                                    />
+                                </label>
+                            </div>
+                            <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+                                Set a <strong>close time</strong> to run this as a competition — the
+                                leaderboard stays hidden until 5 minutes after it closes, then
+                                publishes ranks and notifies everyone. Leave both blank for an
+                                always-open test with an instant, ungated result.
+                            </p>
+                        </div>
+                    </>
                 )}
 
                 {/* Questions */}
