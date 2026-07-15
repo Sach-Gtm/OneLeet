@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 
 const { verifyToken } = require("../../middlewares/authMiddleware");
-const { requireRole } = require("../../middlewares/roleMiddleware");
+const { requireStaff } = require("../../middlewares/roleMiddleware");
 const pdfUploadLocal = require("../../middlewares/pdfUploadLocal");
 const notes = require("../../controllers/content/studyNotesController");
 
@@ -25,7 +25,7 @@ router.get("/:id", verifyToken, notes.getNoteById);
 router.post("/:id/summary", verifyToken, notes.summarizeNote);
 router.post("/:id/flashcards", verifyToken, notes.generateFlashcards);
 
-// Upload (teachers only)
-router.post("/", verifyToken, requireRole("teacher"), handleUpload, notes.uploadNote);
+// Upload (mentors, admins, super admin)
+router.post("/", verifyToken, requireStaff, handleUpload, notes.uploadNote);
 
 module.exports = router;

@@ -24,6 +24,9 @@ import {
     Trash2,
     Check,
     RefreshCw,
+    ShieldCheck,
+    UserX,
+    LineChart,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -31,11 +34,15 @@ import {
     getStudents,
     setStudentPlan,
     setUserRole,
+    getStaff,
+    removeUser,
 } from "@/Api/AdminApi";
+import StudentActivityModal from "@/Components/App/StudentActivityModal";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
 import { getInbox, markInboxRead, deleteInboxItem } from "@/Api/ContactApi";
+import { isStaff, isAdmin, isSuperadmin, roleLabel } from "@/lib/roles";
 
 // Per-type presentation for the requests inbox.
 const INBOX_TYPES = {
@@ -90,8 +97,8 @@ export default function AdminDashboard() {
     // Send-notification form
     const [notif, setNotif] = useState({ title: "", body: "" });
     const [sending, setSending] = useState(false);
-    // Team-access form
-    const [team, setTeam] = useState({ email: "", role: "admin" });
+    // Team-access form (default to mentor — the role an admin is allowed to grant)
+    const [team, setTeam] = useState({ email: "", role: "teacher" });
     const [granting, setGranting] = useState(false);
     // Full passport-photo viewer (admin identity check)
     const [photoView, setPhotoView] = useState(null);
@@ -119,9 +126,18 @@ export default function AdminDashboard() {
     const [inbox, setInbox] = useState({ items: [], unread: 0, counts: {}, total: 0 });
     const [inboxFilter, setInboxFilter] = useState("");
     const [inboxLoading, setInboxLoading] = useState(false);
+    // Team roster (who is admin / mentor)
+    const [staff, setStaff] = useState([]);
+    // Per-student activity modal (which student's id is open)
+    const [activityView, setActivityView] = useState(null);
 
-    const isStaff = user && (user.role === "admin" || user.role === "teacher");
-    const isAdmin = user && user.role === "admin";
+    // Permission tiers (UI gate only — the API enforces the real rules):
+    //   canCreate         — mentors + admins + super admin (content, notifs)
+    //   canManageStudents — admins + super admin (student data, inbox, roster)
+    //   isSuper           — super admin only (premium, removing staff)
+    const canCreate = isStaff(user);
+    const canManageStudents = isAdmin(user);
+    const isSuper = isSuperadmin(user);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -140,15 +156,27 @@ export default function AdminDashboard() {
     }, [search, page]);
 
     useEffect(() => {
-        if (isStaff) load();
-    }, [isStaff, load]);
+        if (canManageStudents) load();
+    }, [canManageStudents, load]);
 
     useEffect(() => {
-        if (!isStaff) return;
+        if (!canCreate) return;
         getQuestions({ limit: 1 })
             .then((r) => setQCount(r.total ?? 0))
             .catch(() => {});
-    }, [isStaff]);
+    }, [canCreate]);
+
+    const loadStaff = useCallback(async () => {
+        try {
+            setStaff(await getStaff());
+        } catch {
+            /* non-critical — leave the roster empty */
+        }
+    }, []);
+
+    useEffect(() => {
+        if (canManageStudents) loadStaff();
+    }, [canManageStudents, loadStaff]);
 
     const loadInbox = useCallback(async () => {
         setInboxLoading(true);
@@ -163,8 +191,8 @@ export default function AdminDashboard() {
     }, [inboxFilter]);
 
     useEffect(() => {
-        if (isStaff) loadInbox();
-    }, [isStaff, loadInbox]);
+        if (canManageStudents) loadInbox();
+    }, [canManageStudents, loadInbox]);
 
     const toggleInboxRead = async (item) => {
         try {
@@ -185,8 +213,9 @@ export default function AdminDashboard() {
         }
     };
 
-    // Hooks must run unconditionally; gate AFTER them.
-    if (user && !isStaff) return <Navigate to="/dashboard" replace />;
+    // Hooks must run unconditionally; gate AFTER them. Any staff (mentor,
+    // admin, super admin) may open this page; each section is gated below.
+    if (user && !canCreate) return <Navigate to="/dashboard" replace />;
 
     const togglePlan = async (student) => {
         const next = student.plan === "pro" ? "free" : "pro";
@@ -201,6 +230,28 @@ export default function AdminDashboard() {
             }));
         } catch (err) {
             toast.error(err.message || "Could not update plan");
+        }
+    };
+
+    const handleRemove = async (target, kind) => {
+        const who = kind === "staff" ? `${target.name} (${roleLabel(target)})` : target.name;
+        const extra = kind === "student" ? " and their results" : "";
+        if (!window.confirm(`Remove ${who}? This permanently deletes their account${extra}.`))
+            return;
+        try {
+            await removeUser(target._id);
+            toast.success(`${target.name} has been removed`);
+            if (kind === "staff") {
+                loadStaff();
+            } else {
+                setData((d) => ({
+                    ...d,
+                    students: d.students.filter((s) => s._id !== target._id),
+                    total: Math.max(0, d.total - 1),
+                }));
+            }
+        } catch (err) {
+            toast.error(err.message || "Could not remove the account");
         }
     };
 
@@ -232,7 +283,8 @@ export default function AdminDashboard() {
         try {
             const res = await setUserRole(team.email.trim(), team.role);
             toast.success(res.message || "Access updated");
-            setTeam({ email: "", role: "admin" });
+            setTeam({ email: "", role: "teacher" });
+            loadStaff();
         } catch (err) {
             toast.error(err.message || "Could not update access");
         } finally {
@@ -332,27 +384,35 @@ export default function AdminDashboard() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
+                <h1 className="text-2xl font-bold text-slate-900">
+                    {canManageStudents ? "Admin Dashboard" : "Content Studio"}
+                </h1>
                 <p className="text-sm text-slate-500">
-                    Everyone on OneLeet and how they&apos;re progressing.
+                    {canManageStudents
+                        ? "Everyone on OneLeet and how they're progressing."
+                        : "Create and publish learning material for students."}
                 </p>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                {STAT_CARDS.map((c) => (
-                    <StatCard
-                        key={c.key}
-                        icon={c.icon}
-                        label={c.label}
-                        value={overview?.[c.key]}
-                        tint={c.tint}
-                        suffix={c.suffix}
-                    />
-                ))}
-            </div>
+            {/* Stats (admins + super admin) */}
+            {canManageStudents && (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                    {STAT_CARDS.map((c) => (
+                        <StatCard
+                            key={c.key}
+                            icon={c.icon}
+                            label={c.label}
+                            value={overview?.[c.key]}
+                            tint={c.tint}
+                            suffix={c.suffix}
+                        />
+                    ))}
+                </div>
+            )}
 
-            {/* Requests inbox — every bug report, contribution & callback lands here */}
+            {/* Requests inbox — every bug report, contribution & callback lands
+                here. Admins + super admin only; mentors never see it. */}
+            {canManageStudents && (
             <div className="rounded-xl border border-slate-200 bg-white p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
@@ -483,8 +543,10 @@ export default function AdminDashboard() {
                     </ul>
                 )}
             </div>
+            )}
 
-            {/* Actions: broadcast a notification + grant team access */}
+            {/* Actions: broadcast a notification (any staff) + grant team access
+                (admins + super admin) */}
             <div className="grid gap-4 lg:grid-cols-2">
                 <form
                     onSubmit={handleSend}
@@ -518,7 +580,7 @@ export default function AdminDashboard() {
                     </button>
                 </form>
 
-                {isAdmin && (
+                {canManageStudents && (
                     <form
                         onSubmit={handleGrant}
                         className="space-y-3 rounded-xl border border-slate-200 bg-white p-4"
@@ -529,6 +591,7 @@ export default function AdminDashboard() {
                         <p className="text-xs text-slate-500">
                             The teammate must register first, then enter their email
                             here to grant access.
+                            {!isSuper && " Admins can appoint mentors; only the Super Admin grants admin access."}
                         </p>
                         <input
                             value={team.email}
@@ -542,8 +605,8 @@ export default function AdminDashboard() {
                                 onChange={(e) => setTeam((t) => ({ ...t, role: e.target.value }))}
                                 className="h-10 rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                             >
-                                <option value="admin">Admin</option>
-                                <option value="teacher">Teacher</option>
+                                <option value="teacher">Mentor</option>
+                                {isSuper && <option value="admin">Admin</option>}
                                 <option value="student">Student (revoke)</option>
                             </select>
                             <button
@@ -714,6 +777,9 @@ export default function AdminDashboard() {
                 </button>
             </form>
 
+            {/* Student directory + roster — admins + super admin only */}
+            {canManageStudents && (
+            <>
             {/* Search */}
             <div className="relative max-w-sm">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -740,18 +806,19 @@ export default function AdminDashboard() {
                                 <th className="px-4 py-3 text-center">Tests</th>
                                 <th className="px-4 py-3 text-center">Accuracy</th>
                                 <th className="px-4 py-3 text-center">Plan</th>
+                                <th className="px-4 py-3 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="px-4 py-10 text-center">
+                                    <td colSpan={7} className="px-4 py-10 text-center">
                                         <Loader2 className="mx-auto h-5 w-5 animate-spin text-indigo-600" />
                                     </td>
                                 </tr>
                             ) : data.students.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-4 py-10 text-center text-slate-400">
+                                    <td colSpan={7} className="px-4 py-10 text-center text-slate-400">
                                         No students found.
                                     </td>
                                 </tr>
@@ -805,23 +872,60 @@ export default function AdminDashboard() {
                                             {s.stats?.accuracy ?? 0}%
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            <button
-                                                onClick={() => togglePlan(s)}
-                                                className={
-                                                    s.plan === "pro"
-                                                        ? "inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700 hover:bg-amber-200"
-                                                        : "inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200"
-                                                }
-                                                title="Click to toggle premium"
-                                            >
-                                                {s.plan === "pro" ? (
-                                                    <>
-                                                        <Crown className="h-3 w-3" /> Premium
-                                                    </>
-                                                ) : (
-                                                    "Free"
-                                                )}
-                                            </button>
+                                            {isSuper ? (
+                                                <button
+                                                    onClick={() => togglePlan(s)}
+                                                    className={
+                                                        s.plan === "pro"
+                                                            ? "inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700 hover:bg-amber-200"
+                                                            : "inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200"
+                                                    }
+                                                    title="Click to toggle premium"
+                                                >
+                                                    {s.plan === "pro" ? (
+                                                        <>
+                                                            <Crown className="h-3 w-3" /> Premium
+                                                        </>
+                                                    ) : (
+                                                        "Free"
+                                                    )}
+                                                </button>
+                                            ) : (
+                                                <span
+                                                    className={
+                                                        s.plan === "pro"
+                                                            ? "inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700"
+                                                            : "inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"
+                                                    }
+                                                    title="Only the Super Admin can change premium"
+                                                >
+                                                    {s.plan === "pro" ? (
+                                                        <>
+                                                            <Crown className="h-3 w-3" /> Premium
+                                                        </>
+                                                    ) : (
+                                                        "Free"
+                                                    )}
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center justify-center gap-1.5">
+                                                <button
+                                                    onClick={() => setActivityView(s._id)}
+                                                    title="View activity"
+                                                    className="inline-grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-400 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
+                                                >
+                                                    <LineChart className="h-4 w-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleRemove(s, "student")}
+                                                    title="Remove this student"
+                                                    className="inline-grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-400 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+                                                >
+                                                    <UserX className="h-4 w-4" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -857,6 +961,62 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
+            {/* Team roster — who is admin & mentor. The Super Admin can remove
+                mentors/admins here; admins see it read-only. */}
+            <div className="rounded-xl border border-slate-200 bg-white p-4">
+                <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-800">
+                    <ShieldCheck className="h-4 w-4 text-indigo-600" /> Team
+                    <span className="text-xs font-normal text-slate-400">
+                        · {staff.length} member{staff.length === 1 ? "" : "s"}
+                    </span>
+                </div>
+                {staff.length === 0 ? (
+                    <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400">
+                        No mentors or admins yet.
+                    </p>
+                ) : (
+                    <ul className="divide-y divide-slate-100">
+                        {staff.map((m) => (
+                            <li key={m._id} className="flex items-center gap-3 py-2.5">
+                                {m.avatar ? (
+                                    <img src={m.avatar} alt={m.name} className="h-8 w-8 rounded-full object-cover" />
+                                ) : (
+                                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
+                                        {(m.name || "U").charAt(0).toUpperCase()}
+                                    </span>
+                                )}
+                                <div className="min-w-0 flex-1">
+                                    <div className="truncate text-sm font-semibold text-slate-800">{m.name}</div>
+                                    <div className="truncate text-xs text-slate-400">{m.email}</div>
+                                </div>
+                                <span
+                                    className={
+                                        m.role === "superadmin"
+                                            ? "rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700"
+                                            : m.role === "admin"
+                                              ? "rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700"
+                                              : "rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700"
+                                    }
+                                >
+                                    {roleLabel(m)}
+                                </span>
+                                {isSuper && m.role !== "superadmin" && (
+                                    <button
+                                        onClick={() => handleRemove(m, "staff")}
+                                        title={`Remove ${m.name}`}
+                                        className="grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-400 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+                                    >
+                                        <UserX className="h-4 w-4" />
+                                    </button>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+            </>
+            )}
+
             {/* Full passport-photo viewer (click a student's photo to verify identity) */}
             {photoView && (
                 <div
@@ -887,6 +1047,14 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {activityView && (
+                <StudentActivityModal
+                    key={activityView}
+                    studentId={activityView}
+                    onClose={() => setActivityView(null)}
+                />
             )}
         </div>
     );

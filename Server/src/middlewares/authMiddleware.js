@@ -41,4 +41,29 @@ const verifyToken = async (req, res, next) => {
     }
 };
 
-module.exports = { verifyToken };
+// Like verifyToken, but never rejects: it attaches req.user when a valid token
+// is present and otherwise leaves it undefined and continues. Used by endpoints
+// that serve both signed-in and anonymous callers (e.g. the activity heartbeat,
+// which counts anonymous landing-page visits too).
+const optionalAuth = async (req, res, next) => {
+    let token;
+    if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    } else if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith("Bearer ")
+    ) {
+        token = req.headers.authorization.split(" ")[1];
+    }
+    if (!token) return next();
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select("-password");
+        if (user) req.user = user;
+    } catch {
+        /* invalid token → treat as anonymous */
+    }
+    next();
+};
+
+module.exports = { verifyToken, optionalAuth };

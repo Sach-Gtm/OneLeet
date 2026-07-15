@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -20,7 +20,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { getDashboard } from "@/Api/DashboardApi";
+import { getMyAnalytics } from "@/Api/ActivityApi";
 import NetworkCanvas from "@/Components/General/NetworkCanvas";
+import { isStudent } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
 function CountUp({ value = 0, format = (v) => v, duration = 1000 }) {
@@ -97,9 +99,57 @@ function EmptyState({ icon, title, subtitle }) {
     );
 }
 
+// Real time-on-site over the last 7 days, drawn as bars that grow in.
+function WeekActivity({ minutesByDay }) {
+    const map = new Map((minutesByDay || []).map((d) => [d.date, d.minutes]));
+    const days = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        const key = d.toISOString().slice(0, 10);
+        return {
+            key,
+            minutes: map.get(key) || 0,
+            label: d.toLocaleDateString(undefined, { weekday: "narrow" }),
+        };
+    });
+    const max = Math.max(1, ...days.map((d) => d.minutes));
+    const total = days.reduce((s, d) => s + d.minutes, 0);
+    return (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6">
+            <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-sm font-bold text-slate-800">This week</h2>
+                <span className="text-xs font-medium text-slate-400">
+                    {total >= 60 ? `${Math.floor(total / 60)}h ${total % 60}m` : `${total}m`} studied
+                </span>
+            </div>
+            <div className="flex h-24 items-end gap-2.5">
+                {days.map((d, i) => (
+                    <div key={d.key} className="flex flex-1 flex-col items-center gap-1.5">
+                        <div className="flex w-full flex-1 items-end">
+                            <motion.div
+                                initial={{ scaleY: 0 }}
+                                animate={{ scaleY: 1 }}
+                                transition={{ duration: 0.6, delay: i * 0.06, ease: "easeOut" }}
+                                style={{
+                                    height: `${Math.max(4, (d.minutes / max) * 100)}%`,
+                                    transformOrigin: "bottom",
+                                }}
+                                className="w-full rounded-t-md bg-gradient-to-t from-indigo-500 to-violet-500"
+                                title={`${d.minutes} min`}
+                            />
+                        </div>
+                        <span className="text-[10px] font-medium text-slate-400">{d.label}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 export default function Dashboard() {
     const { user } = useAuth();
     const [data, setData] = useState(null);
+    const [week, setWeek] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -114,6 +164,10 @@ export default function Dashboard() {
             .finally(() => {
                 if (active) setLoading(false);
             });
+        // Real time-on-site for the "this week" strip (best-effort).
+        getMyAnalytics()
+            .then((res) => active && setWeek(res.minutesByDay || []))
+            .catch(() => {});
         return () => {
             active = false;
         };
@@ -133,8 +187,7 @@ export default function Dashboard() {
         );
     }
 
-    const needsPhoto =
-        user && user.role !== "teacher" && user.role !== "admin" && !user?.passportPhoto?.url;
+    const needsPhoto = user && isStudent(user) && !user?.passportPhoto?.url;
 
     return (
         <div className="mx-auto max-w-6xl space-y-6">
@@ -237,6 +290,9 @@ export default function Dashboard() {
                     );
                 })}
             </div>
+
+            {/* This week — real time-on-site */}
+            <WeekActivity minutesByDay={week} />
 
             {/* AI insight + Recent activity */}
             <div className="grid gap-6 lg:grid-cols-3">

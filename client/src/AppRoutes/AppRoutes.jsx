@@ -13,6 +13,7 @@ import Home from "../Pages/General/Home";
 import MarketingLayout from "@/Components/General/MarketingLayout";
 import ProtectedRoute from "@/Components/Auth/ProtectedRoute";
 import AppShell from "@/Components/App/AppShell";
+import ActivityTracker from "@/Components/App/ActivityTracker";
 
 const NotFound = lazy(() => import("@/Components/General/NotFound"));
 const Mentors = lazy(() => import("@/Pages/Navbar-Pages/Mentors"));
@@ -39,6 +40,7 @@ const Community = lazy(() => import("@/Pages/App/Community"));
 const PostDetail = lazy(() => import("@/Pages/App/PostDetail"));
 const Profile = lazy(() => import("@/Pages/App/Profile"));
 const AdminDashboard = lazy(() => import("@/Pages/App/AdminDashboard"));
+const Studio = lazy(() => import("@/Pages/App/Studio"));
 
 const FullscreenLoader = () => (
     <div className="flex min-h-screen items-center justify-center bg-[#FAF9F6]">
@@ -49,6 +51,7 @@ const FullscreenLoader = () => (
 const AppRoutes = () => {
     return (
         <Router>
+            <ActivityTracker />
             <Suspense fallback={<FullscreenLoader />}>
                 <Routes>
                     {/* Public marketing pages — light themed shell */}
@@ -89,6 +92,7 @@ const AppRoutes = () => {
                         <Route path="/community" element={<Community />} />
                         <Route path="/community/:id" element={<PostDetail />} />
                         <Route path="/profile" element={<Profile />} />
+                        <Route path="/studio" element={<Studio />} />
                         <Route path="/admin" element={<AdminDashboard />} />
                     </Route>
                 </Routes>

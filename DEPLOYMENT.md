@@ -63,8 +63,21 @@ its free allowance is now a limited trial credit.)
    | `CLOUDINARY_API_SECRET` | from Cloudinary |
    | `AI_PROVIDER` | `gemini` |
    | `GEMINI_API_KEY` | from https://aistudio.google.com |
+   | `SUPERADMIN_PASSWORD` | *(recommended)* a strong password. On boot the app creates/claims the Super Admin account (`sachin.gautam8292@gmail.com`) with this password, **before** anyone could register that address. Set it once, on first deploy. |
+   | `SUPERADMIN_EMAIL` | *(optional)* overrides the built-in Super Admin address if it ever changes. |
 
    (Don't set `PORT` — Render injects it and the app reads `process.env.PORT`.)
+
+   > **Super Admin provisioning.** The Super Admin role is never granted by
+   > signing up, and never by promoting an existing account — it's only ever
+   > assigned to a **freshly created** account, so a squatted address can't be
+   > escalated. Provision it one of two ways on a **not-yet-registered** address:
+   > (a) set `SUPERADMIN_PASSWORD` and deploy — the startup bootstrap creates the
+   > account at boot (log in with `sachin.gautam8292@gmail.com` + that password);
+   > or (b) sign in with Google using the real `sachin.gautam8292@gmail.com` for
+   > the first time (the server verifies the address with Google). If the address
+   > was already registered as a normal user, delete that account first. Mentors
+   > and admins are then appointed in-app from the Admin dashboard.
 5. **Create Web Service.** When it's live, copy the URL, e.g.
    `https://oneleet-api.onrender.com`. Health check: open
    `https://oneleet-api.onrender.com/api/health` → should return `{"status":"ok"}`.

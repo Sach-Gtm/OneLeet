@@ -1,4 +1,12 @@
+const mongoose = require("mongoose");
 const User = require("../../models/userModel");
+const Attempt = require("../../models/attemptModel");
+const AiQuery = require("../../models/aiQueryModel");
+const { timeSummary } = require("../activity/activityController");
+
+// A malformed :id would otherwise make Mongoose throw a CastError → 500. Treat
+// it as a plain not-found instead.
+const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 // GET /api/admin/overview — headline numbers for the admin dashboard.
 async function overview(req, res, next) {
@@ -93,6 +101,9 @@ async function setStudentPlan(req, res, next) {
                 .status(400)
                 .json({ success: false, message: "Plan must be 'free' or 'pro'" });
         }
+        if (!isValidId(req.params.id)) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
         const student = await User.findOneAndUpdate(
             { _id: req.params.id, role: "student" },
             { plan },
@@ -113,8 +124,11 @@ async function setStudentPlan(req, res, next) {
     }
 }
 
-// PATCH /api/admin/users/role — promote/demote a user by email. Admin-only
-// (enforced on the route). Used to grant teammates admin/teacher access.
+// PATCH /api/admin/users/role — promote/demote a user by email.
+//   • Super Admin may set any account to student / teacher / admin.
+//   • Admin may only manage students — they can turn a student into a mentor
+//     (teacher) but can't grant admin, and can't touch mentor/admin accounts.
+// The Super Admin account itself can never be re-roled through this endpoint.
 async function setUserRole(req, res, next) {
     try {
         const role = req.body.role;
@@ -137,6 +151,28 @@ async function setUserRole(req, res, next) {
                 .status(400)
                 .json({ success: false, message: "You can't change your own role" });
         }
+        if (target.role === "superadmin") {
+            return res.status(403).json({
+                success: false,
+                message: "The Super Admin account can't be changed",
+            });
+        }
+        const isSuper = req.user.role === "superadmin";
+        if (!isSuper) {
+            // Admins are limited to student accounts and can't mint new admins.
+            if (target.role !== "student") {
+                return res.status(403).json({
+                    success: false,
+                    message: "Only the Super Admin can change mentor or admin accounts",
+                });
+            }
+            if (role === "admin") {
+                return res.status(403).json({
+                    success: false,
+                    message: "Only the Super Admin can grant admin access",
+                });
+            }
+        }
         target.role = role;
         await target.save({ validateBeforeSave: false });
         return res.status(200).json({
@@ -154,4 +190,126 @@ async function setUserRole(req, res, next) {
     }
 }
 
-module.exports = { overview, listStudents, setStudentPlan, setUserRole };
+// DELETE /api/admin/users/:id — remove an account.
+//   • Super Admin may remove anyone (except themselves / another Super Admin).
+//   • Admin may remove students only ("revoke a student profile").
+// Their test attempts are removed too, so leaderboards/analytics don't show a
+// ghost row with no name.
+async function removeUser(req, res, next) {
+    try {
+        if (!isValidId(req.params.id)) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        const target = await User.findById(req.params.id);
+        if (!target) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        if (target._id.toString() === req.user._id.toString()) {
+            return res
+                .status(400)
+                .json({ success: false, message: "You can't remove your own account" });
+        }
+        if (target.role === "superadmin") {
+            return res
+                .status(403)
+                .json({ success: false, message: "The Super Admin account can't be removed" });
+        }
+        const isSuper = req.user.role === "superadmin";
+        if (!isSuper && target.role !== "student") {
+            return res.status(403).json({
+                success: false,
+                message: "Only the Super Admin can remove mentor or admin accounts",
+            });
+        }
+        await Promise.all([
+            User.deleteOne({ _id: target._id }),
+            Attempt.deleteMany({ user: target._id }),
+        ]);
+        return res.status(200).json({
+            success: true,
+            message: `${target.name} has been removed`,
+            id: target._id,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// GET /api/admin/staff — the mentor/admin roster ("who is admin and mentor").
+// Read-only for admins; the Super Admin uses it to manage the team.
+async function listStaff(req, res, next) {
+    try {
+        const staff = await User.find({
+            role: { $in: ["teacher", "admin", "superadmin"] },
+        })
+            .sort({ role: -1, createdAt: -1 })
+            .select("name email role avatar createdAt");
+        return res.status(200).json({ success: true, staff });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// GET /api/admin/students/:id/activity — a full picture of one student for the
+// admin: profile, recent tests, what they've asked the AI (recent + top
+// topics), and time spent. Admins + super admin only (route-gated).
+async function studentActivity(req, res, next) {
+    try {
+        if (!isValidId(req.params.id)) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+        const student = await User.findOne({ _id: req.params.id, role: "student" }).select(
+            "name email phone college branch yearOfStudy targetExam plan stats avatar passportPhoto createdAt"
+        );
+        if (!student) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+
+        const [attempts, aiRecent, aiTopics, time] = await Promise.all([
+            Attempt.find({ user: student._id })
+                .sort({ submittedAt: -1 })
+                .limit(10)
+                .select("testTitle score totalMarks accuracy submittedAt durationTakenSeconds"),
+            AiQuery.find({ user: student._id })
+                .sort({ createdAt: -1 })
+                .limit(10)
+                .select("tool subject topic difficulty createdAt"),
+            AiQuery.aggregate([
+                { $match: { user: student._id, topic: { $nin: ["", null] } } },
+                {
+                    $group: {
+                        _id: { $toLower: "$topic" },
+                        label: { $first: "$topic" },
+                        count: { $sum: 1 },
+                    },
+                },
+                { $sort: { count: -1 } },
+                { $limit: 8 },
+            ]),
+            timeSummary(student._id),
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            student,
+            attempts,
+            ai: {
+                recent: aiRecent,
+                topTopics: aiTopics.map((t) => ({ topic: t.label, count: t.count })),
+            },
+            time,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = {
+    overview,
+    listStudents,
+    setStudentPlan,
+    setUserRole,
+    removeUser,
+    listStaff,
+    studentActivity,
+};

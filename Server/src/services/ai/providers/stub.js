@@ -48,6 +48,27 @@ function generateQuestions({ subject = "", topic = "", difficulty = "moderate", 
     return { provider: "stub", questions };
 }
 
+function draftAssessment({ text = "", subject = "", topic = "", mode = "test", count = 5, difficulty = "moderate" } = {}) {
+    const n = Math.min(Math.max(parseInt(count, 10) || 5, 1), 30);
+    const about = topic || subject || "the topic";
+    const questions = [];
+    for (let i = 1; i <= n; i++) {
+        questions.push({
+            text: `Sample ${difficulty} question ${i} on ${about}${text ? " (from your pasted material)" : ""}.`,
+            options: ["Option A", "Option B", "Option C", "Option D"],
+            correctIndex: i % 4,
+            marks: 1,
+            explanation: "Sample explanation — set AI_PROVIDER=gemini + GEMINI_API_KEY for real drafts.",
+        });
+    }
+    return {
+        provider: "stub",
+        title: `${mode === "practice" ? "Practice" : "Test"}: ${about}`,
+        description: "Sample draft — configure an AI provider to generate from your material.",
+        questions,
+    };
+}
+
 function predictDifficulty({ questionText = "" } = {}) {
     const len = questionText.trim().length;
     const difficulty = len > 160 ? "hard" : len > 80 ? "moderate" : "easy";
@@ -104,6 +125,7 @@ module.exports = {
     summarizeNote,
     generateFlashcards,
     generateQuestions,
+    draftAssessment,
     predictDifficulty,
     generateStudyPlan,
     analyzePerformance,

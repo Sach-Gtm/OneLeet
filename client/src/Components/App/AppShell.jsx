@@ -17,6 +17,7 @@ import {
     Loader2,
     ShieldCheck,
     ChevronDown,
+    Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
@@ -24,6 +25,7 @@ import { useAuth } from "@/context/AuthContext";
 import Logo from "@/Components/General/Logo";
 import Footer from "@/Components/General/Footer";
 import { isProfileComplete } from "@/lib/profile";
+import { isStaff as isStaffUser, roleLabel } from "@/lib/roles";
 
 const NAV = [
     {
@@ -53,10 +55,7 @@ const NAV = [
 ];
 
 function planLabel(user) {
-    if (user?.role === "admin") return "Admin";
-    if (user?.role === "teacher") return "Teacher";
-    if (user?.plan === "pro") return "Premium Student";
-    return "Student";
+    return roleLabel(user);
 }
 
 function SidebarContent({ user, onNavigate, onLogout }) {
@@ -68,14 +67,17 @@ function SidebarContent({ user, onNavigate, onLogout }) {
                 : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
         );
 
-    // Staff (admin/teacher) get an extra Admin section.
-    const isStaff = user?.role === "admin" || user?.role === "teacher";
+    // Staff (mentor/admin/super admin) get an extra Admin section.
+    const isStaff = isStaffUser(user);
     const navGroups = isStaff
         ? [
               ...NAV,
               {
                   section: "Staff",
-                  items: [{ to: "/admin", label: "Admin", icon: ShieldCheck }],
+                  items: [
+                      { to: "/studio", label: "Content Studio", icon: Wand2 },
+                      { to: "/admin", label: "Admin", icon: ShieldCheck },
+                  ],
               },
           ]
         : NAV;
@@ -241,7 +243,7 @@ export default function AppShell() {
     const navigate = useNavigate();
     const location = useLocation();
     const [mobileOpen, setMobileOpen] = useState(false);
-    const isStaff = user?.role === "admin" || user?.role === "teacher";
+    const isStaff = isStaffUser(user);
 
     // Profile is mandatory: until every required field is filled, keep the user
     // on /profile (they can still log out from the header). Once complete, the

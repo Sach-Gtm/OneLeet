@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 
 const { verifyToken } = require("../../middlewares/authMiddleware");
-const { requireRole } = require("../../middlewares/roleMiddleware");
+const { requireStaff } = require("../../middlewares/roleMiddleware");
 const questionController = require("../../controllers/content/questionController");
 
-// The whole question bank is staff-only (teachers + admins).
-router.use(verifyToken, requireRole("teacher", "admin"));
+// The whole question bank is staff-only (mentors, admins, super admin).
+router.use(verifyToken, requireStaff);
 
 router.post("/", questionController.createQuestion);
 router.get("/", questionController.listQuestions);

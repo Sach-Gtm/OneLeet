@@ -2,30 +2,17 @@ import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    Eye,
-    EyeOff,
-    ArrowRight,
-    Loader2,
-    GraduationCap,
-    Presentation,
-} from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import { cn } from "@/lib/utils";
 import AuthLayout from "@/Components/Auth/AuthLayout";
 import { registerSchema } from "@/lib/validations/auth";
 import { registerUser } from "@/Api/AuthApis";
 import { useAuth } from "@/context/AuthContext";
 import Turnstile, { TURNSTILE_ENABLED } from "@/Components/Auth/Turnstile";
-
-const roles = [
-    { value: "student", label: "Student", icon: GraduationCap },
-    { value: "teacher", label: "Teacher", icon: Presentation },
-];
 
 export default function Register() {
     const navigate = useNavigate();
@@ -37,8 +24,6 @@ export default function Register() {
     const {
         register,
         handleSubmit,
-        setValue,
-        watch,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(registerSchema),
@@ -46,13 +31,10 @@ export default function Register() {
             name: "",
             email: "",
             phone: "",
-            role: "student",
             password: "",
             confirmPassword: "",
         },
     });
-
-    const role = watch("role");
 
     const onSubmit = async (values) => {
         if (TURNSTILE_ENABLED && !captchaToken) {
@@ -102,32 +84,6 @@ export default function Register() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-                    {/* Role toggle */}
-                    <div className="grid grid-cols-2 gap-3">
-                        {roles.map((option) => {
-                            const Icon = option.icon;
-                            return (
-                                <button
-                                    key={option.value}
-                                    type="button"
-                                    onClick={() =>
-                                        setValue("role", option.value, {
-                                            shouldValidate: true,
-                                        })
-                                    }
-                                    className={cn(
-                                        "flex items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-semibold transition-all",
-                                        role === option.value
-                                            ? "border-indigo-600 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600"
-                                            : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
-                                    )}
-                                >
-                                    <Icon size={16} /> {option.label}
-                                </button>
-                            );
-                        })}
-                    </div>
-
                     <div className="space-y-1.5">
                         <Label htmlFor="name">Full Name</Label>
                         <Input

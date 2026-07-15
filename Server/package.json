@@ -10,7 +10,7 @@
     "seed:notes": "node scripts/seedNotes.js",
     "seed:tests": "node scripts/seedTests.js",
     "create:admin": "node scripts/createAdmin.js",
-    "test": "node tests/auth.otp.test.js && node tests/admin.test.js && node tests/notification.test.js"
+    "test": "node tests/auth.otp.test.js && node tests/admin.test.js && node tests/notification.test.js && node tests/activity.test.js && node tests/contact.inbox.test.js && node tests/question.test.js && node tests/passport.test.js"
   },
   "keywords": [],
   "author": "",
