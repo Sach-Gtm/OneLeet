@@ -108,6 +108,32 @@ async function generateQuestions({ subject, topic, difficulty = "moderate", coun
     return { provider: "gemini", questions: Array.isArray(parsed.questions) ? parsed.questions : [] };
 }
 
+// Draft a full assessment (test or practice set) from pasted source text (or a
+// topic). Returns a title/description + MCQs with the correct index, marks and
+// an explanation — everything the Studio needs to save an editable draft.
+async function draftAssessment({ text, subject, topic, mode = "test", count = 5, difficulty = "moderate" } = {}) {
+    const kind = mode === "practice" ? "practice question set" : "graded test";
+    const source = text
+        ? `Base the questions ONLY on this source material:\n"""\n${String(text).slice(0, 12000)}\n"""`
+        : `Topic: ${topic || subject || "LEET general aptitude"}.`;
+    const prompt =
+        `You are creating a ${kind} for the Indian LEET (Lateral Entry) engineering entrance exam. ` +
+        `Draft ${count} ${difficulty} multiple-choice questions. Each question has exactly 4 options, ` +
+        `one correct answer given as a 0-based index, an integer marks value (default 1), and a ` +
+        `one-line explanation of why the answer is correct. Also propose a concise title and a ` +
+        `one-line description. ${source} ` +
+        `Respond ONLY as JSON: {"title": string, "description": string, "questions": ` +
+        `[{"text": string, "options": string[4], "correctIndex": number, "marks": number, "explanation": string}]}.`;
+    const raw = await callGemini(prompt, { json: true });
+    const parsed = safeJsonParse(raw) || {};
+    return {
+        provider: "gemini",
+        title: parsed.title || topic || subject || "Untitled set",
+        description: parsed.description || "",
+        questions: Array.isArray(parsed.questions) ? parsed.questions : [],
+    };
+}
+
 async function predictDifficulty({ questionText } = {}) {
     const prompt =
         `Classify the difficulty of this LEET exam question as one of easy, moderate, or hard, ` +
@@ -159,6 +185,7 @@ module.exports = {
     summarizeNote,
     generateFlashcards,
     generateQuestions,
+    draftAssessment,
     predictDifficulty,
     generateStudyPlan,
     analyzePerformance,

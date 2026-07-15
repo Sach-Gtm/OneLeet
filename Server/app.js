@@ -18,6 +18,7 @@ const notificationRoutes = require("./src/routes/notification/notificationRoutes
 const contactRoutes = require("./src/routes/contact/contactRoutes");
 const questionRoutes = require("./src/routes/content/questionRoutes");
 const activityRoutes = require("./src/routes/activity/activityRoutes");
+const studioRoutes = require("./src/routes/studio/studioRoutes");
 
 // Builds and returns the configured Express app WITHOUT starting a server or
 // connecting to the database. server.js wires those up for real runs; tests
@@ -93,6 +94,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/activity", activityRoutes);
+app.use("/api/studio", studioRoutes);
 
 // 404 for unmatched routes
 app.use((req, res) => {
