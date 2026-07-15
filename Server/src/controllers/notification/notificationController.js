@@ -25,9 +25,18 @@ async function create(req, res, next) {
 
 // GET /api/notifications — the 30 most recent, each flagged read/unread for the
 // current user, plus the unread count for the bell badge.
+// Global broadcasts (no recipients) plus anything targeted at this user.
+const visibleTo = (userId) => ({
+    $or: [
+        { recipients: { $exists: false } },
+        { recipients: { $size: 0 } },
+        { recipients: userId },
+    ],
+});
+
 async function listForMe(req, res, next) {
     try {
-        const items = await Notification.find()
+        const items = await Notification.find(visibleTo(req.user._id))
             .sort({ createdAt: -1 })
             .limit(30)
             .lean();
@@ -36,6 +45,8 @@ async function listForMe(req, res, next) {
             _id: n._id,
             title: n.title,
             body: n.body,
+            type: n.type || "broadcast",
+            test: n.test || null,
             createdAt: n.createdAt,
             read: (n.readBy || []).some((id) => id.toString() === uid),
         }));
@@ -53,7 +64,7 @@ async function listForMe(req, res, next) {
 async function markAllRead(req, res, next) {
     try {
         await Notification.updateMany(
-            { readBy: { $ne: req.user._id } },
+            { readBy: { $ne: req.user._id }, ...visibleTo(req.user._id) },
             { $addToSet: { readBy: req.user._id } }
         );
         return res.status(200).json({ success: true });

@@ -38,6 +38,7 @@ import {
     removeUser,
 } from "@/Api/AdminApi";
 import StudentActivityModal from "@/Components/App/StudentActivityModal";
+import CompetitionAdmin from "@/Components/App/CompetitionAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
@@ -621,6 +622,9 @@ export default function AdminDashboard() {
                     </form>
                 )}
             </div>
+
+            {/* Competitive leaderboards + achievement data (admins + super admin) */}
+            {canManageStudents && <CompetitionAdmin isSuper={isSuper} />}
 
             {/* Upload a PYQ paper (staff) */}
             <form

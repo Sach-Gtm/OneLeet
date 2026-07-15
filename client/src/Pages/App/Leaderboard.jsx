@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Medal, Loader2, Award, Crown } from "lucide-react";
+import { Trophy, Medal, Loader2, Award, Crown, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getLeaderboard } from "@/Api/LeaderboardApi";
+import { getLeaderboard, getHallOfFame } from "@/Api/LeaderboardApi";
 
 function RankBadge({ rank }) {
     if (rank <= 3) {
@@ -100,7 +100,96 @@ function Row({ entry, highlight }) {
     );
 }
 
-export default function Leaderboard() {
+// All-time Rank #1 recognition board.
+function HallOfFame() {
+    const [rows, setRows] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        getHallOfFame()
+            .then((d) => setRows(d.hallOfFame || []))
+            .catch(() => setRows([]))
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex h-48 items-center justify-center">
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+            </div>
+        );
+    }
+    if (!rows.length) {
+        return (
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
+                <Crown className="mb-2 h-8 w-8 text-slate-300" />
+                <p className="text-sm font-medium text-slate-600">No champions yet</p>
+                <p className="mt-0.5 text-xs text-slate-400">
+                    Win a competitive test to be the first in the Hall of Fame.
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+            <div className="grid grid-cols-[44px_1fr_auto] gap-3 border-b border-slate-100 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                <span className="text-center">#</span>
+                <span>Student</span>
+                <span className="text-right">🥇 Times Rank #1</span>
+            </div>
+            <div className="divide-y divide-slate-100">
+                {rows.map((r) => (
+                    <div
+                        key={r.userId}
+                        className={cn(
+                            "grid grid-cols-[44px_1fr_auto] items-center gap-3 px-5 py-3.5",
+                            r.isCurrentUser && "bg-indigo-50/70"
+                        )}
+                    >
+                        <div className="flex justify-center">
+                            <RankBadge rank={r.rank} />
+                        </div>
+                        <div className="flex min-w-0 items-center gap-3">
+                            {r.avatar ? (
+                                <img src={r.avatar} alt={r.name} className="h-8 w-8 rounded-full object-cover" />
+                            ) : (
+                                <span className="grid h-8 w-8 place-items-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+                                    {(r.name || "S").charAt(0).toUpperCase()}
+                                </span>
+                            )}
+                            <div className="min-w-0">
+                                <p
+                                    className={cn(
+                                        "truncate text-sm",
+                                        r.isCurrentUser ? "font-bold text-indigo-700" : "font-medium text-slate-700"
+                                    )}
+                                >
+                                    {r.name}
+                                    {r.isCurrentUser && <span className="ml-1 text-indigo-500">(You)</span>}
+                                </p>
+                                {(r.timesRank2 > 0 || r.timesRank3 > 0) && (
+                                    <p className="text-xs text-slate-400">
+                                        🥈 {r.timesRank2} · 🥉 {r.timesRank3}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-end gap-1.5 text-right">
+                            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                            <span className="text-lg font-extrabold tabular-nums text-slate-800">
+                                {r.timesRank1}
+                            </span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// The weekly rolling board (total score across the last 7 days).
+function WeeklyBoard() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -113,7 +202,7 @@ export default function Leaderboard() {
 
     if (loading) {
         return (
-            <div className="flex h-64 items-center justify-center">
+            <div className="flex h-48 items-center justify-center">
                 <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
             </div>
         );
@@ -125,15 +214,7 @@ export default function Leaderboard() {
     const rest = board.slice(3);
 
     return (
-        <div className="mx-auto max-w-3xl">
-            <div className="mb-6 text-center">
-                <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-amber-50 text-amber-500">
-                    <Trophy className="h-6 w-6" />
-                </span>
-                <h1 className="text-2xl font-bold text-slate-900">Top Performers This Week</h1>
-                <p className="text-sm text-slate-500">Compete with the best minds across India.</p>
-            </div>
-
+        <>
             {board.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
                     <Award className="mb-2 h-8 w-8 text-slate-300" />
@@ -180,6 +261,53 @@ export default function Leaderboard() {
                     )}
                 </>
             )}
+        </>
+    );
+}
+
+function TabButton({ active, onClick, children }) {
+    return (
+        <button
+            onClick={onClick}
+            className={cn(
+                "rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors",
+                active ? "bg-indigo-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-800"
+            )}
+        >
+            {children}
+        </button>
+    );
+}
+
+export default function Leaderboard() {
+    const [tab, setTab] = useState("week");
+
+    return (
+        <div className="mx-auto max-w-3xl">
+            <div className="mb-5 text-center">
+                <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-amber-50 text-amber-500">
+                    <Trophy className="h-6 w-6" />
+                </span>
+                <h1 className="text-2xl font-bold text-slate-900">Leaderboard</h1>
+                <p className="text-sm text-slate-500">
+                    {tab === "week"
+                        ? "Top performers across India this week."
+                        : "All-time champions — ranked by Rank #1 finishes."}
+                </p>
+            </div>
+
+            <div className="mb-6 flex justify-center">
+                <div className="inline-flex gap-1 rounded-xl border border-slate-200 bg-white p-1">
+                    <TabButton active={tab === "week"} onClick={() => setTab("week")}>
+                        This Week
+                    </TabButton>
+                    <TabButton active={tab === "fame"} onClick={() => setTab("fame")}>
+                        🏆 Hall of Fame
+                    </TabButton>
+                </div>
+            </div>
+
+            {tab === "week" ? <WeeklyBoard /> : <HallOfFame />}
         </div>
     );
 }

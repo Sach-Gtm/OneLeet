@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAttempt } from "@/Api/TestsApi";
+import TestLeaderboardPanel from "@/Components/App/TestLeaderboardPanel";
 
 const fmtDuration = (s = 0) => {
     const m = Math.floor(s / 60);
@@ -104,6 +105,10 @@ export default function TestResult() {
                     })}
                 </div>
             </div>
+
+            {/* Competitive leaderboard (frozen countdown → final board + celebration).
+                Renders nothing for non-competitive tests. */}
+            {attempt.test?._id && <TestLeaderboardPanel testId={attempt.test._id} />}
 
             {/* Review */}
             <div className="space-y-4">

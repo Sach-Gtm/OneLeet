@@ -16,6 +16,19 @@ const StatsSchema = new mongoose.Schema(
     { _id: false }
 );
 
+// Permanent competitive-test achievements: how many times the student has
+// finished in the Top 3 of a graded test's final leaderboard. Each counter is
+// incremented exactly once when a test's leaderboard is finalised, and never
+// resets on its own — only an admin can reset it.
+const AchievementsSchema = new mongoose.Schema(
+    {
+        rank1: { type: Number, default: 0 },
+        rank2: { type: Number, default: 0 },
+        rank3: { type: Number, default: 0 },
+    },
+    { _id: false }
+);
+
 const UserSchema = new mongoose.Schema(
     {
         name: {
@@ -84,6 +97,10 @@ const UserSchema = new mongoose.Schema(
         },
         stats: {
             type: StatsSchema,
+            default: () => ({}),
+        },
+        achievements: {
+            type: AchievementsSchema,
             default: () => ({}),
         },
 

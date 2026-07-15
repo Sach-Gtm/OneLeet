@@ -33,6 +33,7 @@ const NotesLibrary = lazy(() => import("@/Pages/App/NotesLibrary"));
 const TestsList = lazy(() => import("@/Pages/App/TestsList"));
 const TestTake = lazy(() => import("@/Pages/App/TestTake"));
 const TestResult = lazy(() => import("@/Pages/App/TestResult"));
+const TestLeaderboardPage = lazy(() => import("@/Pages/App/TestLeaderboardPage"));
 const AiTools = lazy(() => import("@/Pages/App/AiTools"));
 const Leaderboard = lazy(() => import("@/Pages/App/Leaderboard"));
 const Analytics = lazy(() => import("@/Pages/App/Analytics"));
@@ -85,6 +86,7 @@ const AppRoutes = () => {
                         <Route path="/notes" element={<NotesLibrary />} />
                         <Route path="/tests" element={<TestsList />} />
                         <Route path="/tests/result/:attemptId" element={<TestResult />} />
+                        <Route path="/tests/:id/leaderboard" element={<TestLeaderboardPage />} />
                         <Route path="/tests/:id" element={<TestTake />} />
                         <Route path="/ai-tools" element={<AiTools />} />
                         <Route path="/leaderboard" element={<Leaderboard />} />

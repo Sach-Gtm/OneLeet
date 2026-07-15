@@ -48,6 +48,13 @@ const TestSchema = new mongoose.Schema(
         questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
         totalMarks: { type: Number, default: 0 },
         isPublished: { type: Boolean, default: true, index: true },
+        // Competitive leaderboard lifecycle. A test is "competitive" when it is a
+        // graded test (mode==="test") with a `closeAt`. Its ranking stays frozen
+        // until ~5 minutes after closeAt, then is finalised exactly once — at
+        // which point ranks, achievements and the topper notification are written
+        // and `leaderboardPublished` flips true.
+        leaderboardPublished: { type: Boolean, default: false, index: true },
+        leaderboardPublishedAt: { type: Date },
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     },
     { timestamps: true }

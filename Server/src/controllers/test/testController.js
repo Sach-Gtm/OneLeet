@@ -70,6 +70,25 @@ async function getTest(req, res, next) {
         const test = await Test.findOne({ _id: req.params.id, isPublished: true });
         if (!test) return res.status(404).json({ success: false, message: "Test not found" });
 
+        // Competitive window: a scheduled graded test can only be taken while open.
+        if (test.mode === "test" && test.closeAt) {
+            const now = Date.now();
+            if (test.openAt && now < new Date(test.openAt).getTime()) {
+                return res.status(403).json({
+                    success: false,
+                    message: "This test hasn't started yet.",
+                    opensAt: test.openAt,
+                });
+            }
+            if (now > new Date(test.closeAt).getTime()) {
+                return res.status(403).json({
+                    success: false,
+                    message: "This test has closed.",
+                    closedAt: test.closeAt,
+                });
+            }
+        }
+
         const practice = test.mode === "practice";
         await test.populate({
             path: "questions",
@@ -87,6 +106,8 @@ async function getTest(req, res, next) {
                 subject: test.subject,
                 mode: test.mode,
                 durationMinutes: test.durationMinutes,
+                openAt: test.openAt || null,
+                closeAt: test.closeAt || null,
                 questions: test.questions,
             },
         });
@@ -103,6 +124,19 @@ async function submitTest(req, res, next) {
             select: "text options correctIndex marks",
         });
         if (!test) return res.status(404).json({ success: false, message: "Test not found" });
+
+        // Competitive window: reject submissions once the test has closed (a small
+        // grace absorbs clock skew and requests already in flight at closeAt).
+        if (
+            test.mode === "test" &&
+            test.closeAt &&
+            Date.now() > new Date(test.closeAt).getTime() + 2 * 60 * 1000
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: "This test has closed. Submissions are no longer accepted.",
+            });
+        }
 
         const submitted = Array.isArray(req.body?.answers) ? req.body.answers : [];
         const answerMap = new Map(submitted.map((a) => [String(a.questionId), a.selectedIndex]));

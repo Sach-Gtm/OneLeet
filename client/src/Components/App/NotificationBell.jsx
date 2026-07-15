@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Bell, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Bell, Loader2, Trophy } from "lucide-react";
 import { getNotifications, markAllNotificationsRead } from "@/Api/NotificationApi";
 
 function timeAgo(date) {
@@ -93,11 +94,11 @@ export default function NotificationBell() {
                                 You&apos;re all caught up.
                             </p>
                         ) : (
-                            items.map((n) => (
-                                <div
-                                    key={n._id}
-                                    className="border-b border-slate-50 px-4 py-3 last:border-0 hover:bg-slate-50"
-                                >
+                            items.map((n) => {
+                                const isLeaderboard = n.type === "leaderboard" && n.test;
+                                const cls =
+                                    "block border-b border-slate-50 px-4 py-3 last:border-0 hover:bg-slate-50";
+                                const inner = (
                                     <div className="flex items-start gap-2">
                                         <span
                                             className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
@@ -105,19 +106,35 @@ export default function NotificationBell() {
                                             }`}
                                         />
                                         <div className="min-w-0">
-                                            <p className="text-sm font-semibold text-slate-800">
+                                            <p className="flex items-center gap-1 text-sm font-semibold text-slate-800">
+                                                {isLeaderboard && (
+                                                    <Trophy className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+                                                )}
                                                 {n.title}
                                             </p>
-                                            <p className="text-sm text-slate-600">
-                                                {n.body}
-                                            </p>
+                                            <p className="text-sm text-slate-600">{n.body}</p>
                                             <p className="mt-0.5 text-xs text-slate-400">
                                                 {timeAgo(n.createdAt)}
+                                                {isLeaderboard && " · Tap to view your rank"}
                                             </p>
                                         </div>
                                     </div>
-                                </div>
-                            ))
+                                );
+                                return isLeaderboard ? (
+                                    <Link
+                                        key={n._id}
+                                        to={`/tests/${n.test}/leaderboard`}
+                                        onClick={() => setOpen(false)}
+                                        className={cls}
+                                    >
+                                        {inner}
+                                    </Link>
+                                ) : (
+                                    <div key={n._id} className={cls}>
+                                        {inner}
+                                    </div>
+                                );
+                            })
                         )}
                     </div>
                 </div>
