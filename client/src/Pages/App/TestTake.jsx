@@ -72,17 +72,19 @@ export default function TestTake() {
         submitRef.current = handleSubmit;
     });
 
-    // countdown
+    const isPractice = test?.mode === "practice";
+
+    // countdown (graded tests only — practice is self-paced)
     useEffect(() => {
-        if (!started) return undefined;
+        if (!started || isPractice) return undefined;
         const t = setInterval(() => setSecondsLeft((s) => Math.max(0, s - 1)), 1000);
         return () => clearInterval(t);
-    }, [started]);
+    }, [started, isPractice]);
 
-    // auto-submit when time runs out
+    // auto-submit when time runs out (never for practice)
     useEffect(() => {
-        if (started && secondsLeft === 0) submitRef.current?.();
-    }, [started, secondsLeft]);
+        if (started && secondsLeft === 0 && !isPractice) submitRef.current?.();
+    }, [started, secondsLeft, isPractice]);
 
     if (loading) {
         return (
@@ -116,24 +118,41 @@ export default function TestTake() {
                     <div className="min-w-0">
                         <h1 className="truncate text-base font-bold text-slate-900">{test.title}</h1>
                         <p className="text-xs text-slate-500">
-                            {answeredCount}/{test.questions.length} answered
+                            {isPractice
+                                ? "Practice — the answer reveals as you go"
+                                : `${answeredCount}/${test.questions.length} answered`}
                         </p>
                     </div>
-                    <div
-                        className={cn(
-                            "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-bold tabular-nums",
-                            lowTime ? "bg-red-50 text-red-600" : "bg-white text-slate-700 ring-1 ring-slate-200"
-                        )}
-                    >
-                        <Clock size={15} /> {fmt(secondsLeft)}
-                    </div>
-                    <button
-                        onClick={() => setShowConfirm(true)}
-                        disabled={submitting}
-                        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
-                    >
-                        Submit
-                    </button>
+                    {isPractice ? (
+                        <span className="rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-bold text-emerald-600">
+                            Practice
+                        </span>
+                    ) : (
+                        <div
+                            className={cn(
+                                "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-bold tabular-nums",
+                                lowTime ? "bg-red-50 text-red-600" : "bg-white text-slate-700 ring-1 ring-slate-200"
+                            )}
+                        >
+                            <Clock size={15} /> {fmt(secondsLeft)}
+                        </div>
+                    )}
+                    {isPractice ? (
+                        <button
+                            onClick={() => navigate("/tests")}
+                            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                        >
+                            Finish
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setShowConfirm(true)}
+                            disabled={submitting}
+                            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
+                        >
+                            Submit
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -148,21 +167,41 @@ export default function TestTake() {
                         <div className="mt-3 space-y-2">
                             {q.options.map((opt, idx) => {
                                 const selected = answers[q._id] === idx;
+                                const revealed = isPractice && answers[q._id] != null;
+                                const isCorrect = idx === q.correctIndex;
+                                let box = "border-slate-200 text-slate-600 hover:bg-slate-50";
+                                let badge = "border-slate-300 text-slate-400";
+                                if (revealed) {
+                                    if (isCorrect) {
+                                        box = "border-emerald-400 bg-emerald-50 text-emerald-800";
+                                        badge = "border-emerald-500 bg-emerald-500 text-white";
+                                    } else if (selected) {
+                                        box = "border-red-300 bg-red-50 text-red-700";
+                                        badge = "border-red-400 bg-red-400 text-white";
+                                    } else {
+                                        box = "border-slate-200 text-slate-400";
+                                        badge = "border-slate-200 text-slate-300";
+                                    }
+                                } else if (selected) {
+                                    box = "border-indigo-500 bg-indigo-50 text-indigo-800";
+                                    badge = "border-indigo-500 bg-indigo-500 text-white";
+                                }
                                 return (
                                     <button
                                         key={idx}
-                                        onClick={() => setAnswers((a) => ({ ...a, [q._id]: idx }))}
+                                        disabled={revealed}
+                                        onClick={() => {
+                                            if (!revealed) setAnswers((a) => ({ ...a, [q._id]: idx }));
+                                        }}
                                         className={cn(
                                             "flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm transition",
-                                            selected
-                                                ? "border-indigo-500 bg-indigo-50 text-indigo-800"
-                                                : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                            box
                                         )}
                                     >
                                         <span
                                             className={cn(
                                                 "grid h-5 w-5 shrink-0 place-items-center rounded-full border text-[11px] font-bold",
-                                                selected ? "border-indigo-500 bg-indigo-500 text-white" : "border-slate-300 text-slate-400"
+                                                badge
                                             )}
                                         >
                                             {String.fromCharCode(65 + idx)}
@@ -172,6 +211,21 @@ export default function TestTake() {
                                 );
                             })}
                         </div>
+                        {isPractice && answers[q._id] != null && (
+                            <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                                <span
+                                    className={cn(
+                                        "font-semibold",
+                                        answers[q._id] === q.correctIndex ? "text-emerald-600" : "text-red-500"
+                                    )}
+                                >
+                                    {answers[q._id] === q.correctIndex ? "Correct! " : "Not quite. "}
+                                </span>
+                                {q.explanation
+                                    ? q.explanation
+                                    : `The correct answer is ${String.fromCharCode(65 + q.correctIndex)}.`}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>

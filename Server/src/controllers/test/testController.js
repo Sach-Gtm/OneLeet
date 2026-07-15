@@ -62,14 +62,21 @@ async function listTests(req, res, next) {
     }
 }
 
-// GET /api/tests/:id — fetch a test for TAKING (correct answers stripped)
+// GET /api/tests/:id — fetch a test for TAKING. Graded tests hide the correct
+// answers until submission; PRACTICE sets reveal the answer the moment the
+// student picks an option, so it's safe (and necessary) to send them up front.
 async function getTest(req, res, next) {
     try {
-        const test = await Test.findOne({ _id: req.params.id, isPublished: true }).populate({
-            path: "questions",
-            select: "text options subject topic difficulty marks", // NOT correctIndex/explanation
-        });
+        const test = await Test.findOne({ _id: req.params.id, isPublished: true });
         if (!test) return res.status(404).json({ success: false, message: "Test not found" });
+
+        const practice = test.mode === "practice";
+        await test.populate({
+            path: "questions",
+            select: practice
+                ? "text options subject topic difficulty marks correctIndex explanation"
+                : "text options subject topic difficulty marks",
+        });
 
         return res.status(200).json({
             success: true,
@@ -78,6 +85,7 @@ async function getTest(req, res, next) {
                 title: test.title,
                 description: test.description,
                 subject: test.subject,
+                mode: test.mode,
                 durationMinutes: test.durationMinutes,
                 questions: test.questions,
             },

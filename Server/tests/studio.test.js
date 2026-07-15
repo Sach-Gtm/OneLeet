@@ -102,6 +102,37 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.ok(afterIds.includes(testId), "published test must be visible to students");
     ok("published test is visible to students");
 
+    // The published set is PRACTICE mode → taking it exposes the correct answers
+    // (revealed on click). GET as a student and confirm correctIndex is present.
+    const practiceTake = await request.get(`/api/tests/${testId}`).set(...auth(student));
+    assert.strictEqual(practiceTake.status, 200);
+    assert.strictEqual(practiceTake.body.test.mode, "practice");
+    assert.ok(
+        Number.isInteger(practiceTake.body.test.questions[0].correctIndex),
+        "practice must reveal correctIndex"
+    );
+    ok("practice test reveals correct answers when taken");
+
+    // A graded TEST must NOT leak the correct answers on GET.
+    const gradedCreate = await request
+        .post("/api/studio/tests")
+        .set(...auth(mentor))
+        .send({
+            title: "Graded mock",
+            mode: "test",
+            questions: [{ text: "2+2?", options: ["3", "4", "5"], correctIndex: 1 }],
+        });
+    const gradedId = gradedCreate.body.test._id;
+    await request.post(`/api/studio/tests/${gradedId}/publish`).set(...auth(mentor));
+    const gradedTake = await request.get(`/api/tests/${gradedId}`).set(...auth(student));
+    assert.strictEqual(gradedTake.body.test.mode, "test");
+    assert.strictEqual(
+        gradedTake.body.test.questions[0].correctIndex,
+        undefined,
+        "graded test must hide correctIndex"
+    );
+    ok("graded test hides correct answers when taken");
+
     // Bad id → 404 (not 500).
     const bad = await request.get("/api/studio/tests/not-an-id").set(...auth(mentor));
     assert.strictEqual(bad.status, 404);
