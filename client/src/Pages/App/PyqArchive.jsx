@@ -11,6 +11,8 @@ import {
     Lightbulb,
     Calculator,
     BookOpen,
+    SlidersHorizontal,
+    X,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -34,36 +36,51 @@ const FILTER_GROUPS = [
 
 const emptySelection = { year: [], stateExam: [], branch: [], subject: [], difficulty: [] };
 
-function FilterSection({ label, options, selected, onToggle }) {
-    const [open, setOpen] = useState(true);
+// A single compact filter as a dropdown button + popover of checkboxes. The
+// button shows how many options are active; only one dropdown is open at a time
+// (managed by the parent), and it closes on outside click.
+function FilterDropdown({ label, options, selected, onToggle, open, onToggleOpen }) {
     if (!options || options.length === 0) return null;
+    const count = selected.length;
     return (
-        <div className="border-b border-slate-100 py-3">
+        <div className="relative" data-filter-dropdown>
             <button
-                onClick={() => setOpen((v) => !v)}
-                className="flex w-full items-center justify-between text-sm font-semibold text-slate-700"
+                type="button"
+                onClick={onToggleOpen}
+                aria-expanded={open}
+                className={cn(
+                    "inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition",
+                    count > 0
+                        ? "border-indigo-300 bg-indigo-50 text-indigo-700"
+                        : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                )}
             >
                 {label}
+                {count > 0 && (
+                    <span className="grid h-4 min-w-4 place-items-center rounded-full bg-indigo-600 px-1 text-[10px] font-bold text-white">
+                        {count}
+                    </span>
+                )}
                 <ChevronDown
-                    size={16}
+                    size={15}
                     className={cn("text-slate-400 transition-transform", open && "rotate-180")}
                 />
             </button>
             {open && (
-                <div className="mt-2 space-y-1.5">
+                <div className="absolute left-0 top-full z-30 mt-1.5 max-h-64 w-max min-w-[11rem] max-w-[calc(100vw-2.5rem)] overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg shadow-slate-200/70">
                     {options.map((opt) => {
                         const value = String(opt);
                         const checked = selected.includes(value);
                         return (
                             <label
                                 key={value}
-                                className="flex cursor-pointer items-center gap-2 text-sm text-slate-500 hover:text-slate-700"
+                                className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-600 hover:bg-slate-50"
                             >
                                 <input
                                     type="checkbox"
                                     checked={checked}
                                     onChange={() => onToggle(value)}
-                                    className="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                    className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                                 />
                                 <span className="capitalize">{opt}</span>
                             </label>
@@ -151,6 +168,7 @@ export default function PyqArchive() {
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [openKey, setOpenKey] = useState(null); // which filter dropdown is open
 
     // Load filter facets once
     useEffect(() => {
@@ -158,6 +176,16 @@ export default function PyqArchive() {
             .then((res) => setFilterOptions(res.filters))
             .catch(() => setFilterOptions(null));
     }, []);
+
+    // Close the open filter dropdown on an outside click.
+    useEffect(() => {
+        if (!openKey) return undefined;
+        const h = (e) => {
+            if (!e.target.closest("[data-filter-dropdown]")) setOpenKey(null);
+        };
+        document.addEventListener("mousedown", h);
+        return () => document.removeEventListener("mousedown", h);
+    }, [openKey]);
 
     // Debounce the search box
     useEffect(() => {
@@ -231,66 +259,70 @@ export default function PyqArchive() {
                 </span>
             </div>
 
-            <div className="flex flex-col gap-6 lg:flex-row">
-                {/* Filter sidebar */}
-                <aside className="w-full shrink-0 lg:w-60">
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-sm font-bold text-slate-800">Filters</h2>
-                            {hasActiveFilters && (
-                                <button
-                                    onClick={clearAll}
-                                    className="text-xs font-medium text-indigo-600 hover:underline"
-                                >
-                                    Clear all
-                                </button>
-                            )}
-                        </div>
-                        {FILTER_GROUPS.map((group) => (
-                            <FilterSection
-                                key={group.key}
-                                label={group.label}
-                                options={filterOptions?.[group.source]}
-                                selected={selected[group.key]}
-                                onToggle={(value) => toggleFilter(group.key, value)}
-                            />
-                        ))}
-                    </div>
-                </aside>
-
-                {/* Results */}
-                <div className="min-w-0 flex-1">
-                    <div className="mb-4 flex flex-wrap items-center gap-3">
-                        <div className="relative min-w-0 flex-1">
-                            <Search
-                                size={16}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                            />
-                            <input
-                                type="text"
-                                value={search}
-                                onChange={(e) => {
-                                    setSearch(e.target.value);
-                                    setPage(1);
-                                }}
-                                placeholder="Search by topic, year, or exam name..."
-                                className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                            />
-                        </div>
-                        <select
-                            value={sort}
+            <div>
+                {/* Search + sort */}
+                <div className="mb-3 flex flex-wrap items-center gap-3">
+                    <div className="relative min-w-0 flex-1">
+                        <Search
+                            size={16}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                        />
+                        <input
+                            type="text"
+                            value={search}
                             onChange={(e) => {
-                                setSort(e.target.value);
+                                setSearch(e.target.value);
                                 setPage(1);
                             }}
-                            className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none"
-                        >
-                            <option value="newest">Sort by: Newest</option>
-                            <option value="oldest">Sort by: Oldest</option>
-                            <option value="year-desc">Year: High to Low</option>
-                            <option value="year-asc">Year: Low to High</option>
-                        </select>
+                            placeholder="Search by topic, year, or exam name..."
+                            className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                        />
                     </div>
+                    <select
+                        value={sort}
+                        onChange={(e) => {
+                            setSort(e.target.value);
+                            setPage(1);
+                        }}
+                        className="h-11 shrink-0 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none"
+                    >
+                        <option value="newest">Sort by: Newest</option>
+                        <option value="oldest">Sort by: Oldest</option>
+                        <option value="year-desc">Year: High to Low</option>
+                        <option value="year-asc">Year: Low to High</option>
+                    </select>
+                </div>
+
+                {/* Compact filter dropdown bar */}
+                <div className="mb-4 flex flex-wrap items-center gap-2">
+                    <span className="mr-0.5 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        <SlidersHorizontal size={14} /> Filters
+                    </span>
+                    {FILTER_GROUPS.map((group) => (
+                        <FilterDropdown
+                            key={group.key}
+                            label={group.label}
+                            options={filterOptions?.[group.source]}
+                            selected={selected[group.key]}
+                            onToggle={(value) => toggleFilter(group.key, value)}
+                            open={openKey === group.key}
+                            onToggleOpen={() =>
+                                setOpenKey((k) => (k === group.key ? null : group.key))
+                            }
+                        />
+                    ))}
+                    {hasActiveFilters && (
+                        <button
+                            onClick={clearAll}
+                            className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-indigo-50"
+                        >
+                            <X size={13} /> Clear all
+                        </button>
+                    )}
+                </div>
+
+                {/* Results */}
+                <div className="min-w-0">
 
                     {loading ? (
                         <div className="flex h-64 items-center justify-center">
@@ -311,7 +343,7 @@ export default function PyqArchive() {
                             <p className="mb-3 text-xs text-slate-400">
                                 {total} paper{total === 1 ? "" : "s"} found
                             </p>
-                            <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {pyqs.map((pyq) => (
                                     <PyqCard key={pyq._id} pyq={pyq} />
                                 ))}
