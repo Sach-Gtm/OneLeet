@@ -9,10 +9,12 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import AuthLayout from "@/Components/Auth/AuthLayout";
+import GoogleLogin from "@/Components/Auth/GoogleLogin";
 import { registerSchema } from "@/lib/validations/auth";
 import { registerUser } from "@/Api/AuthApis";
 import { useAuth } from "@/context/AuthContext";
 import Turnstile, { TURNSTILE_ENABLED } from "@/Components/Auth/Turnstile";
+import { GOOGLE_ENABLED } from "@/lib/googleAuth";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -184,6 +186,18 @@ export default function Register() {
                         )}
                     </Button>
                 </form>
+
+                {GOOGLE_ENABLED && (
+                    <>
+                        <div className="flex items-center gap-3">
+                            <div className="h-px flex-1 bg-slate-200" />
+                            <span className="text-xs text-slate-400">Or sign up with</span>
+                            <div className="h-px flex-1 bg-slate-200" />
+                        </div>
+
+                        <GoogleLogin redirectTo="/dashboard" />
+                    </>
+                )}
 
                 <p className="text-center text-sm text-slate-500">
                     Already have an account?{" "}
