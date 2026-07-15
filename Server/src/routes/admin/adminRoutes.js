@@ -29,6 +29,11 @@ router.patch("/students/:id/achievements/reset", admin.resetStudentAchievements)
 router.patch("/students/:id/plan", requireSuperadmin, admin.setStudentPlan);
 router.post("/hall-of-fame/reset", requireSuperadmin, admin.resetHallOfFame);
 
+// Account block-list — controls who may hold an account. Super-Admin only.
+router.get("/blocklist", requireSuperadmin, admin.listBlocklist);
+router.post("/blocklist", requireSuperadmin, admin.blockEmail);
+router.post("/blocklist/unblock", requireSuperadmin, admin.unblockEmail);
+
 // Role changes and removals are gated to admins here, then further narrowed by
 // the *target's* role inside the controller (an admin may only manage students;
 // only the Super Admin may touch mentor/admin accounts).
