@@ -34,6 +34,22 @@ const GoogleLogin = ({ redirectTo = "/", onError }) => {
             if (onError) onError(message);
             else toast.error(message);
         },
+        // Popup-level failures (blocked by the browser, closed early, cookies
+        // disabled) are NOT OAuth errors, so they never reach onError above. Left
+        // unhandled they'd fail silently — the user clicks and nothing happens.
+        // Surface a clear, actionable message instead.
+        onNonOAuthError: (err) => {
+            const byType = {
+                popup_failed_to_open:
+                    "Your browser blocked the Google popup. Allow pop-ups for oneleet.in, then try again.",
+                popup_closed:
+                    "The Google sign-in window closed before finishing. Please try again.",
+            };
+            const message =
+                byType[err?.type] || "Google sign-in didn't complete. Please try again.";
+            if (onError) onError(message);
+            else toast.error(message);
+        },
     });
 
     return (
