@@ -25,14 +25,13 @@ router.get("/me/summary", verifyToken, ctrl.myProgressSummary);
 router.post("/ai-draft", verifyToken, requireStaff, ctrl.aiDraftSyllabus);
 router.post("/ai-scan", verifyToken, requireStaff, handleUpload, ctrl.aiScanSyllabus);
 
-// Create/edit/delete — any signed-in user (students get a PERSONAL syllabus;
-// staff get a GLOBAL one). Ownership is enforced inside the controller.
-router.post("/", verifyToken, ctrl.createSyllabus);
+// Create/edit/delete — STAFF ONLY (managed from the Content Studio).
+router.post("/", verifyToken, requireStaff, ctrl.createSyllabus);
 router.get("/:id", verifyToken, ctrl.getSyllabus);
-router.put("/:id", verifyToken, ctrl.updateSyllabus);
-router.delete("/:id", verifyToken, ctrl.deleteSyllabus);
+router.put("/:id", verifyToken, requireStaff, ctrl.updateSyllabus);
+router.delete("/:id", verifyToken, requireStaff, ctrl.deleteSyllabus);
 
-// Student progress.
+// Student progress (any signed-in user tracks their own completion).
 router.post("/:id/toggle", verifyToken, ctrl.toggleTopic);
 
 module.exports = router;

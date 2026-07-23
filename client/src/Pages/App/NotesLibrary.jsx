@@ -9,7 +9,6 @@ import {
     BookOpen,
     Eye,
     Zap,
-    Plus,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -21,9 +20,7 @@ import {
     generateFlashcards,
 } from "@/Api/NotesApi";
 import NoteAiModal from "@/Components/App/NoteAiModal";
-import NotesUploadModal from "@/Components/App/NotesUploadModal";
 import NoteReaderModal from "@/Components/App/NoteReaderModal";
-import { useAuth } from "@/context/AuthContext";
 
 const SIDEBAR_GROUPS = [
     { key: "difficulty", label: "Difficulty", source: "difficulties" },
@@ -130,12 +127,7 @@ export default function NotesLibrary() {
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [refreshKey, setRefreshKey] = useState(0);
 
-    const { user } = useAuth();
-    const isStaff = ["teacher", "admin", "superadmin"].includes(user?.role);
-
-    const [uploadOpen, setUploadOpen] = useState(false);
     const [reader, setReader] = useState({ open: false, loading: false, note: null });
 
     const [aiModal, setAiModal] = useState({ open: false, mode: "summary", noteTitle: "", loading: false, data: null, error: null });
@@ -172,7 +164,7 @@ export default function NotesLibrary() {
         return () => {
             active = false;
         };
-    }, [queryParams, refreshKey]);
+    }, [queryParams]);
 
     // Open a written / AI "text" note (no PDF): fetch its full body, then read it.
     const openReader = async (note) => {
@@ -212,19 +204,9 @@ export default function NotesLibrary() {
 
     return (
         <div className="mx-auto max-w-6xl">
-            <div className="mb-5 flex items-start justify-between gap-3">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Study Notes &amp; Material</h1>
-                    <p className="text-sm text-slate-500">Access top-tier notes, AI summaries, and flashcards.</p>
-                </div>
-                {isStaff && (
-                    <button
-                        onClick={() => setUploadOpen(true)}
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
-                    >
-                        <Plus size={16} /> Add note
-                    </button>
-                )}
+            <div className="mb-5">
+                <h1 className="text-2xl font-bold text-slate-900">Study Notes &amp; Material</h1>
+                <p className="text-sm text-slate-500">Access top-tier notes, AI summaries, and flashcards.</p>
             </div>
 
             {/* Subject chips */}
@@ -375,17 +357,6 @@ export default function NotesLibrary() {
                 data={aiModal.data}
                 error={aiModal.error}
             />
-
-            {isStaff && (
-                <NotesUploadModal
-                    open={uploadOpen}
-                    onClose={() => setUploadOpen(false)}
-                    onUploaded={() => {
-                        setPage(1);
-                        setRefreshKey((k) => k + 1);
-                    }}
-                />
-            )}
 
             <NoteReaderModal
                 open={reader.open}
