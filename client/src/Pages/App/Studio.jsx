@@ -33,6 +33,7 @@ import {
 import { getSyllabi, deleteSyllabus } from "@/Api/SyllabusApi";
 import NotesUploadModal from "@/Components/App/NotesUploadModal";
 import SyllabusEditorModal from "@/Components/App/SyllabusEditorModal";
+import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
 
 const blankQuestion = () => ({
     text: "",
@@ -73,6 +74,7 @@ export default function Studio() {
         closeAt: "",
     });
     const [questions, setQuestions] = useState([blankQuestion()]);
+    const [targets, setTargets] = useState([]);
     const [editingId, setEditingId] = useState(null);
 
     // AI drafting inputs
@@ -133,6 +135,7 @@ export default function Studio() {
         setEditingId(null);
         setMeta({ title: "", subject: "", description: "", durationMinutes: 30, openAt: "", closeAt: "" });
         setQuestions([blankQuestion()]);
+        setTargets([]);
         setSource("");
         setTopic("");
         setMode("test");
@@ -200,6 +203,7 @@ export default function Studio() {
         // sets never carry a window.
         openAt: mode === "test" ? fromLocalInput(meta.openAt) : null,
         closeAt: mode === "test" ? fromLocalInput(meta.closeAt) : null,
+        targets,
         questions: questions.map((q) => ({
             text: q.text,
             options: q.options.map((o) => o.trim()).filter(Boolean),
@@ -211,6 +215,7 @@ export default function Studio() {
 
     const validate = () => {
         if (!meta.title.trim()) return "Give it a title.";
+        if (!targets.length) return "Choose at least one university (or select All universities).";
         for (let i = 0; i < questions.length; i++) {
             const q = questions[i];
             if (!q.text.trim()) return `Question ${i + 1} needs its text.`;
@@ -253,6 +258,7 @@ export default function Studio() {
                 openAt: toLocalInput(t.openAt),
                 closeAt: toLocalInput(t.closeAt),
             });
+            setTargets(t.targets || []);
             setQuestions(
                 (t.questions || []).map((q) => ({
                     text: q.text || "",
@@ -472,6 +478,14 @@ export default function Studio() {
                         className="h-10 rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                     />
                 </div>
+
+                <div className="mt-3">
+                    <label className="mb-1 block text-xs font-semibold text-slate-600">
+                        Target universities / LEET *
+                    </label>
+                    <ExamMultiSelect value={targets} onChange={setTargets} allowAll height="max-h-40" />
+                </div>
+
                 {mode === "test" && (
                     <>
                         <div className="mt-3 flex items-center gap-2">

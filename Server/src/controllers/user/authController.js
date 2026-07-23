@@ -3,6 +3,7 @@ const fs = require("fs");
 const User = require("../../models/userModel");
 const cloudinary = require("../../config/cloudinary");
 const generateToken = require("../../utils/generateToken");
+const { sanitizeExams } = require("../../config/exams");
 const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
 const {
     sendMail,
@@ -420,6 +421,8 @@ async function updateProfile(req, res, next) {
         for (const key of allowed) {
             if (req.body[key] !== undefined) updates[key] = req.body[key];
         }
+        // The LEET exams a student is preparing for (validated against the catalog).
+        if (Array.isArray(req.body.exams)) updates.exams = sanitizeExams(req.body.exams, { allowAll: false });
         const user = await User.findByIdAndUpdate(req.user._id, updates, {
             returnDocument: "after",
             runValidators: true,

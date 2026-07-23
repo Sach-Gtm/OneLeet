@@ -3,6 +3,7 @@ import { X, Sparkles, Loader2, UploadCloud, PenLine, ScanLine, Plus, Trash2, Gri
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { createSyllabus, updateSyllabus, aiDraftSyllabus, aiScanSyllabus } from "@/Api/SyllabusApi";
+import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
 
 const inputCls =
     "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
@@ -31,6 +32,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
     const [title, setTitle] = useState(editing?.title || "");
     const [subject, setSubject] = useState(editing?.subject || "");
     const [chapters, setChapters] = useState(toEditable(editing?.chapters));
+    const [targets, setTargets] = useState(editing?.targets || []);
     const [aiText, setAiText] = useState("");
     const [file, setFile] = useState(null);
     const [busy, setBusy] = useState(false);
@@ -98,9 +100,10 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
             }))
             .filter((c) => c.title && c.topics.length);
         if (!cleaned.length) return toast.error("Add at least one chapter with a topic.");
+        if (!targets.length) return toast.error("Choose at least one university (or 'All universities').");
         setBusy(true);
         try {
-            const payload = { title: title.trim(), subject, chapters: cleaned };
+            const payload = { title: title.trim(), subject, chapters: cleaned, targets };
             if (isEdit) await updateSyllabus(editing._id, payload);
             else await createSyllabus(payload);
             toast.success(isEdit ? "Syllabus updated" : "Syllabus created 🎉");
@@ -141,6 +144,11 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                         <label className={labelCls}>Subject</label>
                         <input className={inputCls} value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="e.g. Mathematics" />
                     </div>
+                </div>
+
+                <div className="px-5 pt-3">
+                    <label className={labelCls}>Target universities / LEET *</label>
+                    <ExamMultiSelect value={targets} onChange={setTargets} allowAll height="max-h-40" />
                 </div>
 
                 {isStaff && (

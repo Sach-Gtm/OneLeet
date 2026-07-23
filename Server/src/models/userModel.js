@@ -90,6 +90,12 @@ const UserSchema = new mongoose.Schema(
         yearOfStudy: { type: String, trim: true, maxlength: [40, "Value too long"] },
         targetExam: { type: String, trim: true, maxlength: [60, "Value too long"] },
 
+        // The LEET exams / universities a student is preparing for (codes from
+        // config/exams.js). Drives content filtering: they see content targeted
+        // at any of these (plus untargeted "for everyone" content). Empty = see
+        // everything (and we nudge them to choose).
+        exams: { type: [String], default: [] },
+
         plan: {
             type: String,
             enum: ["free", "pro"],

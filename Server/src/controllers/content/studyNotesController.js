@@ -3,6 +3,7 @@ const cloudinary = require("../../config/cloudinary");
 const Note = require("../../models/noteModel");
 const aiService = require("../../services/ai/aiService");
 const { runAiFeature } = require("../../services/ai/aiRuntime");
+const { sanitizeExams, visibilityQuery } = require("../../config/exams");
 
 const CATEGORY = "notes";
 
@@ -17,7 +18,9 @@ async function getNotes(req, res, next) {
     try {
         const { subject, difficulty, format, teacher, q, sort = "newest", page = 1, limit = 9 } = req.query;
 
-        const filter = { category: CATEGORY };
+        // Students see notes targeted at their chosen exams (no preference → all;
+        // staff have no exams set, so they see all).
+        const filter = { category: CATEGORY, ...visibilityQuery(req.user?.exams) };
         const subjectF = listFilter(subject);
         if (subjectF) filter.subject = subjectF;
         const difficultyF = listFilter(difficulty);
@@ -98,7 +101,17 @@ async function getNoteById(req, res, next) {
 async function uploadNote(req, res, next) {
     let localFilePath;
     try {
-        const { title, subject, description, teacher, branch, level, difficulty, format, content, source } = req.body;
+        const { title, subject, description, teacher, branch, level, difficulty, format, content, source, targets } = req.body;
+
+        // `targets` arrives as a JSON string over multipart; accept an array too.
+        let targetList = targets;
+        if (typeof targetList === "string") {
+            try {
+                targetList = JSON.parse(targetList);
+            } catch {
+                targetList = [];
+            }
+        }
 
         const body = typeof content === "string" ? content.trim() : "";
         if (!req.file && !body) {
@@ -139,6 +152,7 @@ async function uploadNote(req, res, next) {
             format: format || (req.file ? "pdf" : "text"),
             content: body || undefined,
             source: source === "ai" ? "ai" : "manual",
+            targets: sanitizeExams(targetList),
             uploadedBy: req.user._id,
             ...fileFields,
         });

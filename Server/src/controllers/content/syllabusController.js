@@ -5,6 +5,7 @@ const SyllabusProgress = require("../../models/syllabusProgressModel");
 const aiService = require("../../services/ai/aiService");
 const { runAiFeature } = require("../../services/ai/aiRuntime");
 const { STAFF } = require("../../config/roles");
+const { sanitizeExams, visibilityQuery } = require("../../config/exams");
 
 const isStaff = (u) => STAFF.includes(u?.role);
 const owns = (u, s) => String(s.createdBy) === String(u._id);
@@ -77,12 +78,11 @@ async function progressMap(userId, syllabi) {
 // staff also see unpublished global drafts.
 async function listSyllabi(req, res, next) {
     try {
-        const filter = {
-            $or: [
-                { scope: "personal", createdBy: req.user._id },
-                isStaff(req.user) ? { scope: "global" } : { scope: "global", published: true },
-            ],
-        };
+        // Staff see every syllabus; students see published ones targeted at their
+        // chosen exams (no preference set → all).
+        const filter = isStaff(req.user)
+            ? {}
+            : { published: true, ...visibilityQuery(req.user.exams) };
         const syllabi = await Syllabus.find(filter).sort({ order: 1, createdAt: 1 }).lean();
         const map = await progressMap(req.user._id, syllabi);
         const out = syllabi.map((s) => {
@@ -98,12 +98,7 @@ async function listSyllabi(req, res, next) {
 // GET /api/syllabus/me/summary — overall coverage across published syllabi.
 async function myProgressSummary(req, res, next) {
     try {
-        const syllabi = await Syllabus.find({
-            $or: [
-                { scope: "global", published: true },
-                { scope: "personal", createdBy: req.user._id },
-            ],
-        }).lean();
+        const syllabi = await Syllabus.find({ published: true, ...visibilityQuery(req.user.exams) }).lean();
         const map = await progressMap(req.user._id, syllabi);
         let totalTopics = 0, doneTopics = 0, totalHours = 0, doneHours = 0;
         for (const s of syllabi) {
@@ -152,19 +147,19 @@ async function getSyllabus(req, res, next) {
 // own staff-only routes, so a student can only ever build one by hand.
 async function createSyllabus(req, res, next) {
     try {
-        const { title, subject, description, exam, chapters, published } = req.body;
+        const { title, subject, description, exam, chapters, published, targets } = req.body;
         if (!title || !String(title).trim()) {
             return res.status(400).json({ success: false, message: "Give the syllabus a title." });
         }
-        const scope = isStaff(req.user) ? "global" : "personal";
         const syllabus = await Syllabus.create({
             title: String(title).trim(),
             subject,
             description,
             exam: exam || "LEET",
             chapters: normalizeChapters(chapters),
-            scope,
-            published: scope === "personal" ? true : published !== false,
+            targets: sanitizeExams(targets),
+            scope: "global",
+            published: published !== false,
             createdBy: req.user._id,
         });
         return res.status(201).json({ success: true, message: "Syllabus created", syllabus });
@@ -183,13 +178,13 @@ async function updateSyllabus(req, res, next) {
             return res.status(403).json({ success: false, message: "You can't edit this syllabus." });
         }
 
-        const { title, subject, description, exam, chapters, published } = req.body;
+        const { title, subject, description, exam, chapters, published, targets } = req.body;
         if (title != null) existing.title = String(title).trim();
         if (subject != null) existing.subject = subject;
         if (description != null) existing.description = description;
         if (exam != null) existing.exam = exam;
-        // Only global (staff) syllabi have a meaningful published flag.
-        if (published != null && existing.scope === "global") existing.published = !!published;
+        if (published != null) existing.published = !!published;
+        if (targets != null) existing.targets = sanitizeExams(targets);
         if (chapters != null) existing.chapters = normalizeChapters(chapters);
         await existing.save();
 

@@ -31,6 +31,9 @@ const SyllabusSchema = new mongoose.Schema(
         exam: { type: String, trim: true, default: "LEET", maxlength: [60, "Value too long"] },
         description: { type: String, trim: true, maxlength: [500, "Description too long"] },
         chapters: { type: [ChapterSchema], default: [] },
+        // Which LEET exams / universities this syllabus is for (codes from
+        // config/exams.js). Empty or ["all"] → shown to every student.
+        targets: { type: [String], default: [], index: true },
         published: { type: Boolean, default: true, index: true },
         // "global": staff-authored, shown to every student. "personal": a student's
         // own syllabus, visible only to them. AI authoring (refine/scan) is

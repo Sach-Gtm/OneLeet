@@ -12,6 +12,9 @@ const TestSchema = new mongoose.Schema(
         description: { type: String, trim: true, maxlength: [400, "Description too long"] },
         subject: { type: String, trim: true, index: true },
         stateExam: { type: String, trim: true },
+        // Which LEET exams / universities this test is for (codes from
+        // config/exams.js). Empty or ["all"] → shown to every student.
+        targets: { type: [String], default: [], index: true },
         category: {
             type: String,
             enum: ["full-mock", "subject-wise", "topic-wise"],

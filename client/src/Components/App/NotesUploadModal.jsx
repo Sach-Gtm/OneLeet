@@ -3,6 +3,7 @@ import { X, Sparkles, Loader2, UploadCloud, PenLine, FileText, RotateCw, Image a
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { uploadNote, generateNoteDraft } from "@/Api/NotesApi";
+import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
 
 const DIFFICULTIES = ["beginner", "intermediate", "advanced"];
 // Quick-start prompts — tap one, then finish the sentence with your topic.
@@ -37,6 +38,8 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
     const [file, setFile] = useState(null);
     const [busy, setBusy] = useState(false);
 
+    const [targets, setTargets] = useState([]);
+
     // AI-draft inputs — a freeform instruction (+ optional image/PDF to read).
     const [aiPrompt, setAiPrompt] = useState("");
     const [aiFile, setAiFile] = useState(null);
@@ -49,6 +52,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
     const reset = () => {
         setForm(emptyForm);
         setFile(null);
+        setTargets([]);
         setAiPrompt("");
         setAiFile(null);
         setDrafted(false);
@@ -96,6 +100,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
         if (source === "ai" && !form.content.trim()) {
             return toast.error("Generate or write some content first.");
         }
+        if (!targets.length) return toast.error("Choose at least one university (or 'All universities').");
         setBusy(true);
         try {
             const fields = {
@@ -108,6 +113,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                 difficulty: form.difficulty,
                 content: form.content,
                 source,
+                targets,
             };
             if (source === "ai") fields.format = "text";
             await uploadNote(fields, source === "ai" ? null : file);
@@ -314,6 +320,11 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                                     onChange={(e) => set("description", e.target.value)}
                                     placeholder="One line shown on the note card"
                                 />
+                            </div>
+
+                            <div>
+                                <label className={labelCls}>Target universities / LEET *</label>
+                                <ExamMultiSelect value={targets} onChange={setTargets} allowAll height="max-h-40" />
                             </div>
 
                             {/* Normal mode: PDF upload */}

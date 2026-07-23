@@ -1,5 +1,6 @@
 const Test = require("../../models/testModel");
 const Attempt = require("../../models/attemptModel");
+const { visibilityQuery } = require("../../config/exams");
 // Registers the Question schema so populate("questions") / populate("answers.question")
 // works at runtime (Test/Attempt only reference it by name).
 require("../../models/questionModel");
@@ -40,8 +41,9 @@ async function applyAttemptToStats(user, { accuracy, durationTakenSeconds }) {
 // GET /api/tests — list available tests (no questions)
 async function listTests(req, res, next) {
     try {
-        const tests = await Test.find({ isPublished: true })
-            .select("title description subject stateExam category durationMinutes questions totalMarks createdAt")
+        // Show only tests targeted at the student's chosen exams (empty pref = all).
+        const tests = await Test.find({ isPublished: true, ...visibilityQuery(req.user?.exams) })
+            .select("title description subject stateExam targets category durationMinutes questions totalMarks createdAt")
             .sort({ createdAt: -1 })
             .lean();
 
@@ -51,6 +53,7 @@ async function listTests(req, res, next) {
             description: t.description,
             subject: t.subject,
             stateExam: t.stateExam,
+            targets: t.targets || [],
             category: t.category,
             durationMinutes: t.durationMinutes,
             questionCount: (t.questions || []).length,

@@ -25,6 +25,7 @@ import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { updateProfile, changePassword, uploadPassportPhoto } from "@/Api/AuthApis";
+import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
 import { missingProfileFields } from "@/lib/profile";
 import { isStaff, roleLabel } from "@/lib/roles";
 
@@ -54,6 +55,7 @@ export default function Profile() {
         college: user?.college || "",
         branch: user?.branch || "",
         yearOfStudy: user?.yearOfStudy || "",
+        exams: user?.exams || [],
     });
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -257,6 +259,22 @@ export default function Profile() {
                                 <IconField icon={CalendarDays} value={form.yearOfStudy} onChange={set("yearOfStudy")} placeholder="e.g. Final Year" />
                             </label>
                         </div>
+
+                        {!staffUser && (
+                            <>
+                                <h3 className="mb-1 mt-6 text-sm font-bold text-slate-800">
+                                    LEET exams you&apos;re preparing for
+                                </h3>
+                                <p className="mb-3 text-xs text-slate-500">
+                                    You&apos;ll see tests, syllabus and notes for these. Pick one or more — change any time.
+                                </p>
+                                <ExamMultiSelect
+                                    value={form.exams}
+                                    onChange={(next) => setForm((f) => ({ ...f, exams: next }))}
+                                    height="max-h-52"
+                                />
+                            </>
+                        )}
 
                         <div className="mt-6 flex items-center justify-between">
                             <button
