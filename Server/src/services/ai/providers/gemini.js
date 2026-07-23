@@ -29,13 +29,21 @@ const safeJsonParse = (text) => {
     }
 };
 
-async function callGemini(prompt, { json = false, tier = "simple" } = {}) {
+// `fileData` (optional) attaches a document/image for multimodal input —
+// { mimeType, data(base64) } — used to scan an uploaded syllabus PDF. Gemini
+// reads the file (incl. scanned/photographed pages) directly, so no separate
+// PDF-text or OCR library is needed.
+async function callGemini(prompt, { json = false, tier = "simple", fileData = null } = {}) {
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("GEMINI_API_KEY is not configured");
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelForTier(tier)}:generateContent?key=${key}`;
+    const parts = [{ text: prompt }];
+    if (fileData && fileData.data) {
+        parts.push({ inlineData: { mimeType: fileData.mimeType || "application/pdf", data: fileData.data } });
+    }
     const body = {
-        contents: [{ parts: [{ text: prompt }] }],
+        contents: [{ parts }],
         ...(json ? { generationConfig: { responseMimeType: "application/json" } } : {}),
     };
 
@@ -170,6 +178,31 @@ async function generateStudyNote({ topic, subject, level, difficulty = "intermed
     };
 }
 
+// Structure a raw syllabus into chapters -> topics with per-topic study-hour
+// estimates. Works from pasted `text` and/or an attached file (`fileData`, e.g.
+// a scanned/uploaded syllabus PDF). Returns an editable draft the author reviews.
+async function structureSyllabus({ text, subject, fileData } = {}) {
+    const src = fileData
+        ? "The syllabus is in the ATTACHED file — read it (including scanned/photographed pages)."
+        : `Syllabus source text:\n"""\n${String(text || "").slice(0, 16000)}\n"""`;
+    const prompt =
+        `You are organising a syllabus for the Indian LEET (Lateral Entry) engineering entrance exam` +
+        `${subject ? ` for the subject "${subject}"` : ""}. Turn it into a clean, ordered structure of ` +
+        `chapters, each containing its topics. For every topic, estimate the study hours a diploma ` +
+        `student needs as an integer (1-20). Keep titles concise; don't invent content beyond the source. ` +
+        `Also propose a short syllabus title. ${src}\n` +
+        `Respond ONLY as JSON: {"title": string, "subject": string, "chapters": ` +
+        `[{"title": string, "topics": [{"title": string, "estimatedHours": number}]}]}.`;
+    const raw = await callGemini(prompt, { json: true, tier: "smart", fileData });
+    const parsed = safeJsonParse(raw) || {};
+    return {
+        provider: "gemini",
+        title: parsed.title || subject || "Syllabus",
+        subject: parsed.subject || subject || "",
+        chapters: Array.isArray(parsed.chapters) ? parsed.chapters : [],
+    };
+}
+
 async function predictDifficulty({ questionText } = {}) {
     const prompt =
         `Classify the difficulty of this LEET exam question as one of easy, moderate, or hard, ` +
@@ -223,6 +256,7 @@ module.exports = {
     generateQuestions,
     draftAssessment,
     generateStudyNote,
+    structureSyllabus,
     predictDifficulty,
     generateStudyPlan,
     analyzePerformance,

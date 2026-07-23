@@ -30,6 +30,7 @@ const ResetPassword = lazy(() => import("@/Pages/Auth/ResetPassword"));
 const Dashboard = lazy(() => import("@/Pages/App/Dashboard"));
 const PyqArchive = lazy(() => import("@/Pages/App/PyqArchive"));
 const NotesLibrary = lazy(() => import("@/Pages/App/NotesLibrary"));
+const Syllabus = lazy(() => import("@/Pages/App/Syllabus"));
 const TestsList = lazy(() => import("@/Pages/App/TestsList"));
 const TestTake = lazy(() => import("@/Pages/App/TestTake"));
 const TestResult = lazy(() => import("@/Pages/App/TestResult"));
@@ -84,6 +85,7 @@ const AppRoutes = () => {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/pyqs" element={<PyqArchive />} />
                         <Route path="/notes" element={<NotesLibrary />} />
+                        <Route path="/syllabus" element={<Syllabus />} />
                         <Route path="/tests" element={<TestsList />} />
                         <Route path="/tests/result/:attemptId" element={<TestResult />} />
                         <Route path="/tests/:id/leaderboard" element={<TestLeaderboardPage />} />

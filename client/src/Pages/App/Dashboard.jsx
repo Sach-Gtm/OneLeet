@@ -21,6 +21,7 @@ import { Button } from "@/Components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { getDashboard } from "@/Api/DashboardApi";
 import { getMyAnalytics } from "@/Api/ActivityApi";
+import { getSyllabusSummary } from "@/Api/SyllabusApi";
 import NetworkCanvas from "@/Components/General/NetworkCanvas";
 import { isStudent } from "@/lib/roles";
 
@@ -150,6 +151,7 @@ export default function Dashboard() {
     const { user } = useAuth();
     const [data, setData] = useState(null);
     const [week, setWeek] = useState([]);
+    const [syllabus, setSyllabus] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -167,6 +169,10 @@ export default function Dashboard() {
         // Real time-on-site for the "this week" strip (best-effort).
         getMyAnalytics()
             .then((res) => active && setWeek(res.minutesByDay || []))
+            .catch(() => {});
+        // Syllabus coverage for the prep ring (best-effort).
+        getSyllabusSummary()
+            .then((res) => active && setSyllabus(res))
             .catch(() => {});
         return () => {
             active = false;
@@ -245,18 +251,25 @@ export default function Dashboard() {
                     </div>
                 </motion.div>
 
-                <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6">
-                    <PrepRing value={stats.overallPrep || 0} />
+                <Link
+                    to="/syllabus"
+                    className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-indigo-200 hover:shadow-md"
+                >
+                    <PrepRing value={syllabus?.totalTopics ? syllabus.percent : stats.overallPrep || 0} />
                     <div>
-                        <p className="text-sm font-semibold text-slate-800">Overall Prep</p>
-                        <p className="text-xs text-slate-400">Based on syllabus coverage</p>
+                        <p className="text-sm font-semibold text-slate-800">Syllabus Coverage</p>
+                        <p className="text-xs text-slate-400">
+                            {syllabus?.totalTopics
+                                ? `${syllabus.doneTopics}/${syllabus.totalTopics} topics done`
+                                : "Track your syllabus topic-by-topic"}
+                        </p>
                         {streak > 0 && (
                             <p className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-orange-500">
                                 <Flame size={13} /> {streak}-day streak
                             </p>
                         )}
                     </div>
-                </div>
+                </Link>
             </div>
 
             {/* Stat cards */}
