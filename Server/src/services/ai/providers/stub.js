@@ -69,6 +69,27 @@ function draftAssessment({ text = "", subject = "", topic = "", mode = "test", c
     };
 }
 
+function generateStudyNote({ topic = "the topic", subject = "", level = "", difficulty = "intermediate" } = {}) {
+    const subj = subject ? ` (${subject})` : "";
+    const lvl = level ? ` for ${level} students` : "";
+    const content =
+        `_Sample study note — set AI_PROVIDER=gemini and GEMINI_API_KEY to generate real, ` +
+        `topic-specific notes._\n\n` +
+        `## Introduction\n${topic}${subj} is an important ${difficulty}-level topic for the LEET exam${lvl}. ` +
+        `This note outlines the core ideas you need to revise.\n\n` +
+        `## Core Concepts\n- Key definitions and terminology\n- The main principle or formula and when to apply it\n` +
+        `- A standard worked example\n\n` +
+        `## Common Exam Questions\n- Direct formula-application problems\n- Conceptual traps to watch for\n\n` +
+        `## Key Takeaways\n- Revise the core definitions first\n- Practise past-year questions on ${topic}\n` +
+        `- Connect this topic to related ones for faster recall`;
+    return {
+        provider: "stub",
+        title: `${topic}${subj}`,
+        description: `Study notes on ${topic}${subj} for LEET preparation.`,
+        content,
+    };
+}
+
 function predictDifficulty({ questionText = "" } = {}) {
     const len = questionText.trim().length;
     const difficulty = len > 160 ? "hard" : len > 80 ? "moderate" : "easy";
@@ -126,6 +147,7 @@ module.exports = {
     generateFlashcards,
     generateQuestions,
     draftAssessment,
+    generateStudyNote,
     predictDifficulty,
     generateStudyPlan,
     analyzePerformance,

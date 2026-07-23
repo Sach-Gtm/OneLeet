@@ -25,7 +25,10 @@ router.get("/:id", verifyToken, notes.getNoteById);
 router.post("/:id/summary", verifyToken, notes.summarizeNote);
 router.post("/:id/flashcards", verifyToken, notes.generateFlashcards);
 
-// Upload (mentors, admins, super admin)
+// AI-draft a note's content from a topic (mentors, admins, super admin).
+router.post("/generate", verifyToken, requireStaff, notes.generateNoteDraft);
+
+// Upload / publish a note (mentors, admins, super admin).
 router.post("/", verifyToken, requireStaff, handleUpload, notes.uploadNote);
 
 module.exports = router;
