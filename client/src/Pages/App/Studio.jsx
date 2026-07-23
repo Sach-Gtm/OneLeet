@@ -16,6 +16,8 @@ import {
     Clock,
     CheckCircle2,
     Trophy,
+    BookOpen,
+    ListChecks,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff } from "@/lib/roles";
@@ -28,6 +30,9 @@ import {
     publishStudioTest,
     removeStudioTest,
 } from "@/Api/StudioApi";
+import { getSyllabi, deleteSyllabus } from "@/Api/SyllabusApi";
+import NotesUploadModal from "@/Components/App/NotesUploadModal";
+import SyllabusEditorModal from "@/Components/App/SyllabusEditorModal";
 
 const blankQuestion = () => ({
     text: "",
@@ -80,6 +85,11 @@ export default function Studio() {
     const [saving, setSaving] = useState(false);
     const [list, setList] = useState([]);
 
+    // Notes & Syllabus authoring (both live here, staff-only).
+    const [notesOpen, setNotesOpen] = useState(false);
+    const [syllabusEditor, setSyllabusEditor] = useState({ open: false, editing: null });
+    const [syllabi, setSyllabi] = useState([]);
+
     const staff = isStaff(user);
 
     const loadList = useCallback(async () => {
@@ -90,9 +100,31 @@ export default function Studio() {
         }
     }, []);
 
+    const loadSyllabi = useCallback(async () => {
+        try {
+            setSyllabi(await getSyllabi());
+        } catch {
+            /* non-critical */
+        }
+    }, []);
+
     useEffect(() => {
-        if (staff) loadList();
-    }, [staff, loadList]);
+        if (staff) {
+            loadList();
+            loadSyllabi();
+        }
+    }, [staff, loadList, loadSyllabi]);
+
+    const handleDeleteSyllabus = async (s) => {
+        if (!window.confirm(`Delete "${s.title}"? This removes it and all student progress on it.`)) return;
+        try {
+            await deleteSyllabus(s._id);
+            toast.success("Syllabus deleted");
+            loadSyllabi();
+        } catch (e) {
+            toast.error(e?.response?.data?.message || "Couldn't delete the syllabus.");
+        }
+    };
 
     // Hooks first, then gate.
     if (user && !staff) return <Navigate to="/dashboard" replace />;
@@ -269,10 +301,82 @@ export default function Studio() {
                 </p>
             </div>
 
+            {/* Notes & Syllabus — both authored here (manual + AI), staff only */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                <div className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-800">
+                    <FileText className="h-4 w-4 text-indigo-600" /> Notes &amp; Syllabus
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                    <button
+                        onClick={() => setNotesOpen(true)}
+                        className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-indigo-300 hover:bg-indigo-50/40"
+                    >
+                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-indigo-50 text-indigo-600">
+                            <BookOpen size={18} />
+                        </span>
+                        <div className="min-w-0">
+                            <p className="text-sm font-semibold text-slate-800">Add a study note</p>
+                            <p className="text-xs text-slate-400">Write, upload a PDF, or draft with AI</p>
+                        </div>
+                        <Plus className="ml-auto h-4 w-4 shrink-0 text-slate-300" />
+                    </button>
+                    <button
+                        onClick={() => setSyllabusEditor({ open: true, editing: null })}
+                        className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-indigo-300 hover:bg-indigo-50/40"
+                    >
+                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-indigo-50 text-indigo-600">
+                            <ListChecks size={18} />
+                        </span>
+                        <div className="min-w-0">
+                            <p className="text-sm font-semibold text-slate-800">Add a syllabus</p>
+                            <p className="text-xs text-slate-400">By hand, AI-refine, or scan a PDF</p>
+                        </div>
+                        <Plus className="ml-auto h-4 w-4 shrink-0 text-slate-300" />
+                    </button>
+                </div>
+
+                {syllabi.length > 0 && (
+                    <div className="mt-4">
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Your syllabi</p>
+                        <ul className="divide-y divide-slate-100">
+                            {syllabi.map((s) => {
+                                const topics = (s.chapters || []).reduce((n, c) => n + (c.topics?.length || 0), 0);
+                                return (
+                                    <li key={s._id} className="flex items-center gap-3 py-2.5">
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-sm font-medium text-slate-700">{s.title}</p>
+                                            <p className="text-xs text-slate-400">
+                                                {s.subject ? `${s.subject} · ` : ""}
+                                                {topics} topic{topics === 1 ? "" : "s"}
+                                                {!s.published ? " · draft" : ""}
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => setSyllabusEditor({ open: true, editing: s })}
+                                            title="Edit"
+                                            className="grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+                                        >
+                                            <Pencil className="h-3.5 w-3.5" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteSyllabus(s)}
+                                            title="Delete"
+                                            className="grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                                        >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                        </button>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                )}
+            </div>
+
             {/* Create with AI */}
             <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
                 <div className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-800">
-                    <Wand2 className="h-4 w-4 text-indigo-600" /> Draft with AI
+                    <Wand2 className="h-4 w-4 text-indigo-600" /> Draft a test with AI
                 </div>
                 <div className="mb-3 grid grid-cols-2 gap-2 sm:max-w-md">
                     {MODES.map((m) => {
@@ -592,6 +696,19 @@ export default function Studio() {
                     </ul>
                 )}
             </div>
+
+            {notesOpen && (
+                <NotesUploadModal open onClose={() => setNotesOpen(false)} onUploaded={() => {}} />
+            )}
+            {syllabusEditor.open && (
+                <SyllabusEditorModal
+                    open
+                    isStaff
+                    editing={syllabusEditor.editing}
+                    onClose={() => setSyllabusEditor({ open: false, editing: null })}
+                    onSaved={loadSyllabi}
+                />
+            )}
         </div>
     );
 }

@@ -16,9 +16,18 @@ export const getNote = async (id) => {
     return data;
 };
 
-// Staff: AI-draft note content from a topic (returns a draft, does not save).
-export const generateNoteDraft = async (payload) => {
-    const { data } = await api.post("/notes/generate", payload);
+// Staff: AI-draft note content from a freeform instruction, optionally reading
+// an attached image/PDF. Returns a draft; does not save.
+export const generateNoteDraft = async ({ prompt, subject, file } = {}) => {
+    if (file) {
+        const form = new FormData();
+        form.append("prompt", prompt || "");
+        if (subject) form.append("subject", subject);
+        form.append("attachment", file);
+        const { data } = await api.post("/notes/generate", form);
+        return data;
+    }
+    const { data } = await api.post("/notes/generate", { prompt, subject });
     return data;
 };
 

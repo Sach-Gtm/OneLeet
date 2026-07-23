@@ -151,34 +151,41 @@ async function uploadNote(req, res, next) {
     }
 }
 
-// POST /api/notes/generate  (staff only) — AI-draft study-note content from a
-// topic. Does NOT save; the author reviews/edits, then publishes via POST /.
-// Routed through the AI runtime so it's cached and cost-logged like every other
-// AI feature (staff are unlimited, so no quota applies).
+// POST /api/notes/generate  (staff only) — AI-draft note content from a FREEFORM
+// instruction (any format: short/long/MCQs/summary/…), optionally reading an
+// attached image or PDF. Does NOT save; the author reviews/edits, then publishes
+// via POST /. Routed through the AI runtime (cached + cost-logged; staff are
+// unlimited, so no quota applies).
 async function generateNoteDraft(req, res, next) {
+    let filePath;
     try {
-        const { topic, subject, level, difficulty, points } = req.body || {};
-        if (!topic || !String(topic).trim()) {
-            return res.status(400).json({ success: false, message: "Enter a topic to draft from." });
+        const { prompt, subject } = req.body || {};
+        const hasFile = Boolean(req.file);
+        if ((!prompt || !String(prompt).trim()) && !hasFile) {
+            return res.status(400).json({
+                success: false,
+                message: "Tell the AI what to write — or attach an image/PDF for it to read.",
+            });
+        }
+
+        let fileData;
+        if (hasFile) {
+            filePath = req.file.path;
+            fileData = { mimeType: req.file.mimetype, data: fs.readFileSync(filePath).toString("base64") };
         }
 
         const { result, cacheHit } = await runAiFeature({
             user: req.user,
             feature: "noteDraft",
-            cacheParams: { topic, subject, level, difficulty, points },
-            inputText: `${topic} ${subject || ""} ${points || ""}`,
-            generate: () =>
-                aiService.generateStudyNote({
-                    topic: String(topic).trim(),
-                    subject,
-                    level,
-                    difficulty,
-                    points,
-                }),
+            cacheParams: { prompt, subject, file: req.file?.originalname, size: req.file?.size },
+            inputText: `${prompt || ""} ${subject || ""}`,
+            generate: () => aiService.generateStudyNote({ prompt, subject, fileData }),
         });
 
+        if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
         return res.status(200).json({ success: true, cacheHit, draft: result });
     } catch (error) {
+        if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
         if (error.status === 429) {
             return res.status(429).json({ success: false, message: error.message, quota: error.quota });
         }

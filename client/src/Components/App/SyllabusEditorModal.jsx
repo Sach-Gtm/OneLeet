@@ -23,9 +23,11 @@ function toEditable(chapters) {
 // Create or edit a syllabus. Chapters/topics can be filled by hand, AI-refined
 // from pasted text, or scanned from an uploaded PDF — all land in the same
 // editable structure the author reviews before saving.
-export default function SyllabusEditorModal({ open, onClose, onSaved, editing }) {
+export default function SyllabusEditorModal({ open, onClose, onSaved, editing, isStaff = false }) {
     const isEdit = Boolean(editing?._id);
-    const [tab, setTab] = useState(isEdit ? "manual" : "ai");
+    // Students build syllabi by hand only — AI refine/scan is staff-only, so they
+    // always start (and stay) on the Manual tab.
+    const [tab, setTab] = useState(isEdit || !isStaff ? "manual" : "ai");
     const [title, setTitle] = useState(editing?.title || "");
     const [subject, setSubject] = useState(editing?.subject || "");
     const [chapters, setChapters] = useState(toEditable(editing?.chapters));
@@ -141,17 +143,19 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing })
                     </div>
                 </div>
 
-                <div className="mx-5 mt-3 flex gap-1 rounded-xl bg-slate-100 p-1">
-                    <button type="button" onClick={() => setTab("manual")} className={tabCls("manual")}>
-                        <PenLine size={14} /> Manual
-                    </button>
-                    <button type="button" onClick={() => setTab("ai")} className={tabCls("ai")}>
-                        <Sparkles size={14} /> AI refine
-                    </button>
-                    <button type="button" onClick={() => setTab("scan")} className={tabCls("scan")}>
-                        <ScanLine size={14} /> Scan PDF
-                    </button>
-                </div>
+                {isStaff && (
+                    <div className="mx-5 mt-3 flex gap-1 rounded-xl bg-slate-100 p-1">
+                        <button type="button" onClick={() => setTab("manual")} className={tabCls("manual")}>
+                            <PenLine size={14} /> Manual
+                        </button>
+                        <button type="button" onClick={() => setTab("ai")} className={tabCls("ai")}>
+                            <Sparkles size={14} /> AI refine
+                        </button>
+                        <button type="button" onClick={() => setTab("scan")} className={tabCls("scan")}>
+                            <ScanLine size={14} /> Scan PDF
+                        </button>
+                    </div>
+                )}
 
                 <div className="flex-1 overflow-y-auto p-5">
                     {tab === "ai" && (

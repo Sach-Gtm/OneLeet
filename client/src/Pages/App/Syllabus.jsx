@@ -1,22 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-    Plus,
     ChevronDown,
     Clock,
     CheckCircle2,
     Circle,
     BookOpen,
     Loader2,
-    Pencil,
-    Trash2,
     GraduationCap,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/context/AuthContext";
-import { isStaff as isStaffUser } from "@/lib/roles";
-import { getSyllabi, toggleTopic, deleteSyllabus } from "@/Api/SyllabusApi";
-import SyllabusEditorModal from "@/Components/App/SyllabusEditorModal";
+import { getSyllabi, toggleTopic } from "@/Api/SyllabusApi";
 
 function computeProgress(chapters, completedSet) {
     let total = 0, done = 0, totalH = 0, doneH = 0;
@@ -68,7 +62,7 @@ function ProgressRing({ value = 0, size = 120, stroke = 10, sublabel }) {
     );
 }
 
-function SyllabusCard({ syllabus, isStaff, onToggle, onEdit, onDelete }) {
+function SyllabusCard({ syllabus, onToggle }) {
     const [open, setOpen] = useState(false);
     const completedSet = useMemo(
         () => new Set((syllabus.completedTopics || []).map(String)),
@@ -84,7 +78,9 @@ function SyllabusCard({ syllabus, isStaff, onToggle, onEdit, onDelete }) {
                         <div className="flex items-center gap-2">
                             <h3 className="truncate text-base font-bold text-slate-900">{syllabus.title}</h3>
                             {!syllabus.published && (
-                                <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">Draft</span>
+                                <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                                    Draft
+                                </span>
                             )}
                         </div>
                         <p className="mt-0.5 text-xs text-slate-500">
@@ -103,16 +99,6 @@ function SyllabusCard({ syllabus, isStaff, onToggle, onEdit, onDelete }) {
                     </div>
                     <ChevronDown className={cn("shrink-0 text-slate-400 transition-transform", open && "rotate-180")} size={18} />
                 </button>
-                {isStaff && (
-                    <div className="flex shrink-0 gap-1">
-                        <button onClick={() => onEdit(syllabus)} className="rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-indigo-600" aria-label="Edit syllabus">
-                            <Pencil size={15} />
-                        </button>
-                        <button onClick={() => onDelete(syllabus)} className="rounded-md p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-500" aria-label="Delete syllabus">
-                            <Trash2 size={15} />
-                        </button>
-                    </div>
-                )}
             </div>
 
             {open && (
@@ -172,10 +158,7 @@ function SyllabusCard({ syllabus, isStaff, onToggle, onEdit, onDelete }) {
 }
 
 export default function Syllabus() {
-    const { user } = useAuth();
-    const isStaff = isStaffUser(user);
     const [syllabi, setSyllabi] = useState(null);
-    const [editor, setEditor] = useState({ open: false, editing: null });
 
     const load = () => getSyllabi().then(setSyllabi).catch(() => setSyllabi([]));
     useEffect(() => {
@@ -204,17 +187,6 @@ export default function Syllabus() {
         }
     };
 
-    const handleDelete = async (s) => {
-        if (!window.confirm(`Delete "${s.title}"? This removes it and everyone's progress on it.`)) return;
-        try {
-            await deleteSyllabus(s._id);
-            toast.success("Syllabus deleted");
-            load();
-        } catch {
-            toast.error("Couldn't delete the syllabus.");
-        }
-    };
-
     const overall = useMemo(() => {
         let total = 0, done = 0, totalH = 0, doneH = 0;
         for (const s of syllabi || []) {
@@ -230,19 +202,9 @@ export default function Syllabus() {
 
     return (
         <div className="mx-auto max-w-4xl">
-            <div className="mb-5 flex items-start justify-between gap-3">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Syllabus Tracker</h1>
-                    <p className="text-sm text-slate-500">Tick off topics as you finish them and watch your coverage grow.</p>
-                </div>
-                {isStaff && (
-                    <button
-                        onClick={() => setEditor({ open: true, editing: null })}
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
-                    >
-                        <Plus size={16} /> Add syllabus
-                    </button>
-                )}
+            <div className="mb-5">
+                <h1 className="text-2xl font-bold text-slate-900">Syllabus Tracker</h1>
+                <p className="text-sm text-slate-500">Tick off topics as you finish them and watch your coverage grow.</p>
             </div>
 
             {syllabi === null ? (
@@ -254,7 +216,7 @@ export default function Syllabus() {
                     <BookOpen className="mb-2 h-8 w-8 text-slate-300" />
                     <p className="text-sm font-medium text-slate-600">No syllabus yet</p>
                     <p className="mt-0.5 text-xs text-slate-400">
-                        {isStaff ? "Add one — paste it, scan a PDF, or build it by hand." : "Your mentors will add the syllabus soon."}
+                        Your mentors will publish subject syllabi here soon.
                     </p>
                 </div>
             ) : (
@@ -281,25 +243,9 @@ export default function Syllabus() {
 
                     {/* Per-subject */}
                     {syllabi.map((s) => (
-                        <SyllabusCard
-                            key={s._id}
-                            syllabus={s}
-                            isStaff={isStaff}
-                            onToggle={handleToggle}
-                            onEdit={(syl) => setEditor({ open: true, editing: syl })}
-                            onDelete={handleDelete}
-                        />
+                        <SyllabusCard key={s._id} syllabus={s} onToggle={handleToggle} />
                     ))}
                 </div>
-            )}
-
-            {editor.open && (
-                <SyllabusEditorModal
-                    open
-                    editing={editor.editing}
-                    onClose={() => setEditor({ open: false, editing: null })}
-                    onSaved={load}
-                />
             )}
         </div>
     );

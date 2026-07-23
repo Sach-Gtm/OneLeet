@@ -32,6 +32,10 @@ const SyllabusSchema = new mongoose.Schema(
         description: { type: String, trim: true, maxlength: [500, "Description too long"] },
         chapters: { type: [ChapterSchema], default: [] },
         published: { type: Boolean, default: true, index: true },
+        // "global": staff-authored, shown to every student. "personal": a student's
+        // own syllabus, visible only to them. AI authoring (refine/scan) is
+        // staff-only, so personal syllabi are always built by hand.
+        scope: { type: String, enum: ["global", "personal"], default: "global", index: true },
         order: { type: Number, default: 0 },
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     },

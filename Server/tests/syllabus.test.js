@@ -40,10 +40,18 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     const teacherToken = generateToken(teacher._id);
     const studentToken = generateToken(student._id);
 
-    // Students can't create a syllabus.
-    const forbid = await request.post("/api/syllabus").set(...auth(studentToken)).send({ title: "x" });
-    assert.strictEqual(forbid.status, 403, "student cannot create a syllabus");
-    ok("students can't create a syllabus");
+    // AI authoring is staff-only: a student can't AI-draft (or scan).
+    const stuAi = await request.post("/api/syllabus/ai-draft").set(...auth(studentToken)).send({ text: "Algebra: Matrices" });
+    assert.strictEqual(stuAi.status, 403, "student cannot use the syllabus AI");
+    ok("students can't use the syllabus AI (staff only)");
+
+    // Students can't create a syllabus at all — creation is staff-only (Studio).
+    const stuCreate = await request
+        .post("/api/syllabus")
+        .set(...auth(studentToken))
+        .send({ title: "My plan", chapters: [{ title: "Week 1", topics: [{ title: "Revise", estimatedHours: 2 }] }] });
+    assert.strictEqual(stuCreate.status, 403, "student cannot create a syllabus");
+    ok("students can't create a syllabus (staff only)");
 
     // Staff can AI-draft from pasted text (stub returns structured chapters).
     const draft = await request
@@ -111,10 +119,12 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     ok("un-marking a topic decreases progress");
 
     // Dashboard summary reflects the student's overall coverage.
+    // Overall coverage across published syllabi: 1 of 2 topics done = 50%.
     const summary = await request.get("/api/syllabus/me/summary").set(...auth(studentToken));
     assert.strictEqual(summary.status, 200);
-    assert.strictEqual(summary.body.summary.percent, 50, "overall summary is 50%");
+    assert.strictEqual(summary.body.summary.totalTopics, 2, "counts the published syllabus topics");
     assert.strictEqual(summary.body.summary.doneTopics, 1, "one topic done overall");
+    assert.strictEqual(summary.body.summary.percent, 50, "overall coverage is 50%");
     ok("the dashboard summary reflects overall syllabus coverage");
 
     // A different student is unaffected by the first's progress.
