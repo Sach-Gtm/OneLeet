@@ -9,3 +9,8 @@ export const getExams = async () => {
     cache = data.exams || [];
     return cache;
 };
+
+// Drop the cache so pickers refetch after an admin edits the catalog.
+export const clearExamsCache = () => {
+    cache = null;
+};

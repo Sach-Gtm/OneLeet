@@ -1,19 +1,16 @@
-// Catalog of LEET / lateral-entry (diploma → 2nd-year B.Tech) entrance exams
-// across India. Content (tests, syllabi, notes) is TARGETED at one or more of
-// these; students pick which they're preparing for and see only matching
-// content. `code` is stable (stored in data) — edit names / add or remove
-// entries freely; new codes become selectable everywhere automatically.
-//
-// A content item with an empty `targets` array (or targets: ["all"]) is shown
-// to EVERY student, so legacy/untargeted content never disappears.
+// LEET / lateral-entry exam catalog. The list lives in the DATABASE (the Exam
+// collection) so an admin can add/remove entries from the Admin panel and it
+// takes effect GLOBALLY. To keep validation/filtering synchronous, this module
+// holds an in-memory cache: it starts from SEED_EXAMS, seeds the DB from that
+// list the first time the server runs, and reloads the cache after each admin
+// edit. Content with empty `targets` (or ["all"]) is shown to every student.
 
-const EXAMS = [
+const SEED_EXAMS = [
     // ── Delhi ──
     { code: "ipu-leet", name: "IPU LEET (GGSIPU)", group: "Delhi NCR" },
     { code: "dtu-leet", name: "DTU Lateral Entry", group: "Delhi NCR" },
     { code: "nsut-leet", name: "NSUT Lateral Entry", group: "Delhi NCR" },
-
-    // ── North India (state exams) ──
+    // ── North India ──
     { code: "up-leet", name: "UP LEET (AKTU)", group: "North India" },
     { code: "bihar-leet", name: "Bihar LEET (BCECE-LE)", group: "North India" },
     { code: "jharkhand-leet", name: "Jharkhand LEET (JCECE-LE)", group: "North India" },
@@ -23,26 +20,22 @@ const EXAMS = [
     { code: "uttarakhand-leet", name: "Uttarakhand LEET (UKSEE)", group: "North India" },
     { code: "himachal-leet", name: "Himachal Pradesh LEET", group: "North India" },
     { code: "jk-leet", name: "J&K Lateral Entry (BOPEE)", group: "North India" },
-
     // ── Central & West ──
     { code: "mp-leet", name: "Madhya Pradesh Lateral Entry (DTE)", group: "Central & West" },
     { code: "chhattisgarh-leet", name: "Chhattisgarh Lateral Entry (CSVTU)", group: "Central & West" },
     { code: "maharashtra-dse", name: "Maharashtra Direct 2nd Year (DSE)", group: "Central & West" },
     { code: "gujarat-d2d", name: "Gujarat Diploma-to-Degree (ACPDC)", group: "Central & West" },
-
     // ── East & North-East ──
     { code: "wb-jelet", name: "West Bengal JELET", group: "East & North-East" },
     { code: "odisha-ojee", name: "Odisha Lateral Entry (OJEE)", group: "East & North-East" },
     { code: "assam-jlee", name: "Assam JLEE (ASTU)", group: "East & North-East" },
-
     // ── South India ──
     { code: "karnataka-dcet", name: "Karnataka DCET", group: "South India" },
     { code: "kerala-let", name: "Kerala LET (LBS)", group: "South India" },
     { code: "ap-ecet", name: "Andhra Pradesh ECET", group: "South India" },
     { code: "ts-ecet", name: "Telangana ECET (TS ECET)", group: "South India" },
     { code: "tamilnadu-le", name: "Tamil Nadu Lateral Entry (DOTE)", group: "South India" },
-
-    // ── Private / Deemed universities (own lateral-entry tests) ──
+    // ── Private / Deemed universities ──
     { code: "lpu-nest", name: "LPU (LPUNEST)", group: "Private / Deemed" },
     { code: "chandigarh-cucet", name: "Chandigarh University (CUCET)", group: "Private / Deemed" },
     { code: "kiit-kiitee", name: "KIIT (KIITEE)", group: "Private / Deemed" },
@@ -56,24 +49,26 @@ const EXAMS = [
     { code: "galgotias", name: "Galgotias University", group: "Private / Deemed" },
 ];
 
-const EXAM_CODES = new Set(EXAMS.map((e) => e.code));
+// In-memory cache — starts as the seed so everything works before/without a DB.
+let cachedExams = SEED_EXAMS.map((e) => ({ ...e }));
+let codeSet = new Set(SEED_EXAMS.map((e) => e.code));
 
-const isValidExam = (code) => code === "all" || EXAM_CODES.has(code);
+// Current catalog (for GET /api/exams and the pickers).
+const getExams = () => cachedExams;
 
-// Clean an incoming list of codes: keep only known codes, de-dupe. If "all" is
-// present, collapse to exactly ["all"]. Used when saving a content item's targets
-// and a student's chosen exams.
+const isValidExam = (code) => code === "all" || codeSet.has(code);
+
+// Clean an incoming list of codes: keep only known codes, de-dupe. "all" (when
+// allowed) collapses to exactly ["all"].
 function sanitizeExams(input, { allowAll = true } = {}) {
     if (!Array.isArray(input)) return [];
     const set = new Set(input.map((c) => String(c).trim()).filter(Boolean));
     if (allowAll && set.has("all")) return ["all"];
     set.delete("all");
-    return [...set].filter((c) => EXAM_CODES.has(c));
+    return [...set].filter((c) => codeSet.has(c));
 }
 
 // Mongo condition selecting content VISIBLE to a student with these chosen exams.
-// No preference set (empty) → everything. Content with no targets, or targeted at
-// "all", or overlapping the student's exams, is visible.
 function visibilityQuery(studentExams) {
     if (!Array.isArray(studentExams) || studentExams.length === 0) return {};
     return {
@@ -86,7 +81,6 @@ function visibilityQuery(studentExams) {
     };
 }
 
-// JS equivalent of visibilityQuery for already-loaded docs.
 function isVisibleTo(targets, studentExams) {
     if (!Array.isArray(studentExams) || studentExams.length === 0) return true;
     if (!Array.isArray(targets) || targets.length === 0) return true;
@@ -94,4 +88,45 @@ function isVisibleTo(targets, studentExams) {
     return targets.some((t) => studentExams.includes(t));
 }
 
-module.exports = { EXAMS, EXAM_CODES, isValidExam, sanitizeExams, visibilityQuery, isVisibleTo };
+// Reload the in-memory cache from the DB (called at startup and after admin edits).
+// Falls back to the seed cache if the collection is empty or the query fails.
+async function refreshExams() {
+    try {
+        const Exam = require("../models/examModel");
+        const rows = await Exam.find().sort({ order: 1, group: 1, name: 1 }).lean();
+        if (rows.length) {
+            cachedExams = rows.map((r) => ({ code: r.code, name: r.name, group: r.group || "Other" }));
+            codeSet = new Set(rows.map((r) => r.code));
+        }
+    } catch {
+        /* keep the seed cache */
+    }
+    return cachedExams;
+}
+
+// Seed the DB from SEED_EXAMS the first time, then load the cache.
+async function ensureExamsSeeded() {
+    try {
+        const Exam = require("../models/examModel");
+        if ((await Exam.estimatedDocumentCount()) === 0) {
+            await Exam.insertMany(
+                SEED_EXAMS.map((e, i) => ({ ...e, order: i })),
+                { ordered: false }
+            ).catch(() => {});
+        }
+    } catch {
+        /* ignore — cache still holds the seed */
+    }
+    return refreshExams();
+}
+
+module.exports = {
+    SEED_EXAMS,
+    getExams,
+    isValidExam,
+    sanitizeExams,
+    visibilityQuery,
+    isVisibleTo,
+    refreshExams,
+    ensureExamsSeeded,
+};

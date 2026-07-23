@@ -137,6 +137,34 @@ export const unblockEmail = async (email) => {
     }
 };
 
+// LEET exam / university catalog (admin-managed, global).
+export const getAdminExams = async () => {
+    try {
+        const { data } = await api.get("/admin/exams");
+        return data.exams || [];
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const addExam = async (name, group) => {
+    try {
+        const { data } = await api.post("/admin/exams", { name, group });
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const removeExam = async (id) => {
+    try {
+        const { data } = await api.delete(`/admin/exams/${id}`);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // AI spend dashboard: today/month calls, cache-hit rate, est cost, breakdowns.
 export const getAiUsage = async () => {
     try {

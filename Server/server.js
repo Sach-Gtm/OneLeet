@@ -5,11 +5,13 @@ const bootstrapSuperadmin = require("./src/config/bootstrapSuperadmin");
 const { startEmailHealthChecks } = require("./src/utils/email");
 const { startKeepAwake } = require("./src/utils/keepAwake");
 const { startLeaderboardScheduler } = require("./src/jobs/leaderboardScheduler");
+const { ensureExamsSeeded } = require("./src/config/exams");
 
-// Provision the Super Admin out-of-band once the DB is up, then start the
-// competitive-leaderboard ticker (publishes graded boards ~5 min after close).
+// Provision the Super Admin out-of-band once the DB is up, seed the LEET exam
+// catalog on first run, then start the competitive-leaderboard ticker.
 connectDB().then(() => {
     bootstrapSuperadmin();
+    ensureExamsSeeded();
     startLeaderboardScheduler();
 });
 
