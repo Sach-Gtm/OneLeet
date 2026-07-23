@@ -194,6 +194,7 @@ export default function Dashboard() {
     }
 
     const needsPhoto = user && isStudent(user) && !user?.passportPhoto?.url;
+    const needsExams = user && isStudent(user) && (!user?.exams || user.exams.length === 0);
 
     return (
         <div className="mx-auto max-w-6xl space-y-6">
@@ -215,6 +216,27 @@ export default function Dashboard() {
                         </p>
                     </div>
                     <ArrowRight size={16} className="ml-auto shrink-0 text-amber-500" />
+                </Link>
+            )}
+
+            {needsExams && (
+                <Link
+                    to="/profile"
+                    className="flex items-center gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 transition hover:bg-indigo-100"
+                >
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-indigo-100 text-indigo-600">
+                        <Target size={18} />
+                    </span>
+                    <div className="text-sm">
+                        <p className="font-semibold text-indigo-800">
+                            Pick your LEET exams to personalise your prep
+                        </p>
+                        <p className="text-indigo-700">
+                            Tell us which universities / LEET you&apos;re preparing for and we&apos;ll show only the
+                            tests, syllabus and notes that matter to you. Tap to choose.
+                        </p>
+                    </div>
+                    <ArrowRight size={16} className="ml-auto shrink-0 text-indigo-500" />
                 </Link>
             )}
 

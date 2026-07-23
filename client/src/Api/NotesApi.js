@@ -36,7 +36,9 @@ export const generateNoteDraft = async ({ prompt, subject, file } = {}) => {
 export const uploadNote = async (fields, file) => {
     const form = new FormData();
     Object.entries(fields || {}).forEach(([k, v]) => {
-        if (v != null && v !== "") form.append(k, String(v));
+        if (v == null || v === "") return;
+        // Arrays (e.g. targets) go as JSON so the multipart body round-trips.
+        form.append(k, Array.isArray(v) ? JSON.stringify(v) : String(v));
     });
     if (file) form.append("pdfFile", file);
     // Let axios set the multipart boundary itself — don't hardcode Content-Type.

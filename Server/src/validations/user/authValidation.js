@@ -68,6 +68,9 @@ const updateProfileSchema = z.object({
     branch: optionalCapped(80),
     yearOfStudy: optionalCapped(40),
     targetExam: optionalCapped(60),
+    // The LEET exams a student is preparing for (codes; validated against the
+    // catalog in the controller).
+    exams: z.array(z.string().max(60)).max(100).optional(),
 });
 
 const changePasswordSchema = z.object({

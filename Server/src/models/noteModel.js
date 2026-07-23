@@ -20,6 +20,9 @@ const NoteSchema = new mongoose.Schema(
             maxlength: [50, "Subject name too long"],
             index: true,
         },
+        // Which LEET exams / universities this note is for (codes from
+        // config/exams.js). Empty or ["all"] → shown to every student.
+        targets: { type: [String], default: [], index: true },
 
         // ---- Study-notes metadata (category: "notes") ----
         description: {

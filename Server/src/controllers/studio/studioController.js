@@ -4,6 +4,7 @@ const Question = require("../../models/questionModel");
 const AiQuery = require("../../models/aiQueryModel");
 const ai = require("../../services/ai/aiService");
 const runtime = require("../../services/ai/aiRuntime");
+const { sanitizeExams } = require("../../config/exams");
 
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 const notFound = (res) => res.status(404).json({ success: false, message: "Not found" });
@@ -95,7 +96,7 @@ async function listMine(req, res, next) {
         const tests = await Test.find(filter)
             .sort({ updatedAt: -1 })
             .limit(100)
-            .select("title subject mode status durationMinutes totalMarks questions openAt closeAt createdBy createdAt updatedAt");
+            .select("title subject mode status durationMinutes totalMarks questions openAt closeAt targets createdBy createdAt updatedAt");
         return res.status(200).json({
             success: true,
             tests: tests.map((t) => ({
@@ -138,6 +139,7 @@ async function createTest(req, res, next) {
             durationMinutes: Math.max(1, parseInt(b.durationMinutes, 10) || 30),
             openAt: b.openAt || undefined,
             closeAt: b.closeAt || undefined,
+            targets: sanitizeExams(b.targets),
             questions: docs.map((d) => d._id),
             totalMarks,
             status: "draft",
@@ -165,6 +167,7 @@ async function updateTest(req, res, next) {
             test.durationMinutes = Math.max(1, parseInt(b.durationMinutes, 10) || 30);
         if ("openAt" in b) test.openAt = b.openAt || undefined;
         if ("closeAt" in b) test.closeAt = b.closeAt || undefined;
+        if (b.targets != null) test.targets = sanitizeExams(b.targets);
         if (Array.isArray(b.questions)) {
             const normalized = normalizeQuestions(b.questions, { subject: test.subject });
             await Question.deleteMany({ _id: { $in: test.questions } });
