@@ -40,6 +40,7 @@ module.exports = {
 
     summarizeNote: (input) => getProvider().summarizeNote(input),
     generateFlashcards: (input) => getProvider().generateFlashcards(input),
+    generateStudyNote: (input) => getProvider().generateStudyNote(input),
     generateQuestions: (input) => getProvider().generateQuestions(input),
     draftAssessment: (input) => getProvider().draftAssessment(input),
     predictDifficulty: (input) => getProvider().predictDifficulty(input),

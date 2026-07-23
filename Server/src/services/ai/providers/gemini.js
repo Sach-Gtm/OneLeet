@@ -13,9 +13,9 @@ const BASE_MODEL = () => process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
 // to the cheap base model, so there's no extra cost unless you choose it.
 function modelForTier(tier) {
     if (tier === "smart") {
-        return process.env.AI_MODEL_SMART || process.env.AI_MODEL_SIMPLE || BASE_BASE_MODEL();
+        return process.env.AI_MODEL_SMART || process.env.AI_MODEL_SIMPLE || BASE_MODEL();
     }
-    return process.env.AI_MODEL_SIMPLE || BASE_BASE_MODEL();
+    return process.env.AI_MODEL_SIMPLE || BASE_MODEL();
 }
 
 const safeJsonParse = (text) => {
@@ -145,6 +145,31 @@ async function draftAssessment({ text, subject, topic, mode = "test", count = 5,
     };
 }
 
+// Draft full study-note CONTENT (Markdown) from a topic — for the mentor/admin
+// "AI mode" note authoring. Returns a title + one-line description + the note
+// body, which the author reviews/edits before publishing.
+async function generateStudyNote({ topic, subject, level, difficulty = "intermediate", points } = {}) {
+    const focus = points ? `Make sure to cover these points: ${points}. ` : "";
+    const prompt =
+        `You are an expert faculty member writing study notes for the Indian LEET ` +
+        `(Lateral Entry Entrance Test) engineering exam, for a ${level || "diploma-to-BTech"} ` +
+        `student at ${difficulty} level. ${focus}` +
+        `Write clear, exam-focused notes in Markdown: a one-paragraph intro, logical "## " ` +
+        `sections, bullet points and short worked examples where useful, and end with a ` +
+        `"## Key Takeaways" list. Keep it roughly 400-800 words. Also propose a concise ` +
+        `title and a one-line description.\n` +
+        `Topic: ${topic}\nSubject: ${subject || "General"}\n` +
+        `Respond ONLY as JSON: {"title": string, "description": string, "content": string}.`;
+    const raw = await callGemini(prompt, { json: true, tier: "smart" });
+    const parsed = safeJsonParse(raw) || {};
+    return {
+        provider: "gemini",
+        title: parsed.title || topic || "Untitled note",
+        description: parsed.description || "",
+        content: parsed.content || raw || "",
+    };
+}
+
 async function predictDifficulty({ questionText } = {}) {
     const prompt =
         `Classify the difficulty of this LEET exam question as one of easy, moderate, or hard, ` +
@@ -197,6 +222,7 @@ module.exports = {
     generateFlashcards,
     generateQuestions,
     draftAssessment,
+    generateStudyNote,
     predictDifficulty,
     generateStudyPlan,
     analyzePerformance,

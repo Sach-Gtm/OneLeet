@@ -2,6 +2,7 @@ const fs = require("fs");
 const cloudinary = require("../../config/cloudinary");
 const Note = require("../../models/noteModel");
 const aiService = require("../../services/ai/aiService");
+const { runAiFeature } = require("../../services/ai/aiRuntime");
 
 const CATEGORY = "notes";
 
@@ -90,11 +91,22 @@ async function getNoteById(req, res, next) {
     }
 }
 
-// POST /api/notes  (teacher only)
+// POST /api/notes  (staff only) — publish a note. Two ways to provide the body:
+//   • Normal mode: attach a PDF (req.file), and/or type the content.
+//   • AI mode:     the AI-drafted `content` text (source: "ai"), no file needed.
+// A note must have EITHER a file or written content.
 async function uploadNote(req, res, next) {
     let localFilePath;
     try {
-        const { title, subject, description, teacher, branch, level, difficulty, format } = req.body;
+        const { title, subject, description, teacher, branch, level, difficulty, format, content, source } = req.body;
+
+        const body = typeof content === "string" ? content.trim() : "";
+        if (!req.file && !body) {
+            return res.status(400).json({
+                success: false,
+                message: "Attach a PDF or write the note content before publishing.",
+            });
+        }
 
         let fileFields = {};
         if (req.file) {
@@ -123,15 +135,53 @@ async function uploadNote(req, res, next) {
             branch,
             level,
             difficulty,
-            format,
+            // A written note with no file is a "text" note; otherwise default to pdf.
+            format: format || (req.file ? "pdf" : "text"),
+            content: body || undefined,
+            source: source === "ai" ? "ai" : "manual",
             uploadedBy: req.user._id,
             ...fileFields,
         });
 
         if (localFilePath && fs.existsSync(localFilePath)) fs.unlinkSync(localFilePath);
-        return res.status(201).json({ success: true, message: "Note uploaded", note });
+        return res.status(201).json({ success: true, message: "Note published", note });
     } catch (error) {
         if (localFilePath && fs.existsSync(localFilePath)) fs.unlinkSync(localFilePath);
+        next(error);
+    }
+}
+
+// POST /api/notes/generate  (staff only) — AI-draft study-note content from a
+// topic. Does NOT save; the author reviews/edits, then publishes via POST /.
+// Routed through the AI runtime so it's cached and cost-logged like every other
+// AI feature (staff are unlimited, so no quota applies).
+async function generateNoteDraft(req, res, next) {
+    try {
+        const { topic, subject, level, difficulty, points } = req.body || {};
+        if (!topic || !String(topic).trim()) {
+            return res.status(400).json({ success: false, message: "Enter a topic to draft from." });
+        }
+
+        const { result, cacheHit } = await runAiFeature({
+            user: req.user,
+            feature: "noteDraft",
+            cacheParams: { topic, subject, level, difficulty, points },
+            inputText: `${topic} ${subject || ""} ${points || ""}`,
+            generate: () =>
+                aiService.generateStudyNote({
+                    topic: String(topic).trim(),
+                    subject,
+                    level,
+                    difficulty,
+                    points,
+                }),
+        });
+
+        return res.status(200).json({ success: true, cacheHit, draft: result });
+    } catch (error) {
+        if (error.status === 429) {
+            return res.status(429).json({ success: false, message: error.message, quota: error.quota });
+        }
         next(error);
     }
 }
@@ -177,6 +227,7 @@ module.exports = {
     getNotesFilters,
     getNoteById,
     uploadNote,
+    generateNoteDraft,
     summarizeNote,
     generateFlashcards,
 };

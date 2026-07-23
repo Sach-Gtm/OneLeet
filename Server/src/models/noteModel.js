@@ -43,12 +43,28 @@ const NoteSchema = new mongoose.Schema(
         },
         format: {
             type: String,
-            enum: ["pdf", "handwritten", "slides"],
+            enum: ["pdf", "handwritten", "slides", "text"],
             default: "pdf",
             index: true,
         },
 
-        // ---- File (optional so metadata-only sample notes are valid) ----
+        // ---- Written body (category "notes", format "text") ----
+        // A note can be a PDF (fileUrl) OR written/AI-drafted content — or both.
+        // Markdown is allowed; the reader renders it.
+        content: {
+            type: String,
+            maxlength: [20000, "Note content is too long"],
+        },
+        // How the written content was authored, so AI-drafted notes can be
+        // surfaced/audited. File-only and hand-typed notes are "manual".
+        source: {
+            type: String,
+            enum: ["manual", "ai"],
+            default: "manual",
+            index: true,
+        },
+
+        // ---- File (optional so metadata-only / text-only notes are valid) ----
         fileUrl: { type: String },
         publicId: { type: String, index: true },
         fileSize: { type: Number },
