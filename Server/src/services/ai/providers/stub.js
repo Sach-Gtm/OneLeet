@@ -90,6 +90,27 @@ function generateStudyNote({ topic = "the topic", subject = "", level = "", diff
     };
 }
 
+function structureSyllabus({ text = "", subject = "" } = {}) {
+    // Try to make the sample feel related to what was pasted by pulling a few
+    // capitalised phrases as topic names; otherwise fall back to placeholders.
+    const guesses = (String(text).match(/[A-Z][A-Za-z][A-Za-z ]{3,40}/g) || [])
+        .map((s) => s.trim())
+        .filter((s, i, a) => a.indexOf(s) === i)
+        .slice(0, 6);
+    const topicNames = guesses.length ? guesses : ["Fundamentals", "Core Concepts", "Applications", "Problem Solving"];
+    const mid = Math.ceil(topicNames.length / 2);
+    const mkTopics = (names) => names.map((t) => ({ title: t, estimatedHours: 3 }));
+    return {
+        provider: "stub",
+        title: subject ? `${subject} Syllabus` : "Syllabus",
+        subject,
+        chapters: [
+            { title: "Chapter 1 — Basics", topics: mkTopics(topicNames.slice(0, mid)) },
+            { title: "Chapter 2 — Advanced", topics: mkTopics(topicNames.slice(mid)) },
+        ],
+    };
+}
+
 function predictDifficulty({ questionText = "" } = {}) {
     const len = questionText.trim().length;
     const difficulty = len > 160 ? "hard" : len > 80 ? "moderate" : "easy";
@@ -148,6 +169,7 @@ module.exports = {
     generateQuestions,
     draftAssessment,
     generateStudyNote,
+    structureSyllabus,
     predictDifficulty,
     generateStudyPlan,
     analyzePerformance,
