@@ -7,6 +7,11 @@ const { runAiFeature } = require("../../services/ai/aiRuntime");
 const { STAFF } = require("../../config/roles");
 
 const isStaff = (u) => STAFF.includes(u?.role);
+const owns = (u, s) => String(s.createdBy) === String(u._id);
+// Who may edit/delete: the owner of a personal syllabus, or any staff for a
+// global one. Who may view/track: the owner (personal) or anyone (published global).
+const canManage = (u, s) => (s.scope === "personal" ? owns(u, s) : isStaff(u));
+const canView = (u, s) => (s.scope === "personal" ? owns(u, s) : s.published || isStaff(u));
 
 // Roll up one syllabus against a student's completed-topic set.
 function summarize(syllabus, completedSet) {
@@ -67,10 +72,17 @@ async function progressMap(userId, syllabi) {
     return new Map(rows.map((p) => [String(p.syllabus), new Set((p.completedTopics || []).map(String))]));
 }
 
-// GET /api/syllabus — list syllabi (students see published only) + my progress.
+// GET /api/syllabus — list the syllabi a user can see + their progress:
+// every student sees published global syllabi plus their OWN personal ones;
+// staff also see unpublished global drafts.
 async function listSyllabi(req, res, next) {
     try {
-        const filter = isStaff(req.user) ? {} : { published: true };
+        const filter = {
+            $or: [
+                { scope: "personal", createdBy: req.user._id },
+                isStaff(req.user) ? { scope: "global" } : { scope: "global", published: true },
+            ],
+        };
         const syllabi = await Syllabus.find(filter).sort({ order: 1, createdAt: 1 }).lean();
         const map = await progressMap(req.user._id, syllabi);
         const out = syllabi.map((s) => {
@@ -86,7 +98,12 @@ async function listSyllabi(req, res, next) {
 // GET /api/syllabus/me/summary — overall coverage across published syllabi.
 async function myProgressSummary(req, res, next) {
     try {
-        const syllabi = await Syllabus.find({ published: true }).lean();
+        const syllabi = await Syllabus.find({
+            $or: [
+                { scope: "global", published: true },
+                { scope: "personal", createdBy: req.user._id },
+            ],
+        }).lean();
         const map = await progressMap(req.user._id, syllabi);
         let totalTopics = 0, doneTopics = 0, totalHours = 0, doneHours = 0;
         for (const s of syllabi) {
@@ -116,7 +133,7 @@ async function myProgressSummary(req, res, next) {
 async function getSyllabus(req, res, next) {
     try {
         const syllabus = await Syllabus.findById(req.params.id).lean();
-        if (!syllabus || (!syllabus.published && !isStaff(req.user))) {
+        if (!syllabus || !canView(req.user, syllabus)) {
             return res.status(404).json({ success: false, message: "Syllabus not found" });
         }
         const progress = await SyllabusProgress.findOne({ user: req.user._id, syllabus: syllabus._id }).lean();
@@ -130,20 +147,24 @@ async function getSyllabus(req, res, next) {
     }
 }
 
-// POST /api/syllabus — create (staff).
+// POST /api/syllabus — create. Staff create GLOBAL syllabi (shown to everyone);
+// students create a PERSONAL one (only they see it). AI authoring stays on its
+// own staff-only routes, so a student can only ever build one by hand.
 async function createSyllabus(req, res, next) {
     try {
         const { title, subject, description, exam, chapters, published } = req.body;
         if (!title || !String(title).trim()) {
             return res.status(400).json({ success: false, message: "Give the syllabus a title." });
         }
+        const scope = isStaff(req.user) ? "global" : "personal";
         const syllabus = await Syllabus.create({
             title: String(title).trim(),
             subject,
             description,
             exam: exam || "LEET",
             chapters: normalizeChapters(chapters),
-            published: published !== false,
+            scope,
+            published: scope === "personal" ? true : published !== false,
             createdBy: req.user._id,
         });
         return res.status(201).json({ success: true, message: "Syllabus created", syllabus });
@@ -152,35 +173,42 @@ async function createSyllabus(req, res, next) {
     }
 }
 
-// PUT /api/syllabus/:id — update (staff).
+// PUT /api/syllabus/:id — update. Owner (personal) or staff (global) only.
+// `scope` and ownership can't be changed here.
 async function updateSyllabus(req, res, next) {
     try {
-        const { title, subject, description, exam, chapters, published } = req.body;
-        const update = {};
-        if (title != null) update.title = String(title).trim();
-        if (subject != null) update.subject = subject;
-        if (description != null) update.description = description;
-        if (exam != null) update.exam = exam;
-        if (published != null) update.published = !!published;
-        if (chapters != null) update.chapters = normalizeChapters(chapters);
+        const existing = await Syllabus.findById(req.params.id);
+        if (!existing) return res.status(404).json({ success: false, message: "Syllabus not found" });
+        if (!canManage(req.user, existing)) {
+            return res.status(403).json({ success: false, message: "You can't edit this syllabus." });
+        }
 
-        const syllabus = await Syllabus.findByIdAndUpdate(req.params.id, update, {
-            returnDocument: "after",
-            runValidators: true,
-        });
-        if (!syllabus) return res.status(404).json({ success: false, message: "Syllabus not found" });
-        return res.status(200).json({ success: true, message: "Syllabus updated", syllabus });
+        const { title, subject, description, exam, chapters, published } = req.body;
+        if (title != null) existing.title = String(title).trim();
+        if (subject != null) existing.subject = subject;
+        if (description != null) existing.description = description;
+        if (exam != null) existing.exam = exam;
+        // Only global (staff) syllabi have a meaningful published flag.
+        if (published != null && existing.scope === "global") existing.published = !!published;
+        if (chapters != null) existing.chapters = normalizeChapters(chapters);
+        await existing.save();
+
+        return res.status(200).json({ success: true, message: "Syllabus updated", syllabus: existing });
     } catch (e) {
         next(e);
     }
 }
 
-// DELETE /api/syllabus/:id — delete (staff) + its progress rows.
+// DELETE /api/syllabus/:id — delete + its progress rows. Owner or staff only.
 async function deleteSyllabus(req, res, next) {
     try {
-        const syllabus = await Syllabus.findByIdAndDelete(req.params.id);
-        if (!syllabus) return res.status(404).json({ success: false, message: "Syllabus not found" });
-        await SyllabusProgress.deleteMany({ syllabus: syllabus._id });
+        const existing = await Syllabus.findById(req.params.id);
+        if (!existing) return res.status(404).json({ success: false, message: "Syllabus not found" });
+        if (!canManage(req.user, existing)) {
+            return res.status(403).json({ success: false, message: "You can't delete this syllabus." });
+        }
+        await existing.deleteOne();
+        await SyllabusProgress.deleteMany({ syllabus: existing._id });
         return res.status(200).json({ success: true, message: "Syllabus deleted" });
     } catch (e) {
         next(e);
@@ -244,7 +272,9 @@ async function toggleTopic(req, res, next) {
             return res.status(400).json({ success: false, message: "Invalid topic." });
         }
         const syllabus = await Syllabus.findById(req.params.id).lean();
-        if (!syllabus) return res.status(404).json({ success: false, message: "Syllabus not found" });
+        if (!syllabus || !canView(req.user, syllabus)) {
+            return res.status(404).json({ success: false, message: "Syllabus not found" });
+        }
 
         const belongs = (syllabus.chapters || []).some((c) =>
             (c.topics || []).some((t) => String(t._id) === String(topicId))

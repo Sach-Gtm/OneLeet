@@ -40,10 +40,20 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     const teacherToken = generateToken(teacher._id);
     const studentToken = generateToken(student._id);
 
-    // Students can't create a syllabus.
-    const forbid = await request.post("/api/syllabus").set(...auth(studentToken)).send({ title: "x" });
-    assert.strictEqual(forbid.status, 403, "student cannot create a syllabus");
-    ok("students can't create a syllabus");
+    // AI authoring is staff-only: a student can't AI-draft (or scan).
+    const stuAi = await request.post("/api/syllabus/ai-draft").set(...auth(studentToken)).send({ text: "Algebra: Matrices" });
+    assert.strictEqual(stuAi.status, 403, "student cannot use the syllabus AI");
+    ok("students can't use the syllabus AI (staff only)");
+
+    // But a student CAN build their own PERSONAL syllabus by hand.
+    const personal = await request
+        .post("/api/syllabus")
+        .set(...auth(studentToken))
+        .send({ title: "My plan", chapters: [{ title: "Week 1", topics: [{ title: "Revise Algebra", estimatedHours: 2 }] }] });
+    assert.strictEqual(personal.status, 201, "student can create a personal syllabus");
+    assert.strictEqual(personal.body.syllabus.scope, "personal", "the student's syllabus is personal");
+    const personalId = personal.body.syllabus._id;
+    ok("students can build their own personal syllabus by hand");
 
     // Staff can AI-draft from pasted text (stub returns structured chapters).
     const draft = await request
@@ -111,11 +121,14 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     ok("un-marking a topic decreases progress");
 
     // Dashboard summary reflects the student's overall coverage.
+    // Overall coverage spans the global syllabus (1 of 2 done) AND the student's
+    // own personal syllabus (0 of 1 done) → 1 of 3 topics = 33%.
     const summary = await request.get("/api/syllabus/me/summary").set(...auth(studentToken));
     assert.strictEqual(summary.status, 200);
-    assert.strictEqual(summary.body.summary.percent, 50, "overall summary is 50%");
+    assert.strictEqual(summary.body.summary.totalTopics, 3, "counts global + personal topics");
     assert.strictEqual(summary.body.summary.doneTopics, 1, "one topic done overall");
-    ok("the dashboard summary reflects overall syllabus coverage");
+    assert.strictEqual(summary.body.summary.percent, 33, "overall coverage is 33%");
+    ok("the dashboard summary reflects overall coverage (global + personal)");
 
     // A different student is unaffected by the first's progress.
     const other = await User.create({
@@ -126,6 +139,19 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     const os = otherList.body.syllabi.find((s) => String(s._id) === String(syllabus._id));
     assert.strictEqual(os.progress.percent, 0, "another student starts fresh");
     ok("progress is per-student (isolated)");
+
+    // A student's PERSONAL syllabus is private — no one else sees it.
+    assert.ok(
+        !otherList.body.syllabi.some((s) => String(s._id) === String(personalId)),
+        "another student can't see a personal syllabus"
+    );
+    // ...and a non-owner can't toggle topics on it.
+    const sneak = await request
+        .post(`/api/syllabus/${personalId}/toggle`)
+        .set(...auth(generateToken(other._id)))
+        .send({ topicId: personal.body.syllabus.chapters[0].topics[0]._id, done: true });
+    assert.strictEqual(sneak.status, 404, "non-owner can't touch a personal syllabus");
+    ok("a personal syllabus is private to its owner");
 
     // Toggling a topic that isn't in the syllabus is rejected.
     const bad = await request
