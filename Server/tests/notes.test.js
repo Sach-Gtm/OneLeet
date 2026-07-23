@@ -55,14 +55,17 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(stuPub.status, 403, "student cannot publish a note");
     ok("students can't publish notes");
 
-    // A mentor CAN AI-draft — stub returns real-shaped content.
+    // A mentor CAN AI-draft from a FREEFORM instruction — stub echoes it.
     const gen = await request
         .post("/api/notes/generate")
         .set(...auth(teacherToken))
-        .send({ topic: "First Law of Thermodynamics", subject: "Mechanical", difficulty: "intermediate" });
+        .send({ prompt: "Write 5 MCQs on the First Law of Thermodynamics with answers", subject: "Mechanical" });
     assert.strictEqual(gen.status, 200, "mentor can AI-draft");
     assert.ok(gen.body.draft && gen.body.draft.content && gen.body.draft.title, "draft has title + content");
-    ok("a mentor can AI-draft a note (title + content returned)");
+    // Missing both prompt and file → rejected.
+    const genEmpty = await request.post("/api/notes/generate").set(...auth(teacherToken)).send({});
+    assert.strictEqual(genEmpty.status, 400, "AI needs an instruction or a file");
+    ok("a mentor can AI-draft from a freeform instruction (and empty is refused)");
 
     // A mentor CAN publish a text note (content, no file).
     const draft = gen.body.draft;

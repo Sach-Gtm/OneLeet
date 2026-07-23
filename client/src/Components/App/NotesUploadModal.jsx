@@ -1,10 +1,18 @@
 import { useState } from "react";
-import { X, Sparkles, Loader2, UploadCloud, PenLine, FileText, RotateCw } from "lucide-react";
+import { X, Sparkles, Loader2, UploadCloud, PenLine, FileText, RotateCw, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { uploadNote, generateNoteDraft } from "@/Api/NotesApi";
 
 const DIFFICULTIES = ["beginner", "intermediate", "advanced"];
+// Quick-start prompts — tap one, then finish the sentence with your topic.
+const STYLE_CHIPS = [
+    { label: "Short notes", text: "Write short, crisp revision notes on " },
+    { label: "Detailed", text: "Write detailed notes with worked examples on " },
+    { label: "MCQs", text: "Create 10 MCQs with the correct answer and a one-line reason on " },
+    { label: "Summary", text: "Write a concise summary of " },
+    { label: "Key formulas", text: "List the key formulas and must-know points for " },
+];
 const inputCls =
     "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
 const labelCls = "mb-1 block text-xs font-semibold text-slate-600";
@@ -29,9 +37,9 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
     const [file, setFile] = useState(null);
     const [busy, setBusy] = useState(false);
 
-    // AI-draft inputs
-    const [aiTopic, setAiTopic] = useState("");
-    const [aiPoints, setAiPoints] = useState("");
+    // AI-draft inputs — a freeform instruction (+ optional image/PDF to read).
+    const [aiPrompt, setAiPrompt] = useState("");
+    const [aiFile, setAiFile] = useState(null);
     const [drafted, setDrafted] = useState(false);
 
     if (!open) return null;
@@ -41,8 +49,8 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
     const reset = () => {
         setForm(emptyForm);
         setFile(null);
-        setAiTopic("");
-        setAiPoints("");
+        setAiPrompt("");
+        setAiFile(null);
         setDrafted(false);
         setTab("normal");
     };
@@ -54,21 +62,17 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
     };
 
     const generate = async () => {
-        if (!aiTopic.trim()) return toast.error("Enter a topic to draft from.");
+        if (!aiPrompt.trim() && !aiFile) {
+            return toast.error("Tell the AI what to write, or attach an image/PDF.");
+        }
         setBusy(true);
         try {
-            const res = await generateNoteDraft({
-                topic: aiTopic,
-                subject: form.subject,
-                level: form.level,
-                difficulty: form.difficulty,
-                points: aiPoints,
-            });
+            const res = await generateNoteDraft({ prompt: aiPrompt, subject: form.subject, file: aiFile });
             const d = res.draft || {};
             setForm((f) => ({
                 ...f,
-                title: d.title || aiTopic,
-                description: d.description || "",
+                title: f.title || d.title || "",
+                description: d.description || f.description,
                 content: d.content || "",
             }));
             setDrafted(true);
@@ -160,21 +164,36 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                     {tab === "ai" && !drafted ? (
                         <>
                             <p className="text-xs text-slate-500">
-                                Describe the topic and the AI will write structured LEET study notes you can edit
-                                before publishing.
+                                Tell the AI what you want — like ChatGPT. Short notes, detailed notes, MCQs, a summary,
+                                a comparison table… You can also attach an image or PDF for it to read.
                             </p>
+                            <div className="flex flex-wrap gap-1.5">
+                                {STYLE_CHIPS.map((c) => (
+                                    <button
+                                        key={c.label}
+                                        type="button"
+                                        onClick={() => setAiPrompt(c.text)}
+                                        className="rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600"
+                                    >
+                                        {c.label}
+                                    </button>
+                                ))}
+                            </div>
                             <div>
-                                <label className={labelCls}>Topic *</label>
-                                <input
-                                    className={inputCls}
-                                    value={aiTopic}
-                                    onChange={(e) => setAiTopic(e.target.value)}
-                                    placeholder="e.g. First Law of Thermodynamics"
+                                <label className={labelCls}>What should the AI write? *</label>
+                                <textarea
+                                    rows={5}
+                                    className={cn(inputCls, "h-auto py-2")}
+                                    value={aiPrompt}
+                                    onChange={(e) => setAiPrompt(e.target.value)}
+                                    placeholder={
+                                        "e.g. Write 10 MCQs on the First Law of Thermodynamics with answers and one-line explanations"
+                                    }
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className={labelCls}>Subject</label>
+                                    <label className={labelCls}>Subject (optional)</label>
                                     <input
                                         className={inputCls}
                                         value={form.subject}
@@ -183,38 +202,18 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                                     />
                                 </div>
                                 <div>
-                                    <label className={labelCls}>Difficulty</label>
-                                    <select
-                                        className={inputCls}
-                                        value={form.difficulty}
-                                        onChange={(e) => set("difficulty", e.target.value)}
-                                    >
-                                        {DIFFICULTIES.map((d) => (
-                                            <option key={d} value={d} className="capitalize">
-                                                {d}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <label className={labelCls}>Attach image / PDF (optional)</label>
+                                    <label className="flex h-10 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-slate-300 px-3 text-sm text-slate-500 hover:border-indigo-400">
+                                        <ImageIcon size={16} className="shrink-0 text-slate-400" />
+                                        <span className="truncate">{aiFile ? aiFile.name : "Choose a file"}</span>
+                                        <input
+                                            type="file"
+                                            accept="image/*,application/pdf"
+                                            className="hidden"
+                                            onChange={(e) => setAiFile(e.target.files?.[0] || null)}
+                                        />
+                                    </label>
                                 </div>
-                            </div>
-                            <div>
-                                <label className={labelCls}>Level</label>
-                                <input
-                                    className={inputCls}
-                                    value={form.level}
-                                    onChange={(e) => set("level", e.target.value)}
-                                    placeholder="e.g. 2nd Year / Diploma"
-                                />
-                            </div>
-                            <div>
-                                <label className={labelCls}>Key points to cover (optional)</label>
-                                <textarea
-                                    rows={3}
-                                    className={cn(inputCls, "h-auto py-2")}
-                                    value={aiPoints}
-                                    onChange={(e) => setAiPoints(e.target.value)}
-                                    placeholder="e.g. definition, formula, sign convention, one solved example"
-                                />
                             </div>
                             <button
                                 onClick={generate}
@@ -222,7 +221,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
                             >
                                 {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles size={15} />}
-                                {busy ? "Generating…" : "Generate draft"}
+                                {busy ? "Writing…" : "Generate with AI"}
                             </button>
                         </>
                     ) : (

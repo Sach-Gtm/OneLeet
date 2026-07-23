@@ -153,26 +153,33 @@ async function draftAssessment({ text, subject, topic, mode = "test", count = 5,
     };
 }
 
-// Draft full study-note CONTENT (Markdown) from a topic — for the mentor/admin
-// "AI mode" note authoring. Returns a title + one-line description + the note
-// body, which the author reviews/edits before publishing.
-async function generateStudyNote({ topic, subject, level, difficulty = "intermediate", points } = {}) {
-    const focus = points ? `Make sure to cover these points: ${points}. ` : "";
-    const prompt =
-        `You are an expert faculty member writing study notes for the Indian LEET ` +
-        `(Lateral Entry Entrance Test) engineering exam, for a ${level || "diploma-to-BTech"} ` +
-        `student at ${difficulty} level. ${focus}` +
-        `Write clear, exam-focused notes in Markdown: a one-paragraph intro, logical "## " ` +
-        `sections, bullet points and short worked examples where useful, and end with a ` +
-        `"## Key Takeaways" list. Keep it roughly 400-800 words. Also propose a concise ` +
-        `title and a one-line description.\n` +
-        `Topic: ${topic}\nSubject: ${subject || "General"}\n` +
+// Draft study-note CONTENT (Markdown) from a FREEFORM instruction — the mentor
+// asks for whatever they want (short/long notes, MCQs, a summary, a comparison
+// table, worked examples…), optionally from an attached image/PDF (fileData).
+// Works like a general assistant, but always returns a titled, publishable note.
+async function generateStudyNote({ prompt, subject, fileData } = {}) {
+    const instruction =
+        (prompt && String(prompt).trim()) ||
+        "Write clear, exam-focused revision notes based on the attached material.";
+    const context = subject ? ` Subject / context: ${subject}.` : "";
+    const src = fileData
+        ? " Base the note on the ATTACHED file (image or PDF) — read it, including any diagrams or handwriting."
+        : "";
+    const full =
+        `You are an expert teacher creating study material for the Indian LEET (Lateral Entry) ` +
+        `engineering entrance exam.${context}${src} Do EXACTLY what the teacher asks — it may be ` +
+        `short notes, long detailed notes, MCQs (show the options and mark the correct answer with a ` +
+        `one-line reason), a summary, key points, a comparison table, worked examples, and so on. ` +
+        `Produce clean, well-structured Markdown (## headings, - bullets, **bold**, tables and ` +
+        `numbered lists where they help). Do not add meta commentary.\n` +
+        `Teacher's request: """${instruction}"""\n` +
+        `Also propose a concise title and a one-line description for this note. ` +
         `Respond ONLY as JSON: {"title": string, "description": string, "content": string}.`;
-    const raw = await callGemini(prompt, { json: true, tier: "smart" });
+    const raw = await callGemini(full, { json: true, tier: "smart", fileData });
     const parsed = safeJsonParse(raw) || {};
     return {
         provider: "gemini",
-        title: parsed.title || topic || "Untitled note",
+        title: parsed.title || (subject ? `${subject} — notes` : "Study note"),
         description: parsed.description || "",
         content: parsed.content || raw || "",
     };

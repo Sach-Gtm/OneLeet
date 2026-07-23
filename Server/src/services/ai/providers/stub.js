@@ -69,23 +69,20 @@ function draftAssessment({ text = "", subject = "", topic = "", mode = "test", c
     };
 }
 
-function generateStudyNote({ topic = "the topic", subject = "", level = "", difficulty = "intermediate" } = {}) {
+function generateStudyNote({ prompt = "", subject = "" } = {}) {
+    const ask = String(prompt).trim() || "study notes based on the attached material";
     const subj = subject ? ` (${subject})` : "";
-    const lvl = level ? ` for ${level} students` : "";
     const content =
-        `_Sample study note — set AI_PROVIDER=gemini and GEMINI_API_KEY to generate real, ` +
-        `topic-specific notes._\n\n` +
-        `## Introduction\n${topic}${subj} is an important ${difficulty}-level topic for the LEET exam${lvl}. ` +
-        `This note outlines the core ideas you need to revise.\n\n` +
-        `## Core Concepts\n- Key definitions and terminology\n- The main principle or formula and when to apply it\n` +
-        `- A standard worked example\n\n` +
-        `## Common Exam Questions\n- Direct formula-application problems\n- Conceptual traps to watch for\n\n` +
-        `## Key Takeaways\n- Revise the core definitions first\n- Practise past-year questions on ${topic}\n` +
-        `- Connect this topic to related ones for faster recall`;
+        `_Sample AI note — set AI_PROVIDER=gemini and GEMINI_API_KEY for real results._\n\n` +
+        `**Your request:** ${ask}\n\n` +
+        `## Overview\nOnce AI is enabled, the note the AI writes for your request${subj} will appear here — ` +
+        `in whatever form you asked for (short notes, detailed notes, MCQs, a summary, and so on).\n\n` +
+        `## Key Points\n- Point one\n- Point two\n- Point three\n\n` +
+        `## Example\nA short worked example would appear here.`;
     return {
         provider: "stub",
-        title: `${topic}${subj}`,
-        description: `Study notes on ${topic}${subj} for LEET preparation.`,
+        title: (subject ? `${subject} — ` : "") + "Sample note",
+        description: `Sample note for: ${ask.slice(0, 60)}`,
         content,
     };
 }
