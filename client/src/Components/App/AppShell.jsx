@@ -6,6 +6,7 @@ import {
     BookOpen,
     ClipboardList,
     ListChecks,
+    MonitorPlay,
     Brain,
     BarChart3,
     Trophy,
@@ -37,6 +38,7 @@ const NAV = [
             { to: "/notes", label: "Notes", icon: BookOpen },
             { to: "/syllabus", label: "Syllabus", icon: ListChecks },
             { to: "/tests", label: "Tests", icon: ClipboardList },
+            { to: "/videos", label: "Videos", icon: MonitorPlay },
         ],
     },
     {
