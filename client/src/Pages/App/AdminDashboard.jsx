@@ -41,6 +41,7 @@ import StudentActivityModal from "@/Components/App/StudentActivityModal";
 import CompetitionAdmin from "@/Components/App/CompetitionAdmin";
 import AiUsageAdmin from "@/Components/App/AiUsageAdmin";
 import BlocklistAdmin from "@/Components/App/BlocklistAdmin";
+import ExamAdmin from "@/Components/App/ExamAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
@@ -634,6 +635,9 @@ export default function AdminDashboard() {
 
             {/* AI spend & usage dashboard (admins + super admin) */}
             {canManageStudents && <AiUsageAdmin />}
+
+            {/* Universities / LEET catalog — add/remove colleges (admins + super admin) */}
+            {canManageStudents && <ExamAdmin />}
 
             {/* Account block-list (super admin only) */}
             {isSuper && <BlocklistAdmin />}

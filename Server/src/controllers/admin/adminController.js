@@ -4,8 +4,10 @@ const Attempt = require("../../models/attemptModel");
 const Test = require("../../models/testModel");
 const AiQuery = require("../../models/aiQueryModel");
 const Blocklist = require("../../models/blocklistModel");
+const Exam = require("../../models/examModel");
 const aiRuntime = require("../../services/ai/aiRuntime");
 const { SUPERADMIN_EMAIL } = require("../../config/roles");
+const { refreshExams } = require("../../config/exams");
 const { timeSummary } = require("../activity/activityController");
 
 // A malformed :id would otherwise make Mongoose throw a CastError → 500. Treat
@@ -496,6 +498,68 @@ async function aiUsage(req, res, next) {
     }
 }
 
+// ── LEET exam / university catalog (admin-managed, global) ──
+
+const slugifyCode = (s) =>
+    String(s || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 60);
+
+// GET /api/admin/exams — the full catalog for management.
+async function listExams(req, res, next) {
+    try {
+        const exams = await Exam.find().sort({ group: 1, order: 1, name: 1 }).lean();
+        return res.status(200).json({ success: true, exams });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// POST /api/admin/exams — add a college / LEET. Global the moment it's saved.
+async function addExam(req, res, next) {
+    try {
+        const { name, group } = req.body || {};
+        if (!name || !String(name).trim()) {
+            return res.status(400).json({ success: false, message: "Enter the college / LEET name." });
+        }
+        let code = slugifyCode(req.body.code || name);
+        if (!code) {
+            return res.status(400).json({ success: false, message: "Use letters or numbers in the name." });
+        }
+        // Keep codes unique even if two names slugify the same.
+        if (await Exam.findOne({ code })) code = `${code}-${String(Date.now()).slice(-4)}`;
+
+        const exam = await Exam.create({
+            code,
+            name: String(name).trim().slice(0, 120),
+            group: (group && String(group).trim().slice(0, 60)) || "Other",
+            createdBy: req.user._id,
+        });
+        await refreshExams();
+        return res.status(201).json({ success: true, message: "College added", exam });
+    } catch (error) {
+        if (error && error.code === 11000) {
+            return res.status(409).json({ success: false, message: "That college is already in the list." });
+        }
+        next(error);
+    }
+}
+
+// DELETE /api/admin/exams/:id — remove a college / LEET. Global immediately.
+async function removeExam(req, res, next) {
+    try {
+        const exam = await Exam.findByIdAndDelete(req.params.id);
+        if (!exam) return res.status(404).json({ success: false, message: "Not found" });
+        await refreshExams();
+        return res.status(200).json({ success: true, message: "College removed" });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     overview,
     listStudents,
@@ -512,4 +576,7 @@ module.exports = {
     listBlocklist,
     blockEmail,
     unblockEmail,
+    listExams,
+    addExam,
+    removeExam,
 };

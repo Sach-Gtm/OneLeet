@@ -29,6 +29,12 @@ router.patch("/students/:id/achievements/reset", admin.resetStudentAchievements)
 router.patch("/students/:id/plan", requireSuperadmin, admin.setStudentPlan);
 router.post("/hall-of-fame/reset", requireSuperadmin, admin.resetHallOfFame);
 
+// LEET exam / university catalog — admins add/remove colleges; changes are
+// global (all targeting pickers + student filters read the live catalog).
+router.get("/exams", admin.listExams);
+router.post("/exams", admin.addExam);
+router.delete("/exams/:id", admin.removeExam);
+
 // Account block-list — controls who may hold an account. Super-Admin only.
 router.get("/blocklist", requireSuperadmin, admin.listBlocklist);
 router.post("/blocklist", requireSuperadmin, admin.blockEmail);
