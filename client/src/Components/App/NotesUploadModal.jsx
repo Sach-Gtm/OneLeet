@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Sparkles, Loader2, UploadCloud, PenLine, FileText, RotateCw, Image as ImageIcon } from "lucide-react";
+import { X, Brain, Loader2, UploadCloud, PenLine, FileText, RotateCw, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { uploadNote, generateNoteDraft } from "@/Api/NotesApi";
@@ -117,7 +117,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
             };
             if (source === "ai") fields.format = "text";
             await uploadNote(fields, source === "ai" ? null : file);
-            toast.success("Note published 🎉");
+            toast.success("Note published");
             reset();
             onUploaded?.();
             onClose();
@@ -161,7 +161,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                         <PenLine size={15} /> Write / Upload
                     </button>
                     <button type="button" onClick={() => setTab("ai")} className={tabBtnCls("ai")}>
-                        <Sparkles size={15} /> AI draft
+                        <Brain size={15} /> AI draft
                     </button>
                 </div>
 
@@ -226,7 +226,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                                 disabled={busy}
                                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
                             >
-                                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles size={15} />}
+                                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain size={15} />}
                                 {busy ? "Writing…" : "Generate with AI"}
                             </button>
                         </>
@@ -235,7 +235,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                             {tab === "ai" && drafted && (
                                 <div className="flex items-center justify-between rounded-lg bg-indigo-50 px-3 py-2 text-xs text-indigo-700">
                                     <span className="flex items-center gap-1.5">
-                                        <Sparkles size={13} /> AI draft — review &amp; edit, then publish.
+                                        <Brain size={13} /> AI draft — review &amp; edit, then publish.
                                     </span>
                                     <button
                                         onClick={() => setDrafted(false)}

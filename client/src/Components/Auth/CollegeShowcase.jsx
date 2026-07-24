@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { MapPin, Sparkles } from "lucide-react";
+import { MapPin, Compass } from "lucide-react";
 import { LogoMark } from "@/Components/General/Logo";
 
 // The colleges LEET can open the door to. Names are the official ones (a few
@@ -168,7 +168,7 @@ export default function CollegeShowcase({ heading, compact = false }) {
                         </Link>
                     )}
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold text-white/90 backdrop-blur-sm">
-                        <Sparkles className="h-3.5 w-3.5" /> Where LEET can take you
+                        <Compass className="h-3.5 w-3.5" /> Where LEET can take you
                     </span>
                     {!compact && heading && (
                         <h1 className="max-w-[16rem] text-2xl font-extrabold leading-tight text-white drop-shadow-md xl:text-[1.7rem]">

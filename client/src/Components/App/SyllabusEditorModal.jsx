@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Sparkles, Loader2, UploadCloud, PenLine, ScanLine, Plus, Trash2, GripVertical } from "lucide-react";
+import { X, Brain, Loader2, UploadCloud, PenLine, ScanLine, Plus, Trash2, GripVertical } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { createSyllabus, updateSyllabus, aiDraftSyllabus, aiScanSyllabus } from "@/Api/SyllabusApi";
@@ -106,7 +106,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
             const payload = { title: title.trim(), subject, chapters: cleaned, targets };
             if (isEdit) await updateSyllabus(editing._id, payload);
             else await createSyllabus(payload);
-            toast.success(isEdit ? "Syllabus updated" : "Syllabus created 🎉");
+            toast.success(isEdit ? "Syllabus updated" : "Syllabus created");
             onSaved?.();
             onClose();
         } catch (err) {
@@ -157,7 +157,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                             <PenLine size={14} /> Manual
                         </button>
                         <button type="button" onClick={() => setTab("ai")} className={tabCls("ai")}>
-                            <Sparkles size={14} /> AI refine
+                            <Brain size={14} /> AI refine
                         </button>
                         <button type="button" onClick={() => setTab("scan")} className={tabCls("scan")}>
                             <ScanLine size={14} /> Scan PDF
@@ -184,7 +184,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                                 disabled={busy}
                                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
                             >
-                                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles size={15} />}
+                                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain size={15} />}
                                 {busy ? "Refining…" : "Refine into chapters & topics"}
                             </button>
                         </div>

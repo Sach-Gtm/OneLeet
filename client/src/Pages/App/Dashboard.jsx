@@ -8,13 +8,14 @@ import {
     Clock,
     Play,
     CalendarDays,
-    Sparkles,
+    Brain,
     Flame,
     Activity,
     BookOpen,
     Loader2,
     ArrowRight,
     Camera,
+    Hand,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
@@ -249,8 +250,9 @@ export default function Dashboard() {
                     className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white lg:col-span-2"
                 >
                     <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-                    <h1 className="text-2xl font-bold">
-                        Welcome back, {firstName}! <span className="align-middle">👋</span>
+                    <h1 className="flex items-center gap-2 text-2xl font-bold">
+                        Welcome back, {firstName}!
+                        <Hand className="h-6 w-6 shrink-0 text-amber-300" />
                     </h1>
                     <p className="mt-1 max-w-md text-sm text-indigo-100">
                         {streak > 0
@@ -337,7 +339,7 @@ export default function Dashboard() {
                     <div className="pointer-events-none absolute -right-8 -bottom-8 h-40 w-40 rounded-full bg-indigo-500/20 blur-2xl" />
                     <div className="relative">
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
-                            <Sparkles size={13} /> AI Insight
+                            <Brain size={13} /> AI Insight
                         </span>
                         <h2 className="mt-3 text-xl font-bold">
                             Personalised coaching, powered by AI

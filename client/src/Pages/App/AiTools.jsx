@@ -1,11 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import {
-    Wand2,
+    Brain,
     Gauge,
     BarChart3,
     CalendarDays,
     Loader2,
-    Sparkles,
     Lightbulb,
     Target,
     ChevronRight,
@@ -93,7 +92,7 @@ function TrendingTopics() {
 }
 
 const TOOLS = [
-    { key: "questions", label: "Question Gen", icon: Wand2 },
+    { key: "questions", label: "Question Gen", icon: Brain },
     { key: "predictor", label: "Predictor", icon: Gauge },
     { key: "analyzer", label: "Analyzer", icon: BarChart3 },
     { key: "planner", label: "Study Plan", icon: CalendarDays },
@@ -124,7 +123,7 @@ function RunButton({ loading, children, onClick }) {
             disabled={loading}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
         >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles size={15} />}
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain size={15} />}
             {children}
         </button>
     );
@@ -469,7 +468,7 @@ export default function AiTools() {
                             provider === "gemini" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
                         )}
                     >
-                        <Sparkles size={13} />
+                        <Brain size={13} />
                         {provider === "gemini" ? "Powered by Gemini" : "Sample mode · add GEMINI_API_KEY"}
                     </span>
                 )}

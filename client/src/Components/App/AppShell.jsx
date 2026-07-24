@@ -6,7 +6,7 @@ import {
     BookOpen,
     ClipboardList,
     ListChecks,
-    Sparkles,
+    Brain,
     BarChart3,
     Trophy,
     Users,
@@ -18,7 +18,7 @@ import {
     Loader2,
     ShieldCheck,
     ChevronDown,
-    Wand2,
+    PencilRuler,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
@@ -42,7 +42,7 @@ const NAV = [
     {
         section: "AI & Stats",
         items: [
-            { to: "/ai-tools", label: "AI Tools", icon: Sparkles },
+            { to: "/ai-tools", label: "AI Tools", icon: Brain },
             { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
             { to: "/analytics", label: "Analytics", icon: BarChart3 },
         ],
@@ -77,7 +77,7 @@ function SidebarContent({ user, onNavigate, onLogout }) {
               {
                   section: "Staff",
                   items: [
-                      { to: "/studio", label: "Content Studio", icon: Wand2 },
+                      { to: "/studio", label: "Content Studio", icon: PencilRuler },
                       { to: "/admin", label: "Admin", icon: ShieldCheck },
                   ],
               },

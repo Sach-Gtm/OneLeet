@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
     Search,
     ChevronDown,
-    Sparkles,
+    Brain,
     Layers,
     User,
     Loader2,
@@ -103,7 +103,7 @@ function NoteCard({ note, onSummary, onFlashcards, onRead }) {
                     onClick={() => onSummary(note)}
                     className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
                 >
-                    <Sparkles size={13} /> AI Summary
+                    <Brain size={13} /> AI Summary
                 </button>
                 <button
                     onClick={() => onFlashcards(note)}

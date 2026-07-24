@@ -1,4 +1,4 @@
-import { X, BookOpen, Loader2, Sparkles } from "lucide-react";
+import { X, BookOpen, Loader2, Brain } from "lucide-react";
 
 // A tiny, SAFE Markdown-ish renderer: headings (#..####), bullets (-, *),
 // **bold**, and paragraphs. It builds React nodes (never dangerouslySetInnerHTML),
@@ -108,7 +108,7 @@ export default function NoteReaderModal({ open, onClose, loading, note }) {
                         <>
                             {note.source === "ai" && (
                                 <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-600">
-                                    <Sparkles size={12} /> AI-assisted note
+                                    <Brain size={12} /> AI-assisted note
                                 </div>
                             )}
                             <Markdown content={note.content} />

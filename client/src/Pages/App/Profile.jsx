@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { updateProfile, changePassword, uploadPassportPhoto } from "@/Api/AuthApis";
 import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
+import RankMedal from "@/Components/App/RankMedal";
 import { missingProfileFields } from "@/lib/profile";
 import { isStaff, roleLabel } from "@/lib/roles";
 
@@ -395,17 +396,25 @@ export default function Profile() {
                         {totalPodiums === 0 ? (
                             <p className="text-sm text-slate-400">
                                 No podium finishes yet. Finish in the Top 3 of a competitive test to
-                                earn 🥇 🥈 🥉 badges.
+                                earn{" "}
+                                <span className="inline-flex items-center gap-1 align-middle">
+                                    <RankMedal rank={1} className="h-4 w-4" />
+                                    <RankMedal rank={2} className="h-4 w-4" />
+                                    <RankMedal rank={3} className="h-4 w-4" />
+                                </span>{" "}
+                                badges.
                             </p>
                         ) : (
                             <div className="grid grid-cols-3 gap-3 text-center">
                                 {[
-                                    ["🥇", "Rank 1", ach.rank1],
-                                    ["🥈", "Rank 2", ach.rank2],
-                                    ["🥉", "Rank 3", ach.rank3],
-                                ].map(([emoji, label, count]) => (
+                                    [1, "Rank 1", ach.rank1],
+                                    [2, "Rank 2", ach.rank2],
+                                    [3, "Rank 3", ach.rank3],
+                                ].map(([rank, label, count]) => (
                                     <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                                        <div className="text-2xl leading-none">{emoji}</div>
+                                        <div className="flex justify-center">
+                                            <RankMedal rank={rank} className="h-7 w-7" />
+                                        </div>
                                         <div className="mt-1 text-lg font-extrabold text-slate-800">
                                             {count || 0}
                                         </div>

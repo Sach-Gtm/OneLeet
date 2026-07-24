@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
+import { PartyPopper, TrendingUp } from "lucide-react";
+import RankMedal from "@/Components/App/RankMedal";
 
 // Celebratory UI for a Top-3 finish on a competitive test. Self-contained: the
 // confetti is a tiny canvas particle burst (no dependency) that respects
 // prefers-reduced-motion and cleans itself up.
 
-const MEDAL = { 1: "🥇", 2: "🥈", 3: "🥉" };
 const CONFETTI_COLORS = ["#4f46e5", "#7c3aed", "#EC7A54", "#3FB0D6", "#f59e0b", "#10b981"];
 
 function ordinal(n) {
@@ -79,18 +80,18 @@ function Confetti() {
 
 // Shown when the logged-in student finished in the Top 3.
 export function Celebration({ rank, timesAtRank = 0 }) {
-    const medal = MEDAL[rank] || "🎉";
     const nth =
         timesAtRank > 1 ? ` This is your ${ordinal(timesAtRank)} time reaching Rank #${rank}!` : "";
     return (
         <div className="relative overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-indigo-50 p-6 text-center">
             <Confetti />
             <div className="relative">
-                <div className="text-5xl" role="img" aria-label={`Rank ${rank} medal`}>
-                    {medal}
+                <div className="flex justify-center">
+                    <RankMedal rank={rank} className="h-14 w-14" />
                 </div>
-                <h2 className="mt-2 text-2xl font-extrabold text-slate-900">
-                    🎉 Congratulations! You secured Rank&nbsp;#{rank}
+                <h2 className="mt-2 flex items-center justify-center gap-2 text-2xl font-extrabold text-slate-900">
+                    <PartyPopper className="h-6 w-6 shrink-0 text-amber-500" />
+                    Congratulations! You secured Rank&nbsp;#{rank}
                 </h2>
                 <p className="mx-auto mt-1 max-w-md text-sm font-medium text-slate-600">
                     An outstanding performance in this test.{nth} Keep up the excellent work!
@@ -104,10 +105,10 @@ export function Celebration({ rank, timesAtRank = 0 }) {
 export function Encourage({ rank, total }) {
     return (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
-            <div className="text-4xl" role="img" aria-label="Keep going">
-                💪
-            </div>
-            <h2 className="mt-1 text-lg font-bold text-slate-900">Great effort!</h2>
+            <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-indigo-50 text-indigo-500">
+                <TrendingUp className="h-6 w-6" />
+            </span>
+            <h2 className="mt-2 text-lg font-bold text-slate-900">Great effort!</h2>
             <p className="mt-1 text-sm text-slate-500">
                 You finished{rank ? ` #${rank}` : ""}
                 {total ? ` of ${total}` : ""}. Keep practicing — your next Top&nbsp;3 finish could

@@ -136,7 +136,9 @@ function HallOfFame() {
             <div className="grid grid-cols-[44px_1fr_auto] gap-3 border-b border-slate-100 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 <span className="text-center">#</span>
                 <span>Student</span>
-                <span className="text-right">🥇 Times Rank #1</span>
+                <span className="flex items-center justify-end gap-1 text-right">
+                    <Medal className="h-3.5 w-3.5 text-amber-500" /> Times Rank #1
+                </span>
             </div>
             <div className="divide-y divide-slate-100">
                 {rows.map((r) => (
@@ -169,8 +171,13 @@ function HallOfFame() {
                                     {r.isCurrentUser && <span className="ml-1 text-indigo-500">(You)</span>}
                                 </p>
                                 {(r.timesRank2 > 0 || r.timesRank3 > 0) && (
-                                    <p className="text-xs text-slate-400">
-                                        🥈 {r.timesRank2} · 🥉 {r.timesRank3}
+                                    <p className="flex items-center gap-2.5 text-xs text-slate-400">
+                                        <span className="inline-flex items-center gap-0.5">
+                                            <Medal className="h-3.5 w-3.5 text-slate-400" /> {r.timesRank2}
+                                        </span>
+                                        <span className="inline-flex items-center gap-0.5">
+                                            <Medal className="h-3.5 w-3.5 text-orange-400" /> {r.timesRank3}
+                                        </span>
                                     </p>
                                 )}
                             </div>
@@ -302,7 +309,9 @@ export default function Leaderboard() {
                         This Week
                     </TabButton>
                     <TabButton active={tab === "fame"} onClick={() => setTab("fame")}>
-                        🏆 Hall of Fame
+                        <span className="inline-flex items-center gap-1.5">
+                            <Trophy className="h-4 w-4" /> Hall of Fame
+                        </span>
                     </TabButton>
                 </div>
             </div>

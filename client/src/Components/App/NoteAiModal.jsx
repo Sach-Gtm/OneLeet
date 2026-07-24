@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Sparkles, Loader2, Lightbulb, RotateCw } from "lucide-react";
+import { X, Brain, Loader2, Lightbulb, RotateCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function Flashcard({ card }) {
@@ -31,7 +31,7 @@ export default function NoteAiModal({ open, onClose, mode, noteTitle, loading, d
                 <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
                     <div className="flex items-center gap-2">
                         <span className="grid h-8 w-8 place-items-center rounded-lg bg-indigo-50 text-indigo-600">
-                            <Sparkles size={16} />
+                            <Brain size={16} />
                         </span>
                         <div>
                             <p className="text-sm font-bold text-slate-800">
