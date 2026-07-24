@@ -6,7 +6,7 @@ import {
     Target,
     Clock,
     Flame,
-    Sparkles,
+    Brain,
     Crown,
     Trophy,
     RotateCcw,
@@ -14,6 +14,7 @@ import {
 import toast from "react-hot-toast";
 import { getStudentActivity, resetStudentAchievements } from "@/Api/AdminApi";
 import { timeAgo } from "@/lib/format";
+import RankMedal from "@/Components/App/RankMedal";
 
 const fmtTime = (min) => {
     const m = Math.max(0, Math.round(min || 0));
@@ -141,9 +142,16 @@ export default function StudentActivityModal({ studentId, onClose }) {
                         <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 p-3">
                             <Trophy className="h-4 w-4 text-amber-500" />
                             <span className="text-xs font-semibold text-slate-600">Achievements</span>
-                            <span className="text-sm text-slate-700">
-                                🥇 {s.achievements?.rank1 || 0} · 🥈 {s.achievements?.rank2 || 0} · 🥉{" "}
-                                {s.achievements?.rank3 || 0}
+                            <span className="flex items-center gap-3 text-sm font-semibold text-slate-700">
+                                <span className="inline-flex items-center gap-1">
+                                    <RankMedal rank={1} className="h-4 w-4" /> {s.achievements?.rank1 || 0}
+                                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <RankMedal rank={2} className="h-4 w-4" /> {s.achievements?.rank2 || 0}
+                                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <RankMedal rank={3} className="h-4 w-4" /> {s.achievements?.rank3 || 0}
+                                </span>
                             </span>
                             {(s.achievements?.rank1 || s.achievements?.rank2 || s.achievements?.rank3) > 0 && (
                                 <button
@@ -182,7 +190,7 @@ export default function StudentActivityModal({ studentId, onClose }) {
                         {data.ai?.topTopics?.length > 0 && (
                             <div className="mt-5">
                                 <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-slate-400">
-                                    <Sparkles className="h-3.5 w-3.5" /> Searched on AI
+                                    <Brain className="h-3.5 w-3.5" /> Searched on AI
                                 </p>
                                 <div className="flex flex-wrap gap-1.5">
                                     {data.ai.topTopics.map((t) => (

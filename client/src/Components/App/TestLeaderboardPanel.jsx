@@ -3,8 +3,7 @@ import { Trophy, Clock, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getTestLeaderboard } from "@/Api/LeaderboardApi";
 import { Celebration, Encourage } from "@/Components/App/Celebration";
-
-const MEDAL = { 1: "🥇", 2: "🥈", 3: "🥉" };
+import RankMedal from "@/Components/App/RankMedal";
 
 function fmtCountdown(ms) {
     const total = Math.ceil(ms / 1000);
@@ -114,7 +113,7 @@ export default function TestLeaderboardPanel({ testId }) {
                             )}
                         >
                             <span className="grid w-7 shrink-0 place-items-center text-sm font-bold text-slate-500">
-                                {MEDAL[r.rank] || r.rank}
+                                <RankMedal rank={r.rank} className="h-5 w-5" />
                             </span>
                             {r.avatar ? (
                                 <img src={r.avatar} alt="" className="h-7 w-7 rounded-full object-cover" />

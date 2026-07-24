@@ -5,7 +5,7 @@ import {
     Eye,
     Play,
     Download,
-    Sparkles,
+    Brain,
     FileQuestion,
     Loader2,
     Lightbulb,
@@ -255,7 +255,7 @@ export default function PyqArchive() {
                     </p>
                 </div>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
-                    <Sparkles size={13} /> AI Categorization
+                    <Brain size={13} /> AI Categorization
                 </span>
             </div>
 

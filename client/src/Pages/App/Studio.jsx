@@ -2,8 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
-    Sparkles,
-    Wand2,
+    PencilRuler,
+    Brain,
     Plus,
     Trash2,
     Loader2,
@@ -300,7 +300,7 @@ export default function Studio() {
         <div className="mx-auto max-w-4xl space-y-6">
             <div>
                 <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900">
-                    <Sparkles className="h-6 w-6 text-indigo-600" /> AI Content Studio
+                    <PencilRuler className="h-6 w-6 text-indigo-600" /> AI Content Studio
                 </h1>
                 <p className="text-sm text-slate-500">
                     Paste material or name a topic, let AI draft it, then edit and publish.
@@ -382,7 +382,7 @@ export default function Studio() {
             {/* Create with AI */}
             <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
                 <div className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-800">
-                    <Wand2 className="h-4 w-4 text-indigo-600" /> Draft a test with AI
+                    <Brain className="h-4 w-4 text-indigo-600" /> Draft a test with AI
                 </div>
                 <div className="mb-3 grid grid-cols-2 gap-2 sm:max-w-md">
                     {MODES.map((m) => {
@@ -444,7 +444,7 @@ export default function Studio() {
                         disabled={drafting}
                         className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
                     >
-                        {drafting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                        {drafting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
                         Draft
                     </button>
                 </div>

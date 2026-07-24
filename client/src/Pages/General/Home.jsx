@@ -3,7 +3,8 @@ import {
     ArrowRight,
     FileText,
     ClipboardCheck,
-    Sparkles,
+    Brain,
+    GraduationCap,
     BookOpen,
     Trophy,
     Users,
@@ -17,7 +18,7 @@ import { useSeo } from "@/lib/useSeo";
 const features = [
     { icon: FileText, title: "Real past papers", desc: "Actual LEET papers — practise what the exam really asks.", tint: "bg-indigo-50 border-indigo-100", iconBg: "bg-indigo-500" },
     { icon: ClipboardCheck, title: "Exam-pattern mocks", desc: "Timed tests, instant scoring, every mistake explained.", tint: "bg-rose-50 border-rose-100", iconBg: "bg-rose-500" },
-    { icon: Sparkles, title: "AI practice", desc: "Unlimited questions on any topic, any difficulty, in seconds.", tint: "bg-violet-50 border-violet-100", iconBg: "bg-violet-500" },
+    { icon: Brain, title: "AI practice", desc: "Unlimited questions on any topic, any difficulty, in seconds.", tint: "bg-violet-50 border-violet-100", iconBg: "bg-violet-500" },
     { icon: BookOpen, title: "Smart notes", desc: "High-yield notes and flashcards for last-mile revision.", tint: "bg-amber-50 border-amber-100", iconBg: "bg-amber-500" },
     { icon: Trophy, title: "Leaderboard", desc: "Measure yourself against real aspirants, every day.", tint: "bg-emerald-50 border-emerald-100", iconBg: "bg-emerald-500" },
     { icon: Users, title: "Mentors", desc: "Guidance from students who actually cracked LEET.", tint: "bg-sky-50 border-sky-100", iconBg: "bg-sky-500" },
@@ -62,7 +63,7 @@ export default function Home() {
                     className="mx-auto max-w-3xl space-y-6"
                 >
                     <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white/70 px-4 py-1.5 text-xs font-semibold text-indigo-700 shadow-sm backdrop-blur-sm">
-                        <Sparkles className="h-3.5 w-3.5" /> Built for LEET aspirants
+                        <GraduationCap className="h-3.5 w-3.5" /> Built for LEET aspirants
                     </span>
 
                     <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl md:text-6xl">

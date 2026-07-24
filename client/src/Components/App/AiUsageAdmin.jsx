@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sparkles, Loader2, Database, Coins } from "lucide-react";
+import { Brain, Loader2, Database, Coins } from "lucide-react";
 import { getAiUsage } from "@/Api/AdminApi";
 
 // AI spend & usage dashboard for admins: how many generations ran, how many were
@@ -40,7 +40,7 @@ export default function AiUsageAdmin() {
     return (
         <div className="rounded-xl border border-slate-200 bg-white p-4">
             <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-800">
-                <Sparkles className="h-4 w-4 text-indigo-600" /> AI spend &amp; usage
+                <Brain className="h-4 w-4 text-indigo-600" /> AI spend &amp; usage
                 <span className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
                     <Database className="h-3.5 w-3.5" /> {month.cacheHitRate}% served from cache this month
                 </span>
