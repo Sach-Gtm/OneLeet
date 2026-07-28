@@ -17,6 +17,7 @@ import {
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "@/Components/General/Logo";
+import ThemeToggle from "@/Components/App/ThemeToggle";
 
 export default function Navbar() {
     const location = useLocation();
@@ -124,6 +125,7 @@ export default function Navbar() {
                         </div>
 
                         <div className="hidden md:flex items-center gap-3">
+                            <ThemeToggle variant="icon" />
                             {isLoggedIn ? (
                                 <button
                                     onClick={handleLogoutClick}
@@ -146,32 +148,35 @@ export default function Navbar() {
                             )}
                         </div>
 
-                        <button
-                            className="md:hidden text-slate-700 p-2 rounded-lg hover:bg-slate-100 active:scale-95 transition-all"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        >
-                            <AnimatePresence mode="wait">
-                                {mobileMenuOpen ? (
-                                    <motion.div
-                                        key="close"
-                                        initial={{ rotate: -90, opacity: 0 }}
-                                        animate={{ rotate: 0, opacity: 1 }}
-                                        exit={{ rotate: 90, opacity: 0 }}
-                                    >
-                                        <X size={24} />
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        key="menu"
-                                        initial={{ rotate: 90, opacity: 0 }}
-                                        animate={{ rotate: 0, opacity: 1 }}
-                                        exit={{ rotate: -90, opacity: 0 }}
-                                    >
-                                        <Menu size={24} />
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </button>
+                        <div className="flex items-center gap-1 md:hidden">
+                            <ThemeToggle variant="icon" />
+                            <button
+                                className="text-slate-700 p-2 rounded-lg hover:bg-slate-100 active:scale-95 transition-all"
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            >
+                                <AnimatePresence mode="wait">
+                                    {mobileMenuOpen ? (
+                                        <motion.div
+                                            key="close"
+                                            initial={{ rotate: -90, opacity: 0 }}
+                                            animate={{ rotate: 0, opacity: 1 }}
+                                            exit={{ rotate: 90, opacity: 0 }}
+                                        >
+                                            <X size={24} />
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="menu"
+                                            initial={{ rotate: 90, opacity: 0 }}
+                                            animate={{ rotate: 0, opacity: 1 }}
+                                            exit={{ rotate: -90, opacity: 0 }}
+                                        >
+                                            <Menu size={24} />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </button>
+                        </div>
                     </div>
 
                     <AnimatePresence>
