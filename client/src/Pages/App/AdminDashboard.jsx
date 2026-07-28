@@ -43,6 +43,7 @@ import AiUsageAdmin from "@/Components/App/AiUsageAdmin";
 import BlocklistAdmin from "@/Components/App/BlocklistAdmin";
 import ExamAdmin from "@/Components/App/ExamAdmin";
 import ReviewAdmin from "@/Components/App/ReviewAdmin";
+import MentorAdmin from "@/Components/App/MentorAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
@@ -642,6 +643,9 @@ export default function AdminDashboard() {
 
             {/* Landing-page reviews — add/remove testimonials (admins + super admin) */}
             {canManageStudents && <ReviewAdmin />}
+
+            {/* Mentors — add/remove mentor profiles (admins + super admin) */}
+            {canManageStudents && <MentorAdmin />}
 
             {/* Account block-list (super admin only) */}
             {isSuper && <BlocklistAdmin />}
