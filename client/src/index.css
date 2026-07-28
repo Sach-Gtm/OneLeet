@@ -298,3 +298,20 @@
 .dark .text-emerald-800 { color: #34d399; }
 .dark .text-sky-800 { color: #38bdf8; }
 .dark .text-violet-800 { color: #f0a483; }
+
+/* Continuously-scrolling reviews marquee. The row renders the cards twice, so
+   translating it by -50% loops seamlessly. Pauses when the row is hovered. */
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-x var(--marquee-dur, 48s) linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}

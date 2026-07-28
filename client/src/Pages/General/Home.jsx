@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import Footer from "@/Components/General/Footer";
 import ShaderHero from "@/Components/General/ShaderHero";
 import JourneyReveal from "@/Components/General/JourneyReveal";
+import ReviewsSection from "@/Components/General/ReviewsSection";
 import { useSeo } from "@/lib/useSeo";
 
 const features = [
@@ -197,6 +198,9 @@ export default function Home() {
                     </Link>
                 </div>
             </section>
+
+            {/* Student reviews — a moving marquee, just before the footer. */}
+            <ReviewsSection />
 
             <Footer />
         </>

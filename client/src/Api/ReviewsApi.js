@@ -18,9 +18,16 @@ export const getReviews = async () => {
 };
 
 // --- Admin management ---
-export const createReview = async (payload) => {
+// Multipart: a video review carries an uploaded clip; text reviews just fields.
+export const createReview = async ({ type, text, title, author, video }) => {
     try {
-        const { data } = await api.post("/reviews", payload);
+        const form = new FormData();
+        form.append("type", type);
+        if (text) form.append("text", text);
+        if (title) form.append("title", title);
+        if (author) form.append("author", author);
+        if (video) form.append("video", video);
+        const { data } = await api.post("/reviews", form);
         return data.review;
     } catch (error) {
         unwrap(error);

@@ -14,8 +14,12 @@ const ReviewSchema = new mongoose.Schema(
         title: { type: String, trim: true, maxlength: [160, "Title too long"] },
         // Who gave it (name / college / role) — optional.
         author: { type: String, trim: true, maxlength: [100, "Name too long"] },
-        // For video reviews: the 11-char YouTube id (parsed from the pasted URL).
-        youtubeId: { type: String, trim: true, maxlength: [40, "Invalid video id"] },
+        // For video reviews: the uploaded clip, hosted on Cloudinary and played
+        // inline on the site (no external link).
+        video: {
+            url: { type: String, trim: true },
+            publicId: { type: String, trim: true },
+        },
         published: { type: Boolean, default: true, index: true },
         order: { type: Number, default: 0 },
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

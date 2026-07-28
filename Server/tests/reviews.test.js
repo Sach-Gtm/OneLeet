@@ -1,5 +1,7 @@
 // Tests for landing-page reviews: PUBLIC read (no auth), ADMIN-only add/delete,
-// text + video shapes, and YouTube-id parsing for video reviews.
+// text reviews + validation. Video reviews upload a clip to Cloudinary, which
+// needs live credentials, so here we only assert a video review without a file
+// is rejected — the happy-path upload is covered manually.
 // Run: node tests/reviews.test.js
 const assert = require("assert");
 const { MongoMemoryServer } = require("mongodb-memory-server");
@@ -63,42 +65,27 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
         .send({ type: "text", text: "OneLeet got me into DTU!", author: "Rahul, Diploma CS" });
     assert.strictEqual(addText.status, 201, "admin adds a text review");
     assert.strictEqual(addText.body.review.type, "text");
+    assert.strictEqual(addText.body.review.video, null, "text review has no video");
+    ok("an admin adds a text review");
 
-    // Admin adds a video review — id parsed from the URL.
-    const addVideo = await request
-        .post("/api/reviews")
-        .set(...auth(adminToken))
-        .send({ type: "video", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", title: "My LEET journey" });
-    assert.strictEqual(addVideo.status, 201, "admin adds a video review");
-    assert.strictEqual(addVideo.body.review.youtubeId, "dQw4w9WgXcQ", "video id parsed from URL");
-    const videoId = addVideo.body.review._id;
-    ok("an admin adds text and video reviews (video id parsed from the link)");
-
-    // A video review needs a title, and a valid link.
-    const noTitle = await request
-        .post("/api/reviews").set(...auth(adminToken))
-        .send({ type: "video", url: "https://youtu.be/dQw4w9WgXcQ" });
-    assert.strictEqual(noTitle.status, 400, "video without a title is rejected");
-    const badLink = await request
-        .post("/api/reviews").set(...auth(adminToken))
-        .send({ type: "video", url: "nope", title: "x" });
-    assert.strictEqual(badLink.status, 400, "video with a bad link is rejected");
-    // A text review needs text.
+    // A text review needs text; a video review needs an uploaded clip.
     const noText = await request.post("/api/reviews").set(...auth(adminToken)).send({ type: "text" });
     assert.strictEqual(noText.status, 400, "empty text review is rejected");
-    ok("validation: video needs title+valid link, text needs a message");
+    const noFile = await request.post("/api/reviews").set(...auth(adminToken)).send({ type: "video", title: "x" });
+    assert.strictEqual(noFile.status, 400, "video review without a file is rejected");
+    ok("validation: text needs a message, a video review needs an uploaded clip");
 
-    // Public list now shows both, safe fields only (no createdBy).
+    // Public list shows the text review, safe fields only (no createdBy).
     const pub = await request.get("/api/reviews");
-    assert.strictEqual(pub.body.reviews.length, 2, "both reviews are public");
+    assert.strictEqual(pub.body.reviews.length, 1, "review is public");
     assert.ok(!("createdBy" in pub.body.reviews[0]), "internal fields not exposed");
+    assert.ok("video" in pub.body.reviews[0], "video field present in the shape");
     ok("published reviews appear on the public endpoint with safe fields only");
 
-    // Admin deletes one.
-    const del = await request.delete(`/api/reviews/${videoId}`).set(...auth(adminToken));
+    // Admin deletes it.
+    const del = await request.delete(`/api/reviews/${addText.body.review._id}`).set(...auth(adminToken));
     assert.strictEqual(del.status, 200, "admin deletes a review");
-    const pub2 = await request.get("/api/reviews");
-    assert.strictEqual(pub2.body.reviews.length, 1, "one review left after delete");
+    assert.strictEqual((await request.get("/api/reviews")).body.reviews.length, 0, "none left after delete");
     ok("an admin can delete a review");
 
     await mongoose.disconnect();

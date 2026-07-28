@@ -1,26 +1,28 @@
-import { useEffect, useState, useCallback } from "react";
-import { Star, Loader2, Plus, Trash2, Quote, MonitorPlay } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Star, Loader2, Plus, Trash2, Quote, MonitorPlay, Upload, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { getReviews, createReview, deleteReview } from "@/Api/ReviewsApi";
-import { parseYouTubeId, youTubeThumb } from "@/lib/youtube";
 
 const inCls =
     "h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
 const taCls =
     "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
+const MAX_BYTES = 50 * 1024 * 1024;
 
-// Admin-only: manage the landing-page review strip. Add a written review or a
-// YouTube video review (with a subject/title), or remove one. No dummy data —
-// the strip only appears once a real review is added here.
+// Admin-only: manage the landing-page review marquee. Add a written review or
+// upload a short video clip (played inline on the site — no external link), or
+// remove one. No dummy data — the section only appears once a real review exists.
 export default function ReviewAdmin() {
     const [rows, setRows] = useState(null);
     const [type, setType] = useState("text");
     const [text, setText] = useState("");
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
-    const [url, setUrl] = useState("");
+    const [video, setVideo] = useState(null);
+    const [preview, setPreview] = useState("");
     const [busy, setBusy] = useState(false);
+    const fileRef = useRef(null);
 
     const load = useCallback(() => {
         getReviews()
@@ -31,25 +33,37 @@ export default function ReviewAdmin() {
         load();
     }, [load]);
 
-    const vid = parseYouTubeId(url);
+    const pickVideo = (e) => {
+        const f = e.target.files?.[0];
+        if (!f) return;
+        if (f.size > MAX_BYTES) {
+            toast.error("Video must be 50 MB or smaller.");
+            return;
+        }
+        setVideo(f);
+        setPreview(URL.createObjectURL(f));
+    };
+    const clearVideo = () => {
+        setVideo(null);
+        setPreview("");
+        if (fileRef.current) fileRef.current.value = "";
+    };
+
     const reset = () => {
         setText("");
         setTitle("");
         setAuthor("");
-        setUrl("");
+        clearVideo();
     };
 
     const add = async (e) => {
         e.preventDefault();
         if (type === "text" && !text.trim()) return toast.error("Write the review message.");
-        if (type === "video") {
-            if (!vid) return toast.error("Paste a valid YouTube link.");
-            if (!title.trim()) return toast.error("Add a subject / title for the video.");
-        }
+        if (type === "video" && !video) return toast.error("Choose a video clip to upload.");
         setBusy(true);
         try {
-            await createReview({ type, text: text.trim(), title: title.trim(), author: author.trim(), url });
-            toast.success("Review added — live on the landing page");
+            await createReview({ type, text: text.trim(), title: title.trim(), author: author.trim(), video });
+            toast.success(type === "video" ? "Video review uploaded — live now" : "Review added — live now");
             reset();
             load();
         } catch (err) {
@@ -74,7 +88,7 @@ export default function ReviewAdmin() {
         <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
             <div className="mb-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
                 <Star className="h-4 w-4 text-amber-500" /> Landing-page reviews
-                <span className="font-normal text-slate-400">— shown in the strip above the navbar</span>
+                <span className="font-normal text-slate-400">— a moving marquee near the bottom of the page</span>
             </div>
 
             {/* Text vs video */}
@@ -116,24 +130,32 @@ export default function ReviewAdmin() {
                     />
                 ) : (
                     <>
-                        <input
-                            value={url}
-                            onChange={(e) => setUrl(e.target.value)}
-                            placeholder="YouTube link (https://youtu.be/…)"
-                            className={inCls}
-                        />
-                        {url &&
-                            (vid ? (
-                                <div className="flex items-center gap-2 text-xs font-medium text-emerald-600">
-                                    <img src={youTubeThumb(vid)} alt="" className="h-8 w-14 rounded object-cover" /> Valid link
-                                </div>
-                            ) : (
-                                <p className="text-xs text-rose-500">That isn&apos;t a YouTube link yet.</p>
-                            ))}
+                        {preview ? (
+                            <div className="relative overflow-hidden rounded-lg bg-slate-900">
+                                <video src={preview} muted loop autoPlay playsInline className="h-40 w-full object-cover" />
+                                <button
+                                    type="button"
+                                    onClick={clearVideo}
+                                    className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-black/60 text-white"
+                                    aria-label="Remove video"
+                                >
+                                    <X size={12} />
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => fileRef.current?.click()}
+                                className="flex w-full flex-col items-center gap-1.5 rounded-lg border border-dashed border-slate-300 py-6 text-sm text-slate-500 hover:border-indigo-400 hover:text-indigo-600 dark:border-slate-600"
+                            >
+                                <Upload size={18} /> Upload a video clip (MP4/WebM, ≤50 MB)
+                            </button>
+                        )}
+                        <input ref={fileRef} type="file" accept="video/*" onChange={pickVideo} className="hidden" />
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Subject / title of the video"
+                            placeholder="Caption / title (optional)"
                             className={inCls}
                         />
                     </>
@@ -151,7 +173,7 @@ export default function ReviewAdmin() {
                         className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60 dark:bg-indigo-600 dark:hover:bg-indigo-500"
                     >
                         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                        Add
+                        {busy && type === "video" ? "Uploading…" : "Add"}
                     </button>
                 </div>
             </form>
@@ -168,20 +190,12 @@ export default function ReviewAdmin() {
                 <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                     {rows.map((rv) => (
                         <li key={rv._id} className="flex items-center gap-3 py-2">
-                            {rv.type === "video" ? (
-                                <img
-                                    src={youTubeThumb(rv.youtubeId)}
-                                    alt=""
-                                    className="h-9 w-16 shrink-0 rounded object-cover"
-                                />
-                            ) : (
-                                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-400 dark:bg-slate-800">
-                                    <Quote size={15} />
-                                </span>
-                            )}
+                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-400 dark:bg-slate-800">
+                                {rv.type === "video" ? <MonitorPlay size={15} /> : <Quote size={15} />}
+                            </span>
                             <div className="min-w-0 flex-1">
                                 <p className="truncate text-sm text-slate-700 dark:text-slate-200">
-                                    {rv.type === "video" ? rv.title : rv.text}
+                                    {rv.type === "video" ? rv.title || "Video review" : rv.text}
                                 </p>
                                 {rv.author && <p className="truncate text-xs text-slate-400">{rv.author}</p>}
                             </div>
