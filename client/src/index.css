@@ -171,3 +171,130 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* =========================================================================
+   DARK MODE
+   The app is authored in light Tailwind utilities (bg-white, text-slate-*,
+   border-slate-*). Rather than annotate every component, we remap that palette
+   to a cohesive dark theme under `.dark` (set on <html> by the theme toggle).
+   These rules are UNLAYERED, so they beat Tailwind's layered utilities; and we
+   deliberately DON'T touch low-opacity white overlays (bg-white/10../40) or
+   already-dark slate-800/900/950 surfaces, which are correct on dark as-is.
+   ========================================================================= */
+.dark {
+  color-scheme: dark;
+  --dk-bg: #0b1220;         /* page */
+  --dk-surface: #141c2e;    /* cards (bg-white) */
+  --dk-surface-2: #1b2436;  /* subtle fills (bg-slate-50) */
+  --dk-surface-3: #212c42;  /* fills (bg-slate-100) */
+  --dk-surface-4: #29354e;  /* stronger fills (bg-slate-200) */
+  --dk-border: #2a3752;
+  --dk-border-soft: #1f2a40;
+  --dk-border-strong: #3b4a68;
+  --dk-text-900: #f1f5f9;
+  --dk-text-800: #e6ecf5;
+  --dk-text-700: #d3dcea;
+  --dk-text-600: #b4c0d4;
+  --dk-text-500: #93a1b8;
+  --dk-text-400: #7f8da6;
+  --dk-text-300: #64748b;
+}
+
+/* Page + solid surfaces */
+.dark .bg-\[\#FAF9F6\] { background-color: var(--dk-bg); }
+.dark .bg-white { background-color: var(--dk-surface); }
+.dark .bg-slate-50 { background-color: var(--dk-surface-2); }
+.dark .bg-slate-100 { background-color: var(--dk-surface-3); }
+.dark .bg-slate-200 { background-color: var(--dk-surface-4); }
+
+/* Translucent surfaces (sticky headers / navbar) — keep the blur, darken tint */
+.dark .bg-white\/90 { background-color: rgb(20 28 46 / 0.9); }
+.dark .bg-white\/80 { background-color: rgb(20 28 46 / 0.8); }
+.dark .bg-white\/70 { background-color: rgb(20 28 46 / 0.7); }
+.dark .bg-white\/60 { background-color: rgb(20 28 46 / 0.6); }
+.dark .bg-slate-50\/90 { background-color: rgb(27 36 54 / 0.9); }
+.dark .bg-slate-50\/70 { background-color: rgb(27 36 54 / 0.7); }
+.dark .bg-slate-50\/60 { background-color: rgb(27 36 54 / 0.6); }
+.dark .bg-slate-100\/80 { background-color: rgb(33 44 66 / 0.8); }
+
+/* Hover fills */
+.dark .hover\:bg-white:hover { background-color: var(--dk-surface); }
+.dark .hover\:bg-slate-50:hover { background-color: var(--dk-surface-2); }
+.dark .hover\:bg-slate-100:hover { background-color: var(--dk-surface-3); }
+.dark .hover\:bg-slate-200:hover { background-color: var(--dk-surface-4); }
+
+/* Text */
+.dark .text-slate-900 { color: var(--dk-text-900); }
+.dark .text-slate-800 { color: var(--dk-text-800); }
+.dark .text-slate-700 { color: var(--dk-text-700); }
+.dark .text-slate-600 { color: var(--dk-text-600); }
+.dark .text-slate-500 { color: var(--dk-text-500); }
+.dark .text-slate-400 { color: var(--dk-text-400); }
+.dark .text-slate-300 { color: var(--dk-text-300); }
+.dark .hover\:text-slate-900:hover { color: var(--dk-text-900); }
+.dark .hover\:text-slate-800:hover { color: var(--dk-text-800); }
+.dark .hover\:text-slate-700:hover { color: var(--dk-text-700); }
+.dark .placeholder\:text-slate-400::placeholder { color: #62708a; }
+
+/* Borders / divides / rings */
+.dark .border-slate-50,
+.dark .border-slate-100 { border-color: var(--dk-border-soft); }
+.dark .border-slate-200 { border-color: var(--dk-border); }
+.dark .border-slate-300 { border-color: var(--dk-border-strong); }
+.dark .hover\:border-slate-300:hover { border-color: var(--dk-border-strong); }
+.dark .ring-slate-200 { --tw-ring-color: var(--dk-border); }
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: var(--dk-border-soft); }
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-color: var(--dk-border); }
+
+/* Accent TEXT — lighten brand + status colours so they read on dark surfaces */
+.dark .text-indigo-500,
+.dark .text-indigo-600,
+.dark .text-indigo-700 { color: #57c0e4; }
+.dark .text-violet-500,
+.dark .text-violet-600,
+.dark .text-violet-700 { color: #f0a483; }
+.dark .text-amber-600,
+.dark .text-amber-700 { color: #fbbf24; }
+.dark .text-emerald-600,
+.dark .text-emerald-700 { color: #34d399; }
+.dark .text-rose-500,
+.dark .text-rose-600,
+.dark .text-red-500,
+.dark .text-red-600 { color: #fb7185; }
+.dark .text-sky-600,
+.dark .text-sky-700 { color: #38bdf8; }
+
+/* Accent CHIP fills — darken the pastel -50 fills so they aren't blinding */
+.dark .bg-indigo-50 { background-color: rgb(20 122 158 / 0.18); }
+.dark .bg-violet-50 { background-color: rgb(203 72 38 / 0.18); }
+.dark .bg-amber-50 { background-color: rgb(245 158 11 / 0.15); }
+.dark .bg-emerald-50 { background-color: rgb(16 185 129 / 0.15); }
+.dark .bg-rose-50,
+.dark .bg-red-50 { background-color: rgb(244 63 94 / 0.15); }
+.dark .bg-sky-50 { background-color: rgb(56 189 248 / 0.15); }
+.dark .hover\:bg-indigo-50:hover { background-color: rgb(20 122 158 / 0.22); }
+.dark .hover\:bg-rose-50:hover,
+.dark .hover\:bg-red-50:hover { background-color: rgb(244 63 94 / 0.18); }
+
+/* Accent chip borders */
+.dark .border-indigo-200 { border-color: rgb(20 122 158 / 0.42); }
+.dark .border-amber-200 { border-color: rgb(245 158 11 / 0.4); }
+.dark .border-emerald-200 { border-color: rgb(16 185 129 / 0.4); }
+.dark .border-rose-200,
+.dark .border-red-200 { border-color: rgb(244 63 94 / 0.4); }
+.dark .hover\:border-indigo-200:hover,
+.dark .hover\:border-indigo-300:hover { border-color: rgb(20 122 158 / 0.6); }
+
+/* Colored -100 fills (avatar fallbacks, status chips) — darken to keep contrast
+   with the lightened accent text that sits on them */
+.dark .bg-indigo-100 { background-color: rgb(20 122 158 / 0.28); }
+.dark .bg-amber-100 { background-color: rgb(245 158 11 / 0.22); }
+.dark .bg-emerald-100 { background-color: rgb(16 185 129 / 0.22); }
+.dark .bg-green-100 { background-color: rgb(34 197 94 / 0.22); }
+
+/* Deeper accent-text shades used occasionally */
+.dark .text-indigo-800 { color: #57c0e4; }
+.dark .text-amber-800 { color: #fbbf24; }
+.dark .text-emerald-800 { color: #34d399; }
+.dark .text-sky-800 { color: #38bdf8; }
+.dark .text-violet-800 { color: #f0a483; }

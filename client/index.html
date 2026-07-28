@@ -7,6 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#3FB0D6" />
 
+    <!-- Apply the saved theme before first paint so dark-mode users never see a
+         light flash. Defaults to light. Kept tiny + inline on purpose. -->
+    <script>
+      try {
+        if (localStorage.getItem("oneleet_theme") === "dark") {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (e) {}
+    </script>
+
     <title>OneLeet — AI-powered LEET / Lateral Entry Entrance Test preparation</title>
     <meta
       name="description"
