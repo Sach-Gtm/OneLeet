@@ -3,17 +3,20 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "react-hot-toast";
 import AppRoutes from "./AppRoutes/AppRoutes";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import ErrorBoundary from "@/Components/General/ErrorBoundary";
 import { GOOGLE_CLIENT_ID, GOOGLE_ENABLED } from "@/lib/googleAuth";
 
 const App = () => {
   const app = (
-    <AuthProvider>
-      <ErrorBoundary>
-        <AppRoutes />
-      </ErrorBoundary>
-      <Toaster position="top-right" toastOptions={{ duration: 3500 }} />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <ErrorBoundary>
+          <AppRoutes />
+        </ErrorBoundary>
+        <Toaster position="top-right" toastOptions={{ duration: 3500 }} />
+      </AuthProvider>
+    </ThemeProvider>
   );
 
   // Only mount the Google provider (which loads the GSI script) when a client

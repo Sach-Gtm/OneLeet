@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
+import ThemeToggle from "@/Components/App/ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "@/Components/General/Logo";
 import Footer from "@/Components/General/Footer";
@@ -123,6 +124,8 @@ function SidebarContent({ user, onNavigate, onLogout }) {
             </nav>
 
             <div className="border-t border-slate-100 p-3">
+                {/* Light / dark switch — lives in the bottom nav, on every page. */}
+                <ThemeToggle />
                 <div className="flex items-center gap-3 rounded-lg px-2 py-2">
                     {user?.avatar ? (
                         <img
@@ -319,6 +322,7 @@ export default function AppShell() {
                         />
                     </div>
                     <div className="ml-auto flex items-center gap-2">
+                        <ThemeToggle variant="icon" />
                         <NotificationBell />
                         <UserMenu
                             user={user}

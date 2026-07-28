@@ -54,7 +54,10 @@ export default function Home() {
             <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 pb-16 pt-28 text-center sm:px-6 sm:pt-32">
                 {/* Live GPU shader wash (falls back to the light layout behind it). */}
                 <ShaderHero className="absolute inset-0 -z-10" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-[#FAF9F6]" />
+                {/* In dark mode the shader stays light, so lay a dark scrim over it
+                    to keep the hero text readable. */}
+                <div className="pointer-events-none absolute inset-0 -z-10 hidden bg-slate-950/85 dark:block" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-[#FAF9F6] dark:to-slate-950" />
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
