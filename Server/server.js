@@ -6,12 +6,15 @@ const { startEmailHealthChecks } = require("./src/utils/email");
 const { startKeepAwake } = require("./src/utils/keepAwake");
 const { startLeaderboardScheduler } = require("./src/jobs/leaderboardScheduler");
 const { ensureExamsSeeded } = require("./src/config/exams");
+const { ensureMentorsSeeded } = require("./src/config/seedMentors");
 
 // Provision the Super Admin out-of-band once the DB is up, seed the LEET exam
-// catalog on first run, then start the competitive-leaderboard ticker.
+// catalog + founding mentors on first run, then start the competitive-
+// leaderboard ticker.
 connectDB().then(() => {
     bootstrapSuperadmin();
     ensureExamsSeeded();
+    ensureMentorsSeeded();
     startLeaderboardScheduler();
 });
 
