@@ -75,7 +75,8 @@ export default function Navbar() {
                 }}
                 animate={hidden ? "hidden" : "visible"}
                 transition={{ duration: 0.35, ease: "easeInOut" }}
-                className={`fixed top-0 left-0 w-full z-50 py-3 sm:py-5 transition-all duration-300`}
+                style={{ top: "var(--reviewbar-h, 0px)" }}
+                className={`fixed left-0 w-full z-50 py-3 sm:py-5 transition-all duration-300`}
             >
                 <div
                     className={`

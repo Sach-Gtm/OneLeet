@@ -42,6 +42,7 @@ import CompetitionAdmin from "@/Components/App/CompetitionAdmin";
 import AiUsageAdmin from "@/Components/App/AiUsageAdmin";
 import BlocklistAdmin from "@/Components/App/BlocklistAdmin";
 import ExamAdmin from "@/Components/App/ExamAdmin";
+import ReviewAdmin from "@/Components/App/ReviewAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
@@ -638,6 +639,9 @@ export default function AdminDashboard() {
 
             {/* Universities / LEET catalog — add/remove colleges (admins + super admin) */}
             {canManageStudents && <ExamAdmin />}
+
+            {/* Landing-page reviews — add/remove testimonials (admins + super admin) */}
+            {canManageStudents && <ReviewAdmin />}
 
             {/* Account block-list (super admin only) */}
             {isSuper && <BlocklistAdmin />}
