@@ -4,6 +4,7 @@ import { useSeo } from "@/lib/useSeo";
 const mentors = [
     { name: "Sachin Gautam", handle: "@sachingautam", exam: "IPU LEET 2025", initials: "SG" },
     { name: "Ayush", handle: null, exam: "IPU LEET 2025", initials: "A" },
+    { name: "Parth Singh Shekhawat", handle: null, exam: "IPU LEET 2024", initials: "PS" },
 ];
 
 export default function Mentors() {
