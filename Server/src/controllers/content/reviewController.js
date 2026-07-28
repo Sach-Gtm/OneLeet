@@ -1,14 +1,15 @@
 const Review = require("../../models/reviewModel");
-const { parseYouTubeId } = require("../../utils/youtube");
+const cloudinary = require("../../config/cloudinary");
+const { uploadBufferToCloudinary } = require("../../utils/cloudinaryUpload");
 
-// Only the fields the public landing strip needs (never createdBy / internals).
+// Only the fields the public strip needs (never createdBy / internals).
 const publicShape = (r) => ({
     _id: r._id,
     type: r.type,
     text: r.text,
     title: r.title,
     author: r.author,
-    youtubeId: r.youtubeId,
+    video: r.video?.url || null,
     createdAt: r.createdAt,
 });
 
@@ -25,11 +26,11 @@ async function listReviews(req, res, next) {
     }
 }
 
-// POST /api/reviews — ADMIN ONLY (guarded by the route). Adds a text or video
-// review.
+// POST /api/reviews — ADMIN ONLY. A text review (message) or a video review
+// (an uploaded clip, streamed to Cloudinary and played inline on the site).
 async function createReview(req, res, next) {
     try {
-        const { type, text, title, author, url, youtubeId: rawId, order } = req.body || {};
+        const { type, text, title, author, order } = req.body || {};
         const kind = type === "video" ? "video" : "text";
 
         const doc = {
@@ -42,14 +43,14 @@ async function createReview(req, res, next) {
         };
 
         if (kind === "video") {
-            const youtubeId = parseYouTubeId(rawId || url);
-            if (!youtubeId) {
-                return res.status(400).json({ success: false, message: "Paste a valid YouTube link." });
+            if (!req.file) {
+                return res.status(400).json({ success: false, message: "Upload a video clip for a video review." });
             }
-            if (!doc.title) {
-                return res.status(400).json({ success: false, message: "Add a subject / title for the video." });
-            }
-            doc.youtubeId = youtubeId;
+            const result = await uploadBufferToCloudinary(req.file.buffer, {
+                folder: "oneleet/reviews",
+                resource_type: "video",
+            });
+            doc.video = { url: result.secure_url, publicId: result.public_id };
         } else if (!doc.text) {
             return res.status(400).json({ success: false, message: "Write the review message." });
         }
@@ -61,12 +62,19 @@ async function createReview(req, res, next) {
     }
 }
 
-// DELETE /api/reviews/:id — ADMIN ONLY (guarded by the route).
+// DELETE /api/reviews/:id — ADMIN ONLY. Removes the record and its video asset.
 async function deleteReview(req, res, next) {
     try {
         const existing = await Review.findById(req.params.id);
         if (!existing) return res.status(404).json({ success: false, message: "Review not found" });
+
+        const publicId = existing.video?.publicId;
         await existing.deleteOne();
+        if (publicId) {
+            cloudinary.uploader
+                .destroy(publicId, { resource_type: "video" })
+                .catch((e) => console.warn("[review] video cleanup failed:", e.message));
+        }
         return res.status(200).json({ success: true, message: "Review deleted" });
     } catch (e) {
         next(e);
