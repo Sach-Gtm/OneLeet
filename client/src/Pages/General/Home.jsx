@@ -180,14 +180,17 @@ export default function Home() {
                     })}
                 </div>
 
-                {/* Closing CTA */}
-                <div className="mt-14 flex flex-col items-center gap-4 rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-violet-50 p-8 text-center">
-                    <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">
+                {/* Closing CTA — a bold brand-gradient band (theme-independent, so it
+                    reads the same in light and dark). */}
+                <div className="relative mt-14 flex flex-col items-center gap-4 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-600 p-10 text-center shadow-xl shadow-indigo-600/25">
+                    <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+                    <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-violet-300/20 blur-2xl" />
+                    <h3 className="relative text-xl font-bold text-white sm:text-2xl">
                         Your top college is one decision away.
                     </h3>
                     <Link
                         to="/register"
-                        className="group flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-7 py-3 font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.03] active:scale-[0.97]"
+                        className="group relative flex items-center gap-2 rounded-lg bg-white px-7 py-3 font-semibold text-indigo-700 shadow-lg transition-all hover:scale-[1.03] active:scale-[0.97] dark:!bg-white dark:!text-indigo-700"
                     >
                         Start preparing
                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
