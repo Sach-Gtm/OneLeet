@@ -235,18 +235,21 @@ async function aiDraftSyllabus(req, res, next) {
 async function aiScanSyllabus(req, res, next) {
     let path;
     try {
-        if (!req.file) return res.status(400).json({ success: false, message: "Upload a PDF to scan." });
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "Upload a PDF or image to scan." });
+        }
         path = req.file.path;
         const base64 = fs.readFileSync(path).toString("base64");
-        const { subject } = req.body || {};
+        const { subject, prompt } = req.body || {};
         const { result } = await runAiFeature({
             user: req.user,
             feature: "syllabusScan",
-            cacheParams: { file: req.file.originalname, size: req.file.size, subject },
+            cacheParams: { file: req.file.originalname, size: req.file.size, subject, prompt },
             inputText: req.file.originalname || "",
             generate: () =>
                 aiService.structureSyllabus({
                     subject,
+                    instructions: prompt,
                     fileData: { mimeType: req.file.mimetype, data: base64 },
                 }),
         });

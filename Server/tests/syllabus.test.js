@@ -62,6 +62,23 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.ok(Array.isArray(draft.body.draft.chapters) && draft.body.draft.chapters.length > 0, "draft has chapters");
     ok("a mentor can AI-draft a syllabus from text");
 
+    // Staff can AI-SCAN an uploaded IMAGE (not just PDF) with a free-text prompt.
+    const stuScan = await request
+        .post("/api/syllabus/ai-scan")
+        .set(...auth(studentToken))
+        .field("subject", "X")
+        .attach("attachment", Buffer.from("fake-image-bytes"), { filename: "page.png", contentType: "image/png" });
+    assert.strictEqual(stuScan.status, 403, "student cannot scan");
+    const scan = await request
+        .post("/api/syllabus/ai-scan")
+        .set(...auth(teacherToken))
+        .field("subject", "Mechanical")
+        .field("prompt", "Subject is Thermodynamics; group by unit")
+        .attach("attachment", Buffer.from("fake-image-bytes"), { filename: "page.png", contentType: "image/png" });
+    assert.strictEqual(scan.status, 200, "mentor can scan an image");
+    assert.ok(Array.isArray(scan.body.draft.chapters) && scan.body.draft.chapters.length > 0, "scan draft has chapters");
+    ok("a mentor can AI-scan an uploaded image with a prompt (staff only)");
+
     // Staff create a syllabus (1 chapter, 2 topics with hours).
     const created = await request
         .post("/api/syllabus")

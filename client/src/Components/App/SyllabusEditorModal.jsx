@@ -35,6 +35,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
     const [targets, setTargets] = useState(editing?.targets || []);
     const [aiText, setAiText] = useState("");
     const [file, setFile] = useState(null);
+    const [scanPrompt, setScanPrompt] = useState("");
     const [busy, setBusy] = useState(false);
 
     if (!open) return null;
@@ -77,12 +78,12 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
     };
 
     const generateFromFile = async () => {
-        if (!file) return toast.error("Choose a PDF to scan.");
+        if (!file) return toast.error("Choose a PDF or image to scan.");
         setBusy(true);
         try {
-            applyDraft(await aiScanSyllabus(file, subject));
+            applyDraft(await aiScanSyllabus(file, subject, scanPrompt));
         } catch (err) {
-            toast.error(err?.response?.data?.message || "Couldn't scan that PDF.");
+            toast.error(err?.response?.data?.message || "Couldn't scan that file.");
         } finally {
             setBusy(false);
         }
@@ -160,7 +161,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                             <Brain size={14} /> AI refine
                         </button>
                         <button type="button" onClick={() => setTab("scan")} className={tabCls("scan")}>
-                            <ScanLine size={14} /> Scan PDF
+                            <ScanLine size={14} /> Scan file
                         </button>
                     </div>
                 )}
@@ -193,14 +194,32 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                     {tab === "scan" && (
                         <div className="space-y-3">
                             <p className="text-xs text-slate-500">
-                                Upload a syllabus PDF (even a scanned or photographed one) and the AI will read it and draft the
-                                chapters and topics for you to review.
+                                Upload a syllabus <strong>PDF or image</strong> (even a scanned or photographed page) and the
+                                AI will read it and draft the chapters and topics for you to review.
                             </p>
                             <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-slate-300 px-3 py-3 text-sm text-slate-500 hover:border-indigo-400">
                                 <UploadCloud size={18} className="text-slate-400" />
-                                <span className="truncate">{file ? file.name : "Choose a PDF (max 10 MB)"}</span>
-                                <input type="file" accept="application/pdf" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+                                <span className="truncate">{file ? file.name : "Choose a PDF or image (max 10 MB)"}</span>
+                                <input
+                                    type="file"
+                                    accept="application/pdf,image/png,image/jpeg,image/webp,image/heic,image/heif"
+                                    className="hidden"
+                                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                                />
                             </label>
+                            <div>
+                                <label className={labelCls}>Instructions to the AI (optional)</label>
+                                <textarea
+                                    rows={3}
+                                    className={cn(inputCls, "h-auto py-2")}
+                                    value={scanPrompt}
+                                    onChange={(e) => setScanPrompt(e.target.value)}
+                                    placeholder={
+                                        "Tell the AI how to structure it, or correct anything — e.g.\n" +
+                                        "“Subject is Thermodynamics.”  “Group by unit, skip the marking scheme.”  “Merge duplicate topics and cap hours at 8.”"
+                                    }
+                                />
+                            </div>
                             <button
                                 onClick={generateFromFile}
                                 disabled={busy}
@@ -217,7 +236,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                             {chapters.length === 0 ? (
                                 <div className="rounded-xl border border-dashed border-slate-200 py-8 text-center">
                                     <p className="text-sm text-slate-500">No chapters yet.</p>
-                                    <p className="mt-0.5 text-xs text-slate-400">Add one by hand, or use “AI refine” / “Scan PDF”.</p>
+                                    <p className="mt-0.5 text-xs text-slate-400">Add one by hand, or use “AI refine” / “Scan file”.</p>
                                 </div>
                             ) : (
                                 chapters.map((ch, ci) => (

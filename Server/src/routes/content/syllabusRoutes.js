@@ -4,11 +4,12 @@ const multer = require("multer");
 
 const { verifyToken } = require("../../middlewares/authMiddleware");
 const { requireStaff } = require("../../middlewares/roleMiddleware");
-const pdfUploadLocal = require("../../middlewares/pdfUploadLocal");
+const mediaUploadLocal = require("../../middlewares/mediaUploadLocal");
 const ctrl = require("../../controllers/content/syllabusController");
 
+// Accepts a PDF or an image (page photo/scan) — the AI reads either.
 const handleUpload = (req, res, next) => {
-    pdfUploadLocal(req, res, (err) => {
+    mediaUploadLocal(req, res, (err) => {
         if (err instanceof multer.MulterError || err) {
             return res.status(400).json({ success: false, message: err.message });
         }

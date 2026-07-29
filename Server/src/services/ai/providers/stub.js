@@ -87,7 +87,10 @@ function generateStudyNote({ prompt = "", subject = "" } = {}) {
     };
 }
 
-function structureSyllabus({ text = "", subject = "" } = {}) {
+function structureSyllabus({ text = "", subject = "", instructions = "" } = {}) {
+    // The sample provider can't truly follow instructions, but fold them into the
+    // source text so any subject/topic hints in them still colour the guesses.
+    if (instructions) text = `${instructions}\n${text}`;
     // Try to make the sample feel related to what was pasted by pulling a few
     // capitalised phrases as topic names; otherwise fall back to placeholders.
     const guesses = (String(text).match(/[A-Z][A-Za-z][A-Za-z ]{3,40}/g) || [])
