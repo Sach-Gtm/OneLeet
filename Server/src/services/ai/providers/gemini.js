@@ -170,8 +170,12 @@ async function generateStudyNote({ prompt, subject, fileData } = {}) {
         `engineering entrance exam.${context}${src} Do EXACTLY what the teacher asks — it may be ` +
         `short notes, long detailed notes, MCQs (show the options and mark the correct answer with a ` +
         `one-line reason), a summary, key points, a comparison table, worked examples, and so on. ` +
-        `Produce clean, well-structured Markdown (## headings, - bullets, **bold**, tables and ` +
-        `numbered lists where they help). Do not add meta commentary.\n` +
+        `Produce clean, well-structured GitHub-flavoured Markdown (## headings, - bullets, ` +
+        `**bold**, | pipe tables | and 1. numbered lists where they help). Write ALL maths, ` +
+        `symbols and formulae as plain text / Unicode — use → ≤ ≥ × ÷ ± · ° √ ² ₂ etc. directly, ` +
+        `and NEVER use LaTeX or math delimiters like $...$, \\(...\\) or backslash commands ` +
+        `(\\rightarrow, \\times, \\frac …). Put each list item on its own line and do not ` +
+        `backslash-escape characters. Do not add meta commentary.\n` +
         `Teacher's request: """${instruction}"""\n` +
         `Also propose a concise title and a one-line description for this note. ` +
         `Respond ONLY as JSON: {"title": string, "description": string, "content": string}.`;

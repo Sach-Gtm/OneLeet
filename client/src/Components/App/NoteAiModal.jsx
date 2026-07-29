@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X, Brain, Loader2, Lightbulb, RotateCw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { cleanText } from "@/lib/markdown";
 
 function Flashcard({ card }) {
     const [flipped, setFlipped] = useState(false);
@@ -10,7 +11,7 @@ function Flashcard({ card }) {
             className="flex min-h-[110px] w-full flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-indigo-300"
         >
             <p className={cn("text-sm", flipped ? "text-slate-600" : "font-semibold text-slate-800")}>
-                {flipped ? card.answer : card.question}
+                {cleanText(flipped ? card.answer : card.question)}
             </p>
             <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-indigo-500">
                 <RotateCw size={12} /> {flipped ? "Show question" : "Show answer"}
@@ -59,7 +60,7 @@ export default function NoteAiModal({ open, onClose, mode, noteTitle, loading, d
                         <p className="text-sm text-red-500">{error}</p>
                     ) : mode === "summary" ? (
                         <div className="space-y-4">
-                            <p className="text-sm leading-relaxed text-slate-700">{data?.summary}</p>
+                            <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">{cleanText(data?.summary)}</p>
                             {data?.keyPoints?.length > 0 && (
                                 <div>
                                     <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">
@@ -69,7 +70,7 @@ export default function NoteAiModal({ open, onClose, mode, noteTitle, loading, d
                                         {data.keyPoints.map((p, i) => (
                                             <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
                                                 <Lightbulb size={14} className="mt-0.5 shrink-0 text-amber-500" />
-                                                {p}
+                                                {cleanText(p)}
                                             </li>
                                         ))}
                                     </ul>
