@@ -45,11 +45,14 @@ export const aiDraftSyllabus = async (text, subject) => {
     return data.draft;
 };
 
-// Scan an uploaded PDF into chapters/topics (returns a draft).
-export const aiScanSyllabus = async (file, subject) => {
+// Scan an uploaded PDF or image into chapters/topics (returns a draft).
+// `prompt` is optional free-text steering ("subject is Thermodynamics", "group
+// by unit", etc.) that the AI follows and lets override the source.
+export const aiScanSyllabus = async (file, subject, prompt) => {
     const form = new FormData();
-    form.append("pdfFile", file);
+    form.append("attachment", file);
     if (subject) form.append("subject", subject);
+    if (prompt) form.append("prompt", prompt);
     const { data } = await api.post("/syllabus/ai-scan", form);
     return data.draft;
 };

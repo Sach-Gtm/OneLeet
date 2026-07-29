@@ -188,15 +188,21 @@ async function generateStudyNote({ prompt, subject, fileData } = {}) {
 // Structure a raw syllabus into chapters -> topics with per-topic study-hour
 // estimates. Works from pasted `text` and/or an attached file (`fileData`, e.g.
 // a scanned/uploaded syllabus PDF). Returns an editable draft the author reviews.
-async function structureSyllabus({ text, subject, fileData } = {}) {
+async function structureSyllabus({ text, subject, fileData, instructions } = {}) {
     const src = fileData
         ? "The syllabus is in the ATTACHED file — read it (including scanned/photographed pages)."
         : `Syllabus source text:\n"""\n${String(text || "").slice(0, 16000)}\n"""`;
+    const steer = instructions
+        ? ` IMPORTANT — the admin gave these instructions; follow them and let them OVERRIDE the ` +
+          `source where they conflict (they may set/correct the subject, how chapters are grouped, ` +
+          `what to include or skip, hours, etc.): "${String(instructions).slice(0, 1500)}".`
+        : "";
     const prompt =
         `You are organising a syllabus for the Indian LEET (Lateral Entry) engineering entrance exam` +
         `${subject ? ` for the subject "${subject}"` : ""}. Turn it into a clean, ordered structure of ` +
         `chapters, each containing its topics. For every topic, estimate the study hours a diploma ` +
-        `student needs as an integer (1-20). Keep titles concise; don't invent content beyond the source. ` +
+        `student needs as an integer (1-20). Keep titles concise; don't invent content beyond the source.` +
+        `${steer} ` +
         `Also propose a short syllabus title. ${src}\n` +
         `Respond ONLY as JSON: {"title": string, "subject": string, "chapters": ` +
         `[{"title": string, "topics": [{"title": string, "estimatedHours": number}]}]}.`;
