@@ -199,7 +199,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                             </p>
                             <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-slate-300 px-3 py-3 text-sm text-slate-500 hover:border-indigo-400">
                                 <UploadCloud size={18} className="text-slate-400" />
-                                <span className="truncate">{file ? file.name : "Choose a PDF or image (max 10 MB)"}</span>
+                                <span className="truncate">{file ? file.name : "Choose a PDF or image (max 100 MB)"}</span>
                                 <input
                                     type="file"
                                     accept="application/pdf,image/png,image/jpeg,image/webp,image/heic,image/heif"

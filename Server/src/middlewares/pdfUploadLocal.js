@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 
 const pdfUploadLocal = multer({
     storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB (Cloudinary free-tier raw cap)
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB — the shared/default cap (also used by the non-staff note-PDF route)
     fileFilter: (req, file, cb) => {
         const ext = path.extname(file.originalname).toLowerCase();
         if (ext !== ".pdf" || file.mimetype !== "application/pdf") {

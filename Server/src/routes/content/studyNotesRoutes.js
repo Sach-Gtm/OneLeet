@@ -4,12 +4,13 @@ const multer = require("multer");
 
 const { verifyToken } = require("../../middlewares/authMiddleware");
 const { requireStaff } = require("../../middlewares/roleMiddleware");
-const pdfUploadLocal = require("../../middlewares/pdfUploadLocal");
+const pdfUploadStaff = require("../../middlewares/pdfUploadStaff");
 const mediaUploadLocal = require("../../middlewares/mediaUploadLocal");
 const notes = require("../../controllers/content/studyNotesController");
 
+// Note upload is staff-only, so it gets the larger 100 MB cap.
 const handleUpload = (req, res, next) => {
-    pdfUploadLocal(req, res, (err) => {
+    pdfUploadStaff(req, res, (err) => {
         if (err instanceof multer.MulterError || err) {
             return res.status(400).json({ success: false, message: err.message });
         }

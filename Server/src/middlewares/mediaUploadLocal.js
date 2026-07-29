@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 
 const mediaUploadLocal = multer({
     storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+    limits: { fileSize: 100 * 1024 * 1024 }, // 100 MB (the AI can only read the first ~15-20 MB inline)
     fileFilter: (req, file, cb) => {
         if (!ALLOWED.has(file.mimetype)) {
             return cb(new Error("Attach a PDF or an image (PNG, JPG or WEBP)."));
