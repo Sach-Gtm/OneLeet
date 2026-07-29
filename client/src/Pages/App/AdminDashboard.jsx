@@ -316,8 +316,8 @@ export default function AdminDashboard() {
             toast.error("Title, year, exam and subject are required.");
             return;
         }
-        if (pyqFile && pyqFile.size > 10 * 1024 * 1024) {
-            toast.error("PDF must be 10 MB or smaller.");
+        if (pyqFile && pyqFile.size > 100 * 1024 * 1024) {
+            toast.error("PDF must be 100 MB or smaller.");
             return;
         }
         setUploadingPyq(true);
@@ -724,7 +724,7 @@ export default function AdminDashboard() {
                         className="text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200"
                     />
                     <span className="text-xs text-slate-400">
-                        PDF up to 10&nbsp;MB — students can view &amp; download it.
+                        PDF up to 100&nbsp;MB — students can view &amp; download it.
                     </span>
                     <button
                         type="submit"

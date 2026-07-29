@@ -4,12 +4,13 @@ const multer = require("multer");
 
 const { verifyToken } = require("../../middlewares/authMiddleware");
 const { requireStaff } = require("../../middlewares/roleMiddleware");
-const pdfUploadLocal = require("../../middlewares/pdfUploadLocal");
+const pdfUploadStaff = require("../../middlewares/pdfUploadStaff");
 const pyqController = require("../../controllers/content/pyqController");
 
-// Wrap multer so its errors become clean 400s instead of crashing.
+// Wrap multer so its errors become clean 400s instead of crashing. Staff upload,
+// so the larger 100 MB cap applies.
 const handleUpload = (req, res, next) => {
-    pdfUploadLocal(req, res, (err) => {
+    pdfUploadStaff(req, res, (err) => {
         if (err instanceof multer.MulterError || err) {
             return res.status(400).json({ success: false, message: err.message });
         }
