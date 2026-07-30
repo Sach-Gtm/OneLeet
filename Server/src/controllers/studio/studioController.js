@@ -165,7 +165,15 @@ async function updateTest(req, res, next) {
         if (b.title != null) test.title = String(b.title).slice(0, 140);
         if (b.description != null) test.description = String(b.description).slice(0, 400);
         if (b.subject != null) test.subject = b.subject;
-        if (b.mode) test.mode = b.mode === "practice" ? "practice" : "test";
+        if (b.mode) {
+            test.mode = b.mode === "practice" ? "practice" : "test";
+            // A practice set is never a timed competition — drop any window so it
+            // can't show a frozen "leaderboard locked" countdown.
+            if (test.mode === "practice") {
+                test.openAt = undefined;
+                test.closeAt = undefined;
+            }
+        }
         if (b.format !== undefined) test.format = normalizeFormat(b.format);
         if ("premium" in b) test.premium = !!b.premium; // one-click free⇄premium toggle
         if (b.durationMinutes != null)

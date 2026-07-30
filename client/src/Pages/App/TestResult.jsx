@@ -114,31 +114,55 @@ export default function TestResult() {
             <div className="space-y-4">
                 <h2 className="text-sm font-bold text-slate-800">Review</h2>
                 {attempt.answers.map((a, i) => {
-                    const q = a.question;
-                    if (!q) return null;
+                    // Prefer the immutable snapshot saved with the attempt; fall back
+                    // to the (populated) live question for attempts saved before we
+                    // started snapshotting.
+                    const q = a.question || {};
+                    const text = a.text ?? q.text;
+                    const options = (a.options && a.options.length ? a.options : q.options) || [];
+                    const correctIndex = a.correctIndex ?? q.correctIndex;
+                    const explanation = a.explanation ?? q.explanation;
+                    const badge = (
+                        <span
+                            className={cn(
+                                "shrink-0 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase",
+                                a.selectedIndex === null
+                                    ? "bg-slate-100 text-slate-500"
+                                    : a.correct
+                                    ? "bg-emerald-50 text-emerald-600"
+                                    : "bg-red-50 text-red-500"
+                            )}
+                        >
+                            {a.selectedIndex === null ? "Skipped" : a.correct ? "Correct" : "Wrong"}
+                        </span>
+                    );
+
+                    // An old attempt whose question was edited/removed before we
+                    // snapshotted: still show whether they got it right, gracefully.
+                    if (!text && !options.length) {
+                        return (
+                            <div key={i} className="flex items-start justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-5">
+                                <p className="text-sm text-slate-500">
+                                    <span className="font-bold text-indigo-600">Q{i + 1}. </span>
+                                    This question was changed or removed by the author, so it can&apos;t be shown.
+                                </p>
+                                {badge}
+                            </div>
+                        );
+                    }
+
                     return (
                         <div key={i} className="rounded-2xl border border-slate-200 bg-white p-5">
                             <div className="flex items-start justify-between gap-3">
                                 <p className="text-sm font-medium text-slate-800">
                                     <span className="font-bold text-indigo-600">Q{i + 1}. </span>
-                                    {q.text}
+                                    {text}
                                 </p>
-                                <span
-                                    className={cn(
-                                        "shrink-0 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase",
-                                        a.selectedIndex === null
-                                            ? "bg-slate-100 text-slate-500"
-                                            : a.correct
-                                            ? "bg-emerald-50 text-emerald-600"
-                                            : "bg-red-50 text-red-500"
-                                    )}
-                                >
-                                    {a.selectedIndex === null ? "Skipped" : a.correct ? "Correct" : "Wrong"}
-                                </span>
+                                {badge}
                             </div>
                             <div className="mt-3 space-y-2">
-                                {q.options.map((opt, idx) => {
-                                    const isCorrect = idx === q.correctIndex;
+                                {options.map((opt, idx) => {
+                                    const isCorrect = idx === correctIndex;
                                     const isChosen = a.selectedIndex === idx;
                                     return (
                                         <div
@@ -162,10 +186,18 @@ export default function TestResult() {
                                     );
                                 })}
                             </div>
-                            {q.explanation && (
-                                <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                            {(a.selectedIndex === null || !a.correct) && Number.isInteger(correctIndex) && options[correctIndex] && (
+                                <p className="mt-3 text-xs text-slate-500">
+                                    Correct answer:{" "}
+                                    <span className="font-semibold text-emerald-700">
+                                        {String.fromCharCode(65 + correctIndex)}. {options[correctIndex]}
+                                    </span>
+                                </p>
+                            )}
+                            {explanation && (
+                                <p className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
                                     <span className="font-semibold">Explanation: </span>
-                                    {q.explanation}
+                                    {explanation}
                                 </p>
                             )}
                         </div>
@@ -180,12 +212,13 @@ export default function TestResult() {
                 >
                     <ArrowLeft size={15} /> Back to Tests
                 </button>
-                {attempt.test?._id && (
+                {/* Only practice sets are repeatable — mock tests are single-attempt. */}
+                {attempt.test?._id && attempt.test?.mode === "practice" && (
                     <button
                         onClick={() => navigate(`/tests/${attempt.test._id}`)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+                        className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
                     >
-                        <RotateCw size={15} /> Retake Test
+                        <RotateCw size={15} /> Practice again
                     </button>
                 )}
             </div>

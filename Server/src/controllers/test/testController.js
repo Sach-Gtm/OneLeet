@@ -182,7 +182,7 @@ async function submitTest(req, res, next) {
     try {
         const test = await Test.findById(req.params.id).populate({
             path: "questions",
-            select: "text options correctIndex marks",
+            select: "text options correctIndex explanation marks",
         });
         if (!test) return res.status(404).json({ success: false, message: "Test not found" });
 
@@ -233,11 +233,19 @@ async function submitTest(req, res, next) {
         const answers = test.questions.map((q) => {
             const marks = q.marks || 1;
             totalMarks += marks;
+            // Snapshot the question so the review is always viewable later.
+            const snap = {
+                question: q._id,
+                text: q.text,
+                options: q.options,
+                correctIndex: q.correctIndex,
+                explanation: q.explanation,
+            };
             const raw = answerMap.has(String(q._id)) ? answerMap.get(String(q._id)) : null;
 
             if (raw === null || raw === undefined || raw === "") {
                 unattemptedCount++;
-                return { question: q._id, selectedIndex: null, correct: false };
+                return { ...snap, selectedIndex: null, correct: false };
             }
             const sel = Number(raw);
             const isCorrect = sel === q.correctIndex;
@@ -247,7 +255,7 @@ async function submitTest(req, res, next) {
             } else {
                 incorrectCount++;
             }
-            return { question: q._id, selectedIndex: sel, correct: isCorrect };
+            return { ...snap, selectedIndex: sel, correct: isCorrect };
         });
 
         const attempted = correctCount + incorrectCount;
@@ -315,7 +323,7 @@ async function getAttempt(req, res, next) {
                 path: "answers.question",
                 select: "text options correctIndex explanation subject topic difficulty marks",
             })
-            .populate("test", "title durationMinutes");
+            .populate("test", "title durationMinutes mode");
         if (!attempt) return res.status(404).json({ success: false, message: "Attempt not found" });
         if (String(attempt.user) !== String(req.user._id)) {
             return res.status(403).json({ success: false, message: "Not your attempt" });
