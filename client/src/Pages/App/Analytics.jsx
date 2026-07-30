@@ -110,10 +110,10 @@ export default function Analytics() {
                     <div className="flex h-40 items-end gap-1.5" role="img" aria-label="Minutes per day">
                         {days.map((d) => (
                             <div key={d.key} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5">
-                                <div className="flex w-full flex-1 items-end">
+                                <div className="flex w-full flex-1 items-end overflow-hidden rounded-md bg-slate-100">
                                     <div
-                                        className="w-full rounded-t-md bg-gradient-to-t from-indigo-500 to-violet-500 transition-all"
-                                        style={{ height: `${Math.max(3, (d.minutes / maxDay) * 100)}%` }}
+                                        className="w-full rounded-md bg-gradient-to-t from-indigo-500 to-violet-500 shadow-sm shadow-indigo-500/30 transition-all"
+                                        style={{ height: `${d.minutes > 0 ? Math.max(6, (d.minutes / maxDay) * 100) : 0}%` }}
                                         title={`${d.minutes} min`}
                                     />
                                 </div>
@@ -151,9 +151,9 @@ export default function Analytics() {
                     <div className="flex h-48 items-end gap-2 sm:gap-3" role="img" aria-label="Accuracy per recent test">
                         {chrono.map((a, i) => (
                             <div key={a._id || i} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
-                                <div className="relative flex w-full flex-1 items-end">
+                                <div className="relative flex w-full flex-1 items-end overflow-hidden rounded-md bg-slate-100">
                                     <div
-                                        className="w-full rounded-t-md bg-gradient-to-t from-indigo-500 to-indigo-500 transition-all"
+                                        className="w-full rounded-md bg-gradient-to-t from-indigo-500 to-violet-500 shadow-sm shadow-indigo-500/30 transition-all"
                                         style={{ height: `${Math.max(4, a.accuracy || 0)}%` }}
                                         title={`${a.testTitle}: ${a.accuracy}% (${a.score}/${a.totalMarks})`}
                                     />

@@ -173,12 +173,12 @@ export default function StudentActivityModal({ studentId, onClose }) {
                         {time.totalMinutes > 0 && (
                             <div className="mt-5">
                                 <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">Time (last 14 days)</p>
-                                <div className="flex h-20 items-end gap-1">
+                                <div className="flex h-20 items-end gap-1 rounded-lg bg-slate-100 p-1">
                                     {time.minutesByDay.map((d) => (
                                         <div
                                             key={d.date}
-                                            className="flex-1 rounded-t bg-gradient-to-t from-indigo-500 to-violet-500"
-                                            style={{ height: `${Math.max(4, (d.minutes / maxDay) * 100)}%` }}
+                                            className="flex-1 rounded bg-gradient-to-t from-indigo-500 to-violet-500"
+                                            style={{ height: `${d.minutes > 0 ? Math.max(6, (d.minutes / maxDay) * 100) : 0}%` }}
                                             title={`${d.date}: ${d.minutes} min`}
                                         />
                                     ))}

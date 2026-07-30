@@ -53,7 +53,15 @@ function PrepRing({ value = 0 }) {
     return (
         <div className="relative h-28 w-28">
             <svg className="h-28 w-28 -rotate-90" viewBox="0 0 110 110">
-                <circle cx="55" cy="55" r={radius} fill="none" stroke="#e2e8f0" strokeWidth="9" />
+                <circle
+                    cx="55"
+                    cy="55"
+                    r={radius}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="9"
+                    className="text-slate-200 dark:text-slate-700"
+                />
                 <motion.circle
                     cx="55"
                     cy="55"
@@ -126,17 +134,21 @@ function WeekActivity({ minutesByDay }) {
             </div>
             <div className="flex h-24 items-end gap-2.5">
                 {days.map((d, i) => (
-                    <div key={d.key} className="flex flex-1 flex-col items-center gap-1.5">
-                        <div className="flex w-full flex-1 items-end">
+                    <div key={d.key} className="flex h-full flex-1 flex-col items-center gap-1.5">
+                        {/* Faint full-height column track so the chart reads as a chart
+                            even on a dark background and with little/no data. The column
+                            must be h-full so the flex-1 track gets a definite height for
+                            the bar's percentage height to resolve against. */}
+                        <div className="flex w-full flex-1 items-end overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800/70">
                             <motion.div
                                 initial={{ scaleY: 0 }}
                                 animate={{ scaleY: 1 }}
                                 transition={{ duration: 0.6, delay: i * 0.06, ease: "easeOut" }}
                                 style={{
-                                    height: `${Math.max(4, (d.minutes / max) * 100)}%`,
+                                    height: `${d.minutes > 0 ? Math.max(8, (d.minutes / max) * 100) : 0}%`,
                                     transformOrigin: "bottom",
                                 }}
-                                className="w-full rounded-t-md bg-gradient-to-t from-indigo-500 to-violet-500"
+                                className="w-full rounded-md bg-gradient-to-t from-indigo-500 to-violet-500 shadow-sm shadow-indigo-500/30"
                                 title={`${d.minutes} min`}
                             />
                         </div>
