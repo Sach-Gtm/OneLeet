@@ -20,6 +20,14 @@ const TestSchema = new mongoose.Schema(
             enum: ["full-mock", "subject-wise", "topic-wise"],
             default: "subject-wise",
         },
+        // Fixed-size format (see config/testFormats.js). When set, the test is
+        // locked to that format's exact question count. null = a custom test.
+        format: {
+            type: String,
+            enum: ["quick-shot", "practice", "challenge", "survivor", "real-exam", null],
+            default: null,
+            index: true,
+        },
         durationMinutes: {
             type: Number,
             required: true,

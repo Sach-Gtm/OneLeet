@@ -9,12 +9,14 @@ import {
     ChevronRight,
 } from "lucide-react";
 import { listTests, listAttempts } from "@/Api/TestsApi";
+import { TEST_FORMATS, TEST_FORMAT_KEYS } from "@/lib/testFormats";
 
 export default function TestsList() {
     const navigate = useNavigate();
     const [tests, setTests] = useState([]);
     const [attempts, setAttempts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState("all");
 
     useEffect(() => {
         let active = true;
@@ -39,6 +41,10 @@ export default function TestsList() {
         );
     }
 
+    // Only surface filter chips for modes that actually have tests.
+    const presentFormats = TEST_FORMAT_KEYS.filter((k) => tests.some((t) => t.format === k));
+    const shown = filter === "all" ? tests : tests.filter((t) => t.format === filter);
+
     return (
         <div className="mx-auto max-w-6xl space-y-8">
             <div>
@@ -48,21 +54,70 @@ export default function TestsList() {
                 </p>
             </div>
 
+            {presentFormats.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                    <button
+                        onClick={() => setFilter("all")}
+                        className={
+                            "rounded-full border px-3.5 py-1.5 text-sm font-semibold transition " +
+                            (filter === "all"
+                                ? "border-indigo-600 bg-indigo-600 text-white"
+                                : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300")
+                        }
+                    >
+                        All
+                    </button>
+                    {presentFormats.map((k) => {
+                        const f = TEST_FORMATS[k];
+                        return (
+                            <button
+                                key={k}
+                                onClick={() => setFilter(k)}
+                                title={`${f.label} — ${f.count} questions`}
+                                className={
+                                    "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-semibold transition " +
+                                    (filter === k
+                                        ? "border-indigo-600 bg-indigo-600 text-white"
+                                        : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300")
+                                }
+                            >
+                                <span>{f.emoji}</span> {f.tag || f.label}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+
             {tests.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
                     <ClipboardList className="mb-2 h-8 w-8 text-slate-300" />
                     <p className="text-sm font-medium text-slate-600">No tests available yet</p>
                     <p className="mt-0.5 text-xs text-slate-400">Run the seed script or add a test to get started.</p>
                 </div>
+            ) : shown.length === 0 ? (
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
+                    <ClipboardList className="mb-2 h-8 w-8 text-slate-300" />
+                    <p className="text-sm font-medium text-slate-600">No tests in this mode yet</p>
+                    <button onClick={() => setFilter("all")} className="mt-1 text-xs font-semibold text-indigo-600 hover:underline">
+                        Show all tests
+                    </button>
+                </div>
             ) : (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {tests.map((t) => (
+                    {shown.map((t) => (
                         <div key={t._id} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5">
-                            {t.subject && (
-                                <span className="mb-2 w-fit rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
-                                    {t.subject}
-                                </span>
-                            )}
+                            <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                                {t.subject && (
+                                    <span className="w-fit rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
+                                        {t.subject}
+                                    </span>
+                                )}
+                                {t.format && TEST_FORMATS[t.format] && (
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                                        <span>{TEST_FORMATS[t.format].emoji}</span> {TEST_FORMATS[t.format].label}
+                                    </span>
+                                )}
+                            </div>
                             <h3 className="text-base font-bold text-slate-900">{t.title}</h3>
                             {t.description && (
                                 <p className="mt-1 line-clamp-2 text-sm text-slate-500">{t.description}</p>

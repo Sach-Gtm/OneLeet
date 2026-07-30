@@ -5,6 +5,7 @@ const AiQuery = require("../../models/aiQueryModel");
 const ai = require("../../services/ai/aiService");
 const runtime = require("../../services/ai/aiRuntime");
 const { sanitizeExams } = require("../../config/exams");
+const { normalizeFormat, formatCount, TEST_FORMATS } = require("../../config/testFormats");
 
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 const notFound = (res) => res.status(404).json({ success: false, message: "Not found" });
@@ -96,7 +97,7 @@ async function listMine(req, res, next) {
         const tests = await Test.find(filter)
             .sort({ updatedAt: -1 })
             .limit(100)
-            .select("title subject mode status durationMinutes totalMarks questions openAt closeAt targets createdBy createdAt updatedAt");
+            .select("title subject mode format status durationMinutes totalMarks questions openAt closeAt targets createdBy createdAt updatedAt");
         return res.status(200).json({
             success: true,
             tests: tests.map((t) => ({
@@ -136,6 +137,7 @@ async function createTest(req, res, next) {
             description: String(b.description || "").slice(0, 400),
             subject: b.subject || "",
             mode: b.mode === "practice" ? "practice" : "test",
+            format: normalizeFormat(b.format),
             durationMinutes: Math.max(1, parseInt(b.durationMinutes, 10) || 30),
             openAt: b.openAt || undefined,
             closeAt: b.closeAt || undefined,
@@ -163,6 +165,7 @@ async function updateTest(req, res, next) {
         if (b.description != null) test.description = String(b.description).slice(0, 400);
         if (b.subject != null) test.subject = b.subject;
         if (b.mode) test.mode = b.mode === "practice" ? "practice" : "test";
+        if (b.format !== undefined) test.format = normalizeFormat(b.format);
         if (b.durationMinutes != null)
             test.durationMinutes = Math.max(1, parseInt(b.durationMinutes, 10) || 30);
         if ("openAt" in b) test.openAt = b.openAt || undefined;
@@ -194,6 +197,14 @@ async function publishTest(req, res, next) {
             return res
                 .status(400)
                 .json({ success: false, message: "Add at least one question before publishing" });
+        }
+        // Locked formats must have EXACTLY their question count — no more, no fewer.
+        const need = formatCount(test.format);
+        if (need != null && test.questions.length !== need) {
+            return res.status(400).json({
+                success: false,
+                message: `${TEST_FORMATS[test.format].label} must have exactly ${need} questions — this has ${test.questions.length}.`,
+            });
         }
         test.status = "published";
         test.isPublished = true;

@@ -9,6 +9,7 @@ const { ensureExamsSeeded } = require("./src/config/exams");
 const { ensureMentorsSeeded } = require("./src/config/seedMentors");
 const { ensureIpuSyllabusSeeded } = require("./src/config/seedIpuSyllabus");
 const { ensureIpuExamPatternSeeded } = require("./src/config/seedIpuExamPattern");
+const { ensureAnalogyTestSeeded } = require("./src/config/seedAnalogyTest");
 
 // Provision the Super Admin out-of-band once the DB is up, seed the LEET exam
 // catalog + founding mentors + IPU LEET syllabus and exam pattern on first run,
@@ -20,6 +21,7 @@ connectDB().then(async () => {
     ensureMentorsSeeded();
     ensureIpuSyllabusSeeded();
     ensureIpuExamPatternSeeded();
+    ensureAnalogyTestSeeded();
     startLeaderboardScheduler();
 });
 

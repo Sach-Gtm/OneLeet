@@ -43,7 +43,7 @@ async function listTests(req, res, next) {
     try {
         // Show only tests targeted at the student's chosen exams (empty pref = all).
         const tests = await Test.find({ isPublished: true, ...visibilityQuery(req.user?.exams) })
-            .select("title description subject stateExam targets category durationMinutes questions totalMarks createdAt")
+            .select("title description subject stateExam targets category format durationMinutes questions totalMarks createdAt")
             .sort({ createdAt: -1 })
             .lean();
 
@@ -55,6 +55,7 @@ async function listTests(req, res, next) {
             stateExam: t.stateExam,
             targets: t.targets || [],
             category: t.category,
+            format: t.format || null,
             durationMinutes: t.durationMinutes,
             questionCount: (t.questions || []).length,
             totalMarks: t.totalMarks || (t.questions || []).length,
