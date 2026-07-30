@@ -33,6 +33,10 @@ const VideoSchema = new mongoose.Schema(
         // config/exams.js). Empty or ["all"] → shown to every student.
         targets: { type: [String], default: [], index: true },
         published: { type: Boolean, default: true, index: true },
+        // Access tier. Free by default; staff flip to premium with one click.
+        // Premium videos stay visible to everyone (shown locked) but only pro-plan
+        // students (and staff) can play them — see config/roles.isPremiumUser.
+        premium: { type: Boolean, default: false, index: true },
         order: { type: Number, default: 0 },
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     },

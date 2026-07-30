@@ -20,6 +20,7 @@ import {
     ListChecks,
     Lock,
     Repeat,
+    Crown,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff } from "@/lib/roles";
@@ -33,7 +34,7 @@ import {
     publishStudioTest,
     removeStudioTest,
 } from "@/Api/StudioApi";
-import { getSyllabi, deleteSyllabus } from "@/Api/SyllabusApi";
+import { getSyllabi, deleteSyllabus, updateSyllabus } from "@/Api/SyllabusApi";
 import NotesUploadModal from "@/Components/App/NotesUploadModal";
 import SyllabusEditorModal from "@/Components/App/SyllabusEditorModal";
 import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
@@ -83,6 +84,8 @@ export default function Studio() {
     // question count the test must have to publish.
     const [format, setFormat] = useState(null);
     const needCount = format ? TEST_FORMATS[format].count : null;
+    // Free by default; when on, only Premium students (and staff) can open it.
+    const [premium, setPremium] = useState(false);
 
     // AI drafting inputs
     const [source, setSource] = useState("");
@@ -129,6 +132,17 @@ export default function Studio() {
         }
     }, [staff, loadList, loadSyllabi]);
 
+    // One-click free⇄premium for a global syllabus.
+    const toggleSyllabusPremium = async (s) => {
+        try {
+            await updateSyllabus(s._id, { premium: !s.premium });
+            toast.success(s.premium ? "Now Free" : "Now Premium");
+            loadSyllabi();
+        } catch (e) {
+            toast.error(e?.response?.data?.message || "Couldn't update the syllabus.");
+        }
+    };
+
     const handleDeleteSyllabus = async (s) => {
         if (!window.confirm(`Delete "${s.title}"? This removes it and all student progress on it.`)) return;
         try {
@@ -152,6 +166,7 @@ export default function Studio() {
         setTopic("");
         setMode("test");
         setFormat(null);
+        setPremium(false);
     };
 
     const handleDraft = async () => {
@@ -220,6 +235,7 @@ export default function Studio() {
         description: meta.description,
         mode,
         format,
+        premium,
         durationMinutes: Number(meta.durationMinutes) || 30,
         // A close time makes it a competitive test (frozen leaderboard). Practice
         // sets never carry a window.
@@ -279,6 +295,7 @@ export default function Studio() {
             setEditingId(t._id);
             setMode(t.mode || "test");
             setFormat(t.format || null);
+            setPremium(!!t.premium);
             setMeta({
                 title: t.title || "",
                 subject: t.subject || "",
@@ -319,6 +336,17 @@ export default function Studio() {
         try {
             await updateStudioTest(t._id, { mode: next });
             toast.success(next === "practice" ? "Switched to Practice" : "Switched to Test");
+            loadList();
+        } catch (e) {
+            toast.error(e.message || "Couldn't switch");
+        }
+    };
+
+    // One-click free⇄premium for a set (only Premium students can open premium).
+    const togglePremium = async (t) => {
+        try {
+            await updateStudioTest(t._id, { premium: !t.premium });
+            toast.success(t.premium ? "Now Free" : "Now Premium");
             loadList();
         } catch (e) {
             toast.error(e.message || "Couldn't switch");
@@ -396,8 +424,21 @@ export default function Studio() {
                                                 {s.subject ? `${s.subject} · ` : ""}
                                                 {topics} topic{topics === 1 ? "" : "s"}
                                                 {!s.published ? " · draft" : ""}
+                                                {s.premium ? " · premium" : ""}
                                             </p>
                                         </div>
+                                        <button
+                                            onClick={() => toggleSyllabusPremium(s)}
+                                            title={s.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                                            className={
+                                                "grid h-8 w-8 place-items-center rounded-md border " +
+                                                (s.premium
+                                                    ? "border-amber-300 bg-amber-50 text-amber-600 hover:bg-amber-100"
+                                                    : "border-slate-200 text-slate-400 hover:bg-slate-50")
+                                            }
+                                        >
+                                            <Crown className="h-3.5 w-3.5" />
+                                        </button>
                                         <button
                                             onClick={() => setSyllabusEditor({ open: true, editing: s })}
                                             title="Edit"
@@ -582,6 +623,23 @@ export default function Studio() {
                         </div>
                     )}
                 </div>
+
+                {/* Premium gate — free unless staff turn this on */}
+                <label className="mt-4 flex cursor-pointer items-center gap-2.5 rounded-xl border border-slate-200 p-3">
+                    <input
+                        type="checkbox"
+                        checked={premium}
+                        onChange={(e) => setPremium(e.target.checked)}
+                        className="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400"
+                    />
+                    <Crown className={"h-4 w-4 " + (premium ? "text-amber-500" : "text-slate-400")} />
+                    <div>
+                        <p className="text-sm font-semibold text-slate-700">Premium only</p>
+                        <p className="text-xs text-slate-400">
+                            Only Premium students can open this — free students see it locked.
+                        </p>
+                    </div>
+                </label>
 
                 {mode === "test" && (
                     <>
@@ -808,12 +866,29 @@ export default function Studio() {
                                                 {TEST_FORMATS[t.format].emoji} {TEST_FORMATS[t.format].label}
                                             </span>
                                         )}
+                                        {t.premium && (
+                                            <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-700">
+                                                <Crown className="h-2.5 w-2.5" /> Premium
+                                            </span>
+                                        )}
                                     </div>
                                     <div className="text-xs text-slate-400">
                                         {t.subject || "—"} · {t.questionCount} Qs · {t.totalMarks} marks
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1.5">
+                                    <button
+                                        onClick={() => togglePremium(t)}
+                                        title={t.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                                        className={
+                                            "inline-flex h-8 items-center gap-1 rounded-md border px-2 text-[11px] font-semibold transition " +
+                                            (t.premium
+                                                ? "border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                                                : "border-slate-200 text-slate-500 hover:bg-slate-50")
+                                        }
+                                    >
+                                        <Crown className="h-3.5 w-3.5" /> {t.premium ? "Premium" : "Free"}
+                                    </button>
                                     <button
                                         onClick={() => toggleTestMode(t)}
                                         title={`Switch to ${t.mode === "practice" ? "Test" : "Practice"}`}

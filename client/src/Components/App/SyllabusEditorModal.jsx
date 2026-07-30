@@ -33,6 +33,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
     const [subject, setSubject] = useState(editing?.subject || "");
     const [chapters, setChapters] = useState(toEditable(editing?.chapters));
     const [targets, setTargets] = useState(editing?.targets || []);
+    const [premium, setPremium] = useState(!!editing?.premium);
     const [aiText, setAiText] = useState("");
     const [file, setFile] = useState(null);
     const [scanPrompt, setScanPrompt] = useState("");
@@ -104,7 +105,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
         if (!targets.length) return toast.error("Choose at least one university (or 'All universities').");
         setBusy(true);
         try {
-            const payload = { title: title.trim(), subject, chapters: cleaned, targets };
+            const payload = { title: title.trim(), subject, chapters: cleaned, targets, premium };
             if (isEdit) await updateSyllabus(editing._id, payload);
             else await createSyllabus(payload);
             toast.success(isEdit ? "Syllabus updated" : "Syllabus created");
@@ -307,9 +308,22 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                 </div>
 
                 <div className="flex items-center justify-between gap-2 border-t border-slate-100 px-5 py-3">
-                    <span className="text-xs text-slate-400">
-                        {totalTopics} topic{totalTopics === 1 ? "" : "s"} · {totalHours} hrs
-                    </span>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs text-slate-400">
+                            {totalTopics} topic{totalTopics === 1 ? "" : "s"} · {totalHours} hrs
+                        </span>
+                        {isStaff && (
+                            <label className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                                <input
+                                    type="checkbox"
+                                    checked={premium}
+                                    onChange={(e) => setPremium(e.target.checked)}
+                                    className="h-3.5 w-3.5 rounded border-slate-300 text-amber-500 focus:ring-amber-400"
+                                />
+                                Premium only
+                            </label>
+                        )}
+                    </div>
                     <div className="flex gap-2">
                         <button onClick={() => !busy && onClose()} className="rounded-lg px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100">
                             Cancel

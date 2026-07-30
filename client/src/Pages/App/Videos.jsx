@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { MonitorPlay, Play, Plus, Pencil, Trash2, Loader2, X } from "lucide-react";
+import { MonitorPlay, Play, Plus, Pencil, Trash2, Loader2, X, Lock, Crown } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff as isStaffUser } from "@/lib/roles";
-import { getVideos, deleteVideo } from "@/Api/VideosApi";
+import { getVideos, deleteVideo, updateVideo } from "@/Api/VideosApi";
 import { youTubeThumb, youTubeEmbed } from "@/lib/youtube";
+import PremiumBadge from "@/Components/General/PremiumBadge";
+import PremiumGateModal from "@/Components/General/PremiumGateModal";
 import VideoEditorModal from "@/Components/App/VideoEditorModal";
 
 // The in-site player: a YouTube embed in a branded modal so students watch
@@ -59,35 +61,62 @@ function PlayerModal({ video, onClose }) {
     );
 }
 
-function VideoCard({ video, staff, onPlay, onEdit, onDelete }) {
+function VideoCard({ video, staff, onPlay, onEdit, onDelete, onTogglePremium }) {
     const sub = [video.chapter, video.topic].filter(Boolean).join(" · ");
+    const locked = !!video.locked;
     return (
         <div className="group overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:border-indigo-300 hover:shadow-sm">
             <div className="relative aspect-video bg-slate-900">
                 <button
                     onClick={() => onPlay(video)}
                     className="absolute inset-0 h-full w-full"
-                    aria-label={`Play ${video.title}`}
+                    aria-label={locked ? `Unlock ${video.title}` : `Play ${video.title}`}
                 >
-                    <img
-                        src={youTubeThumb(video.youtubeId)}
-                        alt=""
-                        loading="lazy"
-                        className="h-full w-full object-cover opacity-95 transition group-hover:opacity-100"
-                    />
-                    <span className="absolute inset-0 grid place-items-center bg-black/15 transition group-hover:bg-black/30">
-                        <span className="grid h-12 w-12 place-items-center rounded-full bg-white/90 shadow-md transition group-hover:scale-110">
-                            <Play className="h-5 w-5 translate-x-0.5 text-indigo-600" fill="currentColor" />
+                    {locked ? (
+                        <span className="absolute inset-0 grid place-items-center bg-gradient-to-br from-slate-800 to-slate-950">
+                            <span className="grid h-12 w-12 place-items-center rounded-full bg-amber-500/90 shadow-md transition group-hover:scale-110">
+                                <Lock className="h-5 w-5 text-white" />
+                            </span>
                         </span>
-                    </span>
+                    ) : (
+                        <>
+                            <img
+                                src={youTubeThumb(video.youtubeId)}
+                                alt=""
+                                loading="lazy"
+                                className="h-full w-full object-cover opacity-95 transition group-hover:opacity-100"
+                            />
+                            <span className="absolute inset-0 grid place-items-center bg-black/15 transition group-hover:bg-black/30">
+                                <span className="grid h-12 w-12 place-items-center rounded-full bg-white/90 shadow-md transition group-hover:scale-110">
+                                    <Play className="h-5 w-5 translate-x-0.5 text-indigo-600" fill="currentColor" />
+                                </span>
+                            </span>
+                        </>
+                    )}
                 </button>
-                {!video.published && (
-                    <span className="absolute left-2 top-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
-                        Draft
-                    </span>
-                )}
+                <div className="absolute left-2 top-2 z-10 flex gap-1">
+                    {!video.published && (
+                        <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                            Draft
+                        </span>
+                    )}
+                    {video.premium && <PremiumBadge locked={locked} />}
+                </div>
                 {staff && (
                     <div className="absolute right-2 top-2 z-10 flex gap-1">
+                        <button
+                            onClick={() => onTogglePremium(video)}
+                            className={
+                                "grid h-7 w-7 place-items-center rounded-md shadow-sm transition " +
+                                (video.premium
+                                    ? "bg-amber-500 text-white hover:bg-amber-600"
+                                    : "bg-white/90 text-slate-600 hover:bg-white hover:text-amber-600")
+                            }
+                            aria-label={video.premium ? "Make free" : "Make premium"}
+                            title={video.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                        >
+                            <Crown size={13} />
+                        </button>
                         <button
                             onClick={() => onEdit(video)}
                             className="grid h-7 w-7 place-items-center rounded-md bg-white/90 text-slate-600 shadow-sm hover:bg-white hover:text-indigo-600"
@@ -123,8 +152,23 @@ export default function Videos() {
     const [playing, setPlaying] = useState(null);
     const [editing, setEditing] = useState(null); // { video } | { video: null } for new
     const [busyId, setBusyId] = useState(null);
+    const [gate, setGate] = useState(null); // premium video a free student tapped
 
     const load = () => getVideos().then(setVideos).catch(() => setVideos([]));
+
+    // A locked premium video routes to the upgrade prompt; otherwise it plays.
+    const play = (v) => (v.locked ? setGate(v) : setPlaying(v));
+
+    // Staff: flip a video free⇄premium in one click, then refetch.
+    const togglePremium = async (video) => {
+        try {
+            await updateVideo(video._id, { premium: !video.premium });
+            toast.success(video.premium ? "Now Free" : "Now Premium");
+            load();
+        } catch (e) {
+            toast.error(e.message || "Couldn't update the video.");
+        }
+    };
     useEffect(() => {
         load();
     }, []);
@@ -242,9 +286,10 @@ export default function Videos() {
                                                     <VideoCard
                                                         video={v}
                                                         staff={staff}
-                                                        onPlay={setPlaying}
+                                                        onPlay={play}
                                                         onEdit={(vid) => setEditing({ video: vid })}
                                                         onDelete={handleDelete}
+                                                        onTogglePremium={togglePremium}
                                                     />
                                                 </div>
                                             ))}
@@ -258,6 +303,7 @@ export default function Videos() {
             )}
 
             {playing && <PlayerModal video={playing} onClose={() => setPlaying(null)} />}
+            <PremiumGateModal open={!!gate} onClose={() => setGate(null)} itemTitle={gate?.title} />
             {editing && (
                 <VideoEditorModal
                     video={editing.video}

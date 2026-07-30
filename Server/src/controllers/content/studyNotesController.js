@@ -4,8 +4,13 @@ const Note = require("../../models/noteModel");
 const aiService = require("../../services/ai/aiService");
 const { runAiFeature } = require("../../services/ai/aiRuntime");
 const { sanitizeExams, visibilityQuery } = require("../../config/exams");
+const { isPremiumUser } = require("../../config/roles");
 
 const CATEGORY = "notes";
+
+// A premium note stays visible to free students (shown locked), but they never
+// receive its file/content and can't open it — this 403 is the enforcement.
+const premiumBlocked = (req, note) => note.premium && !isPremiumUser(req.user);
 
 const listFilter = (value) => {
     if (!value) return undefined;
@@ -42,17 +47,26 @@ async function getNotes(req, res, next) {
 
         const [notes, total] = await Promise.all([
             Note.find(filter)
-                .select("title subject description teacher branch level difficulty format fileUrl createdAt")
+                .select("title subject description teacher branch level difficulty format fileUrl premium createdAt")
                 .populate("uploadedBy", "name")
                 .sort(sortBy)
                 .skip(skip)
-                .limit(limitNum),
+                .limit(limitNum)
+                .lean(),
             Note.countDocuments(filter),
         ]);
 
+        // Premium notes stay in the list (shown locked) but a free student never
+        // gets the fileUrl — so the PDF can't be opened until they upgrade.
+        const canPremium = isPremiumUser(req.user);
+        const out = notes.map((n) => {
+            const locked = !!n.premium && !canPremium;
+            return locked ? { ...n, fileUrl: undefined, locked: true } : { ...n, locked: false };
+        });
+
         return res.status(200).json({
             success: true,
-            notes,
+            notes: out,
             total,
             page: pageNum,
             pages: Math.ceil(total / limitNum) || 1,
@@ -88,6 +102,13 @@ async function getNoteById(req, res, next) {
     try {
         const note = await Note.findOne({ _id: req.params.id, category: CATEGORY }).populate("uploadedBy", "name");
         if (!note) return res.status(404).json({ success: false, message: "Note not found" });
+        if (premiumBlocked(req, note)) {
+            return res.status(403).json({
+                success: false,
+                code: "PREMIUM_REQUIRED",
+                message: "This is a Premium note. Upgrade to Premium to unlock it.",
+            });
+        }
         return res.status(200).json({ success: true, note });
     } catch (error) {
         next(error);
@@ -101,7 +122,7 @@ async function getNoteById(req, res, next) {
 async function uploadNote(req, res, next) {
     let localFilePath;
     try {
-        const { title, subject, description, teacher, branch, level, difficulty, format, content, source, targets } = req.body;
+        const { title, subject, description, teacher, branch, level, difficulty, format, content, source, targets, premium } = req.body;
 
         // `targets` arrives as a JSON string over multipart; accept an array too.
         let targetList = targets;
@@ -153,6 +174,8 @@ async function uploadNote(req, res, next) {
             content: body || undefined,
             source: source === "ai" ? "ai" : "manual",
             targets: sanitizeExams(targetList),
+            // Multipart sends everything as strings; treat "true" as premium.
+            premium: premium === true || premium === "true",
             uploadedBy: req.user._id,
             ...fileFields,
         });
@@ -207,11 +230,38 @@ async function generateNoteDraft(req, res, next) {
     }
 }
 
+// PATCH /api/notes/:id  (staff only) — edit a note's metadata. Powers the
+// one-click free⇄premium toggle in the library; also allows light text edits.
+// The file itself isn't swapped here (re-upload for that).
+async function updateNote(req, res, next) {
+    try {
+        const note = await Note.findOne({ _id: req.params.id, category: CATEGORY });
+        if (!note) return res.status(404).json({ success: false, message: "Note not found" });
+        const b = req.body || {};
+        if ("premium" in b) note.premium = b.premium === true || b.premium === "true";
+        if (b.title != null) note.title = String(b.title).trim();
+        if (b.subject != null) note.subject = b.subject;
+        if (b.description != null) note.description = b.description;
+        if (b.teacher != null) note.teacher = b.teacher;
+        if (b.branch != null) note.branch = b.branch;
+        if (b.level != null) note.level = b.level;
+        if (b.difficulty != null) note.difficulty = b.difficulty;
+        if (b.targets != null) note.targets = sanitizeExams(b.targets);
+        await note.save();
+        return res.status(200).json({ success: true, message: "Note updated", note });
+    } catch (error) {
+        next(error);
+    }
+}
+
 // POST /api/notes/:id/summary  — AI summary via the provider-agnostic service
 async function summarizeNote(req, res, next) {
     try {
         const note = await Note.findOne({ _id: req.params.id, category: CATEGORY });
         if (!note) return res.status(404).json({ success: false, message: "Note not found" });
+        if (premiumBlocked(req, note)) {
+            return res.status(403).json({ success: false, code: "PREMIUM_REQUIRED", message: "This is a Premium note. Upgrade to Premium to unlock it." });
+        }
 
         const result = await aiService.summarizeNote({
             title: note.title,
@@ -229,6 +279,9 @@ async function generateFlashcards(req, res, next) {
     try {
         const note = await Note.findOne({ _id: req.params.id, category: CATEGORY });
         if (!note) return res.status(404).json({ success: false, message: "Note not found" });
+        if (premiumBlocked(req, note)) {
+            return res.status(403).json({ success: false, code: "PREMIUM_REQUIRED", message: "This is a Premium note. Upgrade to Premium to unlock it." });
+        }
 
         const count = Math.min(Math.max(parseInt(req.body?.count, 10) || 6, 1), 20);
         const result = await aiService.generateFlashcards({
@@ -248,6 +301,7 @@ module.exports = {
     getNotesFilters,
     getNoteById,
     uploadNote,
+    updateNote,
     generateNoteDraft,
     summarizeNote,
     generateFlashcards,

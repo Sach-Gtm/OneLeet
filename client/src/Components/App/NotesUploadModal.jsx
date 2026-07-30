@@ -27,6 +27,7 @@ const emptyForm = {
     level: "",
     difficulty: "intermediate",
     content: "",
+    premium: false,
 };
 
 // Staff-only modal to publish a study note two ways:
@@ -114,6 +115,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                 content: form.content,
                 source,
                 targets,
+                premium: form.premium,
             };
             if (source === "ai") fields.format = "text";
             await uploadNote(fields, source === "ai" ? null : file);
@@ -326,6 +328,16 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                                 <label className={labelCls}>Target universities / LEET *</label>
                                 <ExamMultiSelect value={targets} onChange={setTargets} allowAll height="max-h-40" />
                             </div>
+
+                            <label className="flex items-center gap-2 text-sm text-slate-600">
+                                <input
+                                    type="checkbox"
+                                    checked={form.premium}
+                                    onChange={(e) => set("premium", e.target.checked)}
+                                    className="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400"
+                                />
+                                Premium only (free students see it locked)
+                            </label>
 
                             {/* Normal mode: PDF upload */}
                             {tab === "normal" && (

@@ -1,6 +1,7 @@
 const Test = require("../../models/testModel");
 const Attempt = require("../../models/attemptModel");
 const { visibilityQuery } = require("../../config/exams");
+const { isPremiumUser } = require("../../config/roles");
 // Registers the Question schema so populate("questions") / populate("answers.question")
 // works at runtime (Test/Attempt only reference it by name).
 require("../../models/questionModel");
@@ -43,10 +44,13 @@ async function listTests(req, res, next) {
     try {
         // Show only tests targeted at the student's chosen exams (empty pref = all).
         const tests = await Test.find({ isPublished: true, ...visibilityQuery(req.user?.exams) })
-            .select("title description subject stateExam targets category format mode durationMinutes questions totalMarks createdAt")
+            .select("title description subject stateExam targets category format mode premium durationMinutes questions totalMarks createdAt")
             .sort({ createdAt: -1 })
             .lean();
 
+        // Premium items stay visible to everyone (shown locked); `locked` tells the
+        // client to render the badge + upgrade prompt for a free student.
+        const canPremium = isPremiumUser(req.user);
         const out = tests.map((t) => ({
             _id: t._id,
             title: t.title,
@@ -57,6 +61,8 @@ async function listTests(req, res, next) {
             category: t.category,
             format: t.format || null,
             mode: t.mode || "test",
+            premium: !!t.premium,
+            locked: !!t.premium && !canPremium,
             durationMinutes: t.durationMinutes,
             questionCount: (t.questions || []).length,
             totalMarks: t.totalMarks || (t.questions || []).length,
@@ -74,6 +80,15 @@ async function getTest(req, res, next) {
     try {
         const test = await Test.findOne({ _id: req.params.id, isPublished: true });
         if (!test) return res.status(404).json({ success: false, message: "Test not found" });
+
+        // Premium gate: free students can see it in the list but not open it.
+        if (test.premium && !isPremiumUser(req.user)) {
+            return res.status(403).json({
+                success: false,
+                code: "PREMIUM_REQUIRED",
+                message: "This is a Premium test. Upgrade to Premium to unlock it.",
+            });
+        }
 
         // Competitive window: a scheduled graded test can only be taken while open.
         if (test.mode === "test" && test.closeAt) {
@@ -129,6 +144,15 @@ async function submitTest(req, res, next) {
             select: "text options correctIndex marks",
         });
         if (!test) return res.status(404).json({ success: false, message: "Test not found" });
+
+        // Premium gate: a free student can't submit a premium test either.
+        if (test.premium && !isPremiumUser(req.user)) {
+            return res.status(403).json({
+                success: false,
+                code: "PREMIUM_REQUIRED",
+                message: "This is a Premium test. Upgrade to Premium to unlock it.",
+            });
+        }
 
         // Competitive window: reject submissions once the test has closed (a small
         // grace absorbs clock skew and requests already in flight at closeAt).

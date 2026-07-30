@@ -21,6 +21,7 @@ export default function VideoEditorModal({ video, onClose, onSaved }) {
     const [author, setAuthor] = useState(video?.author && video.author !== "OneLeet" ? video.author : "");
     const [targets, setTargets] = useState(video?.targets || []);
     const [published, setPublished] = useState(video?.published !== false);
+    const [premium, setPremium] = useState(!!video?.premium);
     const [busy, setBusy] = useState(false);
 
     const vid = parseYouTubeId(url);
@@ -41,6 +42,7 @@ export default function VideoEditorModal({ video, onClose, onSaved }) {
                 author: author.trim(),
                 targets,
                 published,
+                premium,
             };
             const saved = isEdit ? await updateVideo(video._id, payload) : await createVideo(payload);
             toast.success(isEdit ? "Video updated" : "Video added");
@@ -172,6 +174,15 @@ export default function VideoEditorModal({ video, onClose, onSaved }) {
                             className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                         />
                         Published (visible to students)
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-slate-600">
+                        <input
+                            type="checkbox"
+                            checked={premium}
+                            onChange={(e) => setPremium(e.target.checked)}
+                            className="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400"
+                        />
+                        Premium only (free students see it locked)
                     </label>
                 </div>
 
