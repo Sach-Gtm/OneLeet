@@ -18,9 +18,11 @@ import {
     Trophy,
     BookOpen,
     ListChecks,
+    Lock,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff } from "@/lib/roles";
+import { TEST_FORMATS, TEST_FORMAT_KEYS } from "@/lib/testFormats";
 import {
     aiDraft,
     listStudioTests,
@@ -76,6 +78,10 @@ export default function Studio() {
     const [questions, setQuestions] = useState([blankQuestion()]);
     const [targets, setTargets] = useState([]);
     const [editingId, setEditingId] = useState(null);
+    // Locked size preset (null = custom, no lock). Picking one fixes the exact
+    // question count the test must have to publish.
+    const [format, setFormat] = useState(null);
+    const needCount = format ? TEST_FORMATS[format].count : null;
 
     // AI drafting inputs
     const [source, setSource] = useState("");
@@ -139,6 +145,7 @@ export default function Studio() {
         setSource("");
         setTopic("");
         setMode("test");
+        setFormat(null);
     };
 
     const handleDraft = async () => {
@@ -190,14 +197,23 @@ export default function Studio() {
                 return { ...q, options, correctIndex };
             })
         );
-    const addQuestion = () => setQuestions((qs) => [...qs, blankQuestion()]);
+    const addQuestion = () =>
+        setQuestions((qs) => (needCount && qs.length >= needCount ? qs : [...qs, blankQuestion()]));
     const removeQuestion = (i) => setQuestions((qs) => (qs.length > 1 ? qs.filter((_, idx) => idx !== i) : qs));
+
+    // Pick a locked format (or "custom"). Point the AI drafter at the same count
+    // (capped at 20, its max) so a Quick Shot drafts 10 straight away.
+    const pickFormat = (key) => {
+        setFormat(key);
+        if (key && TEST_FORMATS[key]) setCount(Math.min(TEST_FORMATS[key].count, 20));
+    };
 
     const buildPayload = () => ({
         title: meta.title,
         subject: meta.subject,
         description: meta.description,
         mode,
+        format,
         durationMinutes: Number(meta.durationMinutes) || 30,
         // A close time makes it a competitive test (frozen leaderboard). Practice
         // sets never carry a window.
@@ -228,6 +244,12 @@ export default function Studio() {
     const handleSave = async (publish = false) => {
         const err = validate();
         if (err) return toast.error(err);
+        // Locked format → must publish with EXACTLY its question count.
+        if (publish && needCount && questions.length !== needCount) {
+            return toast.error(
+                `${TEST_FORMATS[format].label} must have exactly ${needCount} questions — you have ${questions.length}.`
+            );
+        }
         setSaving(true);
         try {
             const payload = buildPayload();
@@ -250,6 +272,7 @@ export default function Studio() {
             const t = await getStudioTest(id);
             setEditingId(t._id);
             setMode(t.mode || "test");
+            setFormat(t.format || null);
             setMeta({
                 title: t.title || "",
                 subject: t.subject || "",
@@ -484,6 +507,62 @@ export default function Studio() {
                         Target universities / LEET *
                     </label>
                     <ExamMultiSelect value={targets} onChange={setTargets} allowAll height="max-h-40" />
+                </div>
+
+                {/* Locked size format. Picking one fixes the exact question count. */}
+                <div className="mt-4">
+                    <label className="mb-1.5 block text-xs font-semibold text-slate-600">
+                        Format <span className="font-normal text-slate-400">— locks the question count</span>
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            onClick={() => pickFormat(null)}
+                            className={
+                                "rounded-lg border px-3 py-1.5 text-sm font-semibold transition " +
+                                (!format
+                                    ? "border-indigo-600 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600"
+                                    : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50")
+                            }
+                        >
+                            Custom
+                        </button>
+                        {TEST_FORMAT_KEYS.map((k) => {
+                            const f = TEST_FORMATS[k];
+                            return (
+                                <button
+                                    key={k}
+                                    type="button"
+                                    onClick={() => pickFormat(k)}
+                                    className={
+                                        "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-semibold transition " +
+                                        (format === k
+                                            ? "border-indigo-600 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600"
+                                            : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50")
+                                    }
+                                    title={`${f.label} — exactly ${f.count} questions`}
+                                >
+                                    <span>{f.emoji}</span> {f.label}
+                                    <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500">{f.count}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                    {needCount && (
+                        <div
+                            className={
+                                "mt-2 inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold " +
+                                (questions.length === needCount
+                                    ? "bg-emerald-50 text-emerald-700"
+                                    : "bg-amber-50 text-amber-700")
+                            }
+                        >
+                            <Lock className="h-3 w-3" />
+                            {questions.length}/{needCount} questions
+                            {questions.length !== needCount &&
+                                ` — ${questions.length < needCount ? `add ${needCount - questions.length} more` : `remove ${questions.length - needCount}`} to publish`}
+                        </div>
+                    )}
                 </div>
 
                 {mode === "test" && (
