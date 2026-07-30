@@ -42,6 +42,7 @@ import CompetitionAdmin from "@/Components/App/CompetitionAdmin";
 import AiUsageAdmin from "@/Components/App/AiUsageAdmin";
 import BlocklistAdmin from "@/Components/App/BlocklistAdmin";
 import ExamAdmin from "@/Components/App/ExamAdmin";
+import ExamPatternAdmin from "@/Components/App/ExamPatternAdmin";
 import ReviewAdmin from "@/Components/App/ReviewAdmin";
 import MentorAdmin from "@/Components/App/MentorAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
@@ -640,6 +641,9 @@ export default function AdminDashboard() {
 
             {/* Universities / LEET catalog — add/remove colleges (admins + super admin) */}
             {canManageStudents && <ExamAdmin />}
+
+            {/* Exam paper patterns — full exam guide shown on student dashboards */}
+            {canManageStudents && <ExamPatternAdmin />}
 
             {/* Landing-page reviews — add/remove testimonials (admins + super admin) */}
             {canManageStudents && <ReviewAdmin />}

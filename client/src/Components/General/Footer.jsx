@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
     Mail,
@@ -14,6 +14,7 @@ import {
 import toast from "react-hot-toast";
 import Logo from "@/Components/General/Logo";
 import { submitCallback } from "@/Api/ContactApi";
+import { CALLBACK_EVENT } from "@/lib/callback";
 
 // No socials yet — clicking one drops a cheeky nudge instead of a dead link.
 const FUNNY_LINES = [
@@ -97,6 +98,14 @@ function CallbackModal({ onClose }) {
 
 export default function Footer() {
     const [callbackOpen, setCallbackOpen] = useState(false);
+
+    // Let any screen open the callback modal by firing CALLBACK_EVENT (see
+    // lib/callback.js) — e.g. the dashboard's "Have more questions?" button.
+    useEffect(() => {
+        const open = () => setCallbackOpen(true);
+        window.addEventListener(CALLBACK_EVENT, open);
+        return () => window.removeEventListener(CALLBACK_EVENT, open);
+    }, []);
 
     return (
         <footer className="mt-24 w-full border-t border-slate-200 bg-[#FAF9F6] text-slate-600">
