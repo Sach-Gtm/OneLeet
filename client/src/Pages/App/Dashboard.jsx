@@ -25,6 +25,7 @@ import { getDashboard } from "@/Api/DashboardApi";
 import { getMyAnalytics } from "@/Api/ActivityApi";
 import { getSyllabusSummary } from "@/Api/SyllabusApi";
 import NetworkCanvas from "@/Components/General/NetworkCanvas";
+import ExamPatternSection from "@/Components/App/ExamPatternSection";
 import { isStudent } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
@@ -354,6 +355,9 @@ export default function Dashboard() {
 
             {/* This week — real time-on-site */}
             <WeekActivity minutesByDay={week} />
+
+            {/* Paper pattern & full exam guide for the student's chosen exam(s) */}
+            <ExamPatternSection />
 
             {/* AI insight + Recent activity */}
             <div className="grid gap-6 lg:grid-cols-3">
