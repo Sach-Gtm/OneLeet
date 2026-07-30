@@ -1,0 +1,192 @@
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import {
+    Compass,
+    CheckCircle2,
+    AlertTriangle,
+    Backpack,
+    PhoneCall,
+    ScrollText,
+    ArrowRight,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { PHASES, MISTAKES, EXAM_DAY_KIT, PHASE_STYLES } from "@/lib/prepGuide";
+import { openCallback } from "@/lib/callback";
+
+const reveal = {
+    initial: { opacity: 0, y: 18 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-60px" },
+    transition: { duration: 0.45, ease: "easeOut" },
+};
+
+function PhaseNode({ phase, last }) {
+    const Icon = phase.icon;
+    const s = PHASE_STYLES[phase.color] || PHASE_STYLES.indigo;
+    return (
+        <motion.div {...reveal} className="relative flex gap-4 pb-6">
+            {/* Connecting line */}
+            {!last && <span className="absolute left-[22px] top-12 h-full w-px bg-slate-200 dark:bg-slate-700" />}
+            {/* Node */}
+            <span
+                className={cn(
+                    "relative z-10 grid h-11 w-11 shrink-0 place-items-center rounded-xl",
+                    s.chip,
+                    phase.current && cn("ring-4", s.ring)
+                )}
+            >
+                <Icon size={19} />
+            </span>
+            <div
+                className={cn(
+                    "min-w-0 flex-1 rounded-2xl border bg-white p-4",
+                    phase.current
+                        ? "border-indigo-200 shadow-sm dark:border-indigo-500/30"
+                        : "border-slate-200 dark:border-slate-700/70"
+                )}
+            >
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                    <h3 className="text-base font-bold text-slate-900">{phase.label}</h3>
+                    <span
+                        className={cn(
+                            "rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                            phase.current
+                                ? "bg-indigo-600 text-white"
+                                : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                        )}
+                    >
+                        {phase.window}
+                    </span>
+                </div>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{phase.focus}</p>
+                <ul className="mt-3 space-y-2">
+                    {phase.tips.map((t, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
+                            <CheckCircle2 size={15} className={cn("mt-0.5 shrink-0", s.chip.split(" ")[1])} />
+                            <span>{t}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </motion.div>
+    );
+}
+
+export default function PrepGuide() {
+    return (
+        <div className="mx-auto max-w-4xl space-y-8 pb-4">
+            {/* Hero */}
+            <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white sm:p-8"
+            >
+                <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/10 blur-2xl" />
+                <div className="pointer-events-none absolute -bottom-16 right-24 h-40 w-40 rounded-full bg-violet-500/20 blur-2xl" />
+                <div className="relative">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
+                        <Compass size={13} /> Prep Guide
+                    </span>
+                    <h1 className="mt-3 text-2xl font-bold sm:text-3xl">Your roadmap to cracking LEET</h1>
+                    <p className="mt-2 max-w-xl text-sm text-indigo-100 sm:text-base">
+                        You&apos;re at the start of your journey — perfect timing. Here&apos;s exactly what to focus
+                        on at each stage, the mistakes to avoid, and what to carry on exam day.
+                    </p>
+                </div>
+            </motion.div>
+
+            {/* Roadmap */}
+            <section>
+                <div className="mb-4 flex items-center gap-2">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg bg-indigo-50 text-indigo-600">
+                        <ScrollText size={16} />
+                    </span>
+                    <div>
+                        <h2 className="text-lg font-bold text-slate-900">The phases, start to finish</h2>
+                        <p className="text-xs text-slate-400">What to prioritise as your exam gets closer.</p>
+                    </div>
+                </div>
+                <div>
+                    {PHASES.map((p, i) => (
+                        <PhaseNode key={p.id} phase={p} last={i === PHASES.length - 1} />
+                    ))}
+                </div>
+            </section>
+
+            {/* Mistakes to avoid */}
+            <section>
+                <div className="mb-4 flex items-center gap-2">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg bg-rose-50 text-rose-600 dark:bg-rose-500/15">
+                        <AlertTriangle size={16} />
+                    </span>
+                    <div>
+                        <h2 className="text-lg font-bold text-slate-900">Mistakes to avoid</h2>
+                        <p className="text-xs text-slate-400">The traps that quietly cost the most marks.</p>
+                    </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                    {MISTAKES.map((m, i) => (
+                        <motion.div
+                            {...reveal}
+                            transition={{ ...reveal.transition, delay: (i % 2) * 0.05 }}
+                            key={m.title}
+                            className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700/70"
+                        >
+                            <p className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-slate-100">
+                                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300">
+                                    <AlertTriangle size={11} />
+                                </span>
+                                {m.title}
+                            </p>
+                            <p className="mt-1.5 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{m.body}</p>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+
+            {/* Exam-day kit */}
+            <section>
+                <div className="mb-4 flex items-center gap-2">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg bg-amber-50 text-amber-600">
+                        <Backpack size={16} />
+                    </span>
+                    <div>
+                        <h2 className="text-lg font-bold text-slate-900">What to carry on exam day</h2>
+                        <p className="text-xs text-slate-400">Pack it the night before — always follow your admit card too.</p>
+                    </div>
+                </div>
+                <motion.ul {...reveal} className="grid gap-2 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2 dark:border-slate-700/70">
+                    {EXAM_DAY_KIT.map((item) => (
+                        <li key={item} className="flex items-center gap-2.5 text-sm text-slate-600 dark:text-slate-300">
+                            <CheckCircle2 size={16} className="shrink-0 text-emerald-500" />
+                            {item}
+                        </li>
+                    ))}
+                </motion.ul>
+            </section>
+
+            {/* Callback CTA */}
+            <div className="flex flex-col items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-center sm:flex-row sm:text-left dark:border-slate-700/70 dark:bg-slate-800/40">
+                <div>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Stuck or unsure where to start?</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Get a free call with our team — we&apos;ll help you build a plan that fits your timeline.</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                    <Link
+                        to="/syllabus"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                    >
+                        Start with Syllabus <ArrowRight size={14} />
+                    </Link>
+                    <button
+                        onClick={openCallback}
+                        className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+                    >
+                        <PhoneCall size={15} /> Request a callback
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}

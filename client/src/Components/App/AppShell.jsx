@@ -7,6 +7,7 @@ import {
     ClipboardList,
     ListChecks,
     MonitorPlay,
+    Compass,
     Brain,
     BarChart3,
     Trophy,
@@ -35,6 +36,7 @@ const NAV = [
         section: null,
         items: [
             { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+            { to: "/prep-guide", label: "Prep Guide", icon: Compass },
             { to: "/pyqs", label: "PYQs", icon: FileQuestion },
             { to: "/notes", label: "Notes", icon: BookOpen },
             { to: "/syllabus", label: "Syllabus", icon: ListChecks },

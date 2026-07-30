@@ -26,6 +26,7 @@ import { getMyAnalytics } from "@/Api/ActivityApi";
 import { getSyllabusSummary } from "@/Api/SyllabusApi";
 import NetworkCanvas from "@/Components/General/NetworkCanvas";
 import ExamPatternSection from "@/Components/App/ExamPatternSection";
+import PrepCoachCard from "@/Components/App/PrepCoachCard";
 import { isStudent } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
@@ -355,6 +356,9 @@ export default function Dashboard() {
 
             {/* This week — real time-on-site */}
             <WeekActivity minutesByDay={week} />
+
+            {/* Prep roadmap: what to focus on now, linking to the full guide */}
+            <PrepCoachCard />
 
             {/* Paper pattern & full exam guide for the student's chosen exam(s) */}
             <ExamPatternSection />
