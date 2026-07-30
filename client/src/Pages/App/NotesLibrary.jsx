@@ -7,8 +7,9 @@ import {
     User,
     Loader2,
     BookOpen,
-    Eye,
     Zap,
+    Lock,
+    Crown,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -16,9 +17,14 @@ import {
     getNotes,
     getNotesFilters,
     getNote,
+    updateNote,
     summarizeNote,
     generateFlashcards,
 } from "@/Api/NotesApi";
+import { useAuth } from "@/context/AuthContext";
+import { isStaff } from "@/lib/roles";
+import PremiumBadge from "@/Components/General/PremiumBadge";
+import PremiumGateModal from "@/Components/General/PremiumGateModal";
 import NoteAiModal from "@/Components/App/NoteAiModal";
 import NoteReaderModal from "@/Components/App/NoteReaderModal";
 
@@ -64,16 +70,19 @@ function FilterSection({ label, options, selected, onToggle }) {
     );
 }
 
-function NoteCard({ note, onSummary, onFlashcards, onRead }) {
+function NoteCard({ note, staff, onSummary, onFlashcards, onRead, onLocked, onTogglePremium }) {
     const tags = [note.branch, note.level, note.difficulty].filter(Boolean);
     const hasFile = Boolean(note.fileUrl);
+    const locked = !!note.locked;
     const openView = () => {
+        if (locked) return onLocked(note);
         if (hasFile) window.open(note.fileUrl, "_blank", "noopener,noreferrer");
         else onRead(note);
     };
+    const ai = (fn) => (locked ? onLocked(note) : fn(note));
     return (
         <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5">
-            <div className="mb-2 flex flex-wrap gap-1.5">
+            <div className="mb-2 flex flex-wrap items-center gap-1.5">
                 {tags.map((t) => (
                     <span
                         key={t}
@@ -82,6 +91,7 @@ function NoteCard({ note, onSummary, onFlashcards, onRead }) {
                         {t}
                     </span>
                 ))}
+                {note.premium && <PremiumBadge locked={locked} />}
             </div>
             <h3 className="text-base font-bold text-slate-900">{note.title}</h3>
             <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500">
@@ -92,21 +102,40 @@ function NoteCard({ note, onSummary, onFlashcards, onRead }) {
                 <p className="mt-2 line-clamp-2 text-sm text-slate-500">{note.description}</p>
             )}
 
+            {staff && (
+                <button
+                    onClick={() => onTogglePremium(note)}
+                    className={
+                        "mt-3 inline-flex w-fit items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-semibold transition " +
+                        (note.premium
+                            ? "border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                            : "border-slate-200 text-slate-500 hover:bg-slate-50")
+                    }
+                    title={note.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                >
+                    <Crown size={12} /> {note.premium ? "Premium" : "Make Premium"}
+                </button>
+            )}
+
             <button
                 onClick={openView}
-                className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                className={
+                    "mt-4 flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold text-white transition " +
+                    (locked ? "bg-amber-500 hover:bg-amber-600" : "bg-indigo-600 hover:bg-indigo-700")
+                }
             >
-                <BookOpen size={15} /> {hasFile ? "View Note" : "Read Note"}
+                {locked ? <Lock size={15} /> : <BookOpen size={15} />}{" "}
+                {locked ? "Unlock with Premium" : hasFile ? "View Note" : "Read Note"}
             </button>
             <div className="mt-2 flex gap-2">
                 <button
-                    onClick={() => onSummary(note)}
+                    onClick={() => ai(onSummary)}
                     className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
                 >
                     <Brain size={13} /> AI Summary
                 </button>
                 <button
-                    onClick={() => onFlashcards(note)}
+                    onClick={() => ai(onFlashcards)}
                     className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
                 >
                     <Layers size={13} /> Flashcards
@@ -117,6 +146,10 @@ function NoteCard({ note, onSummary, onFlashcards, onRead }) {
 }
 
 export default function NotesLibrary() {
+    const { user } = useAuth();
+    const staff = isStaff(user);
+    const [gate, setGate] = useState(null); // premium note a free student tapped
+    const [reloadKey, setReloadKey] = useState(0); // bump to refetch after a toggle
     const [filterOptions, setFilterOptions] = useState(null);
     const [subjectChip, setSubjectChip] = useState("all");
     const [sidebar, setSidebar] = useState(emptySidebar);
@@ -164,7 +197,18 @@ export default function NotesLibrary() {
         return () => {
             active = false;
         };
-    }, [queryParams]);
+    }, [queryParams, reloadKey]);
+
+    // Staff: flip a note free⇄premium in one click, then refresh the grid.
+    const togglePremium = async (note) => {
+        try {
+            await updateNote(note._id, { premium: !note.premium });
+            toast.success(note.premium ? "Now Free" : "Now Premium");
+            setReloadKey((k) => k + 1);
+        } catch {
+            toast.error("Couldn't update this note.");
+        }
+    };
 
     // Open a written / AI "text" note (no PDF): fetch its full body, then read it.
     const openReader = async (note) => {
@@ -306,9 +350,12 @@ export default function NotesLibrary() {
                                     <NoteCard
                                         key={note._id}
                                         note={note}
+                                        staff={staff}
                                         onSummary={(n) => runAi(n, "summary")}
                                         onFlashcards={(n) => runAi(n, "flashcards")}
                                         onRead={openReader}
+                                        onLocked={setGate}
+                                        onTogglePremium={togglePremium}
                                     />
                                 ))}
                             </div>
@@ -364,6 +411,8 @@ export default function NotesLibrary() {
                 note={reader.note}
                 onClose={() => setReader({ open: false, loading: false, note: null })}
             />
+
+            <PremiumGateModal open={!!gate} onClose={() => setGate(null)} itemTitle={gate?.title} />
         </div>
     );
 }

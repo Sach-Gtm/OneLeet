@@ -24,6 +24,11 @@ const NoteSchema = new mongoose.Schema(
         // config/exams.js). Empty or ["all"] → shown to every student.
         targets: { type: [String], default: [], index: true },
 
+        // Access tier. Free by default; staff flip to premium with one click.
+        // Premium notes stay visible to everyone (shown locked) but only pro-plan
+        // students (and staff) can open/download them — see config/roles.isPremiumUser.
+        premium: { type: Boolean, default: false, index: true },
+
         // ---- Study-notes metadata (category: "notes") ----
         description: {
             type: String,

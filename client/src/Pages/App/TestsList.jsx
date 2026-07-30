@@ -9,12 +9,15 @@ import {
     ChevronRight,
     GraduationCap,
     Dumbbell,
+    Lock,
 } from "lucide-react";
 import { listTests, listAttempts } from "@/Api/TestsApi";
 import { TEST_FORMATS, TEST_FORMAT_KEYS } from "@/lib/testFormats";
+import PremiumBadge from "@/Components/General/PremiumBadge";
+import PremiumGateModal from "@/Components/General/PremiumGateModal";
 
 // One test/practice card.
-function TestCard({ t, onStart }) {
+function TestCard({ t, onStart, onLocked }) {
     const practice = t.mode === "practice";
     return (
         <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5">
@@ -29,6 +32,7 @@ function TestCard({ t, onStart }) {
                         <span>{TEST_FORMATS[t.format].emoji}</span> {TEST_FORMATS[t.format].label}
                     </span>
                 )}
+                {t.premium && <PremiumBadge locked={t.locked} />}
             </div>
             <h3 className="text-base font-bold text-slate-900">{t.title}</h3>
             {t.description && <p className="mt-1 line-clamp-2 text-sm text-slate-500">{t.description}</p>}
@@ -40,21 +44,30 @@ function TestCard({ t, onStart }) {
                     <Clock size={14} /> {t.durationMinutes} min
                 </span>
             </div>
-            <button
-                onClick={() => onStart(t._id)}
-                className={
-                    "mt-4 flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold text-white transition " +
-                    (practice ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")
-                }
-            >
-                <Play size={15} /> {practice ? "Start Practice" : "Start Test"}
-            </button>
+            {t.locked ? (
+                <button
+                    onClick={() => onLocked(t)}
+                    className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-amber-500 py-2 text-sm font-semibold text-white transition hover:bg-amber-600"
+                >
+                    <Lock size={15} /> Unlock with Premium
+                </button>
+            ) : (
+                <button
+                    onClick={() => onStart(t._id)}
+                    className={
+                        "mt-4 flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold text-white transition " +
+                        (practice ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")
+                    }
+                >
+                    <Play size={15} /> {practice ? "Start Practice" : "Start Test"}
+                </button>
+            )}
         </div>
     );
 }
 
 // One side of the split — a titled column of cards.
-function Column({ title, subtitle, icon, accent, items, onStart }) {
+function Column({ title, subtitle, icon, accent, items, onStart, onLocked }) {
     const Icon = icon;
     return (
         <section>
@@ -76,7 +89,7 @@ function Column({ title, subtitle, icon, accent, items, onStart }) {
             ) : (
                 <div className="space-y-3">
                     {items.map((t) => (
-                        <TestCard key={t._id} t={t} onStart={onStart} />
+                        <TestCard key={t._id} t={t} onStart={onStart} onLocked={onLocked} />
                     ))}
                 </div>
             )}
@@ -90,6 +103,7 @@ export default function TestsList() {
     const [attempts, setAttempts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("all");
+    const [gate, setGate] = useState(null); // premium test a free student tapped
 
     useEffect(() => {
         let active = true;
@@ -187,6 +201,7 @@ export default function TestsList() {
                         accent="bg-emerald-50 text-emerald-600"
                         items={practice}
                         onStart={start}
+                        onLocked={setGate}
                     />
                     <Column
                         title="Mock Tests"
@@ -195,9 +210,12 @@ export default function TestsList() {
                         accent="bg-indigo-50 text-indigo-600"
                         items={mock}
                         onStart={start}
+                        onLocked={setGate}
                     />
                 </div>
             )}
+
+            <PremiumGateModal open={!!gate} onClose={() => setGate(null)} itemTitle={gate?.title} />
 
             {attempts.length > 0 && (
                 <div>

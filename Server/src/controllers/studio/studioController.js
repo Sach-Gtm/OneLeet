@@ -97,7 +97,7 @@ async function listMine(req, res, next) {
         const tests = await Test.find(filter)
             .sort({ updatedAt: -1 })
             .limit(100)
-            .select("title subject mode format status durationMinutes totalMarks questions openAt closeAt targets createdBy createdAt updatedAt");
+            .select("title subject mode format status premium durationMinutes totalMarks questions openAt closeAt targets createdBy createdAt updatedAt");
         return res.status(200).json({
             success: true,
             tests: tests.map((t) => ({
@@ -138,6 +138,7 @@ async function createTest(req, res, next) {
             subject: b.subject || "",
             mode: b.mode === "practice" ? "practice" : "test",
             format: normalizeFormat(b.format),
+            premium: !!b.premium, // free unless staff explicitly mark it premium
             durationMinutes: Math.max(1, parseInt(b.durationMinutes, 10) || 30),
             openAt: b.openAt || undefined,
             closeAt: b.closeAt || undefined,
@@ -166,6 +167,7 @@ async function updateTest(req, res, next) {
         if (b.subject != null) test.subject = b.subject;
         if (b.mode) test.mode = b.mode === "practice" ? "practice" : "test";
         if (b.format !== undefined) test.format = normalizeFormat(b.format);
+        if ("premium" in b) test.premium = !!b.premium; // one-click free⇄premium toggle
         if (b.durationMinutes != null)
             test.durationMinutes = Math.max(1, parseInt(b.durationMinutes, 10) || 30);
         if ("openAt" in b) test.openAt = b.openAt || undefined;

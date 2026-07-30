@@ -39,6 +39,10 @@ const SyllabusSchema = new mongoose.Schema(
         // own syllabus, visible only to them. AI authoring (refine/scan) is
         // staff-only, so personal syllabi are always built by hand.
         scope: { type: String, enum: ["global", "personal"], default: "global", index: true },
+        // Access tier. Free by default; staff flip a global syllabus to premium
+        // with one click. Premium syllabi stay visible to everyone (shown locked)
+        // but only pro-plan students (and staff) can open them — see roles.isPremiumUser.
+        premium: { type: Boolean, default: false, index: true },
         order: { type: Number, default: 0 },
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     },

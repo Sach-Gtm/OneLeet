@@ -38,12 +38,21 @@ export default function TestTake() {
                 startedAtRef.current = new Date().toISOString();
                 setStarted(true);
             })
-            .catch(() => active && setNotFound(true))
+            .catch((err) => {
+                if (!active) return;
+                // A free student who reached a premium test by direct URL: nudge to upgrade.
+                if (err?.response?.data?.code === "PREMIUM_REQUIRED") {
+                    toast.error("This is a Premium test. Upgrade to Premium to unlock it.");
+                    navigate("/tests", { replace: true });
+                    return;
+                }
+                setNotFound(true);
+            })
             .finally(() => active && setLoading(false));
         return () => {
             active = false;
         };
-    }, [id]);
+    }, [id, navigate]);
 
     const handleSubmit = async () => {
         if (submittedRef.current) return;

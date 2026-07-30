@@ -4,7 +4,7 @@ const Syllabus = require("../../models/syllabusModel");
 const SyllabusProgress = require("../../models/syllabusProgressModel");
 const aiService = require("../../services/ai/aiService");
 const { runAiFeature } = require("../../services/ai/aiRuntime");
-const { STAFF } = require("../../config/roles");
+const { STAFF, isPremiumUser } = require("../../config/roles");
 const { sanitizeExams, visibilityQuery } = require("../../config/exams");
 
 const isStaff = (u) => STAFF.includes(u?.role);
@@ -85,9 +85,15 @@ async function listSyllabi(req, res, next) {
             : { published: true, ...visibilityQuery(req.user.exams) };
         const syllabi = await Syllabus.find(filter).sort({ order: 1, createdAt: 1 }).lean();
         const map = await progressMap(req.user._id, syllabi);
+        const canPremium = isPremiumUser(req.user);
         const out = syllabi.map((s) => {
             const set = map.get(String(s._id)) || new Set();
-            return { ...s, progress: summarize(s, set), completedTopics: [...set] };
+            const summary = summarize(s, set);
+            // Premium syllabi stay visible (shown locked). Keep the counts for the
+            // card, but withhold the actual chapter/topic list from free students.
+            const locked = !!s.premium && !canPremium;
+            const base = locked ? { ...s, chapters: [] } : { ...s };
+            return { ...base, locked, progress: summary, completedTopics: [...set] };
         });
         return res.status(200).json({ success: true, syllabi: out });
     } catch (e) {
@@ -131,6 +137,13 @@ async function getSyllabus(req, res, next) {
         if (!syllabus || !canView(req.user, syllabus)) {
             return res.status(404).json({ success: false, message: "Syllabus not found" });
         }
+        if (syllabus.premium && !isPremiumUser(req.user)) {
+            return res.status(403).json({
+                success: false,
+                code: "PREMIUM_REQUIRED",
+                message: "This is a Premium syllabus. Upgrade to Premium to unlock it.",
+            });
+        }
         const progress = await SyllabusProgress.findOne({ user: req.user._id, syllabus: syllabus._id }).lean();
         const set = new Set((progress?.completedTopics || []).map(String));
         return res.status(200).json({
@@ -147,7 +160,7 @@ async function getSyllabus(req, res, next) {
 // own staff-only routes, so a student can only ever build one by hand.
 async function createSyllabus(req, res, next) {
     try {
-        const { title, subject, description, exam, chapters, published, targets } = req.body;
+        const { title, subject, description, exam, chapters, published, premium, targets } = req.body;
         if (!title || !String(title).trim()) {
             return res.status(400).json({ success: false, message: "Give the syllabus a title." });
         }
@@ -160,6 +173,7 @@ async function createSyllabus(req, res, next) {
             targets: sanitizeExams(targets),
             scope: "global",
             published: published !== false,
+            premium: !!premium, // free unless staff mark it premium
             createdBy: req.user._id,
         });
         return res.status(201).json({ success: true, message: "Syllabus created", syllabus });
@@ -178,12 +192,13 @@ async function updateSyllabus(req, res, next) {
             return res.status(403).json({ success: false, message: "You can't edit this syllabus." });
         }
 
-        const { title, subject, description, exam, chapters, published, targets } = req.body;
+        const { title, subject, description, exam, chapters, published, premium, targets } = req.body;
         if (title != null) existing.title = String(title).trim();
         if (subject != null) existing.subject = subject;
         if (description != null) existing.description = description;
         if (exam != null) existing.exam = exam;
         if (published != null) existing.published = !!published;
+        if (premium != null) existing.premium = !!premium; // one-click free⇄premium toggle
         if (targets != null) existing.targets = sanitizeExams(targets);
         if (chapters != null) existing.chapters = normalizeChapters(chapters);
         await existing.save();
@@ -272,6 +287,13 @@ async function toggleTopic(req, res, next) {
         const syllabus = await Syllabus.findById(req.params.id).lean();
         if (!syllabus || !canView(req.user, syllabus)) {
             return res.status(404).json({ success: false, message: "Syllabus not found" });
+        }
+        if (syllabus.premium && !isPremiumUser(req.user)) {
+            return res.status(403).json({
+                success: false,
+                code: "PREMIUM_REQUIRED",
+                message: "This is a Premium syllabus. Upgrade to Premium to unlock it.",
+            });
         }
 
         const belongs = (syllabus.chapters || []).some((c) =>

@@ -59,6 +59,10 @@ const TestSchema = new mongoose.Schema(
         questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
         totalMarks: { type: Number, default: 0 },
         isPublished: { type: Boolean, default: true, index: true },
+        // Access tier. Free by default; staff flip any item to premium with one
+        // click. Premium items stay VISIBLE to everyone (shown locked) but only
+        // pro-plan students (and staff) can open them — see config/roles.isPremiumUser.
+        premium: { type: Boolean, default: false, index: true },
         // Competitive leaderboard lifecycle. A test is "competitive" when it is a
         // graded test (mode==="test") with a `closeAt`. Its ranking stays frozen
         // until ~5 minutes after closeAt, then is finalised exactly once — at

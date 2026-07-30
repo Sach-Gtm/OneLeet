@@ -46,6 +46,12 @@ export const uploadNote = async (fields, file) => {
     return data;
 };
 
+// Staff: edit a note's metadata — powers the one-click free⇄premium toggle.
+export const updateNote = async (id, patch) => {
+    const { data } = await api.patch(`/notes/${id}`, patch);
+    return data;
+};
+
 export const summarizeNote = async (id) => {
     const { data } = await api.post(`/notes/${id}/summary`);
     return data;

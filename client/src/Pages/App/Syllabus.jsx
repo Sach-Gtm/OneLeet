@@ -9,10 +9,13 @@ import {
     Loader2,
     GraduationCap,
     Layers,
+    Lock,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { getSyllabi, toggleTopic } from "@/Api/SyllabusApi";
+import PremiumBadge from "@/Components/General/PremiumBadge";
+import PremiumGateModal from "@/Components/General/PremiumGateModal";
 
 function computeProgress(chapters, completedSet) {
     let total = 0, done = 0, totalH = 0, doneH = 0;
@@ -87,13 +90,19 @@ function Ring({ value = 0, size = 58, stroke = 6, gradId, colors = RINGS[0] }) {
     );
 }
 
-function SyllabusCard({ syllabus, index, onToggle }) {
+function SyllabusCard({ syllabus, index, onToggle, onLocked }) {
     const [open, setOpen] = useState(false);
+    const locked = !!syllabus.locked;
     const completedSet = useMemo(
         () => new Set((syllabus.completedTopics || []).map(String)),
         [syllabus.completedTopics]
     );
-    const prog = computeProgress(syllabus.chapters, completedSet);
+    // A locked premium syllabus ships with no chapters, but the server still sends
+    // its size in `progress` — use that so the card stays enticing (X topics · Y hrs).
+    const sp = syllabus.progress || {};
+    const prog = locked
+        ? { total: sp.totalTopics || 0, done: 0, totalH: sp.totalHours || 0, doneH: 0, percent: 0 }
+        : computeProgress(syllabus.chapters, completedSet);
     // Show only the subject name (drop the long "LEET Engineering…" title).
     const name = syllabus.subject || syllabus.title;
     const colors = RINGS[index % RINGS.length];
@@ -107,7 +116,10 @@ function SyllabusCard({ syllabus, index, onToggle }) {
             transition={{ duration: 0.5, delay: Math.min(index, 6) * 0.05 }}
             className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-slate-700"
         >
-            <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-4 p-5 text-left">
+            <button
+                onClick={() => (locked ? onLocked(syllabus) : setOpen((o) => !o))}
+                className="flex w-full items-center gap-4 p-5 text-left"
+            >
                 <Ring value={prog.percent} gradId={gradId} colors={colors} />
                 <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
@@ -117,13 +129,19 @@ function SyllabusCard({ syllabus, index, onToggle }) {
                                 Draft
                             </span>
                         )}
+                        {syllabus.premium && <PremiumBadge locked={locked} />}
                     </div>
                     <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-xs text-slate-500">
-                        <span className="inline-flex items-center gap-1">
-                            <Layers size={12} /> {(syllabus.chapters || []).length} chapter
-                            {(syllabus.chapters || []).length === 1 ? "" : "s"}
-                        </span>
-                        · {prog.total} topic{prog.total === 1 ? "" : "s"} ·{" "}
+                        {!locked && (
+                            <>
+                                <span className="inline-flex items-center gap-1">
+                                    <Layers size={12} /> {(syllabus.chapters || []).length} chapter
+                                    {(syllabus.chapters || []).length === 1 ? "" : "s"}
+                                </span>
+                                ·{" "}
+                            </>
+                        )}
+                        {prog.total} topic{prog.total === 1 ? "" : "s"} ·{" "}
                         <span className="inline-flex items-center gap-1">
                             <Clock size={12} /> {prog.totalH} hrs
                         </span>
@@ -143,11 +161,15 @@ function SyllabusCard({ syllabus, index, onToggle }) {
                         </span>
                     </div>
                 </div>
-                <ChevronDown className={cn("shrink-0 text-slate-400 transition-transform", open && "rotate-180")} size={18} />
+                {locked ? (
+                    <Lock className="shrink-0 text-amber-500" size={18} />
+                ) : (
+                    <ChevronDown className={cn("shrink-0 text-slate-400 transition-transform", open && "rotate-180")} size={18} />
+                )}
             </button>
 
             <AnimatePresence initial={false}>
-                {open && (
+                {open && !locked && (
                     <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
@@ -227,6 +249,7 @@ function SyllabusCard({ syllabus, index, onToggle }) {
 
 export default function Syllabus() {
     const [syllabi, setSyllabi] = useState(null);
+    const [gate, setGate] = useState(null); // premium syllabus a free student tapped
 
     const load = () => getSyllabi().then(setSyllabi).catch(() => setSyllabi([]));
     useEffect(() => {
@@ -326,10 +349,12 @@ export default function Syllabus() {
 
                     {/* Per-subject */}
                     {syllabi.map((s, i) => (
-                        <SyllabusCard key={s._id} syllabus={s} index={i} onToggle={handleToggle} />
+                        <SyllabusCard key={s._id} syllabus={s} index={i} onToggle={handleToggle} onLocked={setGate} />
                     ))}
                 </div>
             )}
+
+            <PremiumGateModal open={!!gate} onClose={() => setGate(null)} itemTitle={gate?.subject || gate?.title} />
         </div>
     );
 }

@@ -11,6 +11,12 @@ export const isSuperadmin = (u) => u?.role === "superadmin";
 // Anyone who can create content / push notifications (mentor, admin, super).
 export const isStaff = (u) => isMentor(u) || isAdmin(u);
 
+// A student on the paid plan. Staff always have premium access (they author &
+// preview premium content). Mirrors the server's config/roles.isPremiumUser so
+// the UI never renders a "locked" state the API would actually let through.
+export const isPremium = (u) => u?.plan === "pro";
+export const canAccessPremiumContent = (u) => isStaff(u) || isPremium(u);
+
 // Capability gates.
 export const canSeeStudentData = (u) => isAdmin(u); // admin + super admin
 export const canManagePremium = (u) => isSuperadmin(u);

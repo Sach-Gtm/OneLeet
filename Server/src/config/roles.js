@@ -26,4 +26,10 @@ const ADMINS = [ROLES.ADMIN, ROLES.SUPERADMIN];
 // Top tier only (premium toggle, removing staff).
 const SUPERADMINS = [ROLES.SUPERADMIN];
 
-module.exports = { SUPERADMIN_EMAIL, ROLES, STAFF, ADMINS, SUPERADMINS };
+// Who may OPEN content marked `premium`: any staff member (they author and need
+// to preview it) or a student on the paid "pro" plan. Free students still SEE
+// premium items in their lists — shown locked — but can't open them until they
+// upgrade. This is the single source of truth for premium access on the server.
+const isPremiumUser = (user) => !!user && (STAFF.includes(user.role) || user.plan === "pro");
+
+module.exports = { SUPERADMIN_EMAIL, ROLES, STAFF, ADMINS, SUPERADMINS, isPremiumUser };

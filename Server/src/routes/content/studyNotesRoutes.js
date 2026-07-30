@@ -44,4 +44,7 @@ router.post("/generate", verifyToken, requireStaff, handleMedia, notes.generateN
 // Upload / publish a note (mentors, admins, super admin).
 router.post("/", verifyToken, requireStaff, handleUpload, notes.uploadNote);
 
+// Edit a note's metadata — incl. the one-click free⇄premium toggle (staff only).
+router.patch("/:id", verifyToken, requireStaff, notes.updateNote);
+
 module.exports = router;

@@ -1,5 +1,5 @@
 const Video = require("../../models/videoModel");
-const { STAFF } = require("../../config/roles");
+const { STAFF, isPremiumUser } = require("../../config/roles");
 const { sanitizeExams, visibilityQuery } = require("../../config/exams");
 const { parseYouTubeId } = require("../../utils/youtube");
 
@@ -17,7 +17,14 @@ async function listVideos(req, res, next) {
         const videos = await Video.find(filter)
             .sort({ subject: 1, order: 1, createdAt: 1 })
             .lean();
-        return res.status(200).json({ success: true, videos });
+        // Premium videos stay visible to everyone (shown locked), but a free
+        // student never receives the playable youtubeId — so it can't be embedded.
+        const canPremium = isPremiumUser(req.user);
+        const out = videos.map((v) => {
+            const locked = !!v.premium && !canPremium;
+            return locked ? { ...v, youtubeId: undefined, locked: true } : { ...v, locked: false };
+        });
+        return res.status(200).json({ success: true, videos: out });
     } catch (e) {
         next(e);
     }
@@ -26,7 +33,7 @@ async function listVideos(req, res, next) {
 // POST /api/videos — add a video. STAFF ONLY (guarded by the route).
 async function createVideo(req, res, next) {
     try {
-        const { title, url, youtubeId: rawId, subject, chapter, topic, description, author, targets, published, order } =
+        const { title, url, youtubeId: rawId, subject, chapter, topic, description, author, targets, published, premium, order } =
             req.body || {};
         if (!title || !String(title).trim()) {
             return res.status(400).json({ success: false, message: "Give the video a title." });
@@ -45,6 +52,7 @@ async function createVideo(req, res, next) {
             author: author && String(author).trim() ? String(author).trim() : "OneLeet",
             targets: sanitizeExams(targets),
             published: published !== false,
+            premium: !!premium, // free unless staff mark it premium
             order: Number(order) || 0,
             createdBy: req.user._id,
         });
@@ -60,7 +68,7 @@ async function updateVideo(req, res, next) {
         const existing = await Video.findById(req.params.id);
         if (!existing) return res.status(404).json({ success: false, message: "Video not found" });
 
-        const { title, url, youtubeId: rawId, subject, chapter, topic, description, author, targets, published, order } =
+        const { title, url, youtubeId: rawId, subject, chapter, topic, description, author, targets, published, premium, order } =
             req.body || {};
 
         if (title != null) existing.title = String(title).trim();
@@ -76,6 +84,7 @@ async function updateVideo(req, res, next) {
         if (author != null) existing.author = String(author).trim() || "OneLeet";
         if (targets != null) existing.targets = sanitizeExams(targets);
         if (published != null) existing.published = !!published;
+        if (premium != null) existing.premium = !!premium; // one-click free⇄premium toggle
         if (order != null) existing.order = Number(order) || 0;
         await existing.save();
 
