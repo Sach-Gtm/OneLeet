@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     Camera,
     Mail,
@@ -24,7 +24,9 @@ import {
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { fmtDuration } from "@/lib/format";
 import { updateProfile, changePassword, uploadPassportPhoto } from "@/Api/AuthApis";
+import { getMyAnalytics } from "@/Api/ActivityApi";
 import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
 import RankMedal from "@/Components/App/RankMedal";
 import { missingProfileFields } from "@/lib/profile";
@@ -60,6 +62,19 @@ export default function Profile() {
     });
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
+
+    // Real time-on-platform, same source as the Dashboard "Time Studied" stat
+    // and the Analytics page, so all three always show the same number.
+    const [timeMinutes, setTimeMinutes] = useState(0);
+    useEffect(() => {
+        let active = true;
+        getMyAnalytics()
+            .then((res) => active && setTimeMinutes(res.totalMinutes || 0))
+            .catch(() => {});
+        return () => {
+            active = false;
+        };
+    }, []);
 
     const [pwOpen, setPwOpen] = useState(false);
     const [pw, setPw] = useState({ currentPassword: "", newPassword: "", confirm: "" });
@@ -144,7 +159,7 @@ export default function Profile() {
     const overview = [
         { label: "Tests Taken", value: stats.testsTaken || 0, icon: ClipboardCheck, color: "text-indigo-600 bg-indigo-50" },
         { label: "PYQs Solved", value: (stats.pyqsSolved || 0).toLocaleString(), icon: CheckCircle2, color: "text-amber-600 bg-amber-50" },
-        { label: "Study Hours", value: `${stats.studyHours || 0}h`, icon: Clock, color: "text-violet-600 bg-violet-50" },
+        { label: "Time Studied", value: fmtDuration(timeMinutes), icon: Clock, color: "text-violet-600 bg-violet-50" },
         { label: "Accuracy", value: `${stats.accuracy || 0}%`, icon: Target, color: "text-emerald-600 bg-emerald-50" },
     ];
     const isTopScorer = (stats.accuracy || 0) >= 80 && (stats.testsTaken || 0) >= 1;
