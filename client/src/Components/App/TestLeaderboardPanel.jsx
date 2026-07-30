@@ -56,8 +56,10 @@ export default function TestLeaderboardPanel({ testId }) {
     }, [pending, data, revealMs, load]);
 
     if (loading || !data) return null;
-    // Only competitive (scheduled graded) tests get the frozen board + celebration.
-    if (!data.competitive) return null;
+    // Only graded tests are ranked — practice sets have no leaderboard. A graded
+    // test with a close window is competitive (frozen until it closes); one without
+    // (lifetime access) shows a LIVE board the moment you finish.
+    if (data.test?.mode !== "test") return null;
 
     if (data.status === "pending") {
         return (
@@ -84,11 +86,14 @@ export default function TestLeaderboardPanel({ testId }) {
         );
     }
 
-    // Published.
+    // Published. A lifetime (non-competitive) test shows a LIVE board immediately;
+    // a competitive one shows the FINAL board + a Top-3 celebration once it closes.
     const me = data.me || { attempted: false };
+    const live = !data.competitive;
     return (
         <div className="space-y-4">
-            {me.attempted &&
+            {!live &&
+                me.attempted &&
                 (me.isTop3 ? (
                     <Celebration rank={me.rank} timesAtRank={me.timesAtRank} />
                 ) : (
@@ -98,11 +103,21 @@ export default function TestLeaderboardPanel({ testId }) {
             <div className="rounded-2xl border border-slate-200 bg-white p-5">
                 <div className="mb-3 flex items-center gap-2">
                     <Trophy size={18} className="text-amber-500" />
-                    <h2 className="text-sm font-bold text-slate-800">Final leaderboard</h2>
+                    <h2 className="text-sm font-bold text-slate-800">{live ? "Live leaderboard" : "Final leaderboard"}</h2>
+                    {live && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-600">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live
+                        </span>
+                    )}
                     <span className="ml-auto text-xs text-slate-400">
                         {data.total} participant{data.total === 1 ? "" : "s"}
                     </span>
                 </div>
+                {live && me.attempted && (
+                    <p className="mb-3 text-xs text-slate-500">
+                        You&apos;re currently ranked <span className="font-semibold text-indigo-600">#{me.rank}</span> of {data.total}. Rankings update as more students attempt.
+                    </p>
+                )}
                 <ul className="space-y-1.5">
                     {data.leaderboard.map((r) => (
                         <li

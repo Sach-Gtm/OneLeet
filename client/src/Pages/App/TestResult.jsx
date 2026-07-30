@@ -56,9 +56,9 @@ export default function TestResult() {
     }
 
     const summary = [
-        { label: "Correct", value: attempt.correctCount, icon: CheckCircle2, color: "text-emerald-600" },
-        { label: "Incorrect", value: attempt.incorrectCount, icon: XCircle, color: "text-red-500" },
-        { label: "Skipped", value: attempt.unattemptedCount, icon: MinusCircle, color: "text-slate-400" },
+        { label: "Correct", value: attempt.correctCount, icon: CheckCircle2, wrap: "border-emerald-200 bg-emerald-50", ring: "bg-emerald-100 text-emerald-600", num: "text-emerald-700" },
+        { label: "Incorrect", value: attempt.incorrectCount, icon: XCircle, wrap: "border-rose-200 bg-rose-50", ring: "bg-rose-100 text-rose-600", num: "text-rose-600" },
+        { label: "Skipped", value: attempt.unattemptedCount, icon: MinusCircle, wrap: "border-slate-200 bg-slate-50", ring: "bg-slate-200 text-slate-500", num: "text-slate-600" },
     ];
 
     return (
@@ -94,20 +94,28 @@ export default function TestResult() {
                         </div>
                     </div>
                 </div>
-                <div className="mt-5 flex gap-3">
-                    {summary.map((s) => {
-                        const Icon = s.icon;
-                        return (
-                            <div key={s.label} className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 text-sm">
-                                <Icon size={15} /> {s.value} {s.label}
-                            </div>
-                        );
-                    })}
-                </div>
             </div>
 
-            {/* Competitive leaderboard (frozen countdown → final board + celebration).
-                Renders nothing for non-competitive tests. */}
+            {/* Correct / incorrect / skipped — clearly colour-coded. */}
+            <div className="grid grid-cols-3 gap-3">
+                {summary.map((s) => {
+                    const Icon = s.icon;
+                    return (
+                        <div key={s.label} className={"flex items-center gap-3 rounded-2xl border p-4 " + s.wrap}>
+                            <span className={"grid h-10 w-10 shrink-0 place-items-center rounded-xl " + s.ring}>
+                                <Icon size={18} />
+                            </span>
+                            <div>
+                                <p className={"text-2xl font-extrabold leading-none " + s.num}>{s.value}</p>
+                                <p className="mt-1 text-xs font-medium text-slate-500">{s.label}</p>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* Leaderboard: live for lifetime tests, frozen countdown → final board
+                for deadline (competitive) tests, nothing for practice sets. */}
             {attempt.test?._id && <TestLeaderboardPanel testId={attempt.test._id} />}
 
             {/* Review */}
