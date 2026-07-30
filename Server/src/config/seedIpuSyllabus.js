@@ -1,5 +1,8 @@
 const Syllabus = require("../models/syllabusModel");
 const User = require("../models/userModel");
+const SeedFlag = require("../models/seedFlagModel");
+
+const SEED_KEY = "ipu-syllabus-v1";
 
 // The official IPU LEET (IPU CET 128) syllabus, cleaned of coaching-ad noise and
 // structured subject → chapter → topic. Seeded ONCE (published, targeted to the
@@ -173,27 +176,34 @@ async function ensureIpuSyllabusSeeded() {
         // Migrate a previously-seeded split Physics/Chemistry before anything else.
         await mergePhysicsChemistry();
 
-        // Only seed when NO IPU-LEET syllabus exists yet, so staff edits/removals
-        // in the Content Studio are never undone by a later boot.
-        const already = await Syllabus.exists({ targets: "ipu-leet" });
-        if (already) return;
+        // Publish the clean official syllabus exactly ONCE. The flag makes it a
+        // one-time action: it adds the clean subjects ALONGSIDE anything already
+        // there (e.g. an earlier rough upload), never duplicates on later boots,
+        // and never resurrects a subject staff delete afterwards.
+        if (await SeedFlag.exists({ key: SEED_KEY })) return;
 
-        // Attribute authorship to an existing admin (createdBy is required). If
-        // none exists yet (very fresh DB), skip — it'll seed on a later boot.
-        const owner = await User.findOne({ role: { $in: ["superadmin", "admin"] } })
-            .sort({ createdAt: 1 })
-            .select("_id")
-            .lean();
+        // Attribute authorship to an admin (createdBy is required); fall back to
+        // any user. If the DB has no users yet, skip — it'll publish on a later
+        // boot (and only then is the flag set).
+        const owner =
+            (await User.findOne({ role: { $in: ["superadmin", "admin"] } }).sort({ createdAt: 1 }).select("_id").lean()) ||
+            (await User.findOne().sort({ createdAt: 1 }).select("_id").lean());
         if (!owner) {
-            console.warn("[ipu-syllabus] no admin to attribute yet; will seed on a later boot");
+            console.warn("[ipu-syllabus] no user to attribute yet; will publish on a later boot");
             return;
         }
 
-        const docs = buildDocs(owner._id);
-        await Syllabus.insertMany(docs);
-        console.log(`[ipu-syllabus] seeded ${docs.length} IPU LEET subjects`);
+        // Add only the clean subjects not already present (by name), so an
+        // existing rough upload is left untouched and nothing is duplicated.
+        const present = new Set(
+            (await Syllabus.find({ targets: "ipu-leet", scope: "global" }, "subject").lean()).map((s) => s.subject)
+        );
+        const docs = buildDocs(owner._id).filter((d) => !present.has(d.subject));
+        if (docs.length) await Syllabus.insertMany(docs);
+        await SeedFlag.create({ key: SEED_KEY });
+        console.log(`[ipu-syllabus] published ${docs.length} IPU LEET subjects (one-time)`);
     } catch (e) {
-        console.warn("[ipu-syllabus] seed skipped:", e.message);
+        console.warn("[ipu-syllabus] publish skipped:", e.message);
     }
 }
 

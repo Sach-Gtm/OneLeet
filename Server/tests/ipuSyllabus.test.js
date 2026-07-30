@@ -1,7 +1,8 @@
-// Tests the seeded IPU LEET syllabus: it publishes once (idempotent), targets
-// the ipu-leet exam with the right subjects/chapters/topics and per-subject hour
-// estimates, and a student preparing for IPU LEET sees it while others don't.
-// Run: node tests/ipuSyllabus.test.js
+// Tests the seeded IPU LEET syllabus: it publishes ONCE (alongside any earlier
+// upload, without touching it), targets the ipu-leet exam with the right
+// subjects/chapters/topics and per-subject hours, is seen only by IPU LEET
+// students, doesn't resurrect deleted subjects, and merges a previously-split
+// Physics/Chemistry. Run: node tests/ipuSyllabus.test.js
 const assert = require("assert");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
@@ -16,9 +17,13 @@ const app = require("../app");
 const request = require("supertest")(app);
 const User = require("../src/models/userModel");
 const Syllabus = require("../src/models/syllabusModel");
+const SeedFlag = require("../src/models/seedFlagModel");
 const generateToken = require("../src/utils/generateToken");
 const { ensureExamsSeeded } = require("../src/config/exams");
 const { ensureIpuSyllabusSeeded, IPU_LEET_SYLLABUS } = require("../src/config/seedIpuSyllabus");
+
+const CLEAN_SUBJECTS = IPU_LEET_SYLLABUS.map((s) => s.subject);
+const N = IPU_LEET_SYLLABUS.length;
 
 let passed = 0;
 const ok = (l) => {
@@ -32,10 +37,12 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     await mongoose.connect(mongod.getUri());
     await ensureExamsSeeded();
 
-    // No admin yet → seed is a safe no-op (createdBy is required).
+    // No user yet → publish is a safe no-op (nothing to attribute it to), and the
+    // flag stays unset so it can publish on a later boot.
     await ensureIpuSyllabusSeeded();
-    assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet" }), 0, "no seed without an admin");
-    ok("seeding is a safe no-op when there is no admin to attribute it to");
+    assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet" }), 0, "nothing published without a user");
+    assert.ok(!(await SeedFlag.exists({ key: "ipu-syllabus-v1" })), "flag not set yet");
+    ok("publishing is a safe no-op when there is no user to attribute it to");
 
     const admin = await User.create({
         name: "Admin", email: "a@t.com", password: "secret123", phone: "9000000001",
@@ -50,15 +57,22 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
         role: "student", isVerified: true, authProvider: "local", exams: ["dtu-leet"],
     });
 
-    // Seed for real now.
-    await ensureIpuSyllabusSeeded();
-    const count = await Syllabus.countDocuments({ targets: "ipu-leet", published: true, scope: "global" });
-    assert.strictEqual(count, IPU_LEET_SYLLABUS.length, `all ${IPU_LEET_SYLLABUS.length} subjects seeded, published & global`);
-    ok(`the ${IPU_LEET_SYLLABUS.length} IPU LEET subjects are seeded (published, global, targeted to ipu-leet)`);
+    // An earlier, rough upload already exists for IPU LEET.
+    await Syllabus.create({
+        title: "Engineering Mechanics", subject: "Engineering Mechanics", exam: "IPU LEET",
+        targets: ["ipu-leet"], published: true, scope: "global", order: 0, createdBy: admin._id,
+        chapters: [{ title: "Statics", order: 0, topics: [{ title: "Forces", estimatedHours: 1, order: 0 }] }],
+    });
 
-    // Structure + per-subject hours are correct.
+    // Publish: adds the clean subjects ALONGSIDE the rough one, leaving it intact.
+    await ensureIpuSyllabusSeeded();
+    assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet", subject: { $in: CLEAN_SUBJECTS } }), N, `all ${N} clean subjects published`);
+    assert.ok(await Syllabus.exists({ targets: "ipu-leet", subject: "Engineering Mechanics" }), "earlier upload left untouched");
+    assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet" }), N + 1, "clean set sits alongside the earlier one");
+    ok(`publishes the ${N} clean subjects alongside an earlier upload, without touching it`);
+
+    // Structure + per-subject hours.
     const maths = await Syllabus.findOne({ targets: "ipu-leet", subject: "Applied Mathematics" }).lean();
-    assert.ok(maths, "Applied Mathematics exists");
     const calc = maths.chapters.find((c) => c.title === "Calculus");
     assert.ok(calc && calc.topics.some((t) => t.title === "Limits and continuity"), "Calculus → Limits and continuity");
     assert.strictEqual(calc.topics[0].estimatedHours, 1.5, "maths topics are 1.5h each");
@@ -66,68 +80,49 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(mech.chapters[0].topics[0].estimatedHours, 1, "mechanics topics are 1h each");
     const reasoning = await Syllabus.findOne({ targets: "ipu-leet", subject: "Reasoning" }).lean();
     assert.strictEqual(reasoning.chapters[0].topics[0].estimatedHours, 0.5, "reasoning topics are 0.5h each");
-    ok("subjects carry the right chapters/topics and per-subject hour estimates");
-
-    // Physics + Chemistry are one combined subject; Reasoning, Aptitude and
-    // Computer Awareness stay separate.
     const pc = await Syllabus.findOne({ targets: "ipu-leet", subject: "Physics & Chemistry" }).lean();
-    assert.ok(pc, "Physics & Chemistry is a single subject");
-    assert.ok(
-        pc.chapters.some((c) => c.title === "Units and Measurement") && pc.chapters.some((c) => c.title === "Structure of Atom"),
-        "it holds both physics and chemistry chapters"
-    );
-    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Physics" })), "no standalone Physics");
-    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Chemistry" })), "no standalone Chemistry");
-    assert.ok(await Syllabus.exists({ targets: "ipu-leet", subject: "Quantitative Aptitude" }), "Aptitude stays separate");
-    assert.ok(await Syllabus.exists({ targets: "ipu-leet", subject: "Computer Awareness" }), "Computer Awareness stays separate");
-    ok("Physics & Chemistry are combined; Reasoning, Aptitude and Computer Awareness stay separate");
+    assert.ok(pc && pc.chapters.some((c) => c.title === "Units and Measurement") && pc.chapters.some((c) => c.title === "Structure of Atom"), "Physics & Chemistry is combined");
+    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Physics" })) && !(await Syllabus.exists({ targets: "ipu-leet", subject: "Chemistry" })), "no standalone Physics/Chemistry");
+    ok("subjects carry the right chapters/topics/hours, with Physics & Chemistry combined");
 
     // No coaching-ad noise leaked into any title.
-    const all = await Syllabus.find({ targets: "ipu-leet" }).lean();
-    const blob = JSON.stringify(all).toLowerCase();
+    const blob = JSON.stringify(await Syllabus.find({ targets: "ipu-leet" }).lean()).toLowerCase();
     ["mission engineering", "coaching in delhi", "9582202651", "youtube", "cut off", "best leet"].forEach((junk) => {
         assert.ok(!blob.includes(junk), `no ad noise: "${junk}"`);
     });
     ok("the pasted coaching-ad text is fully stripped out");
 
-    // An IPU LEET student sees all the subjects; a DTU student sees none of them.
+    // An IPU LEET student sees the whole set; a DTU student sees none of it.
     const ipuList = (await request.get("/api/syllabus").set(...auth(generateToken(ipuStudent._id)))).body.syllabi;
-    assert.strictEqual(ipuList.filter((s) => s.targets.includes("ipu-leet")).length, IPU_LEET_SYLLABUS.length, "ipu student sees all subjects");
+    assert.strictEqual(ipuList.filter((s) => s.targets.includes("ipu-leet")).length, N + 1, "ipu student sees all ipu subjects");
     const dtuList = (await request.get("/api/syllabus").set(...auth(generateToken(dtuStudent._id)))).body.syllabi;
-    assert.strictEqual(dtuList.filter((s) => s.targets.includes("ipu-leet")).length, 0, "dtu student sees none of the ipu subjects");
+    assert.strictEqual(dtuList.filter((s) => s.targets.includes("ipu-leet")).length, 0, "dtu student sees none");
     ok("only students preparing for IPU LEET see the IPU LEET syllabus");
 
-    // Idempotent: re-seeding doesn't duplicate.
+    // Re-publishing is a no-op (flag) — no duplicates.
     await ensureIpuSyllabusSeeded();
-    assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet" }), IPU_LEET_SYLLABUS.length, "no duplicates on re-seed");
-    ok("re-seeding is a no-op (no duplicates)");
+    assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet" }), N + 1, "no duplicates on re-run");
+    ok("re-publishing is a no-op (one-time)");
 
-    // Staff can still edit/delete them (they're ordinary records) — a delete
-    // followed by a re-seed WON'T resurrect it because other ipu-leet syllabi
-    // still exist.
+    // A staff-deleted subject is NOT resurrected on a later boot.
     await Syllabus.deleteOne({ _id: maths._id });
     await ensureIpuSyllabusSeeded();
-    assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet" }), IPU_LEET_SYLLABUS.length - 1, "deleted subject stays deleted");
+    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Applied Mathematics" })), "deleted subject stays deleted");
     ok("a staff-deleted subject is not resurrected by a later boot");
 
-    // Migration: a previously-seeded split Physics + Chemistry is merged on boot,
-    // carrying whatever chapters exist (so staff edits are preserved).
+    // Migration: a previously-split Physics + Chemistry is merged on boot,
+    // carrying whatever chapters exist (staff edits preserved). Flag stays set,
+    // so the clean set isn't re-published here — only the merge runs.
     await Syllabus.deleteMany({ targets: "ipu-leet" });
     await Syllabus.create([
         { title: "Physics", subject: "Physics", exam: "IPU LEET", targets: ["ipu-leet"], published: true, scope: "global", order: 6, createdBy: admin._id, chapters: [{ title: "Units and Measurement", order: 0, topics: [{ title: "SI units", estimatedHours: 0.5, order: 0 }] }] },
         { title: "Chemistry", subject: "Chemistry", exam: "IPU LEET", targets: ["ipu-leet"], published: true, scope: "global", order: 7, createdBy: admin._id, chapters: [{ title: "Structure of Atom", order: 0, topics: [{ title: "Atomic models", estimatedHours: 0.5, order: 0 }] }] },
     ]);
     await ensureIpuSyllabusSeeded();
-    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Physics" })), "standalone Physics gone");
-    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Chemistry" })), "standalone Chemistry gone");
+    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Physics" })) && !(await Syllabus.exists({ targets: "ipu-leet", subject: "Chemistry" })), "standalones gone");
     const merged = await Syllabus.findOne({ targets: "ipu-leet", subject: "Physics & Chemistry" }).lean();
-    assert.ok(merged, "combined subject created");
-    assert.strictEqual(merged.chapters.length, 2, "both chapters carried over (edit-preserving)");
+    assert.ok(merged && merged.chapters.length === 2, "merged into one, chapters carried over");
     ok("a previously split Physics + Chemistry is merged into one subject on boot");
-
-    await ensureIpuSyllabusSeeded();
-    assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet", subject: "Physics & Chemistry" }), 1, "merge is idempotent");
-    ok("the Physics + Chemistry merge runs only once");
 
     await mongoose.disconnect();
     await mongod.stop();
