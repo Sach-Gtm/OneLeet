@@ -23,6 +23,7 @@ const BLANK = {
     fees: "",
     examMode: "",
     duration: "",
+    examDate: "",
     totalQuestions: "",
     totalMarks: "",
     markingCorrect: "",
@@ -101,6 +102,7 @@ export default function ExamPatternAdmin() {
         setForm({
             ...BLANK,
             ...p,
+            examDate: p.examDate ? new Date(p.examDate).toISOString().slice(0, 10) : "",
             totalQuestions: p.totalQuestions ?? "",
             totalMarks: p.totalMarks ?? "",
             sections: (p.sections || []).map((s) => ({
@@ -197,6 +199,9 @@ export default function ExamPatternAdmin() {
                     </Field>
                     <Field label="Duration">
                         <input value={form.duration} onChange={(e) => set("duration", e.target.value)} placeholder="2 hours 30 min" className={inCls} />
+                    </Field>
+                    <Field label="Exam date" hint="Powers the student countdown — edit when the real date is announced">
+                        <input type="date" value={form.examDate} onChange={(e) => set("examDate", e.target.value)} className={inCls} />
                     </Field>
                 </div>
 

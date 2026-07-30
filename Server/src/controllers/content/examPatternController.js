@@ -19,6 +19,14 @@ const num = (v, max) => {
     return Math.min(n, max);
 };
 
+// A valid Date, or null (so an admin can clear the exam date). Accepts a
+// "YYYY-MM-DD" from the form or any parseable date string.
+const date = (v) => {
+    if (v === undefined || v === null || v === "") return null;
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? null : d;
+};
+
 const cleanSections = (input) =>
     (Array.isArray(input) ? input : [])
         .map((s) => ({
@@ -52,6 +60,7 @@ function patternFromBody(body = {}) {
         fees: str(body.fees, 400),
         examMode: str(body.examMode, 80),
         duration: str(body.duration, 80),
+        examDate: date(body.examDate),
         totalQuestions: num(body.totalQuestions, 5000),
         totalMarks: num(body.totalMarks, 100000),
         sections: cleanSections(body.sections),
@@ -77,6 +86,7 @@ const shape = (p) => ({
     fees: p.fees,
     examMode: p.examMode,
     duration: p.duration,
+    examDate: p.examDate,
     totalQuestions: p.totalQuestions,
     totalMarks: p.totalMarks,
     sections: (p.sections || []).map((s) => ({
