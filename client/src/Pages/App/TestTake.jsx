@@ -40,10 +40,17 @@ export default function TestTake() {
             })
             .catch((err) => {
                 if (!active) return;
+                const data = err?.response?.data || {};
                 // A free student who reached a premium test by direct URL: nudge to upgrade.
-                if (err?.response?.data?.code === "PREMIUM_REQUIRED") {
+                if (data.code === "PREMIUM_REQUIRED") {
                     toast.error("This is a Premium test. Upgrade to Premium to unlock it.");
                     navigate("/tests", { replace: true });
+                    return;
+                }
+                // Already taken this single-attempt mock test: show the existing result.
+                if (data.code === "ALREADY_ATTEMPTED") {
+                    toast("You've already taken this test — here's your result.");
+                    navigate(data.attemptId ? `/tests/result/${data.attemptId}` : "/tests", { replace: true });
                     return;
                 }
                 setNotFound(true);
@@ -68,7 +75,13 @@ export default function TestTake() {
             };
             const res = await submitTest(id, payload);
             navigate(`/tests/result/${res.attemptId}`, { replace: true });
-        } catch {
+        } catch (err) {
+            // Raced a second submit of a single-attempt test: go to the first result.
+            const data = err?.response?.data || {};
+            if (data.code === "ALREADY_ATTEMPTED" && data.attemptId) {
+                navigate(`/tests/result/${data.attemptId}`, { replace: true });
+                return;
+            }
             submittedRef.current = false;
             setSubmitting(false);
             toast.error("Could not submit the test. Please try again.");
