@@ -19,6 +19,7 @@ import {
     BookOpen,
     ListChecks,
     Lock,
+    Repeat,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff } from "@/lib/roles";
@@ -92,6 +93,11 @@ export default function Studio() {
 
     const [saving, setSaving] = useState(false);
     const [list, setList] = useState([]);
+    const [listFilter, setListFilter] = useState("all"); // all | test | practice
+    const shownList =
+        listFilter === "all"
+            ? list
+            : list.filter((t) => (listFilter === "practice" ? t.mode === "practice" : t.mode !== "practice"));
 
     // Notes & Syllabus authoring (both live here, staff-only).
     const [notesOpen, setNotesOpen] = useState(false);
@@ -304,6 +310,18 @@ export default function Studio() {
             loadList();
         } catch (e) {
             toast.error(e.message || "Couldn't publish");
+        }
+    };
+
+    // Quick-flip a set between Test and Practice without opening the editor.
+    const toggleTestMode = async (t) => {
+        const next = t.mode === "practice" ? "test" : "practice";
+        try {
+            await updateStudioTest(t._id, { mode: next });
+            toast.success(next === "practice" ? "Switched to Practice" : "Switched to Test");
+            loadList();
+        } catch (e) {
+            toast.error(e.message || "Couldn't switch");
         }
     };
 
@@ -727,19 +745,43 @@ export default function Studio() {
                 </div>
             </div>
 
-            {/* Existing content */}
+            {/* Existing content — every test & practice set you've made */}
             <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                <h2 className="mb-3 text-sm font-bold text-slate-800">Your content</h2>
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <h2 className="text-sm font-bold text-slate-800">Your tests &amp; practice</h2>
+                    <div className="inline-flex rounded-lg border border-slate-200 p-0.5 text-xs font-semibold">
+                        {[
+                            { k: "all", label: "All" },
+                            { k: "test", label: "Tests" },
+                            { k: "practice", label: "Practice" },
+                        ].map((o) => (
+                            <button
+                                key={o.k}
+                                onClick={() => setListFilter(o.k)}
+                                className={
+                                    "rounded-md px-2.5 py-1 transition " +
+                                    (listFilter === o.k ? "bg-indigo-600 text-white" : "text-slate-500 hover:bg-slate-50")
+                                }
+                            >
+                                {o.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 {list.length === 0 ? (
                     <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-400">
                         Nothing yet — draft your first set above.
                     </p>
+                ) : shownList.length === 0 ? (
+                    <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-400">
+                        No {listFilter} sets yet.
+                    </p>
                 ) : (
                     <ul className="divide-y divide-slate-100">
-                        {list.map((t) => (
+                        {shownList.map((t) => (
                             <li key={t._id} className="flex flex-wrap items-center gap-3 py-3">
                                 <div className="min-w-0 flex-1">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex flex-wrap items-center gap-2">
                                         <span className="truncate text-sm font-semibold text-slate-800">{t.title}</span>
                                         <span
                                             className={
@@ -749,17 +791,36 @@ export default function Studio() {
                                                     : "bg-amber-50 text-amber-700")
                                             }
                                         >
-                                            {t.status}
+                                            {t.status === "published" ? "live" : t.status}
                                         </span>
-                                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
-                                            {t.mode}
+                                        <span
+                                            className={
+                                                "rounded-full px-2 py-0.5 text-[10px] font-semibold " +
+                                                (t.mode === "practice"
+                                                    ? "bg-emerald-50 text-emerald-700"
+                                                    : "bg-indigo-50 text-indigo-700")
+                                            }
+                                        >
+                                            {t.mode === "practice" ? "Practice" : "Test"}
                                         </span>
+                                        {t.format && TEST_FORMATS[t.format] && (
+                                            <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                                                {TEST_FORMATS[t.format].emoji} {TEST_FORMATS[t.format].label}
+                                            </span>
+                                        )}
                                     </div>
                                     <div className="text-xs text-slate-400">
                                         {t.subject || "—"} · {t.questionCount} Qs · {t.totalMarks} marks
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1.5">
+                                    <button
+                                        onClick={() => toggleTestMode(t)}
+                                        title={`Switch to ${t.mode === "practice" ? "Test" : "Practice"}`}
+                                        className="inline-flex h-8 items-center gap-1 rounded-md border border-slate-200 px-2 text-[11px] font-semibold text-slate-500 hover:bg-slate-50"
+                                    >
+                                        <Repeat className="h-3.5 w-3.5" /> {t.mode === "practice" ? "Test" : "Practice"}
+                                    </button>
                                     <button
                                         onClick={() => handleEdit(t._id)}
                                         title="Edit"
