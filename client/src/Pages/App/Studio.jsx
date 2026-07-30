@@ -21,10 +21,12 @@ import {
     Lock,
     Repeat,
     Crown,
+    ClipboardPaste,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff } from "@/lib/roles";
 import { TEST_FORMATS, TEST_FORMAT_KEYS } from "@/lib/testFormats";
+import { parseQuestions } from "@/lib/parseQuestions";
 import {
     aiDraft,
     listStudioTests,
@@ -46,6 +48,19 @@ const blankQuestion = () => ({
     marks: 1,
     explanation: "",
 });
+
+const BULK_PLACEHOLDER = `Paste one question per block, e.g.
+
+Bee : Hive :: Bird : ?
+A) Sky
+B) Nest
+C) Tree
+D) Egg
+Answer: B
+Explanation: A hive is a bee's home.
+
+…or a JSON array:
+[{"text":"…","options":["A","B","C","D"],"answer":"B","explanation":"…"}]`;
 
 // Convert a stored Date/ISO into the value a <input type="datetime-local">
 // expects (local "YYYY-MM-DDTHH:mm"), and back.
@@ -78,6 +93,8 @@ export default function Studio() {
         closeAt: "",
     });
     const [questions, setQuestions] = useState([blankQuestion()]);
+    const [bulkOpen, setBulkOpen] = useState(false);
+    const [bulkText, setBulkText] = useState("");
     const [targets, setTargets] = useState([]);
     const [editingId, setEditingId] = useState(null);
     // Locked size preset (null = custom, no lock). Picking one fixes the exact
@@ -221,6 +238,24 @@ export default function Studio() {
     const addQuestion = () =>
         setQuestions((qs) => (needCount && qs.length >= needCount ? qs : [...qs, blankQuestion()]));
     const removeQuestion = (i) => setQuestions((qs) => (qs.length > 1 ? qs.filter((_, idx) => idx !== i) : qs));
+
+    // Bulk import: paste many questions (block format or JSON) straight into the
+    // editor, then Save/Publish through the normal flow (format count still locks).
+    const loadBulk = (mode) => {
+        let parsed;
+        try {
+            parsed = parseQuestions(bulkText);
+        } catch (e) {
+            return toast.error(e.message || "Couldn't read those questions.");
+        }
+        setQuestions((qs) => {
+            const kept = mode === "append" ? qs.filter((q) => q.text.trim() || q.options.some((o) => o.trim())) : [];
+            return [...kept, ...parsed.map((p) => ({ ...blankQuestion(), ...p }))];
+        });
+        setBulkText("");
+        setBulkOpen(false);
+        toast.success(`Loaded ${parsed.length} question${parsed.length === 1 ? "" : "s"} — review & publish below`);
+    };
 
     // Pick a locked format (or "custom"). Point the AI drafter at the same count
     // (capped at 20, its max) so a Quick Shot drafts 10 straight away.
@@ -695,6 +730,50 @@ export default function Studio() {
 
                 {/* Questions */}
                 <div className="mt-5 space-y-4">
+                    {/* Bulk paste / import — add many questions at once */}
+                    <div className="rounded-xl border border-dashed border-indigo-200 bg-indigo-50/30">
+                        <button
+                            type="button"
+                            onClick={() => setBulkOpen((o) => !o)}
+                            className="flex w-full items-center gap-2 px-4 py-2.5 text-sm font-semibold text-indigo-700"
+                        >
+                            <ClipboardPaste className="h-4 w-4" /> Bulk paste / import questions
+                            <span className="ml-auto text-xs font-normal text-slate-400">
+                                {bulkOpen ? "Hide" : "Add many at once"}
+                            </span>
+                        </button>
+                        {bulkOpen && (
+                            <div className="border-t border-indigo-100 p-4">
+                                <textarea
+                                    value={bulkText}
+                                    onChange={(e) => setBulkText(e.target.value)}
+                                    rows={9}
+                                    placeholder={BULK_PLACEHOLDER}
+                                    className="w-full rounded-lg border border-slate-200 px-3 py-2 font-mono text-xs leading-relaxed focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                                />
+                                <p className="mt-2 text-xs text-slate-500">
+                                    One block per question — the stem, then options as <b>A) B) C)</b> (or 1) 2) 3)),
+                                    then an <b>Answer:</b> line and an optional <b>Explanation:</b> — or paste a JSON array.
+                                </p>
+                                <div className="mt-2.5 flex flex-wrap gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => loadBulk("replace")}
+                                        className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+                                    >
+                                        <ClipboardPaste className="h-4 w-4" /> Load (replace all)
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => loadBulk("append")}
+                                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+                                    >
+                                        <Plus className="h-4 w-4" /> Add to list
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                     {questions.map((q, i) => (
                         <div key={i} className="rounded-xl border border-slate-200 p-4">
                             <div className="mb-2 flex items-start gap-2">
