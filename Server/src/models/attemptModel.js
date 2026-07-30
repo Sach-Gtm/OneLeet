@@ -3,6 +3,13 @@ const mongoose = require("mongoose");
 const AnswerSchema = new mongoose.Schema(
     {
         question: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
+        // A snapshot of the question at submit time so the results review is
+        // immutable — it survives the author later editing or deleting the test's
+        // questions (older attempts, saved before this, fall back to the ref).
+        text: { type: String },
+        options: { type: [String], default: undefined },
+        correctIndex: { type: Number },
+        explanation: { type: String },
         selectedIndex: { type: Number, default: null }, // null = unattempted
         correct: { type: Boolean, default: false },
     },

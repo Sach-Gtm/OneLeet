@@ -231,4 +231,22 @@ async function ensureReasoningQuickShotsSeeded() {
     }
 }
 
-module.exports = { BANKS, ensureReasoningQuickShotsSeeded };
+// One-time cleanup: a Quick Shot is a warm-up, never a timed competition. Clear
+// any competitive window (openAt/closeAt) left on quick-shot tests so the result
+// page never shows a frozen "leaderboard locked" countdown for a warm-up.
+async function ensureQuickShotWindowsCleared() {
+    try {
+        const KEY = "quickshot-clear-windows-v1";
+        if (await SeedFlag.exists({ key: KEY })) return;
+        const res = await Test.updateMany(
+            { format: "quick-shot", $or: [{ openAt: { $ne: null } }, { closeAt: { $ne: null } }] },
+            { $unset: { openAt: "", closeAt: "" } }
+        );
+        await SeedFlag.create({ key: KEY });
+        if (res.modifiedCount) console.log(`[quickshot] cleared the competitive window on ${res.modifiedCount} warm-up(s)`);
+    } catch (e) {
+        console.warn("[quickshot] window cleanup skipped:", e.message);
+    }
+}
+
+module.exports = { BANKS, ensureReasoningQuickShotsSeeded, ensureQuickShotWindowsCleared };
