@@ -18,6 +18,7 @@ import {
     Hand,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { fmtDuration } from "@/lib/format";
 import { Button } from "@/Components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { getDashboard } from "@/Api/DashboardApi";
@@ -95,7 +96,12 @@ const STAT_META = [
     { key: "testsTaken", label: "Tests Taken", icon: ClipboardCheck, color: "text-indigo-600 bg-indigo-50", format: (v) => v },
     { key: "accuracy", label: "Accuracy", icon: Target, color: "text-emerald-600 bg-emerald-50", format: (v) => `${v}%` },
     { key: "pyqsSolved", label: "PYQs Solved", icon: CheckCircle2, color: "text-amber-600 bg-amber-50", format: (v) => v.toLocaleString() },
-    { key: "studyHours", label: "Study Hours", icon: Clock, color: "text-violet-600 bg-violet-50", format: (v) => `${v}h` },
+    // Time studied comes from the same activity tracking as the Analytics page
+    // (and the "This week" strip below), so the numbers always agree. The old
+    // stats.studyHours counted only time inside tests, which read as "0h" for
+    // anyone who mostly browses notes/PYQs/AI tools — confusingly out of step
+    // with the time we actually show them everywhere else.
+    { key: "timeStudied", label: "Time Studied", icon: Clock, color: "text-violet-600 bg-violet-50", format: fmtDuration, timeBased: true },
 ];
 
 function EmptyState({ icon, title, subtitle }) {
@@ -164,6 +170,7 @@ export default function Dashboard() {
     const { user } = useAuth();
     const [data, setData] = useState(null);
     const [week, setWeek] = useState([]);
+    const [timeMinutes, setTimeMinutes] = useState(0);
     const [syllabus, setSyllabus] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -179,9 +186,14 @@ export default function Dashboard() {
             .finally(() => {
                 if (active) setLoading(false);
             });
-        // Real time-on-site for the "this week" strip (best-effort).
+        // Real time-on-site for the "this week" strip and the "Time Studied"
+        // stat (best-effort). Same source as the Analytics page.
         getMyAnalytics()
-            .then((res) => active && setWeek(res.minutesByDay || []))
+            .then((res) => {
+                if (!active) return;
+                setWeek(res.minutesByDay || []);
+                setTimeMinutes(res.totalMinutes || 0);
+            })
             .catch(() => {});
         // Syllabus coverage for the prep ring (best-effort).
         getSyllabusSummary()
@@ -312,7 +324,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 {STAT_META.map((meta, idx) => {
                     const Icon = meta.icon;
-                    const value = stats[meta.key] || 0;
+                    const value = meta.timeBased ? timeMinutes : stats[meta.key] || 0;
                     return (
                         <motion.div
                             key={meta.key}

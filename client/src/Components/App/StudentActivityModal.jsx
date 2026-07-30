@@ -13,14 +13,8 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { getStudentActivity, resetStudentAchievements } from "@/Api/AdminApi";
-import { timeAgo } from "@/lib/format";
+import { timeAgo, fmtDuration } from "@/lib/format";
 import RankMedal from "@/Components/App/RankMedal";
-
-const fmtTime = (min) => {
-    const m = Math.max(0, Math.round(min || 0));
-    const h = Math.floor(m / 60);
-    return h ? `${h}h ${m % 60}m` : `${m}m`;
-};
 
 // Full read-only picture of one student for an admin: profile, tests, AI
 // topics, and time spent. Opened from the student directory.
@@ -64,7 +58,7 @@ export default function StudentActivityModal({ studentId, onClose }) {
     const stats = [
         { label: "Tests", value: s?.stats?.testsTaken ?? 0, icon: ClipboardCheck, tint: "text-indigo-600 bg-indigo-50" },
         { label: "Accuracy", value: `${s?.stats?.accuracy ?? 0}%`, icon: Target, tint: "text-emerald-600 bg-emerald-50" },
-        { label: "Time", value: fmtTime(time.totalMinutes), icon: Clock, tint: "text-violet-600 bg-violet-50" },
+        { label: "Time", value: fmtDuration(time.totalMinutes), icon: Clock, tint: "text-violet-600 bg-violet-50" },
         { label: "Streak", value: `${s?.stats?.streak ?? 0}d`, icon: Flame, tint: "text-orange-600 bg-orange-50" },
     ];
 

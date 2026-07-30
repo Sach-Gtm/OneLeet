@@ -9,16 +9,10 @@ import {
     BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { timeAgo } from "@/lib/format";
+import { timeAgo, fmtDuration } from "@/lib/format";
 import { useAuth } from "@/context/AuthContext";
 import { listAttempts } from "@/Api/TestsApi";
 import { getMyAnalytics } from "@/Api/ActivityApi";
-
-const fmtTime = (min) => {
-    const m = Math.max(0, Math.round(min || 0));
-    const h = Math.floor(m / 60);
-    return h ? `${h}h ${m % 60}m` : `${m}m`;
-};
 
 export default function Analytics() {
     const { user } = useAuth();
@@ -60,7 +54,7 @@ export default function Analytics() {
         { label: "Tests Taken", value: stats.testsTaken || 0, icon: ClipboardCheck, color: "text-indigo-600 bg-indigo-50" },
         { label: "Avg Accuracy", value: `${stats.accuracy || 0}%`, icon: Target, color: "text-emerald-600 bg-emerald-50" },
         { label: "Best Score", value: `${bestScorePct}%`, icon: TrendingUp, color: "text-amber-600 bg-amber-50" },
-        { label: "Time on OneLeet", value: fmtTime(time.totalMinutes), icon: Clock, color: "text-violet-600 bg-violet-50" },
+        { label: "Time on OneLeet", value: fmtDuration(time.totalMinutes), icon: Clock, color: "text-violet-600 bg-violet-50" },
     ];
 
     // Last 14 days of time, oldest→newest, with any missing days shown as 0.
@@ -98,7 +92,7 @@ export default function Analytics() {
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-sm font-bold text-slate-800">Time on OneLeet (last 14 days)</h2>
-                    <span className="text-xs font-medium text-slate-400">{fmtTime(time.totalMinutes)} total</span>
+                    <span className="text-xs font-medium text-slate-400">{fmtDuration(time.totalMinutes)} total</span>
                 </div>
                 {time.totalMinutes === 0 ? (
                     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 py-10 text-center">
@@ -130,7 +124,7 @@ export default function Analytics() {
                                 className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600"
                             >
                                 <span className="text-slate-400">{p.path === "/" ? "Home" : p.path.replace(/^\//, "")}</span>
-                                <span className="font-semibold text-indigo-600">{fmtTime(p.minutes)}</span>
+                                <span className="font-semibold text-indigo-600">{fmtDuration(p.minutes)}</span>
                             </span>
                         ))}
                     </div>
