@@ -16,6 +16,7 @@ const SEED_EXAMS = [
     { code: "jharkhand-leet", name: "Jharkhand LEET (JCECE-LE)", group: "North India" },
     { code: "haryana-leet", name: "Haryana LEET (HSTES)", group: "North India" },
     { code: "punjab-leet", name: "Punjab LEET (IKGPTU)", group: "North India" },
+    { code: "sliet-leet", name: "SLIET LEET (Longowal)", group: "North India" },
     { code: "rajasthan-leet", name: "Rajasthan Lateral Entry (REAP)", group: "North India" },
     { code: "uttarakhand-leet", name: "Uttarakhand LEET (UKSEE)", group: "North India" },
     { code: "himachal-leet", name: "Himachal Pradesh LEET", group: "North India" },
@@ -104,7 +105,10 @@ async function refreshExams() {
     return cachedExams;
 }
 
-// Seed the DB from SEED_EXAMS the first time, then load the cache.
+// Seed the DB from SEED_EXAMS the first time, then load the cache. On an
+// already-seeded DB, also top up any seed exams added to the list since (e.g. a
+// newly-supported state's LEET) — inserting only the MISSING codes, so it works
+// in production without wiping admin edits or duplicating existing entries.
 async function ensureExamsSeeded() {
     try {
         const Exam = require("../models/examModel");
@@ -113,6 +117,15 @@ async function ensureExamsSeeded() {
                 SEED_EXAMS.map((e, i) => ({ ...e, order: i })),
                 { ordered: false }
             ).catch(() => {});
+        } else {
+            const existing = new Set((await Exam.find({}, "code").lean()).map((e) => e.code));
+            const missing = SEED_EXAMS.filter((e) => !existing.has(e.code));
+            if (missing.length) {
+                await Exam.insertMany(
+                    missing.map((e, i) => ({ ...e, order: 1000 + i })),
+                    { ordered: false }
+                ).catch(() => {});
+            }
         }
     } catch {
         /* ignore — cache still holds the seed */
