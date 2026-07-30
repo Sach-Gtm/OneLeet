@@ -13,7 +13,7 @@ function ReviewVideoModal({ review, onClose }) {
         <div className="fixed inset-0 z-[80] flex items-center justify-center p-4" onClick={onClose}>
             <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-sm" />
             <div
-                className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-black shadow-2xl"
+                className="relative z-10 w-full max-w-2xl overflow-hidden rounded-2xl bg-black shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 <button
@@ -47,9 +47,12 @@ function ReviewCard({ review, onPlay }) {
         }
     }, [isVideo]);
 
+    // Uniform landscape cards (~half the old height). Videos are shot landscape,
+    // so 16:9 fills cleanly; text cards share the same footprint so the row
+    // stays even.
     if (isVideo) {
         return (
-            <div className="relative h-96 w-72 shrink-0 overflow-hidden rounded-2xl bg-slate-900 shadow-lg shadow-slate-300/40 dark:shadow-black/40 sm:w-80">
+            <div className="relative h-40 w-72 shrink-0 overflow-hidden rounded-2xl bg-slate-900 shadow-md shadow-slate-300/40 dark:shadow-black/40">
                 <video
                     ref={videoRef}
                     src={review.video}
@@ -60,19 +63,19 @@ function ReviewCard({ review, onPlay }) {
                     preload="metadata"
                     className="h-full w-full object-cover"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/25" />
-                <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white backdrop-blur">
-                    <Play size={10} className="fill-white" /> Video
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/20" />
+                <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white backdrop-blur">
+                    <Play size={9} className="fill-white" /> Video
                 </span>
                 <button
                     onClick={() => onPlay(review)}
-                    className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition hover:bg-white/35"
+                    className="absolute right-2.5 top-2.5 grid h-8 w-8 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition hover:bg-white/35"
                     aria-label="Play with sound"
                 >
-                    <Volume2 size={16} />
+                    <Volume2 size={14} />
                 </button>
-                <div className="absolute inset-x-0 bottom-0 p-4 text-left">
-                    {review.title && <p className="line-clamp-2 text-sm font-semibold text-white">{review.title}</p>}
+                <div className="absolute inset-x-0 bottom-0 p-3 text-left">
+                    {review.title && <p className="line-clamp-1 text-sm font-semibold text-white">{review.title}</p>}
                     {review.author && <p className="mt-0.5 text-xs text-white/75">{review.author}</p>}
                 </div>
             </div>
@@ -81,13 +84,13 @@ function ReviewCard({ review, onPlay }) {
 
     const text = review.text || review.title || "";
     return (
-        <div className="flex h-96 w-72 shrink-0 flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-lg shadow-slate-300/40 dark:border-slate-700 dark:shadow-black/40 sm:w-80">
-            <div>
-                <Quote className="h-8 w-8 -scale-x-100 text-indigo-300" />
-                <p className="mt-3 line-clamp-[7] text-base font-medium leading-relaxed text-slate-700">{text}</p>
+        <div className="flex h-40 w-72 shrink-0 flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-md shadow-slate-300/40 dark:border-slate-700 dark:shadow-black/40">
+            <div className="min-h-0">
+                <Quote className="h-5 w-5 -scale-x-100 text-indigo-300" />
+                <p className="mt-1.5 line-clamp-3 text-sm font-medium leading-snug text-slate-700">{text}</p>
             </div>
-            <div className="flex items-center gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700 dark:bg-slate-800">
+            <div className="flex items-center gap-2.5">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700 dark:bg-slate-800">
                     {(review.author || "O").charAt(0).toUpperCase()}
                 </span>
                 <div className="min-w-0">
@@ -96,7 +99,7 @@ function ReviewCard({ review, onPlay }) {
                     </p>
                     <div className="flex gap-0.5">
                         {[0, 1, 2, 3, 4].map((i) => (
-                            <Star key={i} size={11} className="fill-amber-400 text-amber-400" />
+                            <Star key={i} size={10} className="fill-amber-400 text-amber-400" />
                         ))}
                     </div>
                 </div>
