@@ -11,6 +11,7 @@ import {
     Building2,
     TrendingUp,
     CalendarDays,
+    CalendarClock,
     ExternalLink,
     PhoneCall,
     GraduationCap,
@@ -21,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { getMyExamPatterns } from "@/Api/ExamPatternApi";
+import { daysUntil } from "@/lib/useExamCountdown";
 import { openCallback } from "@/lib/callback";
 
 // Stable empty reference so "no exams selected" doesn't churn the useMemo below.
@@ -84,6 +86,7 @@ function PatternDetail({ p }) {
             : "";
     const hasSections = (p.sections || []).length > 0;
     const hasColleges = (p.topColleges || []).length > 0;
+    const daysLeft = daysUntil(p.examDate);
 
     return (
         <motion.div
@@ -98,9 +101,17 @@ function PatternDetail({ p }) {
                 <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
                 <div className="pointer-events-none absolute -bottom-12 right-16 h-32 w-32 rounded-full bg-violet-500/20 blur-2xl" />
                 <div className="relative">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm">
-                        <ScrollText size={12} /> Paper Pattern & Exam Guide
-                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm">
+                            <ScrollText size={12} /> Paper Pattern & Exam Guide
+                        </span>
+                        {daysLeft != null && (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-amber-950">
+                                <CalendarClock size={12} />
+                                {daysLeft === 0 ? "Exam is today!" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} to go`}
+                            </span>
+                        )}
+                    </div>
                     <h3 className="mt-2 text-xl font-bold leading-tight">{p.examName}</h3>
                     <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-indigo-100">
                         {p.conductingBody && (

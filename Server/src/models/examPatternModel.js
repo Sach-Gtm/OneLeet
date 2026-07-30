@@ -55,6 +55,9 @@ const ExamPatternSchema = new mongoose.Schema(
         examMode: { type: String, trim: true, maxlength: [80, "Too long"] },
         // "2 hours", "150 minutes", etc.
         duration: { type: String, trim: true, maxlength: [80, "Too long"] },
+        // The exam date. Drives the live countdown a student sees ("N days to
+        // go"); admins set/adjust it as the official date is announced.
+        examDate: { type: Date },
         totalQuestions: { type: Number, min: 0, max: 5000 },
         totalMarks: { type: Number, min: 0, max: 100000 },
 

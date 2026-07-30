@@ -8,9 +8,11 @@ import {
     PhoneCall,
     ScrollText,
     ArrowRight,
+    CalendarClock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PHASES, MISTAKES, EXAM_DAY_KIT, PHASE_STYLES } from "@/lib/prepGuide";
+import { PHASES, MISTAKES, EXAM_DAY_KIT, PHASE_STYLES, phaseForDays } from "@/lib/prepGuide";
+import { useExamCountdown } from "@/lib/useExamCountdown";
 import { openCallback } from "@/lib/callback";
 
 const reveal = {
@@ -20,7 +22,7 @@ const reveal = {
     transition: { duration: 0.45, ease: "easeOut" },
 };
 
-function PhaseNode({ phase, last }) {
+function PhaseNode({ phase, last, current, windowLabel }) {
     const Icon = phase.icon;
     const s = PHASE_STYLES[phase.color] || PHASE_STYLES.indigo;
     return (
@@ -32,7 +34,7 @@ function PhaseNode({ phase, last }) {
                 className={cn(
                     "relative z-10 grid h-11 w-11 shrink-0 place-items-center rounded-xl",
                     s.chip,
-                    phase.current && cn("ring-4", s.ring)
+                    current && cn("ring-4", s.ring)
                 )}
             >
                 <Icon size={19} />
@@ -40,7 +42,7 @@ function PhaseNode({ phase, last }) {
             <div
                 className={cn(
                     "min-w-0 flex-1 rounded-2xl border bg-white p-4",
-                    phase.current
+                    current
                         ? "border-indigo-200 shadow-sm dark:border-indigo-500/30"
                         : "border-slate-200 dark:border-slate-700/70"
                 )}
@@ -49,14 +51,16 @@ function PhaseNode({ phase, last }) {
                     <h3 className="text-base font-bold text-slate-900">{phase.label}</h3>
                     <span
                         className={cn(
-                            "rounded-full px-2 py-0.5 text-[11px] font-semibold",
-                            phase.current
+                            "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                            current
                                 ? "bg-indigo-600 text-white"
                                 : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
                         )}
                     >
-                        {phase.window}
+                        {current && windowLabel && <CalendarClock size={10} />}
+                        {current && windowLabel ? windowLabel : phase.window}
                     </span>
+                    {current && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">You&apos;re here</span>}
                 </div>
                 <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{phase.focus}</p>
                 <ul className="mt-3 space-y-2">
@@ -73,6 +77,12 @@ function PhaseNode({ phase, last }) {
 }
 
 export default function PrepGuide() {
+    const countdown = useExamCountdown();
+    const daysLeft = countdown?.daysLeft ?? null;
+    const currentId = phaseForDays(daysLeft);
+    const windowLabel =
+        daysLeft == null ? null : daysLeft === 0 ? "Exam is today!" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} to go`;
+
     return (
         <div className="mx-auto max-w-4xl space-y-8 pb-4">
             {/* Hero */}
@@ -85,13 +95,22 @@ export default function PrepGuide() {
                 <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/10 blur-2xl" />
                 <div className="pointer-events-none absolute -bottom-16 right-24 h-40 w-40 rounded-full bg-violet-500/20 blur-2xl" />
                 <div className="relative">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
-                        <Compass size={13} /> Prep Guide
-                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
+                            <Compass size={13} /> Prep Guide
+                        </span>
+                        {windowLabel && (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-amber-950">
+                                <CalendarClock size={13} /> {windowLabel}
+                                {countdown?.examName ? ` · ${countdown.examName}` : ""}
+                            </span>
+                        )}
+                    </div>
                     <h1 className="mt-3 text-2xl font-bold sm:text-3xl">Your roadmap to cracking LEET</h1>
                     <p className="mt-2 max-w-xl text-sm text-indigo-100 sm:text-base">
-                        You&apos;re at the start of your journey — perfect timing. Here&apos;s exactly what to focus
-                        on at each stage, the mistakes to avoid, and what to carry on exam day.
+                        {daysLeft == null
+                            ? "You're at the start of your journey — perfect timing. Here's exactly what to focus on at each stage, the mistakes to avoid, and what to carry on exam day."
+                            : "Here's exactly what to focus on for where you are now, the mistakes to avoid, and what to carry on exam day."}
                     </p>
                 </div>
             </motion.div>
@@ -109,7 +128,13 @@ export default function PrepGuide() {
                 </div>
                 <div>
                     {PHASES.map((p, i) => (
-                        <PhaseNode key={p.id} phase={p} last={i === PHASES.length - 1} />
+                        <PhaseNode
+                            key={p.id}
+                            phase={p}
+                            last={i === PHASES.length - 1}
+                            current={p.id === currentId}
+                            windowLabel={windowLabel}
+                        />
                     ))}
                 </div>
             </section>

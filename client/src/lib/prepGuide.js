@@ -11,8 +11,7 @@ export const PHASES = [
     {
         id: "foundation",
         label: "Foundation",
-        window: "Now — you're here",
-        current: true,
+        window: "4+ months to go",
         icon: Sprout,
         color: "emerald",
         focus: "Cover the syllabus and build a routine you can keep for months.",
@@ -128,6 +127,17 @@ export const EXAM_DAY_KIT = [
     "Analog watch (if the centre allows)",
     "Anything your admit card specifically asks you to bring",
 ];
+
+// Which phase a student is in, from the days left until their exam. With no
+// known exam date we assume the very start (Foundation).
+export function phaseForDays(days) {
+    if (days == null) return "foundation";
+    if (days <= 1) return "exam-day";
+    if (days <= 7) return "final-week";
+    if (days <= 30) return "sharpen";
+    if (days <= 120) return "build";
+    return "foundation";
+}
 
 // Tailwind class sets per phase colour, used by the guide + dashboard card.
 // Explicit dark variants because emerald/sky/rose tints aren't remapped by the

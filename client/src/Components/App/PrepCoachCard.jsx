@@ -1,13 +1,17 @@
 import { Link } from "react-router-dom";
-import { Compass, CheckCircle2, ArrowRight } from "lucide-react";
+import { Compass, CheckCircle2, ArrowRight, CalendarClock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PHASES, PHASE_STYLES } from "@/lib/prepGuide";
+import { PHASES, PHASE_STYLES, phaseForDays } from "@/lib/prepGuide";
+import { useExamCountdown } from "@/lib/useExamCountdown";
 
 // Compact dashboard entry point to the full Prep Guide. Surfaces the phase the
-// student is in right now (Foundation, at session start) with its focus and a
-// couple of tips, plus a mini roadmap of all the phases ahead.
+// student is in right now — derived live from their exam countdown — with its
+// focus and a couple of tips, plus a mini roadmap of all the phases ahead.
 export default function PrepCoachCard() {
-    const current = PHASES.find((p) => p.current) || PHASES[0];
+    const countdown = useExamCountdown();
+    const daysLeft = countdown?.daysLeft ?? null;
+    const currentId = phaseForDays(daysLeft);
+    const current = PHASES.find((p) => p.id === currentId) || PHASES[0];
     const s = PHASE_STYLES[current.color] || PHASE_STYLES.indigo;
     const Icon = current.icon;
 
@@ -39,8 +43,13 @@ export default function PrepCoachCard() {
                 <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-bold text-slate-900">{current.label} phase</span>
-                        <span className="rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-semibold text-white">
-                            {current.window}
+                        <span className="inline-flex items-center gap-1 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-semibold text-white">
+                            {daysLeft != null && <CalendarClock size={10} />}
+                            {daysLeft == null
+                                ? current.window
+                                : daysLeft === 0
+                                  ? "Exam is today!"
+                                  : `${daysLeft} day${daysLeft === 1 ? "" : "s"} to go`}
                         </span>
                     </div>
                     <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">{current.focus}</p>
@@ -63,10 +72,10 @@ export default function PrepCoachCard() {
                             <span
                                 className={cn(
                                     "h-2.5 w-2.5 rounded-full",
-                                    p.current ? PHASE_STYLES[p.color].dot : "bg-slate-200 dark:bg-slate-700"
+                                    p.id === currentId ? PHASE_STYLES[p.color].dot : "bg-slate-200 dark:bg-slate-700"
                                 )}
                             />
-                            <span className={cn("text-[10px] font-medium", p.current ? "text-slate-700 dark:text-slate-200" : "text-slate-400")}>
+                            <span className={cn("text-[10px] font-medium", p.id === currentId ? "text-slate-700 dark:text-slate-200" : "text-slate-400")}>
                                 {p.label}
                             </span>
                         </div>
