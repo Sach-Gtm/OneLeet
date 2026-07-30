@@ -8,22 +8,17 @@ OneLeet is an AI-powered **LEET / lateral-entry exam-prep platform** for Indian 
 
 ## Authoring questions / content from external sources
 
-When the founder shares questions from **examveda or any other platform**, never reproduce
-them verbatim. Make every item OneLeet's own:
+**examveda:** the founder has obtained **permission from examveda** to use their questions, and
+these standard exam questions recur across papers. So when the founder shares questions **from
+examveda**, reproduce them **faithfully / verbatim** — copy the question and all options exactly
+as given (fix only obvious typos, encoding, or formatting). Do **not** paraphrase or reorder.
 
-- Rewrite the question wording **substantially** (not a token change).
-- **Reword and reorder the options**; where possible change the numbers, names, or examples.
-- Keep the tested skill and difficulty the same.
-- Prefer **authoring fresh questions** on the same topic/skill over copy-then-edit.
-
-> Honest note: a light "20–30% tweak" is **not** a reliable copyright shield on its own — a
-> lightly-paraphrased original question is a derivative work and can still infringe, and copying
-> a whole curated set can infringe the *compilation* even if each item is edited. **Substantial
-> rewriting (as above) is the safe default.** Standard, common reasoning/aptitude items (basic
-> analogies, standard math, PYQs) are largely generic and low-risk once reworded. For large-scale
-> commercial use, a quick professional IP check is worthwhile. **PYQs (real past exam papers)**
-> are both high-value and generally far safer to use than a competitor's practice bank — lean on
-> them.
+**Any other source without stated permission:** do not copy verbatim. Rewrite the wording
+substantially, reword/reorder the options (vary numbers, names, examples), keep the skill and
+difficulty, or author fresh questions. A light "20–30% tweak" is not a reliable copyright shield
+on its own (a lightly-paraphrased original is still a derivative), so lean toward substantial
+rewrites or originals when permission isn't in place. **PYQs (real past exam papers)** are
+high-value and generally safe — lean on them.
 
 ## How content reaches production
 
