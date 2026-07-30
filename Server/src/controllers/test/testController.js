@@ -44,29 +44,52 @@ async function listTests(req, res, next) {
     try {
         // Show only tests targeted at the student's chosen exams (empty pref = all).
         const tests = await Test.find({ isPublished: true, ...visibilityQuery(req.user?.exams) })
-            .select("title description subject stateExam targets category format mode premium durationMinutes questions totalMarks createdAt")
+            .select("title description subject stateExam targets category format mode premium durationMinutes questions totalMarks closeAt openAt createdAt")
             .sort({ createdAt: -1 })
             .lean();
+
+        // Which of these has the student already attempted? Graded mock tests are
+        // single-attempt, so the card shows "See result" instead of "Start". Keep
+        // the latest attempt per test for the result link.
+        const latestByTest = new Map();
+        if (req.user) {
+            const attempts = await Attempt.find({ user: req.user._id, test: { $in: tests.map((t) => t._id) } })
+                .select("test submittedAt")
+                .sort({ submittedAt: -1 })
+                .lean();
+            for (const a of attempts) {
+                const k = String(a.test);
+                if (!latestByTest.has(k)) latestByTest.set(k, a._id);
+            }
+        }
 
         // Premium items stay visible to everyone (shown locked); `locked` tells the
         // client to render the badge + upgrade prompt for a free student.
         const canPremium = isPremiumUser(req.user);
-        const out = tests.map((t) => ({
-            _id: t._id,
-            title: t.title,
-            description: t.description,
-            subject: t.subject,
-            stateExam: t.stateExam,
-            targets: t.targets || [],
-            category: t.category,
-            format: t.format || null,
-            mode: t.mode || "test",
-            premium: !!t.premium,
-            locked: !!t.premium && !canPremium,
-            durationMinutes: t.durationMinutes,
-            questionCount: (t.questions || []).length,
-            totalMarks: t.totalMarks || (t.questions || []).length,
-        }));
+        const out = tests.map((t) => {
+            const attemptId = latestByTest.get(String(t._id)) || null;
+            return {
+                _id: t._id,
+                title: t.title,
+                description: t.description,
+                subject: t.subject,
+                stateExam: t.stateExam,
+                targets: t.targets || [],
+                category: t.category,
+                format: t.format || null,
+                mode: t.mode || "test",
+                premium: !!t.premium,
+                locked: !!t.premium && !canPremium,
+                durationMinutes: t.durationMinutes,
+                questionCount: (t.questions || []).length,
+                totalMarks: t.totalMarks || (t.questions || []).length,
+                // Deadline for the card. Practice sets (and mock tests without a
+                // window) have no closeAt → the client shows "Lifetime access".
+                closeAt: t.closeAt || null,
+                attempted: !!attemptId,
+                attemptId,
+            };
+        });
         return res.status(200).json({ success: true, tests: out });
     } catch (error) {
         next(error);
@@ -88,6 +111,24 @@ async function getTest(req, res, next) {
                 code: "PREMIUM_REQUIRED",
                 message: "This is a Premium test. Upgrade to Premium to unlock it.",
             });
+        }
+
+        // Single-attempt: a graded mock test can only be taken once. If they've
+        // already done it, send them to their result instead of a fresh attempt.
+        // (Practice sets stay repeatable — drilling is the point.)
+        if (test.mode === "test") {
+            const prev = await Attempt.findOne({ user: req.user._id, test: test._id })
+                .select("_id")
+                .sort({ submittedAt: -1 })
+                .lean();
+            if (prev) {
+                return res.status(403).json({
+                    success: false,
+                    code: "ALREADY_ATTEMPTED",
+                    attemptId: prev._id,
+                    message: "You've already taken this test. View your result.",
+                });
+            }
         }
 
         // Competitive window: a scheduled graded test can only be taken while open.
@@ -152,6 +193,19 @@ async function submitTest(req, res, next) {
                 code: "PREMIUM_REQUIRED",
                 message: "This is a Premium test. Upgrade to Premium to unlock it.",
             });
+        }
+
+        // Single-attempt: never accept a second submission of a graded mock test.
+        if (test.mode === "test") {
+            const prev = await Attempt.findOne({ user: req.user._id, test: test._id }).select("_id").lean();
+            if (prev) {
+                return res.status(409).json({
+                    success: false,
+                    code: "ALREADY_ATTEMPTED",
+                    attemptId: prev._id,
+                    message: "You've already submitted this test.",
+                });
+            }
         }
 
         // Competitive window: reject submissions once the test has closed (a small
@@ -244,7 +298,7 @@ async function submitTest(req, res, next) {
 async function listAttempts(req, res, next) {
     try {
         const attempts = await Attempt.find({ user: req.user._id })
-            .select("testTitle score totalMarks accuracy correctCount incorrectCount submittedAt")
+            .select("test testTitle score totalMarks accuracy correctCount incorrectCount submittedAt")
             .sort({ submittedAt: -1 })
             .limit(20);
         return res.status(200).json({ success: true, attempts });
