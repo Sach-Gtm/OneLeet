@@ -84,9 +84,10 @@ const IPU_LEET_SYLLABUS = [
         ],
     },
     {
-        subject: "Physics",
+        subject: "Physics & Chemistry",
         hours: 0.5,
         chapters: [
+            // Physics
             { title: "Units and Measurement", topics: ["Fundamental and derived units; SI units", "Measurement of length, mass and time", "Measurement of area, volume and temperature", "Precision, accuracy and errors in measurement", "Dimensional analysis and conversion of units"] },
             { title: "Force and Laws of Motion", topics: ["Newton's laws of motion", "Applications of force and motion"] },
             { title: "Gravitation", topics: ["Universal law of gravitation", "Acceleration due to gravity"] },
@@ -96,12 +97,7 @@ const IPU_LEET_SYLLABUS = [
             { title: "Magnetic Effects of Current", topics: ["Magnetic fields and electromagnetism", "Applications of electromagnetism"] },
             { title: "Sources of Energy", topics: ["Renewable and non-renewable energy sources", "Energy conservation"] },
             { title: "Natural Resources", topics: ["Air, water and soil", "Conservation of natural resources", "Ecosystems, biodiversity and environmental issues"] },
-        ],
-    },
-    {
-        subject: "Chemistry",
-        hours: 0.5,
-        chapters: [
+            // Chemistry
             { title: "Structure of Atom", topics: ["Subatomic particles", "Atomic models and the quantum mechanical model", "Isotopes and isobars"] },
             { title: "Chemical Bonding", topics: ["Types of chemical bonds", "Lewis structures", "Polarity of molecules and intermolecular forces"] },
             { title: "Chemical Periodicity", topics: ["Periodic table and periodic law", "Trends in the periodic table", "Classification of elements"] },
@@ -143,8 +139,40 @@ function buildDocs(ownerId) {
     }));
 }
 
+// One-time, edit-preserving migration: an earlier version seeded Physics and
+// Chemistry as two separate subjects. Combine them into a single "Physics &
+// Chemistry" (carrying whatever chapters currently exist, so staff edits are
+// kept) and drop the two standalones. Runs once — afterwards the standalones no
+// longer exist, so it's a no-op.
+async function mergePhysicsChemistry() {
+    const phys = await Syllabus.findOne({ targets: "ipu-leet", scope: "global", subject: "Physics" }).lean();
+    const chem = await Syllabus.findOne({ targets: "ipu-leet", scope: "global", subject: "Chemistry" }).lean();
+    if (!phys || !chem) return;
+    if (await Syllabus.exists({ targets: "ipu-leet", subject: "Physics & Chemistry" })) return;
+
+    const chapters = [...(phys.chapters || []), ...(chem.chapters || [])].map((c, i) => ({ ...c, order: i }));
+    await Syllabus.create({
+        title: "Physics & Chemistry",
+        subject: "Physics & Chemistry",
+        exam: phys.exam || "IPU LEET",
+        description: "Official IPU LEET (IPU CET 128) Physics & Chemistry syllabus.",
+        targets: ["ipu-leet"],
+        published: phys.published !== false,
+        scope: "global",
+        order: phys.order,
+        createdBy: phys.createdBy,
+        chapters,
+    });
+    await Syllabus.deleteOne({ _id: phys._id });
+    await Syllabus.deleteOne({ _id: chem._id });
+    console.log("[ipu-syllabus] merged Physics + Chemistry into one subject");
+}
+
 async function ensureIpuSyllabusSeeded() {
     try {
+        // Migrate a previously-seeded split Physics/Chemistry before anything else.
+        await mergePhysicsChemistry();
+
         // Only seed when NO IPU-LEET syllabus exists yet, so staff edits/removals
         // in the Content Studio are never undone by a later boot.
         const already = await Syllabus.exists({ targets: "ipu-leet" });

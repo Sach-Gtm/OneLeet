@@ -68,6 +68,20 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(reasoning.chapters[0].topics[0].estimatedHours, 0.5, "reasoning topics are 0.5h each");
     ok("subjects carry the right chapters/topics and per-subject hour estimates");
 
+    // Physics + Chemistry are one combined subject; Reasoning, Aptitude and
+    // Computer Awareness stay separate.
+    const pc = await Syllabus.findOne({ targets: "ipu-leet", subject: "Physics & Chemistry" }).lean();
+    assert.ok(pc, "Physics & Chemistry is a single subject");
+    assert.ok(
+        pc.chapters.some((c) => c.title === "Units and Measurement") && pc.chapters.some((c) => c.title === "Structure of Atom"),
+        "it holds both physics and chemistry chapters"
+    );
+    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Physics" })), "no standalone Physics");
+    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Chemistry" })), "no standalone Chemistry");
+    assert.ok(await Syllabus.exists({ targets: "ipu-leet", subject: "Quantitative Aptitude" }), "Aptitude stays separate");
+    assert.ok(await Syllabus.exists({ targets: "ipu-leet", subject: "Computer Awareness" }), "Computer Awareness stays separate");
+    ok("Physics & Chemistry are combined; Reasoning, Aptitude and Computer Awareness stay separate");
+
     // No coaching-ad noise leaked into any title.
     const all = await Syllabus.find({ targets: "ipu-leet" }).lean();
     const blob = JSON.stringify(all).toLowerCase();
@@ -95,6 +109,25 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     await ensureIpuSyllabusSeeded();
     assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet" }), IPU_LEET_SYLLABUS.length - 1, "deleted subject stays deleted");
     ok("a staff-deleted subject is not resurrected by a later boot");
+
+    // Migration: a previously-seeded split Physics + Chemistry is merged on boot,
+    // carrying whatever chapters exist (so staff edits are preserved).
+    await Syllabus.deleteMany({ targets: "ipu-leet" });
+    await Syllabus.create([
+        { title: "Physics", subject: "Physics", exam: "IPU LEET", targets: ["ipu-leet"], published: true, scope: "global", order: 6, createdBy: admin._id, chapters: [{ title: "Units and Measurement", order: 0, topics: [{ title: "SI units", estimatedHours: 0.5, order: 0 }] }] },
+        { title: "Chemistry", subject: "Chemistry", exam: "IPU LEET", targets: ["ipu-leet"], published: true, scope: "global", order: 7, createdBy: admin._id, chapters: [{ title: "Structure of Atom", order: 0, topics: [{ title: "Atomic models", estimatedHours: 0.5, order: 0 }] }] },
+    ]);
+    await ensureIpuSyllabusSeeded();
+    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Physics" })), "standalone Physics gone");
+    assert.ok(!(await Syllabus.exists({ targets: "ipu-leet", subject: "Chemistry" })), "standalone Chemistry gone");
+    const merged = await Syllabus.findOne({ targets: "ipu-leet", subject: "Physics & Chemistry" }).lean();
+    assert.ok(merged, "combined subject created");
+    assert.strictEqual(merged.chapters.length, 2, "both chapters carried over (edit-preserving)");
+    ok("a previously split Physics + Chemistry is merged into one subject on boot");
+
+    await ensureIpuSyllabusSeeded();
+    assert.strictEqual(await Syllabus.countDocuments({ targets: "ipu-leet", subject: "Physics & Chemistry" }), 1, "merge is idempotent");
+    ok("the Physics + Chemistry merge runs only once");
 
     await mongoose.disconnect();
     await mongod.stop();
