@@ -28,6 +28,7 @@ const ForgotPassword = lazy(() => import("@/Pages/Auth/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/Pages/Auth/ResetPassword"));
 
 const Dashboard = lazy(() => import("@/Pages/App/Dashboard"));
+const PrepGuide = lazy(() => import("@/Pages/App/PrepGuide"));
 const PyqArchive = lazy(() => import("@/Pages/App/PyqArchive"));
 const NotesLibrary = lazy(() => import("@/Pages/App/NotesLibrary"));
 const Syllabus = lazy(() => import("@/Pages/App/Syllabus"));
@@ -84,6 +85,7 @@ const AppRoutes = () => {
                         }
                     >
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/prep-guide" element={<PrepGuide />} />
                         <Route path="/pyqs" element={<PyqArchive />} />
                         <Route path="/notes" element={<NotesLibrary />} />
                         <Route path="/syllabus" element={<Syllabus />} />
