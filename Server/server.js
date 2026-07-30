@@ -7,14 +7,17 @@ const { startKeepAwake } = require("./src/utils/keepAwake");
 const { startLeaderboardScheduler } = require("./src/jobs/leaderboardScheduler");
 const { ensureExamsSeeded } = require("./src/config/exams");
 const { ensureMentorsSeeded } = require("./src/config/seedMentors");
+const { ensureIpuSyllabusSeeded } = require("./src/config/seedIpuSyllabus");
 
 // Provision the Super Admin out-of-band once the DB is up, seed the LEET exam
-// catalog + founding mentors on first run, then start the competitive-
-// leaderboard ticker.
-connectDB().then(() => {
-    bootstrapSuperadmin();
+// catalog + founding mentors + IPU LEET syllabus on first run, then start the
+// competitive-leaderboard ticker. The syllabus seed is attributed to an admin,
+// so it runs after the Super Admin is provisioned.
+connectDB().then(async () => {
+    await bootstrapSuperadmin();
     ensureExamsSeeded();
     ensureMentorsSeeded();
+    ensureIpuSyllabusSeeded();
     startLeaderboardScheduler();
 });
 
