@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { MonitorPlay, Play, Plus, Pencil, Trash2, Loader2, X, Lock, Crown } from "lucide-react";
+import { MonitorPlay, Play, Plus, Pencil, Trash2, Loader2, X, Lock, Crown, ListFilter } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -173,7 +173,9 @@ export default function Videos() {
         load();
     }, []);
 
-    // Distinct subjects (in the order the server returned them) for the filter.
+    // Distinct subjects (in the order the server returned them) for the filter —
+    // these are exactly the subject names staff typed on the videos, so whatever
+    // an admin calls a subject ("Reasoning", "Maths", …) becomes a filter option.
     const subjects = useMemo(() => {
         const seen = [];
         for (const v of videos || []) {
@@ -182,6 +184,20 @@ export default function Videos() {
         }
         return seen;
     }, [videos]);
+
+    // Surface the filter as soon as an admin has named at least one subject (or
+    // there's more than one bucket). A lone unlabelled "General" bucket isn't
+    // worth a filter, so it stays hidden until real subjects exist.
+    const showSubjectFilter = useMemo(
+        () => subjects.length > 1 || subjects.some((s) => s !== "General"),
+        [subjects]
+    );
+
+    // If the selected subject disappears (e.g. its last video was deleted or
+    // unpublished), fall back to "All" so the page never looks empty.
+    useEffect(() => {
+        if (subject !== "all" && videos && !subjects.includes(subject)) setSubject("all");
+    }, [subjects, subject, videos]);
 
     // Group the (filtered) videos subject → chapter, preserving server order.
     const grouped = useMemo(() => {
@@ -239,17 +255,24 @@ export default function Videos() {
                 )}
             </div>
 
-            {/* Subject filter */}
-            {subjects.length > 1 && (
-                <div className="mb-5 flex flex-wrap gap-2">
-                    <FilterChip active={subject === "all"} onClick={() => setSubject("all")}>
-                        All
-                    </FilterChip>
-                    {subjects.map((s) => (
-                        <FilterChip key={s} active={subject === s} onClick={() => setSubject(s)}>
-                            {s}
+            {/* Subject filter — an always-on "All" chip plus one chip per subject
+                an admin has named on a video, so students can jump straight to
+                Reasoning, Maths, and so on. */}
+            {showSubjectFilter && (
+                <div className="mb-5">
+                    <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        <ListFilter size={13} /> Filter by subject
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        <FilterChip active={subject === "all"} onClick={() => setSubject("all")}>
+                            All
                         </FilterChip>
-                    ))}
+                        {subjects.map((s) => (
+                            <FilterChip key={s} active={subject === s} onClick={() => setSubject(s)}>
+                                {s}
+                            </FilterChip>
+                        ))}
+                    </div>
                 </div>
             )}
 
@@ -307,6 +330,7 @@ export default function Videos() {
             {editing && (
                 <VideoEditorModal
                     video={editing.video}
+                    subjects={subjects.filter((s) => s !== "General")}
                     onClose={() => setEditing(null)}
                     onSaved={handleSaved}
                 />

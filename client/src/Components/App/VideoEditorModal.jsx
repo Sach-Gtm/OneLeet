@@ -11,7 +11,7 @@ const labelCls = "mb-1 block text-xs font-semibold uppercase tracking-wide text-
 
 // Staff-only form to add or edit a video. Students never see this — the Videos
 // page only mounts it for mentors/admins.
-export default function VideoEditorModal({ video, onClose, onSaved }) {
+export default function VideoEditorModal({ video, subjects = [], onClose, onSaved }) {
     const isEdit = !!video;
     const [title, setTitle] = useState(video?.title || "");
     const [url, setUrl] = useState(video?.youtubeId ? `https://youtu.be/${video.youtubeId}` : "");
@@ -121,9 +121,20 @@ export default function VideoEditorModal({ video, onClose, onSaved }) {
                             <input
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
-                                placeholder="Discrete Mathematics"
+                                placeholder="Reasoning"
+                                list="video-subject-suggestions"
                                 className={inputCls}
                             />
+                            {/* Reuse existing subject names so they merge into one
+                                filter chip instead of splitting on a typo/case. */}
+                            <datalist id="video-subject-suggestions">
+                                {subjects.map((s) => (
+                                    <option key={s} value={s} />
+                                ))}
+                            </datalist>
+                            <p className="mt-1 text-[11px] text-slate-400">
+                                Becomes a filter option on the Videos page.
+                            </p>
                         </label>
                         <label className="block">
                             <span className={labelCls}>Chapter / Unit</span>
