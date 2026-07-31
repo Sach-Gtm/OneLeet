@@ -11,6 +11,9 @@ const TestSchema = new mongoose.Schema(
         },
         description: { type: String, trim: true, maxlength: [400, "Description too long"] },
         subject: { type: String, trim: true, index: true },
+        // Optional chapter/topic label (e.g. "Friction") — drives the chapter
+        // filter on the Tests page. Backfilled from the questions for older tests.
+        topic: { type: String, trim: true, index: true },
         stateExam: { type: String, trim: true },
         // Which LEET exams / universities this test is for (codes from
         // config/exams.js). Empty or ["all"] → shown to every student.
