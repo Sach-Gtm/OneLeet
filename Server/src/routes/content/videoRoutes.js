@@ -12,6 +12,7 @@ router.get("/", verifyToken, ctrl.listVideos);
 // Manage the video library — STAFF ONLY (mentors/admins). Students can only
 // watch, never add/edit/remove.
 router.post("/", verifyToken, requireStaff, ctrl.createVideo);
+router.post("/bulk", verifyToken, requireStaff, ctrl.bulkCreateVideos);
 router.put("/:id", verifyToken, requireStaff, ctrl.updateVideo);
 router.delete("/:id", verifyToken, requireStaff, ctrl.deleteVideo);
 

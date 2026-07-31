@@ -29,6 +29,16 @@ export const createVideo = async (payload) => {
     }
 };
 
+// Bulk add — many links under one subject. Returns { createdCount, failed, videos }.
+export const bulkCreateVideos = async (payload) => {
+    try {
+        const { data } = await api.post("/videos/bulk", payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 export const updateVideo = async (id, payload) => {
     try {
         const { data } = await api.put(`/videos/${id}`, payload);

@@ -111,6 +111,33 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     );
     ok("a student sees only published videos for the universities they picked");
 
+    // --- Bulk add: many links under ONE subject; invalid links are skipped. ---
+    const studentBulk = await request
+        .post("/api/videos/bulk")
+        .set(...auth(studentToken))
+        .send({ subject: "Reasoning", targets: ["all"], items: [{ url: "https://youtu.be/ddddddddddd" }] });
+    assert.strictEqual(studentBulk.status, 403, "student cannot bulk-add");
+
+    const bulk = await request
+        .post("/api/videos/bulk")
+        .set(...auth(teacherToken))
+        .send({
+            subject: "Reasoning",
+            targets: ["ipu-leet"],
+            items: [
+                { url: "https://youtu.be/ddddddddddd", chapter: "Analogy" },
+                { url: "https://www.youtube.com/watch?v=eeeeeeeeeee", chapter: "Classification", topic: "Odd one out" },
+                { url: "not a youtube link", chapter: "Bad" },
+            ],
+        });
+    assert.strictEqual(bulk.status, 201, "staff can bulk-add");
+    assert.strictEqual(bulk.body.createdCount, 2, "two valid links created");
+    assert.strictEqual(bulk.body.failed.length, 1, "one invalid link reported back");
+    assert.ok(bulk.body.videos.every((v) => v.subject === "Reasoning"), "all created under the one subject");
+    const analogy = bulk.body.videos.find((v) => v.chapter === "Analogy");
+    assert.strictEqual(analogy.title, "Analogy", "a titleless link falls back to its chapter name");
+    ok("staff bulk-adds many links under one subject; invalid links are skipped and reported");
+
     // Staff edits a video.
     const upd = await request
         .put(`/api/videos/${vidId}`)
@@ -127,7 +154,7 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     const del = await request.delete(`/api/videos/${vidId}`).set(...auth(teacherToken));
     assert.strictEqual(del.status, 200, "staff can delete");
     const afterDel = (await request.get("/api/videos").set(...auth(teacherToken))).body.videos;
-    assert.strictEqual(afterDel.length, 3, "one fewer video after delete");
+    assert.strictEqual(afterDel.length, 5, "one fewer video after delete (4 singles + 2 bulk − 1)");
     ok("staff can delete a video; students cannot");
 
     await mongoose.disconnect();
