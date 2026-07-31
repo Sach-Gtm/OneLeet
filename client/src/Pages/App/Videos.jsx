@@ -260,18 +260,35 @@ export default function Videos() {
 
     return (
         <div className="mx-auto max-w-6xl">
-            {/* Impressive gradient header */}
-            <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 p-5 text-white shadow-lg sm:p-6">
-                <div className="pointer-events-none absolute -right-10 -top-12 h-44 w-44 rounded-full bg-white/10 blur-2xl" />
-                <div className="pointer-events-none absolute -bottom-14 right-28 h-36 w-36 rounded-full bg-fuchsia-300/20 blur-2xl" />
+            {/* Header — a refined, professional "studio" panel: a deep slate/indigo
+                base with a subtle dot-grid texture, a soft glow, and a decorative
+                equalizer motif (fitting for video), instead of a loud gradient. */}
+            <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 p-5 text-white shadow-lg ring-1 ring-white/10 sm:p-6">
+                {/* dot-grid texture */}
+                <svg className="pointer-events-none absolute inset-0 h-full w-full text-white opacity-[0.12]" aria-hidden="true">
+                    <defs>
+                        <pattern id="vl-dots" width="22" height="22" patternUnits="userSpaceOnUse">
+                            <circle cx="1.5" cy="1.5" r="1.5" fill="currentColor" />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#vl-dots)" />
+                </svg>
+                {/* soft glow */}
+                <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl" />
+                {/* equalizer / waveform motif */}
+                <svg className="pointer-events-none absolute bottom-0 right-4 hidden text-indigo-400 sm:block" width="188" height="52" viewBox="0 0 188 52" fill="none" aria-hidden="true">
+                    {[18, 30, 12, 40, 24, 46, 20, 34, 16, 38, 26, 44, 14, 32].map((h, i) => (
+                        <rect key={i} x={i * 14} y={52 - h} width="6" height={h} rx="3" fill="currentColor" opacity={0.18 + (i % 3) * 0.1} />
+                    ))}
+                </svg>
                 <div className="relative flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <span className="grid h-12 w-12 place-items-center rounded-xl bg-white/15 ring-1 ring-white/25 backdrop-blur">
-                            <MonitorPlay className="h-6 w-6" />
+                    <div className="flex items-center gap-3.5">
+                        <span className="grid h-12 w-12 place-items-center rounded-xl bg-white/10 ring-1 ring-white/15 backdrop-blur">
+                            <MonitorPlay className="h-6 w-6 text-indigo-300" />
                         </span>
                         <div>
-                            <h1 className="text-2xl font-black tracking-tight">Video Lectures</h1>
-                            <p className="text-sm text-white/80">
+                            <h1 className="text-2xl font-bold tracking-tight">Video Lectures</h1>
+                            <p className="text-sm text-slate-300">
                                 {videos?.length
                                     ? `${videos.length} curated ${videos.length === 1 ? "lecture" : "lectures"} · playing right here inside OneLeet`
                                     : "Curated lectures, playing right here inside OneLeet"}
@@ -282,13 +299,13 @@ export default function Videos() {
                         <div className="flex flex-wrap gap-2">
                             <button
                                 onClick={() => setBulkOpen(true)}
-                                className="inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-3.5 py-2 text-sm font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25"
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3.5 py-2 text-sm font-semibold text-white ring-1 ring-white/15 backdrop-blur transition hover:bg-white/20"
                             >
                                 <Layers size={16} /> Add multiple
                             </button>
                             <button
                                 onClick={() => setEditing({ video: null })}
-                                className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-2 text-sm font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-50"
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-400"
                             >
                                 <Plus size={16} /> Add video
                             </button>
