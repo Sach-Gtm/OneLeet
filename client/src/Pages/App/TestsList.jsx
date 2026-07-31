@@ -32,6 +32,10 @@ const inCollege = (t, c) => c === "all" || isUniversal(t) || (t.targets || []).i
 // A "Real Mock Test" is a full-syllabus paper (every subject, real-exam format).
 const isRealMock = (t) => t.category === "full-mock" || t.format === "real-exam";
 
+// The exam's subjects — always offered in the Subject filter so students can pick
+// theirs; any other subjects that appear on real tests merge in after these.
+const SUBJECTS = ["Reasoning", "Mathematics", "Mechanics", "Physics", "Chemistry", "Computer Application"];
+
 // Every card shows a deadline. No close date → the content is always available.
 function Deadline({ closeAt }) {
     if (!closeAt) {
@@ -214,7 +218,7 @@ export default function TestsList() {
         return opts;
     }, [byMode]);
     const subjectOptions = useMemo(() => {
-        const seen = [];
+        const seen = [...SUBJECTS];
         for (const t of byMode) if (t.subject && !seen.includes(t.subject)) seen.push(t.subject);
         return [{ value: "all", label: "All subjects" }, ...seen.map((s) => ({ value: s, label: s }))];
     }, [byMode]);
@@ -299,8 +303,8 @@ export default function TestsList() {
                     <div className="flex flex-wrap items-center gap-3">
                         <ModeToggle view={view} onChange={pick} counts={counts} />
                         <div className="flex flex-1 flex-wrap items-center gap-2">
+                            {subjectOptions.length > 1 && <Select value={fSubject} onChange={setFSubject} options={subjectOptions} />}
                             {formatOptions.length > 1 && <Select value={fFormat} onChange={setFFormat} options={formatOptions} />}
-                            {subjectOptions.length > 2 && <Select value={fSubject} onChange={setFSubject} options={subjectOptions} />}
                             {collegeOptions.length > 1 && <Select value={fCollege} onChange={setFCollege} options={collegeOptions} />}
                             {chapterOptions.length > 1 && <Select value={fChapter} onChange={setFChapter} options={chapterOptions} />}
                             {anyFilter && (
