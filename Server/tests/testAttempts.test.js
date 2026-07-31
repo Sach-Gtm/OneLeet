@@ -82,6 +82,22 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(p2.status, 201, "practice second submit also ok");
     ok("practice sets stay repeatable (multiple attempts allowed)");
 
+    // A taken practice set is flagged attempted (so the card shows Retake / View
+    // Result, not "Start Practice") and carries an attempt id for the result link.
+    list = (await request.get("/api/tests").set(...auth(studentT))).body.tests;
+    const prow = list.find((t) => String(t._id) === String(practice._id));
+    assert.strictEqual(prow.attempted, true, "practice set marked attempted after submitting");
+    assert.ok(prow.attemptId, "practice set carries an attempt id for View Result");
+    ok("an attempted practice set surfaces as attempted (Retake / View Result)");
+
+    // Resilience: even if the practice test is re-seeded with a NEW _id, the
+    // earlier attempt (matched on its snapshotted testTitle) still marks it done.
+    const reseeded = await Test.create({ title: "Practice", mode: "practice", durationMinutes: 10, questions: [qPrac._id], totalMarks: 1, status: "published", isPublished: true, targets: [], createdBy: admin._id });
+    list = (await request.get("/api/tests").set(...auth(studentT))).body.tests;
+    const rrow = list.find((t) => String(t._id) === String(reseeded._id));
+    assert.strictEqual(rrow.attempted, true, "re-seeded practice (new _id, same title) stays attempted");
+    ok("a re-seeded practice test keeps its attempted state via title match");
+
     await mongoose.disconnect();
     await mongod.stop();
     console.log(`\n✅ All ${passed} test-attempt checks passed`);
