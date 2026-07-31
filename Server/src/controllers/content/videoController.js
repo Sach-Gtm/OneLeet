@@ -62,6 +62,67 @@ async function createVideo(req, res, next) {
     }
 }
 
+// POST /api/videos/bulk — add many videos in one shot, ALL under a single
+// subject (each link becomes its own card). STAFF ONLY (guarded by the route).
+// Body: { subject, targets, premium, published, items: [{ url, title, chapter, topic }] }.
+// Invalid links are skipped and reported back rather than failing the whole batch.
+async function bulkCreateVideos(req, res, next) {
+    try {
+        const { subject, targets, premium, published, items } = req.body || {};
+        if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ success: false, message: "Add at least one YouTube link." });
+        }
+        if (items.length > 100) {
+            return res.status(400).json({ success: false, message: "Please add at most 100 links at a time." });
+        }
+        // One subject for the whole batch — that is the whole point of bulk add.
+        const subj = subject ? String(subject).trim() : "";
+        const cleanTargets = sanitizeExams(targets);
+        const isPremium = !!premium;
+        const isPublished = published !== false;
+
+        const toCreate = [];
+        const failed = [];
+        items.forEach((it, i) => {
+            const youtubeId = parseYouTubeId(it?.youtubeId || it?.url);
+            if (!youtubeId) {
+                failed.push({ index: i, url: it?.url || "", error: "Not a valid YouTube link" });
+                return;
+            }
+            const chapter = it?.chapter ? String(it.chapter).trim() : "";
+            const topic = it?.topic ? String(it.topic).trim() : "";
+            // Title is optional per link — fall back to the chapter/topic/subject so
+            // staff can bulk-add with just links + chapter names.
+            const title = (it?.title && String(it.title).trim()) || chapter || topic || subj || "Video lecture";
+            toCreate.push({
+                title,
+                youtubeId,
+                subject: subj || undefined,
+                chapter: chapter || undefined,
+                topic: topic || undefined,
+                author: it?.author && String(it.author).trim() ? String(it.author).trim() : "OneLeet",
+                targets: cleanTargets,
+                published: isPublished,
+                premium: isPremium,
+                order: Number(it?.order) || 0,
+                createdBy: req.user._id,
+            });
+        });
+
+        let created = [];
+        if (toCreate.length) created = await Video.insertMany(toCreate);
+        return res.status(201).json({
+            success: true,
+            message: `${created.length} video${created.length === 1 ? "" : "s"} added${failed.length ? `, ${failed.length} skipped` : ""}.`,
+            createdCount: created.length,
+            failed,
+            videos: created,
+        });
+    } catch (e) {
+        next(e);
+    }
+}
+
 // PUT /api/videos/:id — edit. STAFF ONLY (guarded by the route).
 async function updateVideo(req, res, next) {
     try {
@@ -106,4 +167,4 @@ async function deleteVideo(req, res, next) {
     }
 }
 
-module.exports = { listVideos, createVideo, updateVideo, deleteVideo };
+module.exports = { listVideos, createVideo, bulkCreateVideos, updateVideo, deleteVideo };
