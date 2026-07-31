@@ -3,7 +3,7 @@
 // entry level. Used by the Studio picker and the student Tests filters/badges.
 export const TEST_FORMATS = {
     "quick-shot": { key: "quick-shot", label: "Quick Shot", tag: "Warm-up", emoji: "⚡", count: 10 },
-    practice: { key: "practice", label: "Practice Mode", emoji: "📘", count: 25 },
+    practice: { key: "practice", label: "Challenger", emoji: "📘", count: 25 },
     challenge: { key: "challenge", label: "Challenge Mode", emoji: "🔥", count: 40 },
     survivor: { key: "survivor", label: "Survivor Mode", emoji: "🛡️", count: 50 },
     "real-exam": { key: "real-exam", label: "Real Exam Mode", emoji: "🎯", count: 100 },
