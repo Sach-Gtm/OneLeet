@@ -87,7 +87,7 @@ function VideoCard({ video, staff, onPlay, onEdit, onDelete, onTogglePremium }) 
     const locked = !!video.locked;
     const chapter = video.chapter?.trim();
     return (
-        <div className="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-lg">
+        <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-lg">
             <div className="relative aspect-video overflow-hidden bg-slate-900">
                 <button onClick={() => onPlay(video)} className="absolute inset-0 h-full w-full" aria-label={locked ? `Unlock ${video.title}` : `Play ${video.title}`}>
                     {locked ? (
@@ -132,7 +132,7 @@ function VideoCard({ video, staff, onPlay, onEdit, onDelete, onTogglePremium }) 
             </div>
             <button onClick={() => onPlay(video)} className="flex flex-1 flex-col p-2.5 text-left">
                 {chapter && <p className="mb-0.5 truncate text-[10px] font-bold uppercase tracking-wide text-indigo-500">{chapter}</p>}
-                <p className="line-clamp-2 text-[13px] font-semibold leading-snug text-slate-800">{video.title}</p>
+                <p className="line-clamp-2 min-h-[2.25rem] text-[13px] font-semibold leading-snug text-slate-800">{video.title}</p>
                 <p className="mt-auto pt-1 truncate text-[11px] text-slate-400">{video.author || "OneLeet"}</p>
             </button>
         </div>
@@ -381,7 +381,7 @@ export default function Videos() {
                             </div>
                             <div className={gridCls}>
                                 {vids.map((v) => (
-                                    <div key={v._id} className={cn(busyId === v._id && "pointer-events-none opacity-50")}>
+                                    <div key={v._id} className={cn("h-full", busyId === v._id && "pointer-events-none opacity-50")}>
                                         <VideoCard
                                             video={v}
                                             staff={staff}
