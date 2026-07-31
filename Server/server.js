@@ -16,6 +16,7 @@ const { ensureClassificationMockTestsSeeded } = require("./src/config/seedClassi
 const { ensureOddOneOutMockTestsSeeded } = require("./src/config/seedOddOneOutMockTests");
 const { ensureReasoningTopicTestsSeeded } = require("./src/config/seedReasoningTopicTests");
 const { ensureTestTopicsBackfilled } = require("./src/config/seedTestTopicBackfill");
+const { ensureMechanicsTestsSeeded } = require("./src/config/seedMechanicsTests");
 
 // Provision the Super Admin out-of-band once the DB is up, seed the LEET exam
 // catalog + founding mentors + IPU LEET syllabus and exam pattern on first run,
@@ -35,6 +36,7 @@ connectDB().then(async () => {
     ensureOddOneOutMockTestsSeeded();
     ensureReasoningTopicTestsSeeded();
     ensureTestTopicsBackfilled();
+    ensureMechanicsTestsSeeded();
     startLeaderboardScheduler();
 });
 
