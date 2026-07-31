@@ -51,15 +51,22 @@ async function listTests(req, res, next) {
         // Which of these has the student already attempted? Graded mock tests are
         // single-attempt, so the card shows "See result" instead of "Start". Keep
         // the latest attempt per test for the result link.
+        // Index the student's latest attempt by BOTH the test's id and its title.
+        // Matching on the (stable, unique) title as well means a test that was
+        // re-seeded with a new _id still surfaces the earlier attempt, instead of
+        // reverting the card to "Start".
         const latestByTest = new Map();
+        const latestByTitle = new Map();
         if (req.user) {
-            const attempts = await Attempt.find({ user: req.user._id, test: { $in: tests.map((t) => t._id) } })
-                .select("test submittedAt")
+            const attempts = await Attempt.find({ user: req.user._id })
+                .select("test testTitle submittedAt")
                 .sort({ submittedAt: -1 })
                 .lean();
             for (const a of attempts) {
                 const k = String(a.test);
                 if (!latestByTest.has(k)) latestByTest.set(k, a._id);
+                const tk = (a.testTitle || "").trim().toLowerCase();
+                if (tk && !latestByTitle.has(tk)) latestByTitle.set(tk, a._id);
             }
         }
 
@@ -67,7 +74,10 @@ async function listTests(req, res, next) {
         // client to render the badge + upgrade prompt for a free student.
         const canPremium = isPremiumUser(req.user);
         const out = tests.map((t) => {
-            const attemptId = latestByTest.get(String(t._id)) || null;
+            const attemptId =
+                latestByTest.get(String(t._id)) ||
+                latestByTitle.get((t.title || "").trim().toLowerCase()) ||
+                null;
             return {
                 _id: t._id,
                 title: t.title,
