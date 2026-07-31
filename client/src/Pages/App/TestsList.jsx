@@ -91,12 +91,13 @@ function TestCard({ t, onStart, onLocked, onResult }) {
                     <Eye size={15} /> See Result
                 </button>
             ) : t.attempted && practice ? (
+                // Already attempted a practice set → offer Retake or View Result.
                 <div className="mt-4 flex gap-2">
                     <button onClick={() => onStart(t._id)} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
-                        <RotateCcw size={15} /> Practice again
+                        <RotateCcw size={15} /> Retake
                     </button>
-                    <button onClick={() => onResult(t.attemptId)} className="flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
-                        <Eye size={15} /> Result
+                    <button onClick={() => onResult(t.attemptId)} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+                        <Eye size={15} /> View Result
                     </button>
                 </div>
             ) : (
