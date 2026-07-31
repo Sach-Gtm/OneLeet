@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
     Compass,
     CheckCircle2,
@@ -8,12 +8,17 @@ import {
     PhoneCall,
     ScrollText,
     ArrowRight,
+    ArrowLeft,
     CalendarClock,
+    Lock,
+    Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PHASES, MISTAKES, EXAM_DAY_KIT, PHASE_STYLES, phaseForDays } from "@/lib/prepGuide";
 import { useExamCountdown } from "@/lib/useExamCountdown";
 import { openCallback } from "@/lib/callback";
+import { useAuth } from "@/context/AuthContext";
+import { canAccessPremiumContent } from "@/lib/roles";
 
 const reveal = {
     initial: { opacity: 0, y: 18 },
@@ -76,12 +81,111 @@ function PhaseNode({ phase, last, current, windowLabel }) {
     );
 }
 
+// Free students see this instead of the guide: a Premium paywall that still
+// previews what's inside (so the value is clear) and offers the two ways in —
+// buy Premium or request a callback — plus a way back out.
+function PrepGuideLocked({ onBack }) {
+    const perks = [
+        { icon: ScrollText, t: "Stage-by-stage study roadmap" },
+        { icon: AlertTriangle, t: "Mistakes that quietly cost marks" },
+        { icon: Backpack, t: "Your exam-day checklist" },
+        { icon: Compass, t: "Guidance tuned to your countdown" },
+    ];
+    return (
+        <div className="mx-auto max-w-2xl py-4">
+            <button
+                onClick={onBack}
+                className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            >
+                <ArrowLeft size={16} /> Back
+            </button>
+            <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, ease: "easeOut" }}
+                className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700/70 dark:bg-slate-800/40"
+            >
+                {/* Premium hero */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 to-indigo-800 px-6 py-10 text-center text-white sm:px-10">
+                    <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+                    <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-violet-500/20 blur-2xl" />
+                    <div className="relative">
+                        <span className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-white/15 backdrop-blur-sm">
+                            <Lock size={28} />
+                        </span>
+                        <h1 className="text-2xl font-bold sm:text-3xl">The Prep Guide is Premium</h1>
+                        <p className="mx-auto mt-2 max-w-md text-sm text-indigo-100 sm:text-base">
+                            Your personalised LEET roadmap — what to focus on at each stage, the mistakes that cost
+                            marks, and your exam-day checklist — is unlocked for Premium students.
+                        </p>
+                    </div>
+                </div>
+
+                {/* What's inside */}
+                <div className="px-6 py-6 sm:px-10">
+                    <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">What you&apos;ll unlock</p>
+                    <ul className="grid gap-2.5 sm:grid-cols-2">
+                        {perks.map((perk) => {
+                            const Ic = perk.icon;
+                            return (
+                                <li
+                                    key={perk.t}
+                                    className="flex items-center gap-2.5 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-sm font-medium text-slate-700 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-200"
+                                >
+                                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
+                                        <Ic size={15} />
+                                    </span>
+                                    {perk.t}
+                                </li>
+                            );
+                        })}
+                    </ul>
+
+                    {/* The two ways in, plus a way out */}
+                    <div className="mt-6 flex flex-col gap-2.5">
+                        <a
+                            href="mailto:help@oneleet.in?subject=OneLeet%20Premium%20%E2%80%94%20Prep%20Guide"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+                        >
+                            <Crown size={17} /> Buy Premium
+                        </a>
+                        <button
+                            onClick={openCallback}
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-3 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50 dark:border-indigo-500/30 dark:bg-slate-800 dark:text-indigo-300 dark:hover:bg-slate-700/60"
+                        >
+                            <PhoneCall size={16} /> Request a callback
+                        </button>
+                        <button
+                            onClick={onBack}
+                            className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                        >
+                            <ArrowLeft size={15} /> Go back
+                        </button>
+                    </div>
+                    <p className="mt-4 text-center text-xs text-slate-400">
+                        Prefer to talk first? Request a callback and our team will help you pick the right plan.
+                    </p>
+                </div>
+            </motion.div>
+        </div>
+    );
+}
+
 export default function PrepGuide() {
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const countdown = useExamCountdown();
     const daysLeft = countdown?.daysLeft ?? null;
     const currentId = phaseForDays(daysLeft);
     const windowLabel =
         daysLeft == null ? null : daysLeft === 0 ? "Exam is today!" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} to go`;
+
+    // Premium gate: only Pro students (and staff, who author/preview it) can open
+    // the guide. Everyone else gets the paywall. The dashboard preview card stays
+    // visible to all, so free students still see what the guide offers.
+    if (!canAccessPremiumContent(user)) {
+        return <PrepGuideLocked onBack={() => (window.history.length > 1 ? navigate(-1) : navigate("/dashboard"))} />;
+    }
 
     return (
         <div className="mx-auto max-w-4xl space-y-8 pb-4">
