@@ -27,6 +27,7 @@ import { getSyllabusSummary } from "@/Api/SyllabusApi";
 import NetworkCanvas from "@/Components/General/NetworkCanvas";
 import ExamPatternSection from "@/Components/App/ExamPatternSection";
 import PrepCoachCard from "@/Components/App/PrepCoachCard";
+import IdentityWatermark from "@/Components/Security/IdentityWatermark";
 import { isStudent } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
@@ -225,6 +226,7 @@ export default function Dashboard() {
 
     return (
         <div className="mx-auto max-w-6xl space-y-6">
+            <IdentityWatermark />
             {needsPhoto && (
                 <Link
                     to="/profile"
