@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Loader2, MonitorSmartphone } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Button } from "@/Components/ui/button";
@@ -24,6 +24,9 @@ export default function Login() {
     const turnstileRef = useRef(null);
 
     const redirectTo = location.state?.from?.pathname || "/dashboard";
+    // Set by the axios interceptor when the API rejects a stale token because the
+    // account signed in on another device (single-device login).
+    const wasRevoked = new URLSearchParams(location.search).get("revoked") === "1";
 
     const {
         register,
@@ -79,6 +82,17 @@ export default function Login() {
                         Please enter your details to sign in.
                     </p>
                 </div>
+
+                {wasRevoked && (
+                    <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                        <MonitorSmartphone className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+                        <p>
+                            You were signed out because your account was used on
+                            another device. Your OneLeet account works on one
+                            device at a time — sign in again to continue here.
+                        </p>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
                     <div className="space-y-1.5">

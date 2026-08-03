@@ -136,13 +136,17 @@ export const uploadPassportPhoto = async (file) => {
 };
 
 export const logoutUser = async () => {
-    // Clear the local token first so we're logged out even if the network call
-    // fails (and so a stale token never lingers).
-    clearToken();
+    // Post FIRST, while the Bearer token is still attached, so the server can
+    // recover our id and rotate the session id — invalidating this token
+    // server-side even when the httpOnly cookie is blocked as third-party (the
+    // very case the Bearer token exists for). `finally` still guarantees the
+    // local token is dropped, so we're logged out even if the request fails.
     try {
         const { data } = await api.post("/auth/logout");
         return data;
     } catch (error) {
         unwrap(error);
+    } finally {
+        clearToken();
     }
 };

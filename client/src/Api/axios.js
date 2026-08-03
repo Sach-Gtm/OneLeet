@@ -61,4 +61,28 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+// Single-device login: the server rotates a session id on every login, so when
+// this account signs in on another device our token becomes stale and the API
+// answers 401 with { code: "SESSION_REVOKED" }. Drop the dead token and bounce
+// to /login with a flag the page turns into a friendly "signed out elsewhere"
+// notice. Guard against a redirect loop (already on /login) and against the
+// browser's own restrictions in odd embed contexts.
+let handlingRevoked = false;
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.data?.code === "SESSION_REVOKED") {
+            clearToken();
+            if (!handlingRevoked && typeof window !== "undefined") {
+                const path = window.location.pathname;
+                if (path !== "/login") {
+                    handlingRevoked = true;
+                    window.location.assign("/login?revoked=1");
+                }
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default api;
