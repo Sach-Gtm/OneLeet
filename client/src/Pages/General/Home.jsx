@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { lazy, Suspense } from "react";
 import {
     ArrowRight,
     FileText,
@@ -11,10 +11,15 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Footer from "@/Components/General/Footer";
-import ShaderHero from "@/Components/General/ShaderHero";
-import JourneyReveal from "@/Components/General/JourneyReveal";
-import ReviewsSection from "@/Components/General/ReviewsSection";
 import { useSeo } from "@/lib/useSeo";
+
+// Heavy, non-critical pieces loaded off the critical path so the hero (the LCP)
+// paints fast: the WebGL shader background (ogl) and the below-the-fold sections
+// (which also pull framer-motion). This keeps ogl + framer-motion out of the
+// landing entry chunk entirely.
+const ShaderHero = lazy(() => import("@/Components/General/ShaderHero"));
+const JourneyReveal = lazy(() => import("@/Components/General/JourneyReveal"));
+const ReviewsSection = lazy(() => import("@/Components/General/ReviewsSection"));
 
 const features = [
     { icon: FileText, title: "Real past papers", desc: "Actual LEET papers — practise what the exam really asks.", tint: "bg-indigo-50 border-indigo-100", iconBg: "bg-indigo-500" },
@@ -53,19 +58,20 @@ export default function Home() {
         <>
             {/* Hero */}
             <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 pb-16 pt-28 text-center sm:px-6 sm:pt-32">
-                {/* Live GPU shader wash (falls back to the light layout behind it). */}
-                <ShaderHero className="absolute inset-0 -z-10" />
+                {/* Instant pastel backdrop — paints immediately with no JS, so the
+                    hero (the LCP) never waits on WebGL. The GPU shader fades in
+                    over it once its chunk has loaded. */}
+                <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(ellipse_75%_55%_at_50%_0%,#d3f2fb_0%,#eef2ff_32%,#FAF9F6_68%)] dark:bg-slate-950" />
+                {/* Live GPU shader wash, loaded off the critical path. */}
+                <Suspense fallback={null}>
+                    <ShaderHero className="absolute inset-0 -z-10" />
+                </Suspense>
                 {/* In dark mode the shader stays light, so lay a dark scrim over it
                     to keep the hero text readable. */}
                 <div className="pointer-events-none absolute inset-0 -z-10 hidden bg-slate-950/85 dark:block" />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-[#FAF9F6] dark:to-slate-950" />
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="mx-auto max-w-3xl space-y-6"
-                >
+                <div className="mx-auto max-w-3xl space-y-6 animate-fade-up">
                     <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white/70 px-4 py-1.5 text-xs font-semibold text-indigo-700 shadow-sm backdrop-blur-sm">
                         <GraduationCap className="h-3.5 w-3.5" /> Built for LEET aspirants
                     </span>
@@ -103,7 +109,7 @@ export default function Home() {
                     <p className="pt-3 text-sm font-medium text-slate-500">
                         Built by a LEET rank-holder who sat exactly where you&apos;re sitting now.
                     </p>
-                </motion.div>
+                </div>
             </section>
 
             {/* Real talk — the questions in a student's head, answered */}
@@ -113,13 +119,10 @@ export default function Home() {
                 </h2>
                 <div className="space-y-5">
                     {conversation.map((c, i) => (
-                        <motion.div
+                        <div
                             key={i}
-                            initial={{ opacity: 0, y: 16 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-60px" }}
-                            transition={{ duration: 0.4, delay: i * 0.05 }}
-                            className="space-y-2"
+                            className="space-y-2 animate-fade-up"
+                            style={{ animationDelay: `${i * 0.05}s` }}
                         >
                             <div className="flex justify-end">
                                 <p className="max-w-[80%] rounded-2xl rounded-br-md border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm">
@@ -131,7 +134,7 @@ export default function Home() {
                                     {c.a}
                                 </p>
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </section>
@@ -148,15 +151,11 @@ export default function Home() {
                         you always dreamed of start to open.
                     </p>
                 </div>
-                <motion.div
-                    initial={{ opacity: 0, y: 18 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.5 }}
-                    className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white/70 p-2 shadow-sm sm:p-4"
-                >
-                    <JourneyReveal className="block h-auto w-full" />
-                </motion.div>
+                <div className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white/70 p-2 shadow-sm animate-fade-up sm:p-4">
+                    <Suspense fallback={<div className="h-56 w-full" />}>
+                        <JourneyReveal className="block h-auto w-full" />
+                    </Suspense>
+                </div>
             </section>
 
             {/* Features */}
@@ -200,7 +199,9 @@ export default function Home() {
             </section>
 
             {/* Student reviews — a moving marquee, just before the footer. */}
-            <ReviewsSection />
+            <Suspense fallback={null}>
+                <ReviewsSection />
+            </Suspense>
 
             <Footer />
         </>
