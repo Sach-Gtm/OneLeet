@@ -1,9 +1,16 @@
 import { X, BookOpen, Loader2, Brain } from "lucide-react";
 import Markdown from "@/Components/App/Markdown";
+import ProtectedContent from "@/Components/Security/ProtectedContent";
+import { useAuth } from "@/context/AuthContext";
+import { isStaff } from "@/lib/roles";
 
 // Reads a written / AI-drafted "text" note inline (no PDF to open).
 export default function NoteReaderModal({ open, onClose, loading, note }) {
+    const { user } = useAuth();
     if (!open) return null;
+    // Premium notes get the watermark + capture-protection layer; free notes and
+    // trusted staff are unaffected.
+    const guarded = Boolean(note?.premium) && !isStaff(user);
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/40" onClick={onClose} />
@@ -37,14 +44,18 @@ export default function NoteReaderModal({ open, onClose, loading, note }) {
                             <p className="text-sm">Loading…</p>
                         </div>
                     ) : note?.content ? (
-                        <>
+                        <ProtectedContent
+                            enabled={guarded}
+                            contentType="note"
+                            contentRef={note?.title || note?._id || ""}
+                        >
                             {note.source === "ai" && (
                                 <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-600">
                                     <Brain size={12} /> AI-assisted note
                                 </div>
                             )}
                             <Markdown content={note.content} />
-                        </>
+                        </ProtectedContent>
                     ) : (
                         <p className="text-sm text-slate-500">This note has no readable text.</p>
                     )}
