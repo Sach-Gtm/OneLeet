@@ -8,6 +8,7 @@ import {
     requestNotificationPermission,
     showSystemNotification,
 } from "@/lib/systemNotify";
+import { enableBackgroundPush } from "@/lib/webPush";
 
 function timeAgo(date) {
     const s = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -67,11 +68,20 @@ export default function NotificationBell() {
         const p = await requestNotificationPermission();
         setPerm(p);
         if (p === "granted") {
+            // Also subscribe to background push (works even with the app closed);
+            // no-ops if the server has no VAPID keys — foreground still works.
+            enableBackgroundPush().catch(() => {});
             showSystemNotification("Notifications are on 🎉", {
-                body: "We'll alert you here when there's something new — keep a OneLeet tab open.",
+                body: "We'll alert you when there's something new.",
             });
         }
     };
+
+    // If the user already granted permission (e.g. on a previous visit), make
+    // sure this browser is subscribed for background push too.
+    useEffect(() => {
+        if (notificationPermission() === "granted") enableBackgroundPush().catch(() => {});
+    }, []);
 
     // Initial fetch + light polling so pushed notifications show up.
     useEffect(() => {

@@ -1,4 +1,5 @@
 const Notification = require("../../models/notificationModel");
+const { sendBroadcastPush } = require("../../services/push/webPushService");
 
 // POST /api/notifications — staff broadcast a notification to everyone.
 async function create(req, res, next) {
@@ -15,6 +16,9 @@ async function create(req, res, next) {
             body,
             createdBy: req.user._id,
         });
+        // Fire background push to every subscriber (no-op unless VAPID configured).
+        // Not awaited — the broadcast response shouldn't wait on the push fan-out.
+        sendBroadcastPush({ title, body, url: "/dashboard" }).catch(() => {});
         return res
             .status(201)
             .json({ success: true, message: "Notification sent", notification });
