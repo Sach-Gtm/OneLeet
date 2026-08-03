@@ -18,7 +18,8 @@ import { PHASES, MISTAKES, EXAM_DAY_KIT, PHASE_STYLES, phaseForDays } from "@/li
 import { useExamCountdown } from "@/lib/useExamCountdown";
 import { openCallback } from "@/lib/callback";
 import { useAuth } from "@/context/AuthContext";
-import { canAccessPremiumContent } from "@/lib/roles";
+import { canAccessPremiumContent, isStaff } from "@/lib/roles";
+import ProtectedContent from "@/Components/Security/ProtectedContent";
 
 const reveal = {
     initial: { opacity: 0, y: 18 },
@@ -188,7 +189,13 @@ export default function PrepGuide() {
     }
 
     return (
-        <div className="mx-auto max-w-4xl space-y-8 pb-4">
+        <ProtectedContent
+            enabled={!isStaff(user)}
+            contentType="prep-guide"
+            contentRef="Prep Guide"
+            className="mx-auto max-w-4xl"
+        >
+        <div className="space-y-8 pb-4">
             {/* Hero */}
             <motion.div
                 initial={{ opacity: 0, y: 16 }}
@@ -317,5 +324,6 @@ export default function PrepGuide() {
                 </div>
             </div>
         </div>
+        </ProtectedContent>
     );
 }

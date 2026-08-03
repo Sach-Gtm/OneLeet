@@ -24,6 +24,7 @@ import PremiumGateModal from "@/Components/General/PremiumGateModal";
 import VideoEditorModal from "@/Components/App/VideoEditorModal";
 import BulkVideoModal from "@/Components/App/BulkVideoModal";
 import VideoFilterGate from "@/Components/App/VideoFilterGate";
+import ProtectedContent from "@/Components/Security/ProtectedContent";
 
 const FILTER_KEY = "oneleet.videoFilter.v1";
 const ALL_FILTER = { exam: "all", subject: "all", chapter: "all" };
@@ -39,7 +40,7 @@ const matchesFilter = (v, f) =>
 
 // The in-site player: a YouTube embed in a branded modal so students watch inside
 // OneLeet instead of being sent to youtube.com. Closes on Escape / click outside.
-function PlayerModal({ video, onClose }) {
+function PlayerModal({ video, onClose, guarded = false }) {
     useEffect(() => {
         const onKey = (e) => e.key === "Escape" && onClose();
         window.addEventListener("keydown", onKey);
@@ -61,7 +62,12 @@ function PlayerModal({ video, onClose }) {
                         <X size={18} />
                     </button>
                 </div>
-                <div className="aspect-video w-full bg-black">
+                <ProtectedContent
+                    enabled={guarded}
+                    contentType="video"
+                    contentRef={video.title || video.youtubeId || ""}
+                    className="aspect-video w-full bg-black"
+                >
                     <iframe
                         src={`${youTubeEmbed(video.youtubeId)}&autoplay=1`}
                         title={video.title}
@@ -69,7 +75,7 @@ function PlayerModal({ video, onClose }) {
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
                     />
-                </div>
+                </ProtectedContent>
                 {(meta || video.description) && (
                     <div className="px-4 py-3">
                         {meta && <p className="text-xs font-medium text-slate-300">{meta}</p>}
@@ -410,7 +416,13 @@ export default function Videos() {
                 />
             )}
 
-            {playing && <PlayerModal video={playing} onClose={() => setPlaying(null)} />}
+            {playing && (
+                <PlayerModal
+                    video={playing}
+                    onClose={() => setPlaying(null)}
+                    guarded={Boolean(playing.premium) && !staff}
+                />
+            )}
             <PremiumGateModal open={!!premiumGate} onClose={() => setPremiumGate(null)} itemTitle={premiumGate?.title} />
             {editing && (
                 <VideoEditorModal

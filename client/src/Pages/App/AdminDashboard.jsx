@@ -41,6 +41,7 @@ import StudentActivityModal from "@/Components/App/StudentActivityModal";
 import CompetitionAdmin from "@/Components/App/CompetitionAdmin";
 import AiUsageAdmin from "@/Components/App/AiUsageAdmin";
 import BlocklistAdmin from "@/Components/App/BlocklistAdmin";
+import ContentProtectionAdmin from "@/Components/App/ContentProtectionAdmin";
 import ExamAdmin from "@/Components/App/ExamAdmin";
 import ExamPatternAdmin from "@/Components/App/ExamPatternAdmin";
 import ReviewAdmin from "@/Components/App/ReviewAdmin";
@@ -650,6 +651,9 @@ export default function AdminDashboard() {
 
             {/* Mentors — add/remove mentor profiles (admins + super admin) */}
             {canManageStudents && <MentorAdmin />}
+
+            {/* Content-protection alerts — who's trying to capture premium content */}
+            {canManageStudents && <ContentProtectionAdmin />}
 
             {/* Account block-list (super admin only) */}
             {isSuper && <BlocklistAdmin />}

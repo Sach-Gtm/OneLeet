@@ -4,6 +4,9 @@ import { Clock, Loader2, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { getTest, submitTest } from "@/Api/TestsApi";
+import { useAuth } from "@/context/AuthContext";
+import { isStaff } from "@/lib/roles";
+import ProtectedContent from "@/Components/Security/ProtectedContent";
 
 const fmt = (s) => {
     const m = Math.floor(s / 60);
@@ -14,6 +17,7 @@ const fmt = (s) => {
 export default function TestTake() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [test, setTest] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -179,6 +183,11 @@ export default function TestTake() {
             </div>
 
             {/* Questions */}
+            <ProtectedContent
+                enabled={Boolean(test.premium) && !isStaff(user)}
+                contentType="test"
+                contentRef={test.title || test._id || ""}
+            >
             <div className="space-y-4">
                 {test.questions.map((q, i) => (
                     <div key={q._id} className="rounded-2xl border border-slate-200 bg-white p-5">
@@ -251,6 +260,7 @@ export default function TestTake() {
                     </div>
                 ))}
             </div>
+            </ProtectedContent>
 
             {/* Confirm submit */}
             {showConfirm && (

@@ -14,7 +14,7 @@ const NotificationSchema = new mongoose.Schema(
         recipients: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", index: true }],
         // Optional deep-link context (a topper/leaderboard notification links to
         // the test's result screen).
-        type: { type: String, enum: ["broadcast", "leaderboard"], default: "broadcast" },
+        type: { type: String, enum: ["broadcast", "leaderboard", "security"], default: "broadcast" },
         test: { type: mongoose.Schema.Types.ObjectId, ref: "Test" },
     },
     { timestamps: true }

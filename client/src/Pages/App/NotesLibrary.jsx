@@ -27,6 +27,7 @@ import PremiumBadge from "@/Components/General/PremiumBadge";
 import PremiumGateModal from "@/Components/General/PremiumGateModal";
 import NoteAiModal from "@/Components/App/NoteAiModal";
 import NoteReaderModal from "@/Components/App/NoteReaderModal";
+import ProtectedPdfModal from "@/Components/App/ProtectedPdfModal";
 
 const SIDEBAR_GROUPS = [
     { key: "difficulty", label: "Difficulty", source: "difficulties" },
@@ -70,14 +71,14 @@ function FilterSection({ label, options, selected, onToggle }) {
     );
 }
 
-function NoteCard({ note, staff, onSummary, onFlashcards, onRead, onLocked, onTogglePremium }) {
+function NoteCard({ note, staff, onSummary, onFlashcards, onRead, onViewFile, onLocked, onTogglePremium }) {
     const tags = [note.branch, note.level, note.difficulty].filter(Boolean);
     const hasFile = Boolean(note.fileUrl);
     const locked = !!note.locked;
     const openView = () => {
         if (locked) return onLocked(note);
-        if (hasFile) window.open(note.fileUrl, "_blank", "noopener,noreferrer");
-        else onRead(note);
+        if (hasFile) return onViewFile(note); // parent decides: protected modal vs new tab
+        onRead(note);
     };
     const ai = (fn) => (locked ? onLocked(note) : fn(note));
     return (
@@ -162,6 +163,7 @@ export default function NotesLibrary() {
     const [loading, setLoading] = useState(true);
 
     const [reader, setReader] = useState({ open: false, loading: false, note: null });
+    const [pdfNote, setPdfNote] = useState(null); // premium PDF open in the protected viewer
 
     const [aiModal, setAiModal] = useState({ open: false, mode: "summary", noteTitle: "", loading: false, data: null, error: null });
 
@@ -208,6 +210,14 @@ export default function NotesLibrary() {
         } catch {
             toast.error("Couldn't update this note.");
         }
+    };
+
+    // Open a PDF note. Premium PDFs (for non-staff students) go through an in-app
+    // protected viewer — watermarked, no toolbar, no one-click download; free
+    // PDFs (and staff) just open in a new tab as before.
+    const openFile = (note) => {
+        if (note.premium && !staff) setPdfNote(note);
+        else window.open(note.fileUrl, "_blank", "noopener,noreferrer");
     };
 
     // Open a written / AI "text" note (no PDF): fetch its full body, then read it.
@@ -354,6 +364,7 @@ export default function NotesLibrary() {
                                         onSummary={(n) => runAi(n, "summary")}
                                         onFlashcards={(n) => runAi(n, "flashcards")}
                                         onRead={openReader}
+                                        onViewFile={openFile}
                                         onLocked={setGate}
                                         onTogglePremium={togglePremium}
                                     />
@@ -411,6 +422,8 @@ export default function NotesLibrary() {
                 note={reader.note}
                 onClose={() => setReader({ open: false, loading: false, note: null })}
             />
+
+            <ProtectedPdfModal note={pdfNote} onClose={() => setPdfNote(null)} />
 
             <PremiumGateModal open={!!gate} onClose={() => setGate(null)} itemTitle={gate?.title} />
         </div>

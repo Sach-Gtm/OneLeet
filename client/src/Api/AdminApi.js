@@ -16,6 +16,17 @@ export const getAdminOverview = async () => {
     }
 };
 
+// Content-protection alerts: who has been attempting to screenshot / copy /
+// print / record premium content, so staff can follow up.
+export const getSecurityAlerts = async (days = 30) => {
+    try {
+        const { data } = await api.get("/security/alerts", { params: { days } });
+        return data; // { success, days, alerts, students }
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 export const getStudents = async ({ search = "", page = 1, limit = 20 } = {}) => {
     try {
         const { data } = await api.get("/admin/students", {
