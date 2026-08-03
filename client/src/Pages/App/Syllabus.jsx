@@ -10,10 +10,13 @@ import {
     GraduationCap,
     Layers,
     Lock,
+    ScrollText,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { getSyllabi, toggleTopic } from "@/Api/SyllabusApi";
+import { getExams } from "@/Api/ExamsApi";
+import { useAuth } from "@/context/AuthContext";
 import PremiumBadge from "@/Components/General/PremiumBadge";
 import PremiumGateModal from "@/Components/General/PremiumGateModal";
 
@@ -28,6 +31,23 @@ function computeProgress(chapters, completedSet) {
                 doneH += t.estimatedHours || 0;
             }
         }
+    }
+    return { total, done, totalH, doneH, percent: total ? Math.round((done / total) * 100) : 0 };
+}
+
+// Roll up progress across a set of syllabi (one exam's subjects). Locked premium
+// syllabi still count their size (from `progress`) so the exam total is honest.
+function aggregateProgress(syllabi) {
+    let total = 0, done = 0, totalH = 0, doneH = 0;
+    for (const s of syllabi || []) {
+        if (s.locked) {
+            total += s.progress?.totalTopics || 0;
+            totalH += s.progress?.totalHours || 0;
+            continue;
+        }
+        const set = new Set((s.completedTopics || []).map(String));
+        const p = computeProgress(s.chapters, set);
+        total += p.total; done += p.done; totalH += p.totalH; doneH += p.doneH;
     }
     return { total, done, totalH, doneH, percent: total ? Math.round((done / total) * 100) : 0 };
 }
@@ -106,7 +126,8 @@ function SyllabusCard({ syllabus, index, onToggle, onLocked }) {
     // Show only the subject name (drop the long "LEET Engineering…" title).
     const name = syllabus.subject || syllabus.title;
     const colors = RINGS[index % RINGS.length];
-    const gradId = `syl-ring-${index}`;
+    // Keyed by the syllabus id so gradient ids stay unique across exam groups.
+    const gradId = `syl-ring-${syllabus._id}`;
 
     return (
         <motion.div
@@ -247,14 +268,118 @@ function SyllabusCard({ syllabus, index, onToggle, onLocked }) {
     );
 }
 
+// One exam the student is preparing for: a compact card (name + how much of that
+// exam's syllabus is done) that expands to reveal the subjects under it. This is
+// the top level of the tracker — the student sees only the exam(s) they chose.
+function ExamGroup({ name, syllabi, gi, startIndex, onToggle, onLocked, defaultOpen }) {
+    const [open, setOpen] = useState(defaultOpen);
+    const agg = useMemo(() => aggregateProgress(syllabi), [syllabi]);
+    const colors = RINGS[gi % RINGS.length];
+    const gradId = `syl-exam-${gi}`;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: Math.min(gi, 6) * 0.06 }}
+            className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-slate-700"
+        >
+            <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-4 p-5 text-left">
+                <Ring value={agg.percent} size={64} stroke={7} gradId={gradId} colors={colors} />
+                <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                        <ScrollText size={16} className="shrink-0 text-indigo-600" />
+                        <h2 className="truncate text-base font-bold text-slate-900">{name}</h2>
+                    </div>
+                    <p className="mt-0.5 text-xs text-slate-500">
+                        {syllabi.length} subject{syllabi.length === 1 ? "" : "s"} · {agg.total} topic
+                        {agg.total === 1 ? "" : "s"}
+                        {agg.totalH > 0 && (
+                            <>
+                                {" · "}
+                                <span className="inline-flex items-center gap-1">
+                                    <Clock size={11} /> {agg.totalH} hrs
+                                </span>
+                            </>
+                        )}
+                    </p>
+                    <div className="mt-2.5 flex items-center gap-2">
+                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                            <motion.div
+                                className="h-full rounded-full"
+                                style={{ background: `linear-gradient(90deg, ${colors[0]}, ${colors[1]})` }}
+                                initial={{ width: 0 }}
+                                animate={{ width: `${agg.percent}%` }}
+                                transition={{ duration: 0.8, ease: "easeOut" }}
+                            />
+                        </div>
+                        <span className="shrink-0 text-xs font-semibold text-slate-600">
+                            {agg.done}/{agg.total}
+                        </span>
+                    </div>
+                </div>
+                <ChevronDown className={cn("shrink-0 text-slate-400 transition-transform", open && "rotate-180")} size={18} />
+            </button>
+
+            <AnimatePresence initial={false}>
+                {open && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                    >
+                        <div className="space-y-3 border-t border-slate-100 bg-slate-50/60 p-4 dark:border-slate-700 dark:bg-slate-900/40">
+                            {syllabi.map((s, i) => (
+                                <SyllabusCard key={s._id} syllabus={s} index={startIndex + i} onToggle={onToggle} onLocked={onLocked} />
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
+    );
+}
+
 export default function Syllabus() {
+    const { user } = useAuth();
     const [syllabi, setSyllabi] = useState(null);
+    const [examList, setExamList] = useState([]);
     const [gate, setGate] = useState(null); // premium syllabus a free student tapped
 
     const load = () => getSyllabi().then(setSyllabi).catch(() => setSyllabi([]));
     useEffect(() => {
         load();
+        getExams().then(setExamList).catch(() => {});
     }, []);
+
+    const examName = (code) => examList.find((e) => e.code === code)?.name || code;
+
+    // Group the syllabi by the exam(s) the student chose — one group per chosen
+    // exam, so they see only their exams (not every college). No exam chosen (or
+    // "all") → a single "All LEET" bucket rather than each college separately.
+    const groups = useMemo(() => {
+        const list = syllabi || [];
+        if (list.length === 0) return [];
+        const chosen = (user?.exams || []).filter((c) => c && c !== "all");
+        const untargeted = (s) => !(s.targets || []).length || (s.targets || []).includes("all");
+
+        if (chosen.length === 0) {
+            return [{ key: "all", name: "All LEET", syllabi: list }];
+        }
+        const gs = [];
+        for (const code of chosen) {
+            const subs = list.filter((s) => (s.targets || []).includes(code));
+            if (subs.length) gs.push({ key: code, name: examName(code), syllabi: subs });
+        }
+        // Common syllabi (untargeted / "all") shown to every student.
+        const general = list.filter(untargeted);
+        if (general.length) gs.push({ key: "__general", name: "All LEET (common)", syllabi: general });
+        // Fallback: nothing matched a chosen exam → show everything under one group.
+        return gs.length ? gs : [{ key: "all", name: "All LEET", syllabi: list }];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [syllabi, user, examList]);
 
     const handleToggle = async (syllabusId, topicId, done) => {
         // Optimistic — flip the mark immediately, reconcile with the server after.
@@ -341,15 +466,25 @@ export default function Syllabus() {
                                     )}
                                 </p>
                                 <p className="mt-1 text-xs text-slate-400">
-                                    Across {syllabi.length} subject{syllabi.length === 1 ? "" : "s"}. Keep ticking topics to reach 100%.
+                                    Across {syllabi.length} subject{syllabi.length === 1 ? "" : "s"}
+                                    {groups.length > 1 ? ` in ${groups.length} exams` : ""}. Keep ticking topics to reach 100%.
                                 </p>
                             </div>
                         </div>
                     </motion.div>
 
-                    {/* Per-subject */}
-                    {syllabi.map((s, i) => (
-                        <SyllabusCard key={s._id} syllabus={s} index={i} onToggle={handleToggle} onLocked={setGate} />
+                    {/* One card per chosen exam — expand to see (and tick) its syllabus. */}
+                    {groups.map((g, gi) => (
+                        <ExamGroup
+                            key={g.key}
+                            name={g.name}
+                            syllabi={g.syllabi}
+                            gi={gi}
+                            startIndex={groups.slice(0, gi).reduce((n, x) => n + x.syllabi.length, 0)}
+                            onToggle={handleToggle}
+                            onLocked={setGate}
+                            defaultOpen={groups.length === 1}
+                        />
                     ))}
                 </div>
             )}
