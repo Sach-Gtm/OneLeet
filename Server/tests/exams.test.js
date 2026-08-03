@@ -49,7 +49,7 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
             chapters: [{ title: "C", topics: [{ title: "T", estimatedHours: 1 }] }],
         });
     const ipu = await mk("IPU only", ["ipu-leet"]);
-    await mk("DTU only", ["dtu-leet"]);
+    await mk("DTU only", ["dtu-nsut-leet"]);
     await mk("Everyone", []); // untargeted → for all
     assert.strictEqual(ipu.status, 201);
     assert.deepStrictEqual(ipu.body.syllabus.targets, ["ipu-leet"], "targets saved on the syllabus");
@@ -80,9 +80,9 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     const upd = await request
         .patch("/api/auth/me")
         .set(...auth(sToken))
-        .send({ exams: ["dtu-leet", "totally-fake", "dtu-leet"] });
+        .send({ exams: ["dtu-nsut-leet", "totally-fake", "dtu-nsut-leet"] });
     assert.strictEqual(upd.status, 200);
-    assert.deepStrictEqual(upd.body.user.exams, ["dtu-leet"], "bogus dropped + de-duped");
+    assert.deepStrictEqual(upd.body.user.exams, ["dtu-nsut-leet"], "bogus dropped + de-duped");
     ok("a student's chosen exams are validated and de-duped on save");
 
     // After switching to DTU, they now see DTU + untargeted, not IPU.

@@ -110,7 +110,7 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
 
     // Create an UNPUBLISHED DTU pattern (student prepping for IPU shouldn't see it).
     const dtu = await request.post("/api/exam-patterns").set(...auth(adminToken)).send({
-        examCode: "dtu-leet", examName: "DTU Lateral Entry", published: false,
+        examCode: "dtu-nsut-leet", examName: "DTU Lateral Entry", published: false,
     });
     assert.strictEqual(dtu.status, 201);
     // And a published one for an exam the student didn't pick.

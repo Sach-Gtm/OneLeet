@@ -8,8 +8,10 @@
 const SEED_EXAMS = [
     // ── Delhi ──
     { code: "ipu-leet", name: "IPU LEET (GGSIPU)", group: "Delhi NCR" },
-    { code: "dtu-leet", name: "DTU Lateral Entry", group: "Delhi NCR" },
-    { code: "nsut-leet", name: "NSUT Lateral Entry", group: "Delhi NCR" },
+    // DTU & NSUT share a single lateral-entry exam for counselling, so they're
+    // one combined option. (Older separate dtu-leet/nsut-leet entries are folded
+    // into this by the one-time merge in seedMergeDtuNsut.js.)
+    { code: "dtu-nsut-leet", name: "DTU / NSUT Lateral Entry", group: "Delhi NCR" },
     // ── North India ──
     { code: "up-leet", name: "UP LEET (AKTU)", group: "North India" },
     { code: "bihar-leet", name: "Bihar LEET (BCECE-LE)", group: "North India" },

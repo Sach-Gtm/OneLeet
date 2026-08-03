@@ -54,7 +54,7 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     });
     const dtuStudent = await User.create({
         name: "D", email: "d@t.com", password: "secret123", phone: "9000000003",
-        role: "student", isVerified: true, authProvider: "local", exams: ["dtu-leet"],
+        role: "student", isVerified: true, authProvider: "local", exams: ["dtu-nsut-leet"],
     });
 
     // An earlier, rough upload already exists for IPU LEET.

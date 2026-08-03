@@ -89,7 +89,7 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
         title: "IPU only", url: "https://youtu.be/aaaaaaaaaaa", targets: ["ipu-leet"],
     });
     await request.post("/api/videos").set(...auth(teacherToken)).send({
-        title: "DTU only", url: "https://youtu.be/bbbbbbbbbbb", targets: ["dtu-leet"],
+        title: "DTU only", url: "https://youtu.be/bbbbbbbbbbb", targets: ["dtu-nsut-leet"],
     });
     await request.post("/api/videos").set(...auth(teacherToken)).send({
         title: "Hidden draft", url: "https://youtu.be/ccccccccccc", targets: ["all"], published: false,
