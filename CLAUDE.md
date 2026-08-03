@@ -20,6 +20,15 @@ on its own (a lightly-paraphrased original is still a derivative), so lean towar
 rewrites or originals when permission isn't in place. **PYQs (real past exam papers)** are
 high-value and generally safe — lean on them.
 
+## Instructor / author names
+
+**Never add an instructor, teacher, or author _name_** to any content (syllabi, tests, notes,
+videos, exam patterns, blurbs, etc.) unless the founder **explicitly gives that name**. When a
+source (e.g. a coaching syllabus sheet) lists instructor names, **drop them** — don't transcribe
+them into content or even into commit/PR text as attribution. Wherever an instructor/author credit
+would appear, write **"OneLeet"** (already the default for the video `author` field). The
+**Mentors** feature is the only exception — those are real, named people the founder adds on purpose.
+
 ## How content reaches production
 
 There is **no direct write access to Atlas** from a Claude session, so published content (tests,
