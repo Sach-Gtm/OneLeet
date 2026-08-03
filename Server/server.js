@@ -21,6 +21,8 @@ const { ensureMechanicsExamTestsSeeded } = require("./src/config/seedMechanicsEx
 const { ensureAppliedMathTestsSeeded } = require("./src/config/seedAppliedMathTests");
 const { ensureAppliedMathAdvancedTestsSeeded } = require("./src/config/seedAppliedMathAdvancedTests");
 const { ensureComputerAppTestsSeeded } = require("./src/config/seedComputerAppTests");
+const { ensureDtuNsutMerged } = require("./src/config/seedMergeDtuNsut");
+const { ensureDtuNsutSyllabusSeeded } = require("./src/config/seedDtuNsutSyllabus");
 
 // Provision the Super Admin out-of-band once the DB is up, seed the LEET exam
 // catalog + founding mentors + IPU LEET syllabus and exam pattern on first run,
@@ -28,9 +30,13 @@ const { ensureComputerAppTestsSeeded } = require("./src/config/seedComputerAppTe
 // attributed to an admin, so they run after the Super Admin is provisioned.
 connectDB().then(async () => {
     await bootstrapSuperadmin();
-    ensureExamsSeeded();
+    // Seed the exam catalog, then fold the old split DTU/NSUT exams into the
+    // single combined one (awaited in order so the merge sees a seeded catalog).
+    await ensureExamsSeeded();
+    await ensureDtuNsutMerged();
     ensureMentorsSeeded();
     ensureIpuSyllabusSeeded();
+    ensureDtuNsutSyllabusSeeded();
     ensureIpuExamPatternSeeded();
     ensureAnalogyTestSeeded();
     ensureReasoningQuickShotsSeeded();
