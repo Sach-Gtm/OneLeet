@@ -36,6 +36,7 @@ const BLANK = {
     published: true,
     sections: [],
     topColleges: [],
+    seatIntake: [],
 };
 
 function Field({ label, children, hint }) {
@@ -85,6 +86,13 @@ export default function ExamPatternAdmin() {
         setForm((f) => ({ ...f, topColleges: f.topColleges.map((c, idx) => (idx === i ? { ...c, [k]: v } : c)) }));
     const removeCollege = (i) => setForm((f) => ({ ...f, topColleges: f.topColleges.filter((_, idx) => idx !== i) }));
 
+    // --- dynamic seat-intake rows (university-wise) ---
+    const addSeat = () =>
+        setForm((f) => ({ ...f, seatIntake: [...f.seatIntake, { college: "", course: "", seats: "", note: "" }] }));
+    const setSeat = (i, k, v) =>
+        setForm((f) => ({ ...f, seatIntake: f.seatIntake.map((s, idx) => (idx === i ? { ...s, [k]: v } : s)) }));
+    const removeSeat = (i) => setForm((f) => ({ ...f, seatIntake: f.seatIntake.filter((_, idx) => idx !== i) }));
+
     const pickExam = (code) => {
         const name = exams.find((e) => e.code === code)?.name || "";
         // Fill the display name from the catalog on pick, unless the admin has
@@ -116,6 +124,12 @@ export default function ExamPatternAdmin() {
                 name: c.name || "",
                 location: c.location || "",
                 avgPackage: c.avgPackage || "",
+            })),
+            seatIntake: (p.seatIntake || []).map((s) => ({
+                college: s.college || "",
+                course: s.course || "",
+                seats: s.seats ?? "",
+                note: s.note || "",
             })),
         });
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -284,6 +298,33 @@ export default function ExamPatternAdmin() {
                                     <input value={c.location} onChange={(e) => setCollege(i, "location", e.target.value)} placeholder="Location" className={cn(inCls, "sm:w-36")} />
                                     <input value={c.avgPackage} onChange={(e) => setCollege(i, "avgPackage", e.target.value)} placeholder="Avg pkg" className={cn(inCls, "w-24")} />
                                     <button type="button" onClick={() => removeCollege(i)} className="shrink-0 rounded-md p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10" aria-label="Remove college">
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* University-wise seat intake */}
+                <div className="rounded-lg border border-slate-100 p-2.5 dark:border-slate-800">
+                    <div className="mb-2 flex items-center justify-between">
+                        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400">Seat intake (university-wise)</p>
+                        <button type="button" onClick={addSeat} className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-500">
+                            <Plus size={13} /> Add row
+                        </button>
+                    </div>
+                    {form.seatIntake.length === 0 ? (
+                        <p className="py-2 text-center text-xs text-slate-400">No seat intake yet — add a college and its seats.</p>
+                    ) : (
+                        <div className="space-y-2">
+                            {form.seatIntake.map((s, i) => (
+                                <div key={i} className="flex flex-wrap items-center gap-1.5 sm:flex-nowrap">
+                                    <input value={s.college} onChange={(e) => setSeat(i, "college", e.target.value)} placeholder="College / University" className={cn(inCls, "min-w-0 flex-1")} />
+                                    <input value={s.course} onChange={(e) => setSeat(i, "course", e.target.value)} placeholder="Course / Branch" className={cn(inCls, "sm:w-40")} />
+                                    <input type="number" min="0" value={s.seats} onChange={(e) => setSeat(i, "seats", e.target.value)} placeholder="Seats" className={cn(inCls, "w-20")} />
+                                    <input value={s.note} onChange={(e) => setSeat(i, "note", e.target.value)} placeholder="Note" className={cn(inCls, "sm:w-28")} />
+                                    <button type="button" onClick={() => removeSeat(i)} className="shrink-0 rounded-md p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10" aria-label="Remove seat row">
                                         <Trash2 size={14} />
                                     </button>
                                 </div>
