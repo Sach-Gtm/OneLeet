@@ -12,8 +12,12 @@ import { Loader2 } from "lucide-react";
 import Home from "../Pages/General/Home";
 import MarketingLayout from "@/Components/General/MarketingLayout";
 import ProtectedRoute from "@/Components/Auth/ProtectedRoute";
-import AppShell from "@/Components/App/AppShell";
 import ActivityTracker from "@/Components/App/ActivityTracker";
+
+// The authenticated shell (sidebar, notifications, charts, …) is only needed
+// once a user is inside the app — code-split it so a landing/auth visitor never
+// downloads it. It resolves inside the <Suspense> that already wraps the routes.
+const AppShell = lazy(() => import("@/Components/App/AppShell"));
 
 const NotFound = lazy(() => import("@/Components/General/NotFound"));
 const Mentors = lazy(() => import("@/Pages/Navbar-Pages/Mentors"));
