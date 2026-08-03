@@ -92,11 +92,18 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
                 { name: "USICT", location: "Dwarka, Delhi", avgPackage: "₹9 LPA" },
                 { name: "", location: "nowhere" }, // dropped (no name)
             ],
+            seatIntake: [
+                { college: "USICT", course: "CSE", seats: 60, note: "GGSIPU" },
+                { college: "MSIT", seats: 120 },
+                { college: "", seats: "" }, // dropped (no college, no seats)
+            ],
             importantDates: "Applications: Mar–Apr. Exam: May.",
         });
     assert.strictEqual(create.status, 201, "admin creates a pattern");
     assert.strictEqual(create.body.pattern.sections.length, 2, "blank section dropped");
     assert.strictEqual(create.body.pattern.topColleges.length, 1, "nameless college dropped");
+    assert.strictEqual(create.body.pattern.seatIntake.length, 2, "blank seat-intake row dropped");
+    assert.strictEqual(create.body.pattern.seatIntake[0].seats, 60, "seat count round-trips");
     assert.strictEqual(create.body.pattern.markingNegative, "-1");
     const patternId = create.body.pattern._id;
     ok("an admin creates a rich pattern; blank section/college rows are cleaned");

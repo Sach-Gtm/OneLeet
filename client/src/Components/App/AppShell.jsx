@@ -21,6 +21,7 @@ import {
     ShieldCheck,
     ChevronDown,
     PencilRuler,
+    ScrollText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
@@ -37,6 +38,7 @@ const NAV = [
         items: [
             { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
             { to: "/prep-guide", label: "Prep Guide", icon: Compass },
+            { to: "/exam-pattern", label: "Exam Pattern", icon: ScrollText },
             { to: "/pyqs", label: "PYQs", icon: FileQuestion },
             { to: "/notes", label: "Notes", icon: BookOpen },
             { to: "/syllabus", label: "Syllabus", icon: ListChecks },

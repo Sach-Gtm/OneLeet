@@ -50,6 +50,18 @@ const cleanColleges = (input) =>
         .filter((c) => c.name)
         .slice(0, 20);
 
+const cleanSeatIntake = (input) =>
+    (Array.isArray(input) ? input : [])
+        .map((s) => ({
+            college: str(s?.college, 140),
+            course: str(s?.course, 140),
+            seats: num(s?.seats, 100000),
+            note: str(s?.note, 200),
+        }))
+        // Keep a row only if it names a college or gives a seat count.
+        .filter((s) => s.college || s.seats != null)
+        .slice(0, 100);
+
 // Everything an admin may set on a pattern, cleaned. Shared by create + update.
 function patternFromBody(body = {}) {
     return {
@@ -69,6 +81,7 @@ function patternFromBody(body = {}) {
         markingNote: str(body.markingNote, 400),
         avgPlacement: str(body.avgPlacement, 80),
         topColleges: cleanColleges(body.topColleges),
+        seatIntake: cleanSeatIntake(body.seatIntake),
         importantDates: str(body.importantDates, 800),
         officialWebsite: str(body.officialWebsite, 300),
         notes: str(body.notes, 2500),
@@ -104,6 +117,12 @@ const shape = (p) => ({
         name: c.name,
         location: c.location,
         avgPackage: c.avgPackage,
+    })),
+    seatIntake: (p.seatIntake || []).map((s) => ({
+        college: s.college,
+        course: s.course,
+        seats: s.seats,
+        note: s.note,
     })),
     importantDates: p.importantDates,
     officialWebsite: p.officialWebsite,

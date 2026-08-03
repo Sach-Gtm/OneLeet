@@ -29,6 +29,19 @@ const CollegeSchema = new mongoose.Schema(
     { _id: false }
 );
 
+// One university/college's seat intake under this exam — how many seats it
+// offers (optionally per branch/course), so a student can gauge their chances.
+// Kept a sub-document array so an admin can list every participating college.
+const SeatIntakeSchema = new mongoose.Schema(
+    {
+        college: { type: String, trim: true, maxlength: [140, "Too long"] },
+        course: { type: String, trim: true, maxlength: [140, "Too long"] },
+        seats: { type: Number, min: 0, max: 100000 },
+        note: { type: String, trim: true, maxlength: [200, "Too long"] },
+    },
+    { _id: false }
+);
+
 // Everything a student needs to understand a LEET exam at a glance: eligibility,
 // fees, the section-wise paper pattern with marking scheme, and the colleges +
 // placements it leads to. Admin-managed; matched to a student by `examCode`
@@ -71,6 +84,10 @@ const ExamPatternSchema = new mongoose.Schema(
 
         avgPlacement: { type: String, trim: true, maxlength: [80, "Too long"] },
         topColleges: { type: [CollegeSchema], default: [] },
+
+        // University-wise seat intake — the number of seats each participating
+        // college/university offers through this exam.
+        seatIntake: { type: [SeatIntakeSchema], default: [] },
 
         // Free text: application window, exam date, result date, counselling, etc.
         importantDates: { type: String, trim: true, maxlength: [800, "Too long"] },
