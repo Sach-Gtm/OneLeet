@@ -3,6 +3,14 @@ const User = require("../../models/userModel");
 const Notification = require("../../models/notificationModel");
 const { ADMINS } = require("../../config/roles");
 const { sendPushToUsers } = require("../../services/push/webPushService");
+const { sendMail } = require("../../utils/email");
+
+const escapeHtml = (s) =>
+    String(s == null ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
 
 const EVENT_TYPES = SecurityEvent.EVENT_TYPES;
 
@@ -75,9 +83,10 @@ async function report(req, res) {
     }
 }
 
-// Build + send the "student attempted capture" alert to every admin/superadmin.
+// Build + send the "student attempted capture" alert to every admin/superadmin
+// across ALL channels: the in-app bell, a browser push, and email.
 async function notifyAdmins(doc) {
-    const admins = await User.find({ role: { $in: ADMINS } }).select("_id");
+    const admins = await User.find({ role: { $in: ADMINS } }).select("_id email");
     const ids = admins.map((a) => a._id);
     if (!ids.length) return;
 
@@ -90,8 +99,58 @@ async function notifyAdmins(doc) {
     const title = "⚠️ Premium content protection alert";
     const body = `${who} ${action}${where}. Review it in the admin panel.`;
 
+    // 1) In-app bell (targeted to admins) + 2) browser push.
     await Notification.create({ title, body, type: "security", recipients: ids });
     sendPushToUsers(ids, { title, body, url: "/admin", tag: "security" }).catch(() => {});
+
+    // 3) Email — so alerts land even when nobody has the app open. Best-effort;
+    // a mail failure must never break the report.
+    emailAdmins(admins, doc, { who, action, where }).catch((e) =>
+        console.warn("[security] alert email failed:", e.message)
+    );
+}
+
+// Emails the alert to each admin's address plus a configurable alerts inbox
+// (SECURITY_ALERT_EMAIL → CONTACT_EMAIL → admin@oneleet.in). No-ops silently
+// when email isn't configured (sendMail handles that).
+async function emailAdmins(admins, doc, { who, action, where }) {
+    const fallback =
+        process.env.SECURITY_ALERT_EMAIL || process.env.CONTACT_EMAIL || "admin@oneleet.in";
+    const recipients = new Set([fallback.toLowerCase()]);
+    for (const a of admins) if (a.email) recipients.add(a.email.toLowerCase());
+
+    const when = new Date(doc.lastAt || Date.now()).toLocaleString();
+    const subject = "⚠️ OneLeet: premium content protection alert";
+    const rows = [
+        ["Student", who],
+        ["Email", doc.email || "—"],
+        ["Phone", doc.phone || "—"],
+        ["Action", `${action}${where}`],
+        ["Content", doc.contentRef || doc.contentType || "—"],
+        ["Page", doc.path || "—"],
+        ["When", when],
+    ];
+    const html = `
+        <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;padding:24px">
+          <h2 style="color:#b45309">⚠️ Premium content protection alert</h2>
+          <p style="color:#475569">A student attempted to capture premium content. Their view is watermarked with their identity, and this attempt was logged.</p>
+          <table style="border-collapse:collapse;width:100%;margin:12px 0">
+            ${rows
+                .map(
+                    ([k, v]) =>
+                        `<tr><td style="padding:6px 10px;color:#64748b;font-size:13px;border-bottom:1px solid #eef2f7">${k}</td><td style="padding:6px 10px;color:#0f172a;font-size:13px;border-bottom:1px solid #eef2f7">${escapeHtml(v)}</td></tr>`
+                )
+                .join("")}
+          </table>
+          <p style="color:#64748b;font-size:13px">Review all attempts in the admin dashboard → Content protection alerts.</p>
+        </div>`;
+    const text = `Premium content protection alert\n${rows
+        .map(([k, v]) => `${k}: ${v}`)
+        .join("\n")}\n\nReview in the admin dashboard.`;
+
+    await Promise.allSettled(
+        Array.from(recipients).map((to) => sendMail({ to, subject, html, text }))
+    );
 }
 
 // GET /api/security/alerts?days=30  (admin)
