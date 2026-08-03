@@ -40,17 +40,21 @@ export function watermarkText(user) {
 
 // A tiled, semi-transparent diagonal SVG watermark as a data URI, ready for
 // `background-image`. Repeating it across the content gives the classic
-// watermark "wall" that survives screenshots and photos of the screen.
-export function watermarkImage(line1, line2 = "") {
+// watermark "wall" that survives screenshots and photos of the screen. `opacity`
+// tunes how visible it is — heavier over premium content (a deliberate
+// deterrent), fainter for app-wide attribution.
+export function watermarkImage(line1, line2 = "", opacity = 0.1) {
     const esc = (s) =>
         String(s)
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;");
+    const o1 = Math.max(0, Math.min(1, opacity)).toFixed(3);
+    const o2 = (Math.max(0, Math.min(1, opacity)) * 0.9).toFixed(3);
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='330' height='190'>
-  <g transform='rotate(-28 165 95)' fill='#0f172a' fill-opacity='0.10' font-family='Arial, Helvetica, sans-serif' font-weight='600'>
-    <text x='12' y='92' font-size='15'>${esc(line1)}</text>
-    <text x='12' y='114' font-size='11' fill-opacity='0.09'>${esc(line2)}</text>
+  <g transform='rotate(-28 165 95)' fill='#0f172a' font-family='Arial, Helvetica, sans-serif' font-weight='600'>
+    <text x='12' y='92' font-size='15' fill-opacity='${o1}'>${esc(line1)}</text>
+    <text x='12' y='114' font-size='11' fill-opacity='${o2}'>${esc(line2)}</text>
   </g>
 </svg>`;
     return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;

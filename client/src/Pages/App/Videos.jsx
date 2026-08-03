@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     MonitorPlay,
     Play,
@@ -11,6 +11,8 @@ import {
     ListFilter,
     Layers,
     SlidersHorizontal,
+    Maximize,
+    Minimize,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -41,14 +43,41 @@ const matchesFilter = (v, f) =>
 // The in-site player: a YouTube embed in a branded modal so students watch inside
 // OneLeet instead of being sent to youtube.com. Closes on Escape / click outside.
 function PlayerModal({ video, onClose, guarded = false }) {
+    // The watermarked stage — fullscreening THIS (not the bare iframe) keeps the
+    // identity overlay on screen even in fullscreen.
+    const stageRef = useRef(null);
+    const [isFs, setIsFs] = useState(false);
+
     useEffect(() => {
         const onKey = (e) => e.key === "Escape" && onClose();
         window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
+        const onFs = () => setIsFs(Boolean(document.fullscreenElement));
+        document.addEventListener("fullscreenchange", onFs);
+        return () => {
+            window.removeEventListener("keydown", onKey);
+            document.removeEventListener("fullscreenchange", onFs);
+        };
     }, [onClose]);
 
     if (!video) return null;
     const meta = [video.subject, video.chapter, video.topic].filter(Boolean).join(" · ");
+
+    const toggleFullscreen = () => {
+        const el = stageRef.current;
+        if (!el) return;
+        if (document.fullscreenElement) document.exitFullscreen?.();
+        else el.requestFullscreen?.().catch(() => {});
+    };
+
+    // For guarded (premium) videos we must not let the video escape the watermark
+    // overlay: native fullscreen and picture-in-picture both render the raw video
+    // outside our DOM, so disable them and offer a watermarked custom fullscreen
+    // instead. `fs=0` also hides YouTube's own fullscreen button.
+    const src = `${youTubeEmbed(video.youtubeId)}&autoplay=1${guarded ? "&fs=0" : ""}`;
+    const allow = guarded
+        ? "accelerometer; autoplay; encrypted-media; gyroscope"
+        : "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
     return (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4" onClick={onClose}>
             <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" />
@@ -62,20 +91,32 @@ function PlayerModal({ video, onClose, guarded = false }) {
                         <X size={18} />
                     </button>
                 </div>
-                <ProtectedContent
-                    enabled={guarded}
-                    contentType="video"
-                    contentRef={video.title || video.youtubeId || ""}
-                    className="aspect-video w-full bg-black"
-                >
-                    <iframe
-                        src={`${youTubeEmbed(video.youtubeId)}&autoplay=1`}
-                        title={video.title}
-                        className="h-full w-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                    />
-                </ProtectedContent>
+                <div ref={stageRef} className="relative flex items-center justify-center bg-black">
+                    <ProtectedContent
+                        enabled={guarded}
+                        contentType="video"
+                        contentRef={video.title || video.youtubeId || ""}
+                        className="aspect-video w-full bg-black"
+                    >
+                        <iframe
+                            src={src}
+                            title={video.title}
+                            className="h-full w-full"
+                            allow={allow}
+                            allowFullScreen={!guarded}
+                        />
+                    </ProtectedContent>
+                    {guarded && (
+                        <button
+                            onClick={toggleFullscreen}
+                            className="absolute right-2 top-2 z-30 rounded-md bg-black/50 p-1.5 text-white backdrop-blur-sm transition hover:bg-black/70"
+                            aria-label={isFs ? "Exit fullscreen" : "Fullscreen"}
+                            title={isFs ? "Exit fullscreen" : "Fullscreen"}
+                        >
+                            {isFs ? <Minimize size={16} /> : <Maximize size={16} />}
+                        </button>
+                    )}
+                </div>
                 {(meta || video.description) && (
                     <div className="px-4 py-3">
                         {meta && <p className="text-xs font-medium text-slate-300">{meta}</p>}

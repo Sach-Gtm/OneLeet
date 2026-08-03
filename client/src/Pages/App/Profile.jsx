@@ -29,6 +29,7 @@ import { updateProfile, changePassword, uploadPassportPhoto } from "@/Api/AuthAp
 import { getMyAnalytics } from "@/Api/ActivityApi";
 import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
 import RankMedal from "@/Components/App/RankMedal";
+import IdentityWatermark from "@/Components/Security/IdentityWatermark";
 import { missingProfileFields } from "@/lib/profile";
 import { isStaff, roleLabel } from "@/lib/roles";
 
@@ -168,6 +169,7 @@ export default function Profile() {
 
     return (
         <div className="mx-auto max-w-5xl space-y-6">
+            <IdentityWatermark />
             <h1 className="text-2xl font-bold text-slate-900">My Profile</h1>
 
             {incomplete && (
