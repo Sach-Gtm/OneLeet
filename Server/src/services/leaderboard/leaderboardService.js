@@ -3,6 +3,7 @@ const Test = require("../../models/testModel");
 const Attempt = require("../../models/attemptModel");
 const User = require("../../models/userModel");
 const Notification = require("../../models/notificationModel");
+const { sendPushToUsers } = require("../push/webPushService");
 
 // A graded test's ranking is frozen while it runs and for a short cool-off after
 // it closes, then finalised exactly once. This is what keeps the board fair —
@@ -107,17 +108,21 @@ async function finalizeTestLeaderboard(testId) {
         if (participantIds.length) {
             const champ = ranked[0] ? await User.findById(ranked[0].user).select("name") : null;
             const champName = (champ && champ.name) || "a top scorer";
+            const title = `🏆 Leaderboard live: ${test.title}`.slice(0, 120);
+            const body = `The leaderboard for "${test.title}" is now live! Congratulations to ${champName} on Rank #1. Open the app to see where you finished.`.slice(
+                0,
+                1000
+            );
             await Notification.create({
-                title: `🏆 Leaderboard live: ${test.title}`.slice(0, 120),
-                body: `The leaderboard for "${test.title}" is now live! Congratulations to ${champName} on Rank #1. Open the app to see where you finished.`.slice(
-                    0,
-                    1000
-                ),
+                title,
+                body,
                 type: "leaderboard",
                 test: test._id,
                 recipients: participantIds,
                 createdBy: test.createdBy || undefined,
             });
+            // Background push to the participants (no-op unless VAPID configured).
+            sendPushToUsers(participantIds, { title, body, url: `/tests/${test._id}/leaderboard` }).catch(() => {});
         }
 
         return {
