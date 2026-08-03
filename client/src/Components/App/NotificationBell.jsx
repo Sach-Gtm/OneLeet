@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Bell, Loader2, Trophy } from "lucide-react";
+import { Bell, BellRing, Loader2, Trophy } from "lucide-react";
 import { getNotifications, markAllNotificationsRead } from "@/Api/NotificationApi";
+import {
+    notificationsSupported,
+    notificationPermission,
+    requestNotificationPermission,
+    showSystemNotification,
+} from "@/lib/systemNotify";
 
 function timeAgo(date) {
     const s = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -18,17 +24,54 @@ export default function NotificationBell() {
     const [items, setItems] = useState([]);
     const [unread, setUnread] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [perm, setPerm] = useState(notificationPermission());
     const ref = useRef(null);
+    // Newest notification timestamp we've already seen, so a poll only fires an
+    // OS notification for genuinely new items (and never for the first load).
+    const lastTsRef = useRef(0);
+    const seededRef = useRef(false);
 
     const load = useCallback(async () => {
         try {
             const data = await getNotifications();
-            setItems(data?.notifications || []);
+            const list = data?.notifications || [];
+            setItems(list);
             setUnread(data?.unreadCount || 0);
+
+            const newest = list.reduce(
+                (m, n) => Math.max(m, new Date(n.createdAt).getTime()),
+                lastTsRef.current
+            );
+            // On later polls, pop an OS notification for each new, unread item
+            // (capped so a burst can't spam the desktop). Skipped on first load.
+            if (seededRef.current && notificationPermission() === "granted") {
+                list
+                    .filter((n) => !n.read && new Date(n.createdAt).getTime() > lastTsRef.current)
+                    .slice(0, 3)
+                    .forEach((n) =>
+                        showSystemNotification(n.title, {
+                            body: n.body,
+                            tag: String(n._id),
+                            url: n.type === "leaderboard" && n.test ? `/tests/${n.test}/leaderboard` : undefined,
+                        })
+                    );
+            }
+            lastTsRef.current = newest;
+            seededRef.current = true;
         } catch {
             // silently ignore — the bell just won't update
         }
     }, []);
+
+    const enableSystem = async () => {
+        const p = await requestNotificationPermission();
+        setPerm(p);
+        if (p === "granted") {
+            showSystemNotification("Notifications are on 🎉", {
+                body: "We'll alert you here when there's something new — keep a OneLeet tab open.",
+            });
+        }
+    };
 
     // Initial fetch + light polling so pushed notifications show up.
     useEffect(() => {
@@ -84,6 +127,26 @@ export default function NotificationBell() {
                             Notifications
                         </p>
                     </div>
+
+                    {/* Opt-in to OS notifications (shown while the app is open). */}
+                    {notificationsSupported() && perm === "default" && (
+                        <button
+                            onClick={enableSystem}
+                            className="flex w-full items-center gap-2.5 border-b border-slate-100 bg-indigo-50/60 px-4 py-2.5 text-left transition hover:bg-indigo-50"
+                        >
+                            <BellRing size={16} className="shrink-0 text-indigo-600" />
+                            <span className="min-w-0">
+                                <span className="block text-xs font-semibold text-indigo-800">Get alerts on your device</span>
+                                <span className="block text-[11px] text-indigo-600/80">Turn on system notifications — one tap.</span>
+                            </span>
+                        </button>
+                    )}
+                    {notificationsSupported() && perm === "denied" && (
+                        <p className="border-b border-slate-100 px-4 py-2 text-[11px] text-slate-400">
+                            System notifications are blocked. Enable them for this site in your browser settings.
+                        </p>
+                    )}
+
                     <div className="max-h-96 overflow-y-auto">
                         {loading ? (
                             <div className="flex justify-center py-8">
