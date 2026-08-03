@@ -1,6 +1,5 @@
 const User = require("../../models/userModel");
-const generateToken = require("../../utils/generateToken");
-const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
+const { startSession } = require("../../utils/authSession");
 const { SUPERADMIN_EMAIL } = require("../../config/roles");
 const { isEmailBlocked } = require("../../utils/blocklist");
 
@@ -70,8 +69,7 @@ async function googleAuth(req, res, next) {
             if (avatar && !user.avatar) user.avatar = avatar;
             await user.save({ validateBeforeSave: false });
 
-            const token = generateToken(user._id);
-            res.cookie("token", token, buildCookieOptions(SEVEN_DAYS));
+            const token = await startSession(res, req, user);
             return res.status(200).json({
                 success: true,
                 message: "Google login successful",
@@ -90,8 +88,7 @@ async function googleAuth(req, res, next) {
             authProvider: "google",
         });
 
-        const token = generateToken(newUser._id);
-        res.cookie("token", token, buildCookieOptions(SEVEN_DAYS));
+        const token = await startSession(res, req, newUser);
 
         return res.status(201).json({
             success: true,

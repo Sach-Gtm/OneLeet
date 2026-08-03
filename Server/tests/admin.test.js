@@ -74,16 +74,19 @@ const login = async (identifier, password) => {
         .post("/api/auth/login")
         .send({ identifier: "9990001111", password: "adminpass" });
     assert.strictEqual(byPhone.status, 200, "admin login by phone should 200");
-    const adminToken = byPhone.body.token;
-    assert.ok(adminToken);
+    assert.ok(byPhone.body.token);
     assert.strictEqual(byPhone.body.user.role, "admin");
     ok("admin logs in with phone + password");
 
-    // Login by EMAIL still works
+    // Login by EMAIL still works. Single-device login means this later login is
+    // now the active session (the phone login above is superseded), so we use
+    // THIS token for the downstream admin calls — just like a real client would.
     const byEmail = await request
         .post("/api/auth/login")
         .send({ identifier: "boss@oneleet.local", password: "adminpass" });
     assert.strictEqual(byEmail.status, 200);
+    const adminToken = byEmail.body.token;
+    assert.ok(adminToken);
     ok("login by email still works");
 
     // Wrong password rejected

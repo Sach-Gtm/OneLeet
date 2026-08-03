@@ -1,10 +1,11 @@
 const crypto = require("crypto");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
 const User = require("../../models/userModel");
 const cloudinary = require("../../config/cloudinary");
-const generateToken = require("../../utils/generateToken");
 const { sanitizeExams } = require("../../config/exams");
-const { buildCookieOptions, SEVEN_DAYS } = require("../../utils/authCookie");
+const { buildCookieOptions } = require("../../utils/authCookie");
+const { startSession, endSession } = require("../../utils/authSession");
 const {
     sendMail,
     canSendEmail,
@@ -28,12 +29,6 @@ const sanitize = (user) => {
     delete obj.otpExpire;
     delete obj.otpLastSentAt;
     return obj;
-};
-
-const setAuthCookie = (res, userId) => {
-    const token = generateToken(userId);
-    res.cookie("token", token, buildCookieOptions(SEVEN_DAYS));
-    return token;
 };
 
 // Sets a fresh OTP hash + expiry on the user and returns the raw code. Does not
@@ -119,7 +114,7 @@ async function register(req, res, next) {
             });
         }
 
-        const token = setAuthCookie(res, user._id);
+        const token = await startSession(res, req, user);
 
         return res.status(201).json({
             success: true,
@@ -185,7 +180,7 @@ async function login(req, res, next) {
             });
         }
 
-        const token = setAuthCookie(res, user._id);
+        const token = await startSession(res, req, user);
 
         return res.status(200).json({
             success: true,
@@ -246,7 +241,7 @@ async function verifyOtp(req, res, next) {
 
         // Already verified — treat as an idempotent success and log them in.
         if (user.isVerified && !user.otpHash) {
-            const token = setAuthCookie(res, user._id);
+            const token = await startSession(res, req, user);
             return res
                 .status(200)
                 .json({ success: true, user: sanitize(user), token });
@@ -270,7 +265,7 @@ async function verifyOtp(req, res, next) {
         user.otpExpire = undefined;
         await user.save({ validateBeforeSave: false });
 
-        const token = setAuthCookie(res, user._id);
+        const token = await startSession(res, req, user);
         return res.status(200).json({
             success: true,
             message: "Email verified — welcome to OneLeet!",
@@ -541,7 +536,23 @@ async function uploadPassportPhoto(req, res, next) {
 }
 
 // POST /api/auth/logout
-function logout(req, res) {
+// Not behind verifyToken (so an already-stale token can still clear its cookie),
+// so we recover the user id from whatever token is present and rotate their
+// session id — this invalidates the just-used token server-side too, not just
+// the browser cookie. Any failure here is non-fatal: we always clear the cookie.
+async function logout(req, res) {
+    try {
+        let token = req.cookies && req.cookies.token;
+        if (!token && req.headers.authorization?.startsWith("Bearer ")) {
+            token = req.headers.authorization.split(" ")[1];
+        }
+        if (token) {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            if (decoded?.id) await endSession(decoded.id);
+        }
+    } catch {
+        /* token missing/invalid/expired — nothing to rotate */
+    }
     res.cookie("token", "", { ...buildCookieOptions(), expires: new Date(0) });
     return res.status(200).json({ success: true, message: "Logout successful" });
 }

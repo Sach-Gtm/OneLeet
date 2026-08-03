@@ -101,6 +101,18 @@ const UserSchema = new mongoose.Schema(
             enum: ["free", "pro"],
             default: "free",
         },
+
+        // Single active session (one-device login). Each login rotates this to a
+        // fresh random id that's baked into the issued JWT; the auth middleware
+        // rejects any token whose `sid` doesn't match, so logging in on a new
+        // device logs the old one out. `select: false` keeps it out of responses.
+        sessionId: { type: String, select: false },
+        // Which device holds the active session — shown to the user ("this
+        // device") and useful for support. Not secret.
+        sessionDevice: {
+            userAgent: { type: String },
+            loginAt: { type: Date },
+        },
         stats: {
             type: StatsSchema,
             default: () => ({}),
