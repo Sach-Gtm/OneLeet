@@ -10,6 +10,25 @@ const mongoose = require("mongoose");
 
 process.env.JWT_SECRET = process.env.JWT_SECRET || "test-secret";
 process.env.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
+// Configure email (SMTP path) so the alert-email channel is exercised, and stub
+// nodemailer BEFORE the app loads so outgoing mail is captured, not sent.
+process.env.EMAIL_USER = "alerts@oneleet.dev";
+process.env.EMAIL_PASS = "app-password";
+const sentEmails = [];
+require.cache[require.resolve("nodemailer")] = {
+    id: require.resolve("nodemailer"),
+    filename: require.resolve("nodemailer"),
+    loaded: true,
+    exports: {
+        createTransport: () => ({
+            sendMail: async (msg) => {
+                sentEmails.push(msg);
+                return { messageId: "test" };
+            },
+            verify: async () => true,
+        }),
+    },
+};
 
 const app = require("../app");
 const request = require("supertest")(app);
@@ -72,6 +91,19 @@ async function waitUntil(fn, ms = 1500) {
     assert.ok(note.recipients.map(String).includes(String(admin._id)), "notification targets the admin");
     assert.ok(/riya/i.test(note.body) || /riya/i.test(note.title), "notification names the student");
     ok("admins are notified once, targeted, naming the student");
+
+    // Admin is also emailed (to their address + the fallback alerts inbox).
+    const gotEmail = await waitUntil(() =>
+        sentEmails.some(
+            (m) => /protection alert/i.test(m.subject || "") && m.to === "boss@oneleet.local"
+        )
+    );
+    assert.ok(gotEmail, "an alert email is sent to the admin");
+    assert.ok(
+        sentEmails.some((m) => m.to === "admin@oneleet.in"),
+        "the fallback alerts inbox is emailed too"
+    );
+    ok("admins also get the alert by email (app + push + mail)");
 
     // ---- Same attempt again the same day: de-duped, no new notification ----
     const r2 = await request
