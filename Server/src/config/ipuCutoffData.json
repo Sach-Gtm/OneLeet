@@ -1,0 +1,4724 @@
+{
+  "examCode": "ipu-leet",
+  "examName": "IPU LEET (GGSIPU)",
+  "session": "2026-27",
+  "source": "GGSIPU LE-B.Tech (Diploma, CET Code 128) counseling — round-wise closing ranks, 2026",
+  "note": "Ranks are IPU CET (LE) merit ranks. For each category, Opening = best rank admitted, Closing = last rank admitted. If your rank is at or below a Closing rank, you had a realistic chance in that round.",
+  "legend": [
+    {
+      "code": "OPNOHS",
+      "label": "General",
+      "region": "Delhi Region"
+    },
+    {
+      "code": "OPNOOS",
+      "label": "General",
+      "region": "Outside Delhi"
+    },
+    {
+      "code": "BCNOHS",
+      "label": "OBC (Non-Creamy Layer)",
+      "region": "Delhi Region"
+    },
+    {
+      "code": "EWNOHS",
+      "label": "EWS",
+      "region": "Delhi Region"
+    },
+    {
+      "code": "SCNOHS",
+      "label": "Scheduled Caste (SC)",
+      "region": "Delhi Region"
+    },
+    {
+      "code": "SCNOOS",
+      "label": "Scheduled Caste (SC)",
+      "region": "Outside Delhi"
+    },
+    {
+      "code": "STNOHS",
+      "label": "Scheduled Tribe (ST)",
+      "region": "Delhi Region"
+    },
+    {
+      "code": "OPDFHS",
+      "label": "Defence (CW)",
+      "region": "Delhi Region"
+    },
+    {
+      "code": "OPPHHS",
+      "label": "PwD / Divyang",
+      "region": "Delhi Region"
+    },
+    {
+      "code": "NOSMAI",
+      "label": "Sikh Minority",
+      "region": "Delhi Region"
+    }
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "label": "Round 1",
+      "colleges": [
+        {
+          "name": "Bhagwan Parshuram Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 92,
+                  "max": 293
+                },
+                {
+                  "code": "OPPHHS",
+                  "min": 504,
+                  "max": 504
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 318,
+                  "max": 560
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 364,
+                  "max": 385
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 572,
+                  "max": 1142
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 487,
+                  "max": 888
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 1152,
+                  "max": 1152
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 762,
+                  "max": 943
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1156,
+                  "max": 1156
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 858,
+                  "max": 955
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 349,
+                  "max": 400
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 924,
+                  "max": 947
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 514,
+                  "max": 586
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 303,
+                  "max": 345
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 872,
+                  "max": 872
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 395,
+                  "max": 395
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bharati Vidyapeeths College of Engineering",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 134,
+                  "max": 274
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 451,
+                  "max": 551
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 347,
+                  "max": 403
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 427,
+                  "max": 951
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1162,
+                  "max": 1162
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 681,
+                  "max": 681
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 195,
+                  "max": 937
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1021,
+                  "max": 1067
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 273,
+                  "max": 351
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 752,
+                  "max": 770
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 453,
+                  "max": 456
+                }
+              ]
+            },
+            {
+              "branch": "Instrumentation & Control Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 942,
+                  "max": 942
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 243,
+                  "max": 338
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 670,
+                  "max": 813
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 328,
+                  "max": 414
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Delhi Institute of Sciences & Technology (formerly) Delhi Institute of Rural Development)",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOOS",
+                  "min": 559,
+                  "max": 835
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Delhi Technical Campus",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1042,
+                  "max": 1042
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1043,
+                  "max": 1043
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 392,
+                  "max": 1145
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 409,
+                  "max": 1139
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 649,
+                  "max": 649
+                }
+              ]
+            },
+            {
+              "branch": "CSE (Cyber Security)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 847,
+                  "max": 1165
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOOS",
+                  "min": 876,
+                  "max": 876
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Dr. Akhilesh Das Gupta Institute of Professional Studies ( formerly Dr. Akhilesh Das Gupta Institute of Technology & Management)",
+          "branches": [
+            {
+              "branch": "Lateral Entry to . B.Tech.(CS)(Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 779,
+                  "max": 1159
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 883,
+                  "max": 883
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 356,
+                  "max": 1050
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 962,
+                  "max": 1066
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 197,
+                  "max": 853
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 864,
+                  "max": 917
+                }
+              ]
+            },
+            {
+              "branch": "Civil Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 13,
+                  "max": 434
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 717,
+                  "max": 782
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 305,
+                  "max": 323
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 258,
+                  "max": 556
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1059,
+                  "max": 1155
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 758,
+                  "max": 810
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 526,
+                  "max": 603
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 831,
+                  "max": 831
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 563,
+                  "max": 746
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 972,
+                  "max": 1108
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 946,
+                  "max": 1018
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 680,
+                  "max": 1044
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1136,
+                  "max": 1143
+                }
+              ]
+            },
+            {
+              "branch": "Mechanical Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 507,
+                  "max": 716
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 870,
+                  "max": 1065
+                }
+              ]
+            },
+            {
+              "branch": "AIML 2nd Shift",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 999,
+                  "max": 1069
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 939,
+                  "max": 939
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 635,
+                  "max": 725
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 856,
+                  "max": 856
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 821,
+                  "max": 821
+                }
+              ]
+            },
+            {
+              "branch": "Lateral Entry to (CST) (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 769,
+                  "max": 1147
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Echelon Institute of Technology Village Kabulpur Khedi Manjhawali Road",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOOS",
+                  "min": 730,
+                  "max": 730
+                }
+              ]
+            },
+            {
+              "branch": "Mechanical Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 806,
+                  "max": 1173
+                }
+              ]
+            },
+            {
+              "branch": "Civil Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 442,
+                  "max": 1164
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 565,
+                  "max": 953
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 949,
+                  "max": 949
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Fairfield Institute of Management & Technology",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 598,
+                  "max": 777
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 950,
+                  "max": 950
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 607,
+                  "max": 1063
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 619,
+                  "max": 619
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Greater Noida Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 694,
+                  "max": 694
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 979,
+                  "max": 979
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Guru Teg Bahadur Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "NOSMAI",
+                  "min": 829,
+                  "max": 1129
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 419,
+                  "max": 459
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 648,
+                  "max": 648
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 638,
+                  "max": 638
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "NOSMAI",
+                  "min": 952,
+                  "max": 952
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 488,
+                  "max": 490
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 429,
+                  "max": 429
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 880,
+                  "max": 1175
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 520,
+                  "max": 552
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 696,
+                  "max": 696
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 506,
+                  "max": 676
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 822,
+                  "max": 822
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "NOSMAI",
+                  "min": 837,
+                  "max": 837
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 450,
+                  "max": 481
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 554,
+                  "max": 576
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Guru Tegh Bahadur 4th Centenary Engineering College",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 358,
+                  "max": 604
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 591,
+                  "max": 602
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 278,
+                  "max": 1118
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1073,
+                  "max": 1073
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 617,
+                  "max": 741
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 787,
+                  "max": 787
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 418,
+                  "max": 663
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1056,
+                  "max": 1056
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 819,
+                  "max": 819
+                }
+              ]
+            },
+            {
+              "branch": "CSE -Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 669,
+                  "max": 702
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 879,
+                  "max": 879
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "HMR Institute of Technology & Management",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 661,
+                  "max": 967
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 634,
+                  "max": 1128
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1170,
+                  "max": 1174
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Technology",
+              "cells": [
+                {
+                  "code": "OPNOOS",
+                  "min": 970,
+                  "max": 1074
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1030,
+                  "max": 1030
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "JIMS Engineering Management Technical Campus",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 763,
+                  "max": 996
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOOS",
+                  "min": 525,
+                  "max": 525
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 511,
+                  "max": 1098
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 616,
+                  "max": 1122
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 957,
+                  "max": 957
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 726,
+                  "max": 807
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Maharaja Agrasen Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 5,
+                  "max": 79
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 84,
+                  "max": 186
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 123,
+                  "max": 160
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 249,
+                  "max": 249
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 87,
+                  "max": 96
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 190,
+                  "max": 190
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 173,
+                  "max": 173
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 73,
+                  "max": 187
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 224,
+                  "max": 348
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 166,
+                  "max": 250
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 46,
+                  "max": 1006
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 259,
+                  "max": 749
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 1081,
+                  "max": 1081
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 41,
+                  "max": 175
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 424,
+                  "max": 424
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 324,
+                  "max": 324
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPDFHS",
+                  "min": 695,
+                  "max": 695
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 82,
+                  "max": 218
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 390,
+                  "max": 527
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 276,
+                  "max": 331
+                }
+              ]
+            },
+            {
+              "branch": "Mechanical Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPDFHS",
+                  "min": 739,
+                  "max": 739
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 29,
+                  "max": 443
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 468,
+                  "max": 1032
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 75,
+                  "max": 1001
+                }
+              ]
+            },
+            {
+              "branch": "(Electronics and Communication) (Advance Communication Technology)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 446,
+                  "max": 647
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 874,
+                  "max": 874
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 796,
+                  "max": 796
+                }
+              ]
+            },
+            {
+              "branch": "(Electronics Engg - VLSI Design and Technology )",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 176,
+                  "max": 412
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 935,
+                  "max": 935
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 860,
+                  "max": 860
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AI",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 106,
+                  "max": 146
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 225,
+                  "max": 225
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 220,
+                  "max": 220
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 61,
+                  "max": 102
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 461,
+                  "max": 461
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 114,
+                  "max": 114
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 117,
+                  "max": 182
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 501,
+                  "max": 501
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 295,
+                  "max": 295
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Maharaja Surajmal Institute Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 45,
+                  "max": 127
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 161,
+                  "max": 267
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 178,
+                  "max": 227
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 132,
+                  "max": 140
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 302,
+                  "max": 302
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 292,
+                  "max": 292
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 352,
+                  "max": 1133
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 440,
+                  "max": 1041
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 212,
+                  "max": 811
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 391,
+                  "max": 904
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 139,
+                  "max": 535
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1102,
+                  "max": 1102
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 154,
+                  "max": 237
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 530,
+                  "max": 533
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 271,
+                  "max": 332
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 156,
+                  "max": 246
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 577,
+                  "max": 577
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 343,
+                  "max": 343
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Shri Balwant Institute of Technology",
+          "branches": [
+            {
+              "branch": "Mechanical Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 645,
+                  "max": 1135
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Tribhuvan College",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 964,
+                  "max": 964
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Trinity Institute of Innovations in Professional Studies",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1015,
+                  "max": 1015
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 922,
+                  "max": 922
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "University School of Automation & Robotics",
+          "branches": [
+            {
+              "branch": "/ M. Tech (DD) (AI-DS)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 287,
+                  "max": 384
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 425,
+                  "max": 503
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 83,
+                  "max": 193
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 404,
+                  "max": 567
+                },
+                {
+                  "code": "STNOHS",
+                  "min": 247,
+                  "max": 247
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 104,
+                  "max": 133
+                }
+              ]
+            },
+            {
+              "branch": "/ M. Tech (DD) (AI-ML)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 299,
+                  "max": 375
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 437,
+                  "max": 449
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 12,
+                  "max": 136
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 157,
+                  "max": 200
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 230,
+                  "max": 270
+                }
+              ]
+            },
+            {
+              "branch": "/ M. Tech (DD) (AR)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 733,
+                  "max": 1075
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 65,
+                  "max": 671
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 715,
+                  "max": 1083
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 277,
+                  "max": 809
+                }
+              ]
+            },
+            {
+              "branch": "/ M. Tech (DD) (IIOT)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 587,
+                  "max": 998
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 659,
+                  "max": 1064
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 284,
+                  "max": 522
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 646,
+                  "max": 665
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 315,
+                  "max": 566
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "University School of Chemical Technology",
+          "branches": [
+            {
+              "branch": "/M.Tech. Chemical Engineering (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 1138,
+                  "max": 1138
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 396,
+                  "max": 866
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1112,
+                  "max": 1137
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 240,
+                  "max": 1057
+                }
+              ]
+            },
+            {
+              "branch": "(Energy )",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 199,
+                  "max": 1039
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1120,
+                  "max": 1169
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "University School of Information & Communication Technology",
+          "branches": [
+            {
+              "branch": "/M.Tech. Electronics & Communication Engineering (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 171,
+                  "max": 444
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 388,
+                  "max": 388
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 19,
+                  "max": 118
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 256,
+                  "max": 757
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 9,
+                  "max": 312
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 751,
+                  "max": 751
+                }
+              ]
+            },
+            {
+              "branch": "/M.Tech. Computer Science & Engineering (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 28,
+                  "max": 77
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 17,
+                  "max": 64
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 1,
+                  "max": 10
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 30,
+                  "max": 44
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 22,
+                  "max": 38
+                }
+              ]
+            },
+            {
+              "branch": "/M.Tech. Information Technology (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 145,
+                  "max": 260
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 147,
+                  "max": 147
+                },
+                {
+                  "code": "OPDFHS",
+                  "min": 732,
+                  "max": 732
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 14,
+                  "max": 81
+                },
+                {
+                  "code": "OPPHHS",
+                  "min": 373,
+                  "max": 373
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 99,
+                  "max": 143
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 50,
+                  "max": 107
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 188,
+                  "max": 188
+                }
+              ]
+            },
+            {
+              "branch": "LE B.Tech./M.Tech. (D D ) (CSE-DS)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 265,
+                  "max": 265
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 27,
+                  "max": 42
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 57,
+                  "max": 57
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 105,
+                  "max": 105
+                }
+              ]
+            },
+            {
+              "branch": "LE B.Tech./M.Tech. (DD ) (CSE-AI)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 78,
+                  "max": 78
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 24,
+                  "max": 24
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 15,
+                  "max": 20
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 51,
+                  "max": 51
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 55,
+                  "max": 55
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Vivekananda Institute of Professional Studies-Technical Campus",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 438,
+                  "max": 561
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1026,
+                  "max": 1026
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 633,
+                  "max": 808
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 272,
+                  "max": 581
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 771,
+                  "max": 994
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 558,
+                  "max": 719
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 266,
+                  "max": 435
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 830,
+                  "max": 901
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 455,
+                  "max": 465
+                }
+              ]
+            },
+            {
+              "branch": "CSE (Cyber Security)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 283,
+                  "max": 467
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1058,
+                  "max": 1058
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 471,
+                  "max": 471
+                }
+              ]
+            },
+            {
+              "branch": "Industrial Internet of Things",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 857,
+                  "max": 1017
+                }
+              ]
+            },
+            {
+              "branch": "(Electronics Engg - VLSI Design and Technology )",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 489,
+                  "max": 1131
+                }
+              ]
+            },
+            {
+              "branch": "LE B. Tech. (Computer Science & Applied Mathematics)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 701,
+                  "max": 1040
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 580,
+                  "max": 622
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "label": "Round 2",
+      "colleges": [
+        {
+          "name": "Bhagwan Parshuram Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 92,
+                  "max": 370
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 560,
+                  "max": 872
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 385,
+                  "max": 809
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 793,
+                  "max": 1146
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1156,
+                  "max": 1156
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 355,
+                  "max": 447
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 858,
+                  "max": 883
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 371,
+                  "max": 400
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 994,
+                  "max": 994
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 819,
+                  "max": 819
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bharati Vidyapeeths College of Engineering",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 134,
+                  "max": 303
+                },
+                {
+                  "code": "OPPHHS",
+                  "min": 504,
+                  "max": 504
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 451,
+                  "max": 551
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 403,
+                  "max": 629
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 833,
+                  "max": 1142
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 195,
+                  "max": 1171
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1067,
+                  "max": 1067
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 273,
+                  "max": 362
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1155,
+                  "max": 1155
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 821,
+                  "max": 972
+                }
+              ]
+            },
+            {
+              "branch": "Instrumentation & Control Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 959,
+                  "max": 959
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 300,
+                  "max": 368
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 670,
+                  "max": 813
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 429,
+                  "max": 719
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Delhi Technical Campus",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1042,
+                  "max": 1042
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 981,
+                  "max": 1139
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 409,
+                  "max": 409
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOOS",
+                  "min": 876,
+                  "max": 876
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Dr. Akhilesh Das Gupta Institute of Professional Studies ( formerly Dr. Akhilesh Das Gupta Institute of Technology & Management)",
+          "branches": [
+            {
+              "branch": "Lateral Entry to . B.Tech.(CS)(Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1159,
+                  "max": 1159
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 356,
+                  "max": 1077
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 197,
+                  "max": 1053
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 977,
+                  "max": 977
+                }
+              ]
+            },
+            {
+              "branch": "Civil Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 13,
+                  "max": 492
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 856,
+                  "max": 1125
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 335,
+                  "max": 516
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 258,
+                  "max": 714
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 881,
+                  "max": 1059
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 548,
+                  "max": 810
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 725,
+                  "max": 884
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 831,
+                  "max": 831
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 405,
+                  "max": 1177
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1108,
+                  "max": 1108
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 946,
+                  "max": 946
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 886,
+                  "max": 1003
+                }
+              ]
+            },
+            {
+              "branch": "Mechanical Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 550,
+                  "max": 817
+                }
+              ]
+            },
+            {
+              "branch": "AIML 2nd Shift",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1069,
+                  "max": 1069
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 939,
+                  "max": 939
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 635,
+                  "max": 1029
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Echelon Institute of Technology",
+          "branches": [
+            {
+              "branch": "Mechanical Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1095,
+                  "max": 1095
+                }
+              ]
+            },
+            {
+              "branch": "Civil Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 657,
+                  "max": 1164
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 565,
+                  "max": 1023
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Fairfield Institute of Management & Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1063,
+                  "max": 1063
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 835,
+                  "max": 835
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Guru Teg Bahadur Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "NOSMAI",
+                  "min": 1129,
+                  "max": 1129
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 419,
+                  "max": 506
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 648,
+                  "max": 648
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 962,
+                  "max": 962
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "NOSMAI",
+                  "min": 952,
+                  "max": 952
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 490,
+                  "max": 499
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 936,
+                  "max": 936
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 520,
+                  "max": 552
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 676,
+                  "max": 769
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 481,
+                  "max": 576
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 554,
+                  "max": 684
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Guru Tegh Bahadur 4th Centenary Engineering College",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 358,
+                  "max": 723
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 591,
+                  "max": 602
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 820,
+                  "max": 1034
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 893,
+                  "max": 893
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 418,
+                  "max": 814
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 879,
+                  "max": 879
+                }
+              ]
+            },
+            {
+              "branch": "CSE -Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 669,
+                  "max": 852
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 950,
+                  "max": 950
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "HMR Institute of Technology & Management",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 967,
+                  "max": 967
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 812,
+                  "max": 1087
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1170,
+                  "max": 1170
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "JIMS Engineering Management Technical Campus",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 996,
+                  "max": 996
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 897,
+                  "max": 897
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 511,
+                  "max": 511
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1091,
+                  "max": 1091
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Maharaja Agrasen Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 5,
+                  "max": 82
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 84,
+                  "max": 152
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 114,
+                  "max": 173
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 1153,
+                  "max": 1153
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 87,
+                  "max": 101
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 190,
+                  "max": 190
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 307,
+                  "max": 307
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 109,
+                  "max": 205
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 216,
+                  "max": 348
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 343,
+                  "max": 377
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 46,
+                  "max": 1133
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 259,
+                  "max": 1081
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 41,
+                  "max": 279
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 424,
+                  "max": 424
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 391,
+                  "max": 391
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPDFHS",
+                  "min": 695,
+                  "max": 695
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 83,
+                  "max": 251
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 390,
+                  "max": 577
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 331,
+                  "max": 456
+                }
+              ]
+            },
+            {
+              "branch": "Mechanical Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPDFHS",
+                  "min": 739,
+                  "max": 739
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 29,
+                  "max": 578
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 870,
+                  "max": 1162
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 75,
+                  "max": 1009
+                }
+              ]
+            },
+            {
+              "branch": "(Electronics and Communication) (Advance Communication Technology)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 444,
+                  "max": 778
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 874,
+                  "max": 874
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1006,
+                  "max": 1006
+                }
+              ]
+            },
+            {
+              "branch": "(Electronics Engg - VLSI Design and Technology )",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 313,
+                  "max": 475
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 618,
+                  "max": 618
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AI",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 106,
+                  "max": 146
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 224,
+                  "max": 224
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 347,
+                  "max": 347
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 61,
+                  "max": 120
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 461,
+                  "max": 461
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 295,
+                  "max": 295
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 117,
+                  "max": 182
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 501,
+                  "max": 501
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 364,
+                  "max": 364
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Maharaja Surajmal Institute Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 45,
+                  "max": 132
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 161,
+                  "max": 267
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 178,
+                  "max": 227
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 137,
+                  "max": 147
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 302,
+                  "max": 302
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 332,
+                  "max": 332
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 767,
+                  "max": 1105
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 440,
+                  "max": 839
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 212,
+                  "max": 867
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 832,
+                  "max": 1041
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 139,
+                  "max": 1166
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1136,
+                  "max": 1136
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 154,
+                  "max": 253
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 673,
+                  "max": 752
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 514,
+                  "max": 694
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 156,
+                  "max": 289
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 646,
+                  "max": 924
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 696,
+                  "max": 724
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Trinity Institute of Innovations in Professional Studies",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1015,
+                  "max": 1015
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "University School of Automation & Robotics",
+          "branches": [
+            {
+              "branch": "/ M. Tech (DD) (AI- DS)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 287,
+                  "max": 581
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 425,
+                  "max": 503
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 94,
+                  "max": 248
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 404,
+                  "max": 592
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 104,
+                  "max": 328
+                }
+              ]
+            },
+            {
+              "branch": "/ M. Tech (DD) (AI- ML)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 349,
+                  "max": 526
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 441,
+                  "max": 449
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 12,
+                  "max": 157
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 200,
+                  "max": 225
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 484,
+                  "max": 545
+                }
+              ]
+            },
+            {
+              "branch": "/ M. Tech (DD) (AR)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 733,
+                  "max": 941
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 65,
+                  "max": 728
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 982,
+                  "max": 1083
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 344,
+                  "max": 822
+                }
+              ]
+            },
+            {
+              "branch": "/ M. Tech (DD) (IIOT)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 902,
+                  "max": 1175
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 659,
+                  "max": 1076
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 284,
+                  "max": 587
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 665,
+                  "max": 665
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 566,
+                  "max": 566
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "University School of Chemical Technology",
+          "branches": [
+            {
+              "branch": "/M.Tech. Chemical Engineering (Dual Degree)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 413,
+                  "max": 1176
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 240,
+                  "max": 240
+                }
+              ]
+            },
+            {
+              "branch": "(Energy )",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 199,
+                  "max": 905
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1169,
+                  "max": 1169
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "University School of Information & Communication Technology",
+          "branches": [
+            {
+              "branch": "/M.Tech. Electronics & Communication Engineering (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 234,
+                  "max": 660
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 477,
+                  "max": 477
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 21,
+                  "max": 176
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 256,
+                  "max": 1071
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 116,
+                  "max": 312
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 751,
+                  "max": 751
+                }
+              ]
+            },
+            {
+              "branch": "/M.Tech. Computer Science & Engineering (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 19,
+                  "max": 144
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 17,
+                  "max": 64
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 1,
+                  "max": 10
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 30,
+                  "max": 44
+                },
+                {
+                  "code": "STNOHS",
+                  "min": 247,
+                  "max": 247
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 22,
+                  "max": 38
+                }
+              ]
+            },
+            {
+              "branch": "/M.Tech. Information Technology (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 145,
+                  "max": 288
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 196,
+                  "max": 196
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 14,
+                  "max": 81
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 99,
+                  "max": 143
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 50,
+                  "max": 107
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 188,
+                  "max": 188
+                }
+              ]
+            },
+            {
+              "branch": "LE B.Tech./M.Tech. (D D ) (CSE-DS)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 202,
+                  "max": 202
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 27,
+                  "max": 42
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 57,
+                  "max": 57
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 105,
+                  "max": 105
+                }
+              ]
+            },
+            {
+              "branch": "LE B.Tech./M.Tech. (DD ) (CSE-AI)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 77,
+                  "max": 77
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 24,
+                  "max": 24
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 15,
+                  "max": 20
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 51,
+                  "max": 51
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 55,
+                  "max": 55
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Vivekananda Institute of Professional Studies-Technical Campus",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 564,
+                  "max": 789
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 960,
+                  "max": 1072
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 393,
+                  "max": 701
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1056,
+                  "max": 1056
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 864,
+                  "max": 864
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 266,
+                  "max": 515
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 830,
+                  "max": 901
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 455,
+                  "max": 465
+                }
+              ]
+            },
+            {
+              "branch": "CSE (Cyber Security)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 148,
+                  "max": 561
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1058,
+                  "max": 1058
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 580,
+                  "max": 580
+                }
+              ]
+            },
+            {
+              "branch": "Industrial Internet of Things",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 926,
+                  "max": 926
+                }
+              ]
+            },
+            {
+              "branch": "(Electronics Engg - VLSI Design and Technology )",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 489,
+                  "max": 1131
+                }
+              ]
+            },
+            {
+              "branch": "LE B. Tech. (Computer Science & Applied Mathematics)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 760,
+                  "max": 1040
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 622,
+                  "max": 622
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "label": "Round 3",
+      "colleges": [
+        {
+          "name": "Bhagwan Parshuram Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 92,
+                  "max": 446
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 560,
+                  "max": 813
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 744,
+                  "max": 819
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 804,
+                  "max": 975
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 459,
+                  "max": 662
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 883,
+                  "max": 1006
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 477,
+                  "max": 515
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 994,
+                  "max": 994
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 858,
+                  "max": 858
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bharati Vidyapeeths College of Engineering",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 134,
+                  "max": 345
+                },
+                {
+                  "code": "OPPHHS",
+                  "min": 504,
+                  "max": 504
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 451,
+                  "max": 881
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 414,
+                  "max": 722
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 833,
+                  "max": 1142
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 195,
+                  "max": 937
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1067,
+                  "max": 1067
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 273,
+                  "max": 470
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 821,
+                  "max": 972
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 300,
+                  "max": 411
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 872,
+                  "max": 1056
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 429,
+                  "max": 719
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Delhi Technical Campus",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1139,
+                  "max": 1139
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOOS",
+                  "min": 876,
+                  "max": 876
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1123,
+                  "max": 1123
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Dr. Akhilesh Das Gupta Institute of Professional Studies ( formerly Dr. Akhilesh Das Gupta Institute of Technology & Management)",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 356,
+                  "max": 911
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 197,
+                  "max": 949
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 977,
+                  "max": 977
+                }
+              ]
+            },
+            {
+              "branch": "Civil Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 181,
+                  "max": 933
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1168,
+                  "max": 1168
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 678,
+                  "max": 1106
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 415,
+                  "max": 1124
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 548,
+                  "max": 810
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 725,
+                  "max": 1177
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 831,
+                  "max": 831
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Technology",
+              "cells": [
+                {
+                  "code": "OPNOOS",
+                  "min": 1108,
+                  "max": 1108
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 946,
+                  "max": 946
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 918,
+                  "max": 918
+                }
+              ]
+            },
+            {
+              "branch": "Mechanical Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 550,
+                  "max": 1096
+                }
+              ]
+            },
+            {
+              "branch": "AIML 2nd Shift",
+              "cells": [
+                {
+                  "code": "OPNOOS",
+                  "min": 939,
+                  "max": 939
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 712,
+                  "max": 1029
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Echelon Institute of Technology",
+          "branches": [
+            {
+              "branch": "Mechanical Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1095,
+                  "max": 1095
+                }
+              ]
+            },
+            {
+              "branch": "Civil Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1010,
+                  "max": 1161
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Fairfield Institute of Management & Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1063,
+                  "max": 1063
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 835,
+                  "max": 835
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Guru Teg Bahadur Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "NOSMAI",
+                  "min": 1129,
+                  "max": 1129
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 419,
+                  "max": 506
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 648,
+                  "max": 648
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 962,
+                  "max": 962
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "NOSMAI",
+                  "min": 952,
+                  "max": 952
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 499,
+                  "max": 581
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1144,
+                  "max": 1144
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 936,
+                  "max": 936
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 676,
+                  "max": 1015
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 727,
+                  "max": 1079
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 481,
+                  "max": 684
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 554,
+                  "max": 769
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Guru Tegh Bahadur 4th Centenary Engineering College",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 358,
+                  "max": 1002
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 591,
+                  "max": 602
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 1087,
+                  "max": 1087
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 418,
+                  "max": 877
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 879,
+                  "max": 879
+                }
+              ]
+            },
+            {
+              "branch": "CSE -Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 669,
+                  "max": 1091
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 950,
+                  "max": 950
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "HMR Institute of Technology & Management",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 441,
+                  "max": 1154
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1170,
+                  "max": 1170
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Maharaja Agrasen Institute of Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 5,
+                  "max": 96
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 100,
+                  "max": 190
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 114,
+                  "max": 295
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 98,
+                  "max": 124
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 224,
+                  "max": 224
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 307,
+                  "max": 307
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Technology",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 149,
+                  "max": 252
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 390,
+                  "max": 530
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 377,
+                  "max": 436
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 46,
+                  "max": 1133
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 259,
+                  "max": 1081
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 41,
+                  "max": 313
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 424,
+                  "max": 424
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 618,
+                  "max": 618
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPDFHS",
+                  "min": 695,
+                  "max": 695
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 83,
+                  "max": 280
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 519,
+                  "max": 752
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 343,
+                  "max": 629
+                }
+              ]
+            },
+            {
+              "branch": "Mechanical Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 29,
+                  "max": 805
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1032,
+                  "max": 1059
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1001,
+                  "max": 1001
+                }
+              ]
+            },
+            {
+              "branch": "(Electronics and Communication) (Advance Communication Technology)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 444,
+                  "max": 929
+                }
+              ]
+            },
+            {
+              "branch": "(Electronics Engg - VLSI Design and Technology )",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 412,
+                  "max": 1175
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 809,
+                  "max": 809
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AI",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 110,
+                  "max": 172
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 551,
+                  "max": 551
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 347,
+                  "max": 347
+                }
+              ]
+            },
+            {
+              "branch": "CSE -AIML",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 61,
+                  "max": 140
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 461,
+                  "max": 461
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 331,
+                  "max": 331
+                }
+              ]
+            },
+            {
+              "branch": "CSE -DS",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 182,
+                  "max": 209
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 547,
+                  "max": 547
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 364,
+                  "max": 364
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Maharaja Surajmal Institute Technology",
+          "branches": [
+            {
+              "branch": "Computer Science & Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 28,
+                  "max": 161
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 207,
+                  "max": 302
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 178,
+                  "max": 332
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 112,
+                  "max": 158
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 318,
+                  "max": 318
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 403,
+                  "max": 403
+                }
+              ]
+            },
+            {
+              "branch": "Electrical & Electronics Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 420,
+                  "max": 1089
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 440,
+                  "max": 440
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 366,
+                  "max": 1147
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 675,
+                  "max": 1041
+                }
+              ]
+            },
+            {
+              "branch": "Electronics & Communication Engineering (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 139,
+                  "max": 1148
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1136,
+                  "max": 1136
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift I)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 169,
+                  "max": 303
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 903,
+                  "max": 924
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 514,
+                  "max": 694
+                }
+              ]
+            },
+            {
+              "branch": "Information Technology (Shift II)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 217,
+                  "max": 355
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 670,
+                  "max": 1155
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 696,
+                  "max": 724
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "University School of Automation & Robotics",
+          "branches": [
+            {
+              "branch": "/ M. Tech (DD) (AI-DS)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 287,
+                  "max": 714
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 425,
+                  "max": 610
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 94,
+                  "max": 258
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 404,
+                  "max": 665
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 104,
+                  "max": 328
+                }
+              ]
+            },
+            {
+              "branch": "/ M. Tech (DD) (AI-ML)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 349,
+                  "max": 720
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 449,
+                  "max": 503
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 12,
+                  "max": 157
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 200,
+                  "max": 982
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 484,
+                  "max": 545
+                }
+              ]
+            },
+            {
+              "branch": "/ M. Tech (DD) (AR)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 65,
+                  "max": 1159
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 344,
+                  "max": 822
+                }
+              ]
+            },
+            {
+              "branch": "/ M. Tech (DD) (IIOT)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 284,
+                  "max": 1075
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 409,
+                  "max": 566
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "University School of Chemical Technology",
+          "branches": [
+            {
+              "branch": "/M.Tech. Chemical Engineering (Dual Degree)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 353,
+                  "max": 1176
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 240,
+                  "max": 240
+                }
+              ]
+            },
+            {
+              "branch": "(Energy )",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 199,
+                  "max": 905
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 1169,
+                  "max": 1169
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "University School of Information & Communication Technology",
+          "branches": [
+            {
+              "branch": "/M.Tech. Electronics & Communication Engineering (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 308,
+                  "max": 668
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 505,
+                  "max": 505
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 21,
+                  "max": 246
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 256,
+                  "max": 1156
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 116,
+                  "max": 391
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 751,
+                  "max": 751
+                }
+              ]
+            },
+            {
+              "branch": "/M.Tech. Computer Science & Engineering (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 19,
+                  "max": 144
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 64,
+                  "max": 69
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 1,
+                  "max": 17
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 30,
+                  "max": 44
+                },
+                {
+                  "code": "STNOHS",
+                  "min": 247,
+                  "max": 247
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 22,
+                  "max": 38
+                }
+              ]
+            },
+            {
+              "branch": "/M.Tech. Information Technology (Dual Degree)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 145,
+                  "max": 288
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 196,
+                  "max": 196
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 25,
+                  "max": 81
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 99,
+                  "max": 348
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 50,
+                  "max": 125
+                },
+                {
+                  "code": "SCNOOS",
+                  "min": 188,
+                  "max": 188
+                }
+              ]
+            },
+            {
+              "branch": "LE B.Tech./M.Tech. (D D ) (CSE-DS)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 202,
+                  "max": 202
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 27,
+                  "max": 42
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 57,
+                  "max": 57
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 105,
+                  "max": 105
+                }
+              ]
+            },
+            {
+              "branch": "LE B.Tech./M.Tech. (DD ) (CSE-AI)",
+              "cells": [
+                {
+                  "code": "BCNOHS",
+                  "min": 77,
+                  "max": 77
+                },
+                {
+                  "code": "EWNOHS",
+                  "min": 101,
+                  "max": 101
+                },
+                {
+                  "code": "OPNOHS",
+                  "min": 20,
+                  "max": 24
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 51,
+                  "max": 51
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 55,
+                  "max": 55
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Vivekananda Institute of Professional Studies-Technical Campus",
+          "branches": [
+            {
+              "branch": "Artificial Intelligence & Data Science",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 763,
+                  "max": 1034
+                },
+                {
+                  "code": "STNOHS",
+                  "min": 1035,
+                  "max": 1035
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 960,
+                  "max": 1072
+                }
+              ]
+            },
+            {
+              "branch": "Artificial Intelligence & Machine Learning",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 393,
+                  "max": 968
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 861,
+                  "max": 864
+                }
+              ]
+            },
+            {
+              "branch": "Computer Science & Engineering",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 266,
+                  "max": 691
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 830,
+                  "max": 901
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 455,
+                  "max": 465
+                }
+              ]
+            },
+            {
+              "branch": "CSE (Cyber Security)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 148,
+                  "max": 753
+                },
+                {
+                  "code": "SCNOHS",
+                  "min": 1058,
+                  "max": 1058
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 580,
+                  "max": 580
+                }
+              ]
+            },
+            {
+              "branch": "(Electronics Engg - VLSI Design and Technology )",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 489,
+                  "max": 1054
+                }
+              ]
+            },
+            {
+              "branch": "LE B. Tech. (Computer Science & Applied Mathematics)",
+              "cells": [
+                {
+                  "code": "OPNOHS",
+                  "min": 794,
+                  "max": 794
+                },
+                {
+                  "code": "OPNOOS",
+                  "min": 622,
+                  "max": 622
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

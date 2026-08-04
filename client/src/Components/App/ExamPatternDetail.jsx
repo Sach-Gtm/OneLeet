@@ -18,11 +18,13 @@ import {
     ArrowRight,
     ScrollText,
     Armchair,
+    TrendingDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { daysUntil } from "@/lib/useExamCountdown";
 import { openCallback } from "@/lib/callback";
 import SeatMatrixModal from "@/Components/App/SeatMatrixModal";
+import CutoffModal from "@/Components/App/CutoffModal";
 
 const DIFF = {
     Easy: "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
@@ -188,8 +190,9 @@ function SeatIntakeSection({ rows }) {
 
 // The full paper pattern for one exam: identity band + key facts + section-wise
 // structure + seat intake + colleges/placement + dates + notes + a callback CTA.
-export default function PatternDetail({ p, hasMatrix = false }) {
+export default function PatternDetail({ p, hasMatrix = false, hasCutoffs = false }) {
     const [matrixOpen, setMatrixOpen] = useState(false);
+    const [cutoffOpen, setCutoffOpen] = useState(false);
     const marking =
         p.markingCorrect || p.markingNegative
             ? [p.markingCorrect && `${p.markingCorrect} correct`, p.markingNegative && `${p.markingNegative} wrong`]
@@ -231,6 +234,25 @@ export default function PatternDetail({ p, hasMatrix = false }) {
                         </p>
                     </div>
                     <ArrowRight size={16} className="shrink-0 text-indigo-400" />
+                </button>
+            )}
+
+            {/* Round-wise counseling cut-offs. */}
+            {hasCutoffs && (
+                <button
+                    onClick={() => setCutoffOpen(true)}
+                    className="flex w-full items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4 text-left transition hover:bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10"
+                >
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-emerald-600 text-white">
+                        <TrendingDown size={18} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">Previous-Year Cut-offs</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                            Round-wise closing ranks by college, branch &amp; category (diploma holders).
+                        </p>
+                    </div>
+                    <ArrowRight size={16} className="shrink-0 text-emerald-500" />
                 </button>
             )}
 
@@ -348,6 +370,14 @@ export default function PatternDetail({ p, hasMatrix = false }) {
                     examCode={p.examCode}
                     examName={p.examName}
                     onClose={() => setMatrixOpen(false)}
+                />
+            )}
+
+            {cutoffOpen && (
+                <CutoffModal
+                    examCode={p.examCode}
+                    examName={p.examName}
+                    onClose={() => setCutoffOpen(false)}
                 />
             )}
         </div>

@@ -10,6 +10,7 @@ const { ensureMentorsSeeded } = require("./src/config/seedMentors");
 const { ensureIpuSyllabusSeeded } = require("./src/config/seedIpuSyllabus");
 const { ensureIpuExamPatternSeeded } = require("./src/config/seedIpuExamPattern");
 const { ensureIpuSeatMatrixSeeded } = require("./src/config/seedIpuSeatMatrix");
+const { ensureIpuCutoffsSeeded } = require("./src/config/seedIpuCutoffs");
 const { ensureAnalogyTestSeeded } = require("./src/config/seedAnalogyTest");
 const { ensureReasoningQuickShotsSeeded, ensureQuickShotWindowsCleared } = require("./src/config/seedReasoningQuickShots");
 const { ensureAnalogyMockTestsSeeded } = require("./src/config/seedAnalogyMockTests");
@@ -40,6 +41,7 @@ connectDB().then(async () => {
     ensureDtuNsutSyllabusSeeded();
     ensureIpuExamPatternSeeded();
     ensureIpuSeatMatrixSeeded();
+    ensureIpuCutoffsSeeded();
     ensureAnalogyTestSeeded();
     ensureReasoningQuickShotsSeeded();
     ensureQuickShotWindowsCleared();
