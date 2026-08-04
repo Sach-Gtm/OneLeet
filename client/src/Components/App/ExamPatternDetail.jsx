@@ -247,9 +247,9 @@ export default function PatternDetail({ p, hasMatrix = false, hasCutoffs = false
                         <TrendingDown size={18} />
                     </span>
                     <div className="min-w-0 flex-1">
-                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">Previous-Year Cut-offs</p>
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">Cut-offs &amp; College Predictor</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Round-wise closing ranks by college, branch &amp; category (diploma holders).
+                            Round-wise closing ranks — enter your rank to see which colleges you&apos;d get.
                         </p>
                     </div>
                     <ArrowRight size={16} className="shrink-0 text-emerald-500" />
