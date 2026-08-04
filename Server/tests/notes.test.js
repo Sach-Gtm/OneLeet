@@ -111,6 +111,33 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(await Note.countDocuments({ category: "notes" }), 2, "exactly the two notes exist");
     ok("the notes collection holds exactly the published notes");
 
+    // Staff can EDIT a note's title + content (powers the Studio note editor).
+    const edit = await request
+        .patch(`/api/notes/${noteId}`)
+        .set(...auth(teacherToken))
+        .send({ title: "Edited title", content: "Completely rewritten note body." });
+    assert.strictEqual(edit.status, 200);
+    const afterEdit = await request.get(`/api/notes/${noteId}`).set(...auth(teacherToken));
+    assert.strictEqual(afterEdit.body.note.title, "Edited title", "title updated");
+    assert.ok(/rewritten note body/.test(afterEdit.body.note.content || ""), "content updated");
+    ok("staff can edit a note's title + content");
+
+    // Students can't edit or delete.
+    const stuEdit = await request.patch(`/api/notes/${noteId}`).set(...auth(studentToken)).send({ title: "hax" });
+    assert.strictEqual(stuEdit.status, 403);
+    const stuDel = await request.delete(`/api/notes/${noteId}`).set(...auth(studentToken));
+    assert.strictEqual(stuDel.status, 403);
+    ok("students can't edit or delete notes (403)");
+
+    // Staff can DELETE a note.
+    const manualId = manual.body.note._id;
+    const del = await request.delete(`/api/notes/${manualId}`).set(...auth(teacherToken));
+    assert.strictEqual(del.status, 200);
+    assert.strictEqual(await Note.countDocuments({ category: "notes" }), 1, "one note remains after delete");
+    const gone = await request.get(`/api/notes/${manualId}`).set(...auth(teacherToken));
+    assert.strictEqual(gone.status, 404, "the deleted note is gone");
+    ok("staff can delete a note");
+
     await mongoose.disconnect();
     await mongod.stop();
     console.log(`\n✅ All ${passed} note-authoring checks passed`);

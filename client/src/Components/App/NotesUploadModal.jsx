@@ -2,7 +2,7 @@ import { useState } from "react";
 import { X, Brain, Loader2, UploadCloud, PenLine, FileText, RotateCw, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { uploadNote, generateNoteDraft } from "@/Api/NotesApi";
+import { uploadNote, generateNoteDraft, updateNote } from "@/Api/NotesApi";
 import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
 
 const DIFFICULTIES = ["beginner", "intermediate", "advanced"];
@@ -33,13 +33,30 @@ const emptyForm = {
 // Staff-only modal to publish a study note two ways:
 //   • Normal  — upload a PDF and/or type the note yourself.
 //   • AI draft — generate the note body from a topic, review/edit, publish.
-export default function NotesUploadModal({ open, onClose, onUploaded }) {
+// Pass `editing` (an existing note) to reuse it as an EDITOR: fields are
+// prefilled and Save patches the note (the PDF file itself isn't swapped here).
+export default function NotesUploadModal({ open, onClose, onUploaded, editing = null }) {
+    const isEdit = Boolean(editing);
     const [tab, setTab] = useState("normal");
-    const [form, setForm] = useState(emptyForm);
+    const [form, setForm] = useState(() =>
+        editing
+            ? {
+                  title: editing.title || "",
+                  subject: editing.subject || "",
+                  description: editing.description || "",
+                  teacher: editing.teacher || "",
+                  branch: editing.branch || "",
+                  level: editing.level || "",
+                  difficulty: editing.difficulty || "intermediate",
+                  content: editing.content || "",
+                  premium: !!editing.premium,
+              }
+            : emptyForm
+    );
     const [file, setFile] = useState(null);
     const [busy, setBusy] = useState(false);
 
-    const [targets, setTargets] = useState([]);
+    const [targets, setTargets] = useState(() => editing?.targets || []);
 
     // AI-draft inputs — a freeform instruction (+ optional image/PDF to read).
     const [aiPrompt, setAiPrompt] = useState("");
@@ -130,6 +147,33 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
         }
     };
 
+    const saveEdit = async () => {
+        if (!form.title.trim()) return toast.error("Give the note a title.");
+        if (!targets.length) return toast.error("Choose at least one university (or 'All universities').");
+        setBusy(true);
+        try {
+            await updateNote(editing._id, {
+                title: form.title,
+                subject: form.subject,
+                description: form.description,
+                teacher: form.teacher,
+                branch: form.branch,
+                level: form.level,
+                difficulty: form.difficulty,
+                content: form.content,
+                targets,
+                premium: form.premium,
+            });
+            toast.success("Note updated");
+            onUploaded?.();
+            onClose();
+        } catch (err) {
+            toast.error(err?.response?.data?.message || err.message || "Couldn't update the note.");
+        } finally {
+            setBusy(false);
+        }
+    };
+
     const tabBtnCls = (id) =>
         cn(
             "flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition",
@@ -146,7 +190,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                         <span className="grid h-8 w-8 place-items-center rounded-lg bg-indigo-50 text-indigo-600">
                             <FileText size={16} />
                         </span>
-                        <p className="text-sm font-bold text-slate-800">Add a study note</p>
+                        <p className="text-sm font-bold text-slate-800">{isEdit ? "Edit study note" : "Add a study note"}</p>
                     </div>
                     <button
                         onClick={close}
@@ -157,15 +201,17 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                     </button>
                 </div>
 
-                {/* Tabs */}
-                <div className="mx-5 mt-4 flex gap-1 rounded-xl bg-slate-100 p-1">
-                    <button type="button" onClick={() => setTab("normal")} className={tabBtnCls("normal")}>
-                        <PenLine size={15} /> Write / Upload
-                    </button>
-                    <button type="button" onClick={() => setTab("ai")} className={tabBtnCls("ai")}>
-                        <Brain size={15} /> AI draft
-                    </button>
-                </div>
+                {/* Tabs (create only — editing is a plain form) */}
+                {!isEdit && (
+                    <div className="mx-5 mt-4 flex gap-1 rounded-xl bg-slate-100 p-1">
+                        <button type="button" onClick={() => setTab("normal")} className={tabBtnCls("normal")}>
+                            <PenLine size={15} /> Write / Upload
+                        </button>
+                        <button type="button" onClick={() => setTab("ai")} className={tabBtnCls("ai")}>
+                            <Brain size={15} /> AI draft
+                        </button>
+                    </div>
+                )}
 
                 {/* Body */}
                 <div className="flex-1 space-y-3 overflow-y-auto p-5">
@@ -339,8 +385,16 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                                 Premium only (free students see it locked)
                             </label>
 
-                            {/* Normal mode: PDF upload */}
-                            {tab === "normal" && (
+                            {/* Editing a PDF note: the file itself can't be swapped here. */}
+                            {isEdit && editing.fileUrl && (
+                                <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
+                                    A PDF is attached to this note. To replace the file, delete this note and upload a new
+                                    one — you can still edit its details here.
+                                </p>
+                            )}
+
+                            {/* Normal mode: PDF upload (create only) */}
+                            {tab === "normal" && !isEdit && (
                                 <div>
                                     <label className={labelCls}>PDF file (optional)</label>
                                     <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-slate-300 px-3 py-2.5 text-sm text-slate-500 hover:border-indigo-400">
@@ -360,7 +414,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
 
                             <div>
                                 <label className={labelCls}>
-                                    {tab === "ai" ? "Note content" : "Or write the note here (optional)"}
+                                    {isEdit || tab === "ai" ? "Note content" : "Or write the note here (optional)"}
                                 </label>
                                 <textarea
                                     rows={tab === "ai" ? 10 : 5}
@@ -385,12 +439,12 @@ export default function NotesUploadModal({ open, onClose, onUploaded }) {
                             Cancel
                         </button>
                         <button
-                            onClick={() => publish(tab === "ai" ? "ai" : "manual")}
+                            onClick={() => (isEdit ? saveEdit() : publish(tab === "ai" ? "ai" : "manual"))}
                             disabled={busy}
                             className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
                         >
                             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud size={15} />}
-                            Publish note
+                            {isEdit ? "Save changes" : "Publish note"}
                         </button>
                     </div>
                 )}
