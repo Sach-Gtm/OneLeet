@@ -27,6 +27,7 @@ import { getSyllabusSummary } from "@/Api/SyllabusApi";
 import NetworkCanvas from "@/Components/General/NetworkCanvas";
 import ExamPatternSection from "@/Components/App/ExamPatternSection";
 import PrepCoachCard from "@/Components/App/PrepCoachCard";
+import PredictedCollegesCard from "@/Components/App/PredictedCollegesCard";
 import { isStudent } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
@@ -266,6 +267,10 @@ export default function Dashboard() {
                     <ArrowRight size={16} className="ml-auto shrink-0 text-indigo-500" />
                 </Link>
             )}
+
+            {/* College predictor teaser (only when the student has a rank + a
+                chosen exam that has cut-offs). Self-gates to null otherwise. */}
+            <PredictedCollegesCard />
 
             {/* Welcome + Overall Prep */}
             <div className="grid gap-6 lg:grid-cols-3">

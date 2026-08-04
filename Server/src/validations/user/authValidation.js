@@ -71,6 +71,14 @@ const updateProfileSchema = z.object({
     // The LEET exams a student is preparing for (codes; validated against the
     // catalog in the controller).
     exams: z.array(z.string().max(60)).max(100).optional(),
+    // LEET merit rank + category for the college predictor. Sent as a number (or
+    // null to clear); category/region are keys the predictor understands.
+    leetRank: z.number().int("Enter a whole number").min(1, "Rank must be at least 1").max(2000000).nullable().optional(),
+    leetCategory: z
+        .enum(["general", "obc", "ews", "sc", "st", "defence", "pwd", "minority"])
+        .optional()
+        .or(z.literal("")),
+    leetRegion: z.enum(["delhi", "outside"]).optional().or(z.literal("")),
 });
 
 const changePasswordSchema = z.object({

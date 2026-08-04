@@ -411,7 +411,7 @@ async function resetPassword(req, res, next) {
 // PATCH /api/auth/me — update editable profile fields
 async function updateProfile(req, res, next) {
     try {
-        const allowed = ["name", "phone", "college", "branch", "yearOfStudy", "targetExam"];
+        const allowed = ["name", "phone", "college", "branch", "yearOfStudy", "targetExam", "leetRank", "leetCategory", "leetRegion"];
         const updates = {};
         for (const key of allowed) {
             if (req.body[key] !== undefined) updates[key] = req.body[key];
