@@ -31,7 +31,6 @@ import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
 import RankMedal from "@/Components/App/RankMedal";
 import { missingProfileFields } from "@/lib/profile";
 import { isStaff, roleLabel } from "@/lib/roles";
-import { PREDICTOR_CATEGORIES, PREDICTOR_REGIONS } from "@/lib/collegePredictor";
 
 const MAX_PHOTO_BYTES = 1024 * 1024; // 1 MB
 
@@ -60,9 +59,6 @@ export default function Profile() {
         branch: user?.branch || "",
         yearOfStudy: user?.yearOfStudy || "",
         exams: user?.exams || [],
-        leetRank: user?.leetRank ? String(user.leetRank) : "",
-        leetCategory: user?.leetCategory || "",
-        leetRegion: user?.leetRegion || "",
     });
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -99,9 +95,7 @@ export default function Profile() {
         }
         setSaving(true);
         try {
-            // leetRank goes as a number (or null to clear).
-            const payload = { ...form, leetRank: form.leetRank ? Number(form.leetRank) : null };
-            const res = await updateProfile(payload);
+            const res = await updateProfile(form);
             setUser(res.user);
             toast.success("Profile saved");
         } catch (err) {
@@ -295,54 +289,6 @@ export default function Profile() {
                                     onChange={(next) => setForm((f) => ({ ...f, exams: next }))}
                                     height="max-h-52"
                                 />
-
-                                <h3 className="mb-1 mt-6 text-sm font-bold text-slate-800">
-                                    Your LEET rank (for the College Predictor)
-                                </h3>
-                                <p className="mb-3 text-xs text-slate-500">
-                                    Add your IPU CET (LE) rank &amp; category to pre-fill the College Predictor and get a
-                                    dashboard preview of colleges you&apos;d get. Leave blank if you don&apos;t have a rank yet.
-                                </p>
-                                <div className="grid gap-3 sm:grid-cols-3">
-                                    <label className="block">
-                                        <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">LEET Rank</span>
-                                        <IconField
-                                            icon={Target}
-                                            type="number"
-                                            min="1"
-                                            inputMode="numeric"
-                                            value={form.leetRank}
-                                            onChange={set("leetRank")}
-                                            placeholder="e.g. 320"
-                                        />
-                                    </label>
-                                    <label className="block">
-                                        <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Category</span>
-                                        <select
-                                            value={form.leetCategory}
-                                            onChange={set("leetCategory")}
-                                            className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                                        >
-                                            <option value="">Select…</option>
-                                            {PREDICTOR_CATEGORIES.map((c) => (
-                                                <option key={c.key} value={c.key}>{c.label}</option>
-                                            ))}
-                                        </select>
-                                    </label>
-                                    <label className="block">
-                                        <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Region</span>
-                                        <select
-                                            value={form.leetRegion}
-                                            onChange={set("leetRegion")}
-                                            className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                                        >
-                                            <option value="">Select…</option>
-                                            {PREDICTOR_REGIONS.map((r) => (
-                                                <option key={r.key} value={r.key}>{r.label}</option>
-                                            ))}
-                                        </select>
-                                    </label>
-                                </div>
                             </>
                         )}
 
