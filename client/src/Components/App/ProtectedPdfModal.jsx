@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { X, FileText, ShieldCheck } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { X, FileText, ShieldCheck, Maximize, Minimize } from "lucide-react";
 import ProtectedContent from "@/Components/Security/ProtectedContent";
 
 // Views a PREMIUM PDF note INSIDE the app instead of opening the raw file URL in
@@ -8,18 +8,41 @@ import ProtectedContent from "@/Components/Security/ProtectedContent";
 // ProtectedContent, so it carries the per-student identity watermark and the
 // capture-reporting layer. Nothing on the web can fully seal a PDF, but this
 // removes the trivial download path and makes any leak traceable to the account.
+//
+// An "expand" control fullscreens the WATERMARKED stage (not the bare iframe),
+// so students can read comfortably while the identity overlay + protection stay
+// on the page even in fullscreen.
 export default function ProtectedPdfModal({ note, onClose }) {
+    const stageRef = useRef(null);
+    const [isFs, setIsFs] = useState(false);
+
     useEffect(() => {
         if (!note) return undefined;
-        const onKey = (e) => e.key === "Escape" && onClose();
+        // Escape closes the modal — but when we're fullscreen, the browser uses
+        // Escape to exit fullscreen first, so don't also close the modal then.
+        const onKey = (e) => {
+            if (e.key === "Escape" && !document.fullscreenElement) onClose();
+        };
+        const onFs = () => setIsFs(Boolean(document.fullscreenElement));
         window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
+        document.addEventListener("fullscreenchange", onFs);
+        return () => {
+            window.removeEventListener("keydown", onKey);
+            document.removeEventListener("fullscreenchange", onFs);
+        };
     }, [note, onClose]);
 
     if (!note) return null;
     // Ask the browser's built-in PDF viewer to hide its toolbar (download / print
     // buttons) and side panes, where the renderer honours it (Chrome / Edge).
     const src = `${note.fileUrl}#toolbar=0&navpanes=0&statusbar=0`;
+
+    const toggleFullscreen = () => {
+        const el = stageRef.current;
+        if (!el) return;
+        if (document.fullscreenElement) document.exitFullscreen?.();
+        else el.requestFullscreen?.().catch(() => {});
+    };
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
@@ -39,27 +62,49 @@ export default function ProtectedPdfModal({ note, onClose }) {
                             </p>
                         </div>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100"
-                        aria-label="Close"
-                    >
-                        <X size={18} />
-                    </button>
+                    <div className="flex shrink-0 items-center gap-1">
+                        <button
+                            onClick={toggleFullscreen}
+                            className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100"
+                            aria-label={isFs ? "Exit full screen" : "Expand to full screen"}
+                            title={isFs ? "Exit full screen" : "Expand to full screen"}
+                        >
+                            <Maximize size={15} /> <span className="hidden sm:inline">Expand</span>
+                        </button>
+                        <button
+                            onClick={onClose}
+                            className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100"
+                            aria-label="Close"
+                        >
+                            <X size={18} />
+                        </button>
+                    </div>
                 </div>
 
-                <ProtectedContent
-                    enabled
-                    contentType="note"
-                    contentRef={note.title || note._id || ""}
-                    className="flex-1 bg-slate-100"
-                >
-                    <iframe
-                        title={note.title || "Premium note"}
-                        src={src}
-                        className="h-[75vh] w-full"
-                    />
-                </ProtectedContent>
+                <div ref={stageRef} className="relative bg-slate-100">
+                    <ProtectedContent
+                        enabled
+                        contentType="note"
+                        contentRef={note.title || note._id || ""}
+                        className="bg-slate-100"
+                    >
+                        <iframe
+                            title={note.title || "Premium note"}
+                            src={src}
+                            className={"w-full " + (isFs ? "h-screen" : "h-[75vh]")}
+                        />
+                    </ProtectedContent>
+                    {/* Toggle sits on the stage so it's reachable in fullscreen too,
+                        where the modal header is hidden behind the fullscreen view. */}
+                    <button
+                        onClick={toggleFullscreen}
+                        className="absolute right-3 top-3 z-30 rounded-md bg-black/50 p-1.5 text-white backdrop-blur-sm transition hover:bg-black/70"
+                        aria-label={isFs ? "Exit full screen" : "Full screen"}
+                        title={isFs ? "Exit full screen" : "Full screen"}
+                    >
+                        {isFs ? <Minimize size={16} /> : <Maximize size={16} />}
+                    </button>
+                </div>
             </div>
         </div>
     );
