@@ -37,6 +37,7 @@ import {
     removeStudioTest,
 } from "@/Api/StudioApi";
 import { getSyllabi, deleteSyllabus, updateSyllabus } from "@/Api/SyllabusApi";
+import { getNotes, updateNote, deleteNote } from "@/Api/NotesApi";
 import NotesUploadModal from "@/Components/App/NotesUploadModal";
 import SyllabusEditorModal from "@/Components/App/SyllabusEditorModal";
 import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
@@ -120,9 +121,10 @@ export default function Studio() {
             : list.filter((t) => (listFilter === "practice" ? t.mode === "practice" : t.mode !== "practice"));
 
     // Notes & Syllabus authoring (both live here, staff-only).
-    const [notesOpen, setNotesOpen] = useState(false);
+    const [notesModal, setNotesModal] = useState({ open: false, editing: null });
     const [syllabusEditor, setSyllabusEditor] = useState({ open: false, editing: null });
     const [syllabi, setSyllabi] = useState([]);
+    const [notes, setNotes] = useState([]);
 
     const staff = isStaff(user);
 
@@ -142,12 +144,44 @@ export default function Studio() {
         }
     }, []);
 
+    const loadNotes = useCallback(async () => {
+        try {
+            const data = await getNotes({ limit: 50, sort: "newest" });
+            setNotes(data?.notes || []);
+        } catch {
+            /* non-critical */
+        }
+    }, []);
+
     useEffect(() => {
         if (staff) {
             loadList();
             loadSyllabi();
+            loadNotes();
         }
-    }, [staff, loadList, loadSyllabi]);
+    }, [staff, loadList, loadSyllabi, loadNotes]);
+
+    // One-click free⇄premium for a study note.
+    const toggleNotePremium = async (n) => {
+        try {
+            await updateNote(n._id, { premium: !n.premium });
+            toast.success(n.premium ? "Now Free" : "Now Premium");
+            loadNotes();
+        } catch (e) {
+            toast.error(e?.response?.data?.message || "Couldn't update the note.");
+        }
+    };
+
+    const handleDeleteNote = async (n) => {
+        if (!window.confirm(`Delete "${n.title}"? This removes the note for everyone.`)) return;
+        try {
+            await deleteNote(n._id);
+            toast.success("Note deleted");
+            loadNotes();
+        } catch (e) {
+            toast.error(e?.response?.data?.message || "Couldn't delete the note.");
+        }
+    };
 
     // One-click free⇄premium for a global syllabus.
     const toggleSyllabusPremium = async (s) => {
@@ -418,7 +452,7 @@ export default function Studio() {
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                     <button
-                        onClick={() => setNotesOpen(true)}
+                        onClick={() => setNotesModal({ open: true, editing: null })}
                         className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-indigo-300 hover:bg-indigo-50/40"
                     >
                         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-indigo-50 text-indigo-600">
@@ -444,6 +478,52 @@ export default function Studio() {
                         <Plus className="ml-auto h-4 w-4 shrink-0 text-slate-300" />
                     </button>
                 </div>
+
+                {notes.length > 0 && (
+                    <div className="mt-4">
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Your notes</p>
+                        <ul className="divide-y divide-slate-100">
+                            {notes.map((n) => (
+                                <li key={n._id} className="flex items-center gap-3 py-2.5">
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate text-sm font-medium text-slate-700">{n.title}</p>
+                                        <p className="text-xs text-slate-400">
+                                            {n.subject ? `${n.subject} · ` : ""}
+                                            {n.fileUrl ? "PDF" : "Text"}
+                                            {n.premium ? " · premium" : ""}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => toggleNotePremium(n)}
+                                        title={n.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                                        className={
+                                            "grid h-8 w-8 place-items-center rounded-md border " +
+                                            (n.premium
+                                                ? "border-amber-300 bg-amber-50 text-amber-600 hover:bg-amber-100"
+                                                : "border-slate-200 text-slate-400 hover:bg-slate-50")
+                                        }
+                                    >
+                                        <Crown className="h-3.5 w-3.5" />
+                                    </button>
+                                    <button
+                                        onClick={() => setNotesModal({ open: true, editing: n })}
+                                        title="Edit"
+                                        className="grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+                                    >
+                                        <Pencil className="h-3.5 w-3.5" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteNote(n)}
+                                        title="Delete"
+                                        className="grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                                    >
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
 
                 {syllabi.length > 0 && (
                     <div className="mt-4">
@@ -1005,8 +1085,13 @@ export default function Studio() {
                 )}
             </div>
 
-            {notesOpen && (
-                <NotesUploadModal open onClose={() => setNotesOpen(false)} onUploaded={() => {}} />
+            {notesModal.open && (
+                <NotesUploadModal
+                    open
+                    editing={notesModal.editing}
+                    onClose={() => setNotesModal({ open: false, editing: null })}
+                    onUploaded={loadNotes}
+                />
             )}
             {syllabusEditor.open && (
                 <SyllabusEditorModal

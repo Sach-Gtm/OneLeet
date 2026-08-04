@@ -246,9 +246,32 @@ async function updateNote(req, res, next) {
         if (b.branch != null) note.branch = b.branch;
         if (b.level != null) note.level = b.level;
         if (b.difficulty != null) note.difficulty = b.difficulty;
+        if (b.content != null) note.content = String(b.content);
         if (b.targets != null) note.targets = sanitizeExams(b.targets);
         await note.save();
         return res.status(200).json({ success: true, message: "Note updated", note });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// DELETE /api/notes/:id  (staff only) — remove a note, best-effort cleaning up
+// its Cloudinary file so we don't orphan the asset.
+async function deleteNote(req, res, next) {
+    try {
+        const note = await Note.findOne({ _id: req.params.id, category: CATEGORY });
+        if (!note) return res.status(404).json({ success: false, message: "Note not found" });
+        if (note.publicId) {
+            cloudinary.uploader
+                .destroy(note.publicId, { resource_type: "raw" })
+                .catch(() =>
+                    cloudinary.uploader.destroy(note.publicId).catch((e) =>
+                        console.warn("[notes] file cleanup failed:", e.message)
+                    )
+                );
+        }
+        await note.deleteOne();
+        return res.status(200).json({ success: true, message: "Note deleted" });
     } catch (error) {
         next(error);
     }
@@ -302,6 +325,7 @@ module.exports = {
     getNoteById,
     uploadNote,
     updateNote,
+    deleteNote,
     generateNoteDraft,
     summarizeNote,
     generateFlashcards,

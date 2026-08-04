@@ -47,4 +47,7 @@ router.post("/", verifyToken, requireStaff, handleUpload, notes.uploadNote);
 // Edit a note's metadata — incl. the one-click free⇄premium toggle (staff only).
 router.patch("/:id", verifyToken, requireStaff, notes.updateNote);
 
+// Delete a note (staff only).
+router.delete("/:id", verifyToken, requireStaff, notes.deleteNote);
+
 module.exports = router;
