@@ -10,6 +10,10 @@ const GoogleLogin = ({ redirectTo = "/", onError }) => {
     const { refresh } = useAuth();
 
     const handleGoogleLogin = useGoogleLogin({
+        // Pin the scopes our backend needs: it exchanges the access token at
+        // Google's userinfo endpoint for the verified email + profile, so the
+        // token must carry these (don't rely on an implicit default).
+        scope: "openid email profile",
         onSuccess: async (tokenResponse) => {
             try {
                 // Hand the access token to our backend, which verifies it with
