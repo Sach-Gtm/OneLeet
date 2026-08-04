@@ -4,6 +4,7 @@ import { ScrollText, Loader2, ArrowLeft, Target, ArrowRight, PhoneCall } from "l
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { getMyExamPatterns } from "@/Api/ExamPatternApi";
+import { getSeatMatrixIndex } from "@/Api/SeatMatrixApi";
 import { openCallback } from "@/lib/callback";
 import PatternDetail from "@/Components/App/ExamPatternDetail";
 
@@ -18,6 +19,8 @@ export default function ExamPatternPage() {
     const { user } = useAuth();
     const [params, setParams] = useSearchParams();
     const [fetched, setFetched] = useState(null);
+    // Which exams have a published seat matrix (to show the "Seat Matrix" button).
+    const [matrixCodes, setMatrixCodes] = useState(() => new Set());
 
     const hasExams = (user?.exams?.length || 0) > 0;
 
@@ -27,6 +30,9 @@ export default function ExamPatternPage() {
         getMyExamPatterns()
             .then((rows) => alive && setFetched(rows))
             .catch(() => alive && setFetched([]));
+        getSeatMatrixIndex()
+            .then((rows) => alive && setMatrixCodes(new Set(rows.map((r) => r.examCode))))
+            .catch(() => {});
         return () => {
             alive = false;
         };
@@ -123,7 +129,7 @@ export default function ExamPatternPage() {
                             ))}
                         </div>
                     )}
-                    {current && <PatternDetail p={current} />}
+                    {current && <PatternDetail p={current} hasMatrix={matrixCodes.has(current.examCode)} />}
                 </div>
             )}
         </div>

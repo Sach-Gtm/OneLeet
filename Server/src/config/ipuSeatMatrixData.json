@@ -1,0 +1,1063 @@
+{
+  "examCode": "ipu-leet",
+  "examName": "IPU LEET (GGSIPU)",
+  "session": "2026-27",
+  "audience": "Diploma holders — Lateral Entry to B.Tech (IPU CET Code 128)",
+  "source": "GGSIPU Notification No. 14/2026, dated 24-04-2026",
+  "note": "Seats shown are what a diploma-holder (lateral-entry) candidate can aim for; the notice's B.Sc-graduate quota is folded in as it is filled by diploma holders in practice. This official intake notice does not publish a caste-wise (SC/ST/OBC/EWS) split or a separate donation figure — those are applied within the counseling process.",
+  "colleges": [
+    {
+      "name": "Bhagwan Parshuram Institute of Technology",
+      "city": "Rohini, Delhi",
+      "branches": [
+        {
+          "branch": "ECE",
+          "branchLong": "LE B.Tech. (Electronics & Communication Engineering)",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "LE B.Tech. (Computer Science & Engineering)",
+          "general": 16,
+          "mq": 2,
+          "total": 18
+        },
+        {
+          "branch": "IT",
+          "branchLong": "LE B.Tech. (Information Technology)",
+          "general": 16,
+          "mq": 2,
+          "total": 18
+        },
+        {
+          "branch": "EEE",
+          "branchLong": "LE B.Tech. (Electrical & Electronics Engineering)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-DS",
+          "branchLong": "LE B.Tech. (CSE) (Data Science)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "Bharati Vidyapeeth's College of Engineering",
+      "city": "Paschim Vihar, Delhi",
+      "branches": [
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering (Shift I)",
+          "general": 22,
+          "mq": 2,
+          "total": 24
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "Electronics & Communication Engineering (Shift I)",
+          "general": 16,
+          "mq": 2,
+          "total": 18
+        },
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology (Shift I)",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "ICE",
+          "branchLong": "Instrumentation & Control Engineering (Shift I)",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "EEE",
+          "branchLong": "Electrical & Electronics Engineering (Shift I)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-AIML",
+          "branchLong": "CSE (AI & ML)",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        }
+      ]
+    },
+    {
+      "name": "Delhi Institute of Science & Technology",
+      "city": "Nangli, Delhi",
+      "branches": [
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 16,
+          "mq": 2,
+          "total": 18
+        }
+      ]
+    },
+    {
+      "name": "Delhi Technical Campus",
+      "city": "Greater Noida, UP",
+      "branches": [
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 43,
+          "mq": 5,
+          "total": 48
+        },
+        {
+          "branch": "AIML",
+          "branchLong": "Artificial Intelligence & Machine Learning",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "AIDS",
+          "branchLong": "Artificial Intelligence & Data Science",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CST",
+          "branchLong": "Computer Science & Technology",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "CSE-AIML",
+          "branchLong": "CSE (AI & ML)",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "CSE-DS",
+          "branchLong": "CSE (Data Science)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSAM",
+          "branchLong": "Computer Science & Applied Mathematics",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-CS",
+          "branchLong": "CSE (Cyber Security)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "Dr. Akhilesh Das Gupta Institute of Professional Studies",
+      "city": "Shastri Park, Delhi",
+      "branches": [
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering (Shift I)",
+          "general": 22,
+          "mq": 2,
+          "total": 24
+        },
+        {
+          "branch": "CSE (2nd Shift)",
+          "branchLong": "Computer Science & Engineering (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology (Shift I)",
+          "general": 16,
+          "mq": 2,
+          "total": 18
+        },
+        {
+          "branch": "IT (2nd Shift)",
+          "branchLong": "Information Technology (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "Electronics & Communication Engineering (Shift I)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ECE (2nd Shift)",
+          "branchLong": "Electronics & Communication Engineering (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CE",
+          "branchLong": "Civil Engineering (Shift I)",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "ME",
+          "branchLong": "Mechanical Engineering (Shift I)",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "AIML",
+          "branchLong": "Artificial Intelligence & Machine Learning",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "AIML (2nd Shift)",
+          "branchLong": "Artificial Intelligence & Machine Learning (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "AIDS",
+          "branchLong": "Artificial Intelligence & Data Science",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "AIDS (2nd Shift)",
+          "branchLong": "Artificial Intelligence & Data Science (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CS",
+          "branchLong": "Computer Science",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CS (2nd Shift)",
+          "branchLong": "Computer Science (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CST",
+          "branchLong": "Computer Science & Technology",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CST (2nd Shift)",
+          "branchLong": "Computer Science & Technology (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "Echelon Institute of Technology",
+      "city": "Faridabad, Haryana",
+      "branches": [
+        {
+          "branch": "CE",
+          "branchLong": "Civil Engineering",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "CSE-AIML",
+          "branchLong": "CSE (AI & ML)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-DS",
+          "branchLong": "CSE (Data Science)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-CS",
+          "branchLong": "CSE (Cyber Security)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 24,
+          "mq": 0,
+          "total": 24
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "Electronics & Communication Engineering",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "ME",
+          "branchLong": "Mechanical Engineering",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "AIDS",
+          "branchLong": "Artificial Intelligence & Data Science",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-IOT",
+          "branchLong": "CSE (IoT) & CS incl. Blockchain Technology",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "Robotics & AI",
+          "branchLong": "Robotics & Artificial Intelligence",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "3D Modelling & Animation",
+          "branchLong": "3D Modelling & Animation",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "Architecture & Interior Decoration",
+          "branchLong": "Architecture & Interior Decoration",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "Nanoscience & Technology",
+          "branchLong": "Nanoscience & Technology",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "Mechatronics",
+          "branchLong": "Mechatronics",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        }
+      ]
+    },
+    {
+      "name": "Fairfield Institute of Management & Technology",
+      "city": "Kapashera, Delhi",
+      "branches": [
+        {
+          "branch": "AIML",
+          "branchLong": "Artificial Intelligence & Machine Learning",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "Electronics & Communication Engineering",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        }
+      ]
+    },
+    {
+      "name": "Greater Noida Institute of Technology",
+      "city": "Greater Noida, UP",
+      "branches": [
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 14,
+          "mq": 1,
+          "total": 15
+        },
+        {
+          "branch": "AIML",
+          "branchLong": "Artificial Intelligence & Machine Learning",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "Guru Teg Bahadur Institute of Technology",
+      "city": "Rajouri Garden, Delhi",
+      "branches": [
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology (Shift I)",
+          "general": 18,
+          "mq": 0,
+          "total": 18
+        },
+        {
+          "branch": "IT (2nd Shift)",
+          "branchLong": "Information Technology (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering (Shift I)",
+          "general": 18,
+          "mq": 0,
+          "total": 18
+        },
+        {
+          "branch": "CSE (2nd Shift)",
+          "branchLong": "Computer Science & Engineering (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "Electronics & Communication Engineering (Shift I)",
+          "general": 12,
+          "mq": 0,
+          "total": 12
+        },
+        {
+          "branch": "CSE-AIML",
+          "branchLong": "CSE (AI & ML)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-DS",
+          "branchLong": "CSE (Data Science)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "Guru Tegh Bahadur 4th Centenary Engineering College",
+      "city": "Rajouri Garden, Delhi",
+      "branches": [
+        {
+          "branch": "CSE-AIML",
+          "branchLong": "CSE (AI & ML)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-DS",
+          "branchLong": "CSE (Data Science)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "Electronics & Communication Engineering",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        }
+      ]
+    },
+    {
+      "name": "HMR Institute of Technology & Management",
+      "city": "Hamidpur, Delhi",
+      "branches": [
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology (Shift I)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering (Shift I)",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "CSE (2nd Shift)",
+          "branchLong": "Computer Science & Engineering (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "AIML",
+          "branchLong": "Artificial Intelligence & Machine Learning",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "AIDS",
+          "branchLong": "Artificial Intelligence & Data Science",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-CS",
+          "branchLong": "CSE (Cyber Security)",
+          "general": 2,
+          "mq": 0,
+          "total": 2
+        },
+        {
+          "branch": "CST",
+          "branchLong": "Computer Science & Technology",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-DS",
+          "branchLong": "CSE (Data Science)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-AIML",
+          "branchLong": "CSE (AI & ML)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-AI",
+          "branchLong": "CSE (Artificial Intelligence)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "JIMS Engineering Management Technical Campus",
+      "city": "Greater Noida, UP",
+      "branches": [
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 38,
+          "mq": 4,
+          "total": 42
+        },
+        {
+          "branch": "AIML",
+          "branchLong": "Artificial Intelligence & Machine Learning",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "AIDS",
+          "branchLong": "Artificial Intelligence & Data Science",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "CST",
+          "branchLong": "Computer Science & Technology",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-AIML",
+          "branchLong": "CSE (AI & ML)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "Maharaja Agrasen Institute of Technology",
+      "city": "Rohini, Delhi",
+      "branches": [
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology (Shift I)",
+          "general": 27,
+          "mq": 3,
+          "total": 30
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering (Shift I)",
+          "general": 33,
+          "mq": 3,
+          "total": 36
+        },
+        {
+          "branch": "CSE (2nd Shift)",
+          "branchLong": "Computer Science & Engineering (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "Electronics & Communication Engineering (Shift I)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "EEE",
+          "branchLong": "Electrical & Electronics Engineering (Shift I)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ME",
+          "branchLong": "Mechanical Engineering (Shift I)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CST",
+          "branchLong": "Computer Science & Technology",
+          "general": 16,
+          "mq": 2,
+          "total": 18
+        },
+        {
+          "branch": "CSE-AIML",
+          "branchLong": "CSE (AI & ML)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-DS",
+          "branchLong": "CSE (Data Science)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-AI",
+          "branchLong": "CSE (Artificial Intelligence)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ECE-ACT",
+          "branchLong": "ECE (Advanced Communication Technology)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ECE-VLSI",
+          "branchLong": "Electronics Engineering (VLSI Design & Technology)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "Maharaja Surajmal Institute of Technology",
+      "city": "Janakpuri, Delhi",
+      "branches": [
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology (Shift I)",
+          "general": 16,
+          "mq": 2,
+          "total": 18
+        },
+        {
+          "branch": "IT (2nd Shift)",
+          "branchLong": "Information Technology (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering (Shift I)",
+          "general": 22,
+          "mq": 2,
+          "total": 24
+        },
+        {
+          "branch": "CSE (2nd Shift)",
+          "branchLong": "Computer Science & Engineering (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "Electronics & Communication Engineering (Shift I)",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "ECE (2nd Shift)",
+          "branchLong": "Electronics & Communication Engineering (Shift II)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "EEE",
+          "branchLong": "Electrical & Electronics Engineering (Shift I)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "Shri Balwant Institute of Technology",
+      "city": "Sonipat, Haryana",
+      "branches": [
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "Electronics & Communication Engineering",
+          "general": 2,
+          "mq": 0,
+          "total": 2
+        },
+        {
+          "branch": "ME",
+          "branchLong": "Mechanical Engineering",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "EEE",
+          "branchLong": "Electrical & Electronics Engineering",
+          "general": 2,
+          "mq": 0,
+          "total": 2
+        }
+      ]
+    },
+    {
+      "name": "Tribhuvan College",
+      "city": "Neemrana, Rajasthan",
+      "branches": [
+        {
+          "branch": "AIML",
+          "branchLong": "Artificial Intelligence & Machine Learning",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "AIDS",
+          "branchLong": "Artificial Intelligence & Data Science",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        }
+      ]
+    },
+    {
+      "name": "Trinity Institute of Innovations in Professional Studies",
+      "city": "Greater Noida, UP",
+      "branches": [
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 5,
+          "mq": 0,
+          "total": 5
+        },
+        {
+          "branch": "CST",
+          "branchLong": "Computer Science & Technology",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "IT",
+          "branchLong": "Information Technology",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        },
+        {
+          "branch": "CSE-AIML",
+          "branchLong": "CSE (AI & ML)",
+          "general": 3,
+          "mq": 0,
+          "total": 3
+        }
+      ]
+    },
+    {
+      "name": "University School of Automation & Robotics (GGSIPU)",
+      "city": "East Campus, Delhi",
+      "branches": [
+        {
+          "branch": "AI-ML",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — AI & ML",
+          "general": 12,
+          "mq": 0,
+          "total": 12
+        },
+        {
+          "branch": "AI-DS",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — AI & DS",
+          "general": 12,
+          "mq": 0,
+          "total": 12
+        },
+        {
+          "branch": "AR",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — Automation & Robotics",
+          "general": 12,
+          "mq": 0,
+          "total": 12
+        },
+        {
+          "branch": "IIOT",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — Industrial IoT",
+          "general": 12,
+          "mq": 0,
+          "total": 12
+        }
+      ]
+    },
+    {
+      "name": "University School of Chemical Technology (GGSIPU)",
+      "city": "Dwarka, Delhi",
+      "branches": [
+        {
+          "branch": "Chemical Engg (Dual Degree)",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — Chemical Engineering",
+          "general": 12,
+          "mq": 0,
+          "total": 12
+        },
+        {
+          "branch": "Energy",
+          "branchLong": "B.Tech (Energy)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "University School of Information & Communication Technology (GGSIPU)",
+      "city": "Dwarka, Delhi",
+      "branches": [
+        {
+          "branch": "CSE",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — Computer Science & Engineering",
+          "general": 18,
+          "mq": 0,
+          "total": 18
+        },
+        {
+          "branch": "IT",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — Information Technology",
+          "general": 12,
+          "mq": 0,
+          "total": 12
+        },
+        {
+          "branch": "ECE",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — Electronics & Communication Engineering",
+          "general": 12,
+          "mq": 0,
+          "total": 12
+        },
+        {
+          "branch": "CSE-AI",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — CSE (Artificial Intelligence)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "CSE-DS",
+          "branchLong": "B.Tech/M.Tech (Dual Degree) — CSE (Data Science)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    },
+    {
+      "name": "Vivekananda Institute of Professional Studies",
+      "city": "Pitampura, Delhi",
+      "branches": [
+        {
+          "branch": "AIML",
+          "branchLong": "Artificial Intelligence & Machine Learning",
+          "general": 16,
+          "mq": 2,
+          "total": 18
+        },
+        {
+          "branch": "IIOT",
+          "branchLong": "Industrial Internet of Things",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        },
+        {
+          "branch": "AIDS",
+          "branchLong": "Artificial Intelligence & Data Science",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "CSE",
+          "branchLong": "Computer Science & Engineering",
+          "general": 16,
+          "mq": 2,
+          "total": 18
+        },
+        {
+          "branch": "VLSI",
+          "branchLong": "Electronics Engineering (VLSI Design & Technology)",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "CSAM",
+          "branchLong": "Computer Science & Applied Mathematics",
+          "general": 11,
+          "mq": 1,
+          "total": 12
+        },
+        {
+          "branch": "CSE-CS",
+          "branchLong": "CSE (Cyber Security)",
+          "general": 6,
+          "mq": 0,
+          "total": 6
+        }
+      ]
+    }
+  ],
+  "totalSeats": 1214,
+  "totalColleges": 21,
+  "totalBranches": 132
+}

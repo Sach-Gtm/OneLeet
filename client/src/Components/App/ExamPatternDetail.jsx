@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
     FileText,
@@ -21,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { daysUntil } from "@/lib/useExamCountdown";
 import { openCallback } from "@/lib/callback";
+import SeatMatrixModal from "@/Components/App/SeatMatrixModal";
 
 const DIFF = {
     Easy: "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
@@ -186,7 +188,8 @@ function SeatIntakeSection({ rows }) {
 
 // The full paper pattern for one exam: identity band + key facts + section-wise
 // structure + seat intake + colleges/placement + dates + notes + a callback CTA.
-export default function PatternDetail({ p }) {
+export default function PatternDetail({ p, hasMatrix = false }) {
+    const [matrixOpen, setMatrixOpen] = useState(false);
     const marking =
         p.markingCorrect || p.markingNegative
             ? [p.markingCorrect && `${p.markingCorrect} correct`, p.markingNegative && `${p.markingNegative} wrong`]
@@ -211,6 +214,25 @@ export default function PatternDetail({ p }) {
                 <Fact icon={Target} tint="bg-violet-50 text-violet-600" label="Marking scheme" value={marking || p.markingNote} />
                 <Fact icon={Layers} tint="bg-amber-50 text-amber-600" label="Total paper" value={totals} />
             </div>
+
+            {/* College-wise seat matrix — opens the searchable full matrix. */}
+            {hasMatrix && (
+                <button
+                    onClick={() => setMatrixOpen(true)}
+                    className="flex w-full items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50/60 p-4 text-left transition hover:bg-indigo-50 dark:border-indigo-500/30 dark:bg-indigo-500/10"
+                >
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-indigo-600 text-white">
+                        <Armchair size={18} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">College-wise Seat Matrix</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                            Every college, branch &amp; seat count (General + Management Quota) for this exam.
+                        </p>
+                    </div>
+                    <ArrowRight size={16} className="shrink-0 text-indigo-400" />
+                </button>
+            )}
 
             {/* Section-wise structure */}
             {hasSections && (
@@ -320,6 +342,14 @@ export default function PatternDetail({ p }) {
                     <PhoneCall size={15} /> Request a callback
                 </button>
             </div>
+
+            {matrixOpen && (
+                <SeatMatrixModal
+                    examCode={p.examCode}
+                    examName={p.examName}
+                    onClose={() => setMatrixOpen(false)}
+                />
+            )}
         </div>
     );
 }
