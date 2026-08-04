@@ -15,7 +15,6 @@ import {
     Sparkles,
 } from "lucide-react";
 import { getCutoffs } from "@/Api/CutoffApi";
-import { useAuth } from "@/context/AuthContext";
 import {
     PREDICTOR_CATEGORIES,
     PREDICTOR_REGIONS,
@@ -146,7 +145,6 @@ function CollegeCard({ college, legendMap, active, rankNum, codes, expanded, onT
 // the parent (rendered only while open) so the effect never needs a synchronous
 // setState.
 export default function CutoffModal({ examCode, examName, onClose }) {
-    const { user } = useAuth();
     const [cutoff, setCutoff] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -156,11 +154,11 @@ export default function CutoffModal({ examCode, examName, onClose }) {
     const [isFs, setIsFs] = useState(false);
     const cardRef = useRef(null);
 
-    // Predictor inputs — prefer the student's saved profile, then their last
-    // session (localStorage), then sensible defaults.
-    const [rank, setRank] = useState(() => (user?.leetRank ? String(user.leetRank) : loadPred().rank || ""));
-    const [category, setCategory] = useState(() => user?.leetCategory || loadPred().category || "general");
-    const [region, setRegion] = useState(() => user?.leetRegion || loadPred().region || "delhi");
+    // Predictor inputs — a pure "what-if" tool: type any target rank to explore.
+    // Remembered across visits (localStorage) so tweaking 300 → 200 is quick.
+    const [rank, setRank] = useState(() => loadPred().rank || "");
+    const [category, setCategory] = useState(() => loadPred().category || "general");
+    const [region, setRegion] = useState(() => loadPred().region || "delhi");
     const [onlyMatches, setOnlyMatches] = useState(false);
 
     useEffect(() => {

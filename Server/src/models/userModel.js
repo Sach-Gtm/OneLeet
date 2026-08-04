@@ -96,16 +96,6 @@ const UserSchema = new mongoose.Schema(
         // everything (and we nudge them to choose).
         exams: { type: [String], default: [] },
 
-        // LEET merit rank + category/region, used to pre-fill the college
-        // predictor (and a dashboard teaser). Optional; empty = not provided.
-        leetRank: { type: Number, min: 1 },
-        leetCategory: {
-            type: String,
-            enum: ["general", "obc", "ews", "sc", "st", "defence", "pwd", "minority", ""],
-            default: "",
-        },
-        leetRegion: { type: String, enum: ["delhi", "outside", ""], default: "" },
-
         plan: {
             type: String,
             enum: ["free", "pro"],
