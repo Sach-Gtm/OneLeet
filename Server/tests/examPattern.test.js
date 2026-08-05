@@ -47,6 +47,12 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
         name: "N", email: "n@t.com", password: "secret123", phone: "9000000004",
         role: "student", isVerified: true, authProvider: "local", exams: [],
     });
+    // Student preparing for "All LEET".
+    const allStudent = await User.create({
+        name: "A", email: "all@t.com", password: "secret123", phone: "9000000005",
+        role: "student", isVerified: true, authProvider: "local", exams: ["all"],
+    });
+    const allToken = generateToken(allStudent._id);
     const adminToken = generateToken(admin._id);
     const teacherToken = generateToken(teacher._id);
     const studentToken = generateToken(student._id);
@@ -132,6 +138,15 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(none.status, 200);
     assert.strictEqual(none.body.patterns.length, 0, "no exams → no patterns");
     ok("a student who picked no exams gets an empty list");
+
+    // "All LEET" student sees every PUBLISHED pattern (IPU + UP), not the
+    // unpublished DTU one — so the on-page filter can offer them.
+    const allMine = await request.get("/api/exam-patterns/me").set(...auth(allToken));
+    assert.strictEqual(allMine.status, 200);
+    assert.strictEqual(allMine.body.patterns.length, 2, "'all' student sees both published patterns");
+    const codes = allMine.body.patterns.map((p) => p.examCode).sort();
+    assert.deepStrictEqual(codes, ["ipu-leet", "up-leet"], "published only (no unpublished DTU)");
+    ok("an 'All LEET' student sees every published pattern (to filter on-page)");
 
     // Admin list shows everything (published + unpublished): 3 total.
     const all = await request.get("/api/exam-patterns").set(...auth(adminToken));
