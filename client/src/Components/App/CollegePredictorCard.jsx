@@ -19,7 +19,10 @@ export default function CollegePredictorCard() {
         getCutoffIndex()
             .then((rows) => {
                 if (!alive) return;
-                const match = rows.find((r) => exams.includes(r.examCode));
+                // An "All LEET" student (exams=["all"]) matches the first exam
+                // that has published cut-offs.
+                const all = exams.includes("all");
+                const match = rows.find((r) => all || exams.includes(r.examCode));
                 if (match) setExam({ examCode: match.examCode, examName: match.examName || "" });
             })
             .catch(() => {});

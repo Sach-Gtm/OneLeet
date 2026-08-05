@@ -282,11 +282,14 @@ export default function Profile() {
                                     LEET exams you&apos;re preparing for
                                 </h3>
                                 <p className="mb-3 text-xs text-slate-500">
-                                    You&apos;ll see tests, syllabus and notes for these. Pick one or more — change any time.
+                                    You&apos;ll see tests, syllabus and notes for these. Pick <b>All LEET</b> for everything,
+                                    or choose one or more specific exams — change any time.
                                 </p>
                                 <ExamMultiSelect
                                     value={form.exams}
                                     onChange={(next) => setForm((f) => ({ ...f, exams: next }))}
+                                    allowAll
+                                    allLabel="All LEET (every exam)"
                                     height="max-h-52"
                                 />
                             </>
