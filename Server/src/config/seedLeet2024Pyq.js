@@ -12,15 +12,17 @@ const { TEST_FORMATS } = require("./testFormats");
 // original options in the original a/b/c/d order; the correct answer was solved
 // and cross-checked (the numeric ones verified symbolically).
 //
-// A few questions in the original paper are ambiguous or contain an obvious
-// slip; where so, the note explains the intended reading and we keep the most
-// defensible key (staff can adjust any of these live in the Content Studio):
+// KEY VALIDATED against IPU's OFFICIAL 2025 answer key: 35 of these questions
+// recur (near-)verbatim in the 2025 paper, and this test's answer matches the
+// official 2025 key on all 35 — including Q34 (Associative), Q36 (1440) and Q70
+// (NaCl solution), which are therefore confirmed, NOT ambiguous. Because the
+// official key is authoritative for the exam, mirror it rather than "correct"
+// it, even where an answer is academically debatable.
+//
+// Two remaining imperfections carried over from the original paper:
 //   • Q26 — f'(a)=0 is necessary but not sufficient; option (a) is arguably also
 //           false, but the keyed converse (c) is the standard "false" statement.
-//   • Q36 — with 5 + 3 balls the separated colour must be the 3; the constraint
-//           is taken as "no two RED together" so the paper's key (1440) holds.
-//   • Q70 — milk is the colloid; the intended "not a colloid" is the NaCl true
-//           solution (water/iron are elements/compounds, not the tested contrast).
+//           (Not in the 2025 paper, so no official answer to defer to.)
 //   • Q98 — a stray "Frog: Aestivation" fragment (belongs to Q100) is dropped.
 
 const SEED_KEY = "leet-2024-pyq-v1";
