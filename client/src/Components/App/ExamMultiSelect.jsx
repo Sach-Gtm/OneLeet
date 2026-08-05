@@ -8,7 +8,13 @@ import { getExams } from "@/Api/ExamsApi";
 //     stores ["all"]; otherwise specific codes.
 //   • Student "which exams" (allowAll=false): specific codes only.
 // `value` is an array of codes; `onChange(next)` gets the new array.
-export default function ExamMultiSelect({ value = [], onChange, allowAll = false, height = "max-h-56" }) {
+export default function ExamMultiSelect({
+    value = [],
+    onChange,
+    allowAll = false,
+    allLabel = "All universities / every LEET",
+    height = "max-h-56",
+}) {
     const [exams, setExams] = useState(null);
     const [q, setQ] = useState("");
 
@@ -65,7 +71,7 @@ export default function ExamMultiSelect({ value = [], onChange, allowAll = false
                     />
                 </div>
                 <span className="shrink-0 pr-1 text-xs font-medium text-slate-400">
-                    {isAll ? "All universities" : `${value.length} selected`}
+                    {isAll ? "All selected" : `${value.length} selected`}
                 </span>
             </div>
 
@@ -86,7 +92,7 @@ export default function ExamMultiSelect({ value = [], onChange, allowAll = false
                     >
                         {isAll && <Check size={11} />}
                     </span>
-                    <Globe2 size={14} /> All universities / every LEET
+                    <Globe2 size={14} /> {allLabel}
                 </button>
             )}
 

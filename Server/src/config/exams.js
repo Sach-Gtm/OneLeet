@@ -74,6 +74,9 @@ function sanitizeExams(input, { allowAll = true } = {}) {
 // Mongo condition selecting content VISIBLE to a student with these chosen exams.
 function visibilityQuery(studentExams) {
     if (!Array.isArray(studentExams) || studentExams.length === 0) return {};
+    // A student preparing for "All LEET" sees everything (including exam-specific
+    // content), so impose no filter.
+    if (studentExams.includes("all")) return {};
     return {
         $or: [
             { targets: { $exists: false } },
@@ -86,6 +89,7 @@ function visibilityQuery(studentExams) {
 
 function isVisibleTo(targets, studentExams) {
     if (!Array.isArray(studentExams) || studentExams.length === 0) return true;
+    if (studentExams.includes("all")) return true; // "All LEET" student sees everything
     if (!Array.isArray(targets) || targets.length === 0) return true;
     if (targets.includes("all")) return true;
     return targets.some((t) => studentExams.includes(t));

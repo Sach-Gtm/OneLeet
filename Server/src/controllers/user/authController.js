@@ -417,7 +417,8 @@ async function updateProfile(req, res, next) {
             if (req.body[key] !== undefined) updates[key] = req.body[key];
         }
         // The LEET exams a student is preparing for (validated against the catalog).
-        if (Array.isArray(req.body.exams)) updates.exams = sanitizeExams(req.body.exams, { allowAll: false });
+        // Students may pick specific exams or "All LEET" (stored as ["all"]).
+        if (Array.isArray(req.body.exams)) updates.exams = sanitizeExams(req.body.exams, { allowAll: true });
         const user = await User.findByIdAndUpdate(req.user._id, updates, {
             returnDocument: "after",
             runValidators: true,

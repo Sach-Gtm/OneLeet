@@ -90,6 +90,22 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.ok(t2.includes("DTU only") && t2.includes("Everyone") && !t2.includes("IPU only"), "filter follows the choice");
     ok("changing the choice changes what the student sees — editable any time");
 
+    // Choosing "All LEET" collapses to exactly ["all"] and shows every exam's content.
+    const allUpd = await request
+        .patch("/api/auth/me")
+        .set(...auth(sToken))
+        .send({ exams: ["all", "ipu-leet"] });
+    assert.strictEqual(allUpd.status, 200);
+    assert.deepStrictEqual(allUpd.body.user.exams, ["all"], "\"all\" collapses to just [\"all\"]");
+    ok("a student can choose 'All LEET' (stored as [\"all\"])");
+
+    const t3 = (await request.get("/api/syllabus").set(...auth(sToken))).body.syllabi.map((s) => s.title);
+    assert.ok(
+        t3.includes("IPU only") && t3.includes("DTU only") && t3.includes("Everyone"),
+        "'All LEET' student sees every exam's content"
+    );
+    ok("an 'All LEET' student sees content targeted at every exam");
+
     await mongoose.disconnect();
     await mongod.stop();
     console.log(`\n✅ All ${passed} exam-targeting checks passed`);
