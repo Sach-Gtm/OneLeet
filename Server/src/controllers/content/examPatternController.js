@@ -139,9 +139,12 @@ async function listMine(req, res, next) {
         if (codes.length === 0) {
             return res.status(200).json({ success: true, patterns: [] });
         }
-        const patterns = await ExamPattern.find({ published: true, examCode: { $in: codes } })
-            .sort({ order: 1, examName: 1 })
-            .lean();
+        // An "All LEET" student (exams=["all"]) sees every published pattern and
+        // picks one from the on-page filter; a specific student sees only theirs.
+        const query = codes.includes("all")
+            ? { published: true }
+            : { published: true, examCode: { $in: codes } };
+        const patterns = await ExamPattern.find(query).sort({ order: 1, examName: 1 }).lean();
         return res.status(200).json({ success: true, patterns: patterns.map(shape) });
     } catch (e) {
         next(e);
