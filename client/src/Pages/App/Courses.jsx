@@ -10,24 +10,6 @@ import {
 } from "lucide-react";
 import { getCourses } from "@/Api/CoursesApi";
 
-// A rupee price with the struck-through MRP beside it. Enrollment is free, so
-// this is display-only marketing that sets up the (paid) premium tier.
-function Price({ price, mrp }) {
-    if (!price) return null;
-    return (
-        <span className="inline-flex items-baseline gap-1.5">
-            <span className="text-base font-bold text-slate-900 dark:text-slate-100">
-                ₹{price.toLocaleString("en-IN")}
-            </span>
-            {mrp > price && (
-                <span className="text-xs text-slate-400 line-through">
-                    ₹{mrp.toLocaleString("en-IN")}
-                </span>
-            )}
-        </span>
-    );
-}
-
 function CourseCard({ course, index }) {
     return (
         <motion.div
@@ -72,7 +54,9 @@ function CourseCard({ course, index }) {
                         </p>
                     )}
                     <div className="mt-auto flex items-center justify-between pt-4">
-                        <Price price={course.price} mrp={course.mrp} />
+                        <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                            <CheckCircle2 size={14} /> Free to join
+                        </span>
                         <span className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
                             {course.enrolled ? "Open" : "View batch"}
                             <ArrowRight size={15} className="transition group-hover:translate-x-0.5" />

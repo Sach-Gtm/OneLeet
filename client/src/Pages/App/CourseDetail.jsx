@@ -13,11 +13,19 @@ import {
 } from "lucide-react";
 import { getCourse, enroll as enrollApi, unenroll as unenrollApi } from "@/Api/CoursesApi";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 
 export default function CourseDetail() {
     const { slug } = useParams();
     const navigate = useNavigate();
     const { user, refresh } = useAuth();
+    const { add: addToCart } = useCart();
+
+    // Add this batch to the cart and head to the pricing/checkout flow.
+    const goPremium = () => {
+        addToCart({ slug: course.slug, name: course.name, price: course.price, subtitle: course.examName || "" });
+        navigate("/pricing");
+    };
 
     const [course, setCourse] = useState(null);
     const [notFound, setNotFound] = useState(false);
@@ -158,17 +166,22 @@ export default function CourseDetail() {
                             </button>
                         )}
                         {course.price ? (
-                            <span className="text-sm text-indigo-100">
-                                Premium tier{" "}
+                            <button
+                                type="button"
+                                onClick={goPremium}
+                                className="group/price inline-flex items-center gap-1 text-sm text-indigo-100 transition hover:text-white"
+                            >
+                                Go Premium{" "}
                                 <strong className="font-semibold text-white">
                                     ₹{course.price.toLocaleString("en-IN")}
                                 </strong>
                                 {course.mrp > course.price && (
-                                    <span className="ml-1 text-indigo-200 line-through">
+                                    <span className="text-indigo-200 line-through">
                                         ₹{course.mrp.toLocaleString("en-IN")}
                                     </span>
                                 )}
-                            </span>
+                                <ArrowRight size={14} className="transition group-hover/price:translate-x-0.5" />
+                            </button>
                         ) : null}
                     </div>
                 </div>
@@ -203,29 +216,57 @@ export default function CourseDetail() {
                 </section>
             )}
 
-            {/* Free vs premium */}
+            {/* What's included — free vs premium */}
             <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800">
                 <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                    Free to join — premium unlocks the rest
+                    What&apos;s included — free vs premium
                 </h2>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                     <div className="rounded-xl border border-slate-100 p-4 dark:border-slate-700">
                         <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600">
-                            <CheckCircle2 size={15} /> Free after you enroll
+                            <CheckCircle2 size={15} /> Free — just create an account
                         </span>
-                        <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
-                            Explore the batch — syllabus, exam pattern, cut-offs, sample papers
-                            and free practice — with no payment.
-                        </p>
+                        <ul className="mt-2.5 space-y-1.5">
+                            {[
+                                "Exam pattern, eligibility & syllabus",
+                                "Seat matrix & previous-year cut-offs",
+                                "Sample past papers (PYQs)",
+                                "A few free practice tests",
+                                "Dashboard & rank predictor",
+                            ].map((t) => (
+                                <li key={t} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
+                                    <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-emerald-500" /> {t}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <div className="rounded-xl border border-slate-100 p-4 dark:border-slate-700">
+                    <div className="rounded-xl border border-indigo-100 bg-indigo-50/40 p-4 dark:border-indigo-500/25 dark:bg-indigo-500/10">
                         <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
                             <Lock size={14} /> Premium (OneLeet Pro)
                         </span>
-                        <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
-                            Full-length ranked mocks, premium notes and the weekly live doubt
-                            class (plus a few 1:1 sessions) are part of the paid batch.
-                        </p>
+                        <ul className="mt-2.5 space-y-1.5">
+                            {[
+                                "Every full-length ranked mock",
+                                "Complete PYQ archive with solutions",
+                                "Premium chapter notes & formula sheets",
+                                "AI mentor — doubts, weak topics, planner",
+                                "Weekly live doubt class + 1:1 sessions",
+                                "Counselling & interview support",
+                            ].map((t) => (
+                                <li key={t} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
+                                    <Lock size={12} className="mt-1 shrink-0 text-indigo-400" /> {t}
+                                </li>
+                            ))}
+                        </ul>
+                        {course.price ? (
+                            <button onClick={goPremium} className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
+                                Go Premium — ₹{course.price.toLocaleString("en-IN")} <ArrowRight size={14} />
+                            </button>
+                        ) : (
+                            <Link to="/pricing" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
+                                See premium pricing <ArrowRight size={14} />
+                            </Link>
+                        )}
                     </div>
                 </div>
             </section>

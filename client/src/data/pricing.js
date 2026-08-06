@@ -75,7 +75,7 @@ export const computeCart = (items = []) => {
 // ── OneLeet Premium Membership — the pitch, kept short so students actually read
 //    it. Each group is one line + a few chips. (Full feature detail lives inside.) ──
 export const MEMBERSHIP_GROUPS = [
-    { icon: "sparkles", title: "AI Personal Mentor", tag: "Your USP", items: ["Doubt solver", "Explains wrong answers", "Study & revision planner", "Weak-topic detection", "Interview prep"] },
+    { icon: "sparkles", title: "AI Personal Mentor", items: ["Doubt solver", "Explains wrong answers", "Study & revision planner", "Weak-topic detection", "Interview prep"] },
     { icon: "book", title: "Complete Master Course", items: ["Chapter notes", "Short notes & formula sheets", "Mind maps", "Concept revision", "PYQ discussions", "Assignment sets"] },
     { icon: "clipboard", title: "Complete Test Series", items: ["Chapter / topic / weekly tests", "Full-length mocks", "PYP & exam-pattern tests", "Unlimited practice"] },
     { icon: "files", title: "Official PYQ Library", items: ["Year / subject / topic-wise", "Official keys & solutions", "Difficulty tags", "FAQs"] },

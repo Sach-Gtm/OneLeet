@@ -189,10 +189,11 @@ export default function Pricing() {
 
             {/* Free vs premium */}
             <div className="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-slate-800/40">
-                <h2 className="text-center text-lg font-bold text-slate-900 dark:text-slate-100">Free forever — no sign-up needed</h2>
+                <h2 className="text-center text-lg font-bold text-slate-900 dark:text-slate-100">Free to explore — sign up free to learn</h2>
                 <p className="mx-auto mt-1 max-w-xl text-center text-sm text-slate-500 dark:text-slate-400">
-                    Premium is where prep becomes <em>personalised</em> — &ldquo;you&apos;re 42% through the syllabus; revise
-                    Reasoning today and attempt Mock #4.&rdquo; The basics stay free:
+                    Look around the exams, syllabus and cut-offs without an account. Make a free account to actually
+                    start practising — free PYQs, mock tests and your dashboard. Go Premium when you want the full mocks,
+                    notes and AI mentor.
                 </p>
                 <div className="mx-auto mt-4 flex max-w-3xl flex-wrap justify-center gap-2">
                     {FREE_FEATURES.map((f) => (
