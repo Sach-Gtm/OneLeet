@@ -111,7 +111,7 @@ export default function Pricing() {
                         </div>
                     ))}
                 </div>
-                <p className="mt-2 text-center text-[11px] text-indigo-200">Up to 50% extra off the cart — on top of every early-bird price.</p>
+                <p className="mt-2 text-center text-[11px] text-indigo-200">Applies to your whole cart, on top of every early-bird price — up to ₹1,000 off.</p>
             </div>
 
             {/* Exam courses */}

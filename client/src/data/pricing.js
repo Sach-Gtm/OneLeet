@@ -17,7 +17,7 @@ export const EXAM_COURSES = [
         mrp: 8999,
         featured: true,
         promise:
-            "Admission in a top-6 IPU college for a CSE-family branch (CSE / CST / IT / AI-DS / DS / AIML / ITE), or a top-3 college for any other branch — else 100% back.",
+            "Refund policy: if you don't score and secure the promised admission (a top-6 IPU college for a CSE-family branch, or a top-3 college for other branches), you get your fee refunded. For details, connect on WhatsApp Business.",
     },
     { slug: "dtu-nsut-leet-2027-foundation", code: "dtu-nsut-leet", name: "DTU / NSUT LEET", subtitle: "Delhi lateral entry", price: 799, mrp: 7999,
       promise: "Top-10 rank → 100% back. Admission on any seat → 60% back." },
@@ -58,6 +58,17 @@ export const cartExtraOff = (n) => {
     return t ? t.off : 0;
 };
 
+// The tier % applies to the WHOLE cart subtotal, but the rupee discount is
+// capped at ₹DISCOUNT_CAP (the margin protector — founder's call).
+export const DISCOUNT_CAP = 1000;
+export const computeCart = (items = []) => {
+    const subtotal = items.reduce((s, i) => s + (Number(i.price) || 0), 0);
+    const pct = cartExtraOff(items.length);
+    const rawDiscount = Math.round((subtotal * pct) / 100);
+    const discount = Math.min(rawDiscount, DISCOUNT_CAP);
+    return { subtotal, pct, rawDiscount, discount, capped: rawDiscount > discount, total: subtotal - discount };
+};
+
 // ── OneLeet Premium Membership — the pitch, kept short so students actually read
 //    it. Each group is one line + a few chips. (Full feature detail lives inside.) ──
 export const MEMBERSHIP_GROUPS = [
@@ -68,7 +79,7 @@ export const MEMBERSHIP_GROUPS = [
     { icon: "chart", title: "Smart Analytics", items: ["Daily & weekly progress", "Accuracy & speed", "Strong / weak topics", "AI suggestions"] },
     { icon: "target", title: "Rank & College Predictor Pro", items: ["Expected rank & trends", "Round & category-wise", "Safe / dream / backup colleges"] },
     { icon: "compass", title: "Counselling Hub", items: ["Process & key dates", "Documents & choice-filling", "Freeze / float guide", "Round updates"] },
-    { icon: "users", title: "Live Sessions & Mentor Support", items: ["Live classes & doubt sessions", "1:1 / 1:M mentorship", "Career & college guidance", "Premium community"] },
+    { icon: "users", title: "Live Sessions & Mentor Support", items: ["Live classes & doubt sessions", "1:1 / 1:M mentorship", "Premium WhatsApp support — 6-hour response", "Career & college guidance", "Premium community"] },
 ];
 
 // Kept FREE (SEO + trust): what anyone can see without paying.
