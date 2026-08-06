@@ -228,4 +228,4 @@ async function deletePattern(req, res, next) {
     }
 }
 
-module.exports = { listMine, listAll, createPattern, updatePattern, deletePattern };
+module.exports = { listMine, listAll, createPattern, updatePattern, deletePattern, shape };

@@ -31,6 +31,7 @@ const seatMatrixRoutes = require("./src/routes/content/seatMatrixRoutes");
 const cutoffRoutes = require("./src/routes/content/cutoffRoutes");
 const courseRoutes = require("./src/routes/content/courseRoutes");
 const enrollmentRoutes = require("./src/routes/content/enrollmentRoutes");
+const publicRoutes = require("./src/routes/publicRoutes");
 
 // Builds and returns the configured Express app WITHOUT starting a server or
 // connecting to the database. server.js wires those up for real runs; tests
@@ -119,6 +120,7 @@ app.use("/api/seat-matrix", seatMatrixRoutes);
 app.use("/api/cutoffs", cutoffRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/public", publicRoutes);
 
 // 404 for unmatched routes
 app.use((req, res) => {
