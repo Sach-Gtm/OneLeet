@@ -27,6 +27,7 @@ function CourseCard({ c, featured }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.35 }}
+            whileHover={{ y: -6 }}
             className={
                 "relative flex flex-col rounded-2xl border p-5 " +
                 (featured
@@ -89,22 +90,36 @@ export default function Pricing() {
     return (
         <div className="mx-auto max-w-6xl px-4 pb-28 pt-28 sm:pt-32">
             {/* Hero */}
-            <div className="text-center">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-300">
+            <div className="relative isolate text-center">
+                {/* animated background accents */}
+                <motion.span aria-hidden className="pointer-events-none absolute -top-10 left-[12%] -z-10 h-44 w-44 rounded-full bg-indigo-400/20 blur-3xl"
+                    animate={{ y: [0, 24, 0], x: [0, 14, 0] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }} />
+                <motion.span aria-hidden className="pointer-events-none absolute -top-4 right-[12%] -z-10 h-36 w-36 rounded-full bg-violet-400/20 blur-3xl"
+                    animate={{ y: [0, -20, 0], x: [0, -16, 0] }} transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }} />
+                <motion.span
+                    initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-300">
                     <Crown size={13} /> OneLeet Premium Membership
-                </span>
-                <h1 className="mt-4 text-3xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-4xl">
+                </motion.span>
+                <motion.h1
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}
+                    className="mt-4 text-3xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-4xl">
                     You don&apos;t just buy a course. You join an ecosystem.
-                </h1>
-                <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
+                </motion.h1>
+                <motion.p
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }}
+                    className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
                     One membership for your exam — AI mentor, premium PYQs, mock series, rank & college
                     predictor, counselling support and a Success Promise. Built by someone who cleared LEET.
-                </p>
+                </motion.p>
                 <div className="mx-auto mt-5 flex max-w-3xl flex-wrap justify-center gap-2">
-                    {MEMBERSHIP_PROMISE.map((p) => (
-                        <span key={p} className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                    {MEMBERSHIP_PROMISE.map((p, i) => (
+                        <motion.span key={p}
+                            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.3, delay: 0.2 + i * 0.04 }}
+                            className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
                             <Check size={12} className="text-emerald-500" /> {p}
-                        </span>
+                        </motion.span>
                     ))}
                 </div>
             </div>
@@ -115,11 +130,19 @@ export default function Pricing() {
                     Preparing for more than one exam? Add batches to your cart and the discount stacks automatically:
                 </p>
                 <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {CART_TIERS.map((t) => (
-                        <div key={t.count} className="rounded-xl bg-white/10 p-3 text-center backdrop-blur-sm">
+                    {CART_TIERS.map((t, i) => (
+                        <motion.div
+                            key={t.count}
+                            initial={{ opacity: 0, y: 12 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.3, delay: i * 0.08 }}
+                            whileHover={{ y: -3, scale: 1.03 }}
+                            className="rounded-xl bg-white/10 p-3 text-center backdrop-blur-sm"
+                        >
                             <p className="text-lg font-extrabold">{t.count === 5 ? "5+" : t.count} courses</p>
                             <p className="text-xs text-indigo-100">Extra {t.off}% OFF</p>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
                 <p className="mt-2 text-center text-[11px] text-indigo-200">Applies to your whole cart, on top of every early-bird price — up to ₹1,000 off.</p>
@@ -163,10 +186,18 @@ export default function Pricing() {
             <div className="mt-14">
                 <h2 className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100">What&apos;s inside the membership</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {MEMBERSHIP_GROUPS.map((g) => {
+                    {MEMBERSHIP_GROUPS.map((g, gi) => {
                         const Icon = GROUP_ICON[g.icon] || Sparkles;
                         return (
-                            <div key={g.title} className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900">
+                            <motion.div
+                                key={g.title}
+                                initial={{ opacity: 0, y: 16 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-40px" }}
+                                transition={{ duration: 0.3, delay: (gi % 4) * 0.06 }}
+                                whileHover={{ y: -4 }}
+                                className="rounded-2xl border border-slate-200 bg-white p-5 transition-shadow hover:shadow-lg dark:border-slate-700 dark:bg-slate-900"
+                            >
                                 <div className="flex items-center gap-2">
                                     <span className="grid h-9 w-9 place-items-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400">
                                         <Icon size={17} />
@@ -181,7 +212,7 @@ export default function Pricing() {
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
+                            </motion.div>
                         );
                     })}
                 </div>

@@ -28,7 +28,7 @@ import NetworkCanvas from "@/Components/General/NetworkCanvas";
 import ExamPatternSection from "@/Components/App/ExamPatternSection";
 import PrepCoachCard from "@/Components/App/PrepCoachCard";
 import CollegePredictorCard from "@/Components/App/CollegePredictorCard";
-import PremiumWhatsApp from "@/Components/App/PremiumWhatsApp";
+import FloatingWhatsApp from "@/Components/App/FloatingWhatsApp";
 import { isStudent } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
@@ -279,8 +279,8 @@ export default function Dashboard() {
                 chose an exam that has cut-offs). Self-gates to null otherwise. */}
             <CollegePredictorCard />
 
-            {/* Premium WhatsApp support — self-gates to null for non-premium. */}
-            <PremiumWhatsApp context="from dashboard" />
+            {/* Premium WhatsApp — floating pulsing button, self-gates for non-premium. */}
+            <FloatingWhatsApp context="from dashboard" />
 
             {/* Welcome + Overall Prep */}
             <div className="grid gap-6 lg:grid-cols-3">

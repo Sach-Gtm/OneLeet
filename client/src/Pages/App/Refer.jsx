@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { Loader2, Gift, Copy, Check, Share2, Trophy, Users } from "lucide-react";
 import { getMyReferral } from "@/Api/PaymentsApi";
@@ -52,7 +53,12 @@ export default function Refer() {
                     <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{ref.conversionCount} / {ref.threshold}</p>
                 </div>
                 <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                    <div className="h-full rounded-full bg-indigo-600 transition-all" style={{ width: `${pct}%` }} />
+                    <motion.div
+                        className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pct}%` }}
+                        transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 }}
+                    />
                 </div>
                 {ref.rewardUnlocked ? (
                     <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
