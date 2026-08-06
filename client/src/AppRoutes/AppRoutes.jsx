@@ -21,6 +21,10 @@ const AppShell = lazy(() => import("@/Components/App/AppShell"));
 
 const NotFound = lazy(() => import("@/Components/General/NotFound"));
 const Mentors = lazy(() => import("@/Pages/Navbar-Pages/Mentors"));
+const ExamsIndex = lazy(() => import("@/Pages/General/ExamsIndex"));
+const ExamDetail = lazy(() => import("@/Pages/General/ExamDetail"));
+const Colleges = lazy(() => import("@/Pages/General/Colleges"));
+const Pricing = lazy(() => import("@/Pages/General/Pricing"));
 const PrivacyPolicy = lazy(() => import("@/Pages/Footer-Pages/PrivacyPolicy"));
 const BugReport = lazy(() => import("@/Pages/Footer-Pages/BugReport"));
 const Contribute = lazy(() => import("@/Pages/Footer-Pages/Contribute"));
@@ -68,6 +72,10 @@ const AppRoutes = () => {
                     {/* Public marketing pages — light themed shell */}
                     <Route element={<MarketingLayout />}>
                         <Route path="/" element={<Home />} />
+                        <Route path="/exams" element={<ExamsIndex />} />
+                        <Route path="/exams/:code" element={<ExamDetail />} />
+                        <Route path="/colleges" element={<Colleges />} />
+                        <Route path="/pricing" element={<Pricing />} />
                         <Route path="/mentor" element={<Mentors />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
                         <Route path="/bug-report" element={<BugReport />} />
