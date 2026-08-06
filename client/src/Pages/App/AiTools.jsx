@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import {
     Brain,
     Gauge,
@@ -51,12 +52,12 @@ function QuotaMeter({ quota }) {
             </span>
             <span className="text-xs text-slate-400">· {used} used</span>
             {plan !== "pro" && (
-                <a
-                    href="mailto:help@oneleet.in?subject=OneLeet%20Premium"
+                <Link
+                    to="/pricing"
                     className="ml-auto rounded-lg bg-indigo-600 px-2.5 py-1 text-xs font-semibold text-white transition hover:bg-indigo-700"
                 >
                     Get premium · 100/day
-                </a>
+                </Link>
             )}
         </div>
     );
