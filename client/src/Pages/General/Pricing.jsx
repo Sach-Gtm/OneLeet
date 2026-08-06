@@ -200,6 +200,9 @@ export default function Pricing() {
                     result, you get money back — the exact terms differ per exam and are shown on each course. Eligibility
                     conditions (minimum tests, PYQs, mentor guidance and counselling participation) apply.
                 </p>
+                <Link to="/success-promise" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
+                    Read the full Success Promise &amp; Terms <ArrowRight size={15} />
+                </Link>
                 <p className="mx-auto mt-3 flex max-w-2xl items-start justify-center gap-1.5 text-[11px] text-slate-400">
                     <Info size={13} className="mt-0.5 shrink-0" />
                     The Success Promise &amp; Terms are being finalised with legal counsel; the full policy is shown at
