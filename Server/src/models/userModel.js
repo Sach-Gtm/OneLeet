@@ -101,6 +101,14 @@ const UserSchema = new mongoose.Schema(
             enum: ["free", "pro"],
             default: "free",
         },
+        // When the "pro" plan expires (set when an order is paid — full validity,
+        // or the 30+3-day window for a split-payment first installment). null =
+        // no expiry (legacy pro users / staff-granted). isPremiumUser treats a
+        // past date as lapsed, so an unpaid split second installment auto-locks.
+        premiumUntil: { type: Date, default: null },
+        // Admin kill-switch: when true, premium is denied even if plan==="pro"
+        // and premiumUntil is in the future. Admin lock/unlock toggles this.
+        premiumLocked: { type: Boolean, default: false },
 
         // Single active session (one-device login). Each login rotates this to a
         // fresh random id that's baked into the issued JWT; the auth middleware

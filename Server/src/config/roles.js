@@ -30,6 +30,15 @@ const SUPERADMINS = [ROLES.SUPERADMIN];
 // to preview it) or a student on the paid "pro" plan. Free students still SEE
 // premium items in their lists — shown locked — but can't open them until they
 // upgrade. This is the single source of truth for premium access on the server.
-const isPremiumUser = (user) => !!user && (STAFF.includes(user.role) || user.plan === "pro");
+const isPremiumUser = (user) => {
+    if (!user) return false;
+    if (STAFF.includes(user.role)) return true; // staff author + preview premium
+    if (user.plan !== "pro") return false;
+    if (user.premiumLocked) return false; // admin kill-switch
+    // A set expiry in the past = lapsed (e.g. split-payment 2nd installment never
+    // paid). No expiry (null) = perpetual pro (legacy / staff-granted).
+    if (user.premiumUntil && new Date(user.premiumUntil).getTime() < Date.now()) return false;
+    return true;
+};
 
 module.exports = { SUPERADMIN_EMAIL, ROLES, STAFF, ADMINS, SUPERADMINS, isPremiumUser };
