@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import { ShoppingCart, ArrowRight, Tag, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { CART_TIERS } from "@/data/pricing";
@@ -21,7 +22,12 @@ export default function CartBar() {
         : null;
 
     return (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95">
+        <motion.div
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 28 }}
+            className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95"
+        >
             <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
                 <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-indigo-600 text-white">
                     <ShoppingCart size={17} />
@@ -67,6 +73,6 @@ export default function CartBar() {
                     </span>
                 ))}
             </div>
-        </div>
+        </motion.div>
     );
 }
