@@ -44,6 +44,7 @@ import BlocklistAdmin from "@/Components/App/BlocklistAdmin";
 import ContentProtectionAdmin from "@/Components/App/ContentProtectionAdmin";
 import ExamAdmin from "@/Components/App/ExamAdmin";
 import ExamPatternAdmin from "@/Components/App/ExamPatternAdmin";
+import PaymentsAdmin from "@/Components/App/PaymentsAdmin";
 import ReviewAdmin from "@/Components/App/ReviewAdmin";
 import MentorAdmin from "@/Components/App/MentorAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
@@ -633,6 +634,9 @@ export default function AdminDashboard() {
                     </form>
                 )}
             </div>
+
+            {/* Payments — orders, coupons, premium lock (admins + super admin) */}
+            {canManageStudents && <PaymentsAdmin isSuper={isSuper} />}
 
             {/* Competitive leaderboards + achievement data (admins + super admin) */}
             {canManageStudents && <CompetitionAdmin isSuper={isSuper} />}
