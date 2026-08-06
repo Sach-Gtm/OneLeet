@@ -10,7 +10,6 @@ import {
     MonitorPlay,
     Compass,
     Brain,
-    BarChart3,
     Trophy,
     Users,
     User,
@@ -23,12 +22,14 @@ import {
     ChevronDown,
     PencilRuler,
     ScrollText,
+    PanelLeftClose,
+    PanelLeftOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
 import ThemeToggle from "@/Components/App/ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
-import Logo from "@/Components/General/Logo";
+import Logo, { LogoMark } from "@/Components/General/Logo";
 import Footer from "@/Components/General/Footer";
 import { isStaff as isStaffUser, roleLabel } from "@/lib/roles";
 
@@ -52,7 +53,6 @@ const NAV = [
         items: [
             { to: "/ai-tools", label: "AI Tools", icon: Brain },
             { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
-            { to: "/analytics", label: "Analytics", icon: BarChart3 },
         ],
     },
     {
@@ -68,10 +68,11 @@ function planLabel(user) {
     return roleLabel(user);
 }
 
-function SidebarContent({ user, onNavigate, onLogout }) {
+function SidebarContent({ user, onNavigate, onLogout, collapsed = false, onToggleCollapse }) {
     const linkClass = ({ isActive }) =>
         cn(
-            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+            "flex items-center rounded-lg text-sm font-medium transition-colors",
+            collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2",
             isActive
                 ? "bg-indigo-50 text-indigo-700"
                 : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
@@ -94,22 +95,43 @@ function SidebarContent({ user, onNavigate, onLogout }) {
 
     return (
         <div className="flex h-full flex-col">
-            <Link
-                to="/dashboard"
-                onClick={onNavigate}
-                className="flex items-center gap-2 px-5 py-5"
-            >
-                <Logo size={32} textClass="text-lg" />
-            </Link>
+            <div className={cn("flex items-center py-5", collapsed ? "justify-center px-2" : "justify-between px-5")}>
+                <Link to="/dashboard" onClick={onNavigate} className="flex items-center gap-2">
+                    {collapsed ? <LogoMark size={30} /> : <Logo size={32} textClass="text-lg" />}
+                </Link>
+                {/* Collapse toggle — desktop only (onToggleCollapse is undefined in the mobile drawer). */}
+                {onToggleCollapse && !collapsed && (
+                    <button
+                        onClick={onToggleCollapse}
+                        className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                        aria-label="Collapse sidebar"
+                        title="Collapse sidebar"
+                    >
+                        <PanelLeftClose size={18} />
+                    </button>
+                )}
+            </div>
 
-            <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2">
+            {onToggleCollapse && collapsed && (
+                <button
+                    onClick={onToggleCollapse}
+                    className="mx-auto mb-1 rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                    aria-label="Expand sidebar"
+                    title="Expand sidebar"
+                >
+                    <PanelLeftOpen size={18} />
+                </button>
+            )}
+
+            <nav className={cn("flex-1 overflow-y-auto py-2", collapsed ? "space-y-2 px-2" : "space-y-6 px-3")}>
                 {navGroups.map((group, i) => (
                     <div key={i} className="space-y-1">
-                        {group.section && (
+                        {group.section && !collapsed && (
                             <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                                 {group.section}
                             </p>
                         )}
+                        {group.section && collapsed && i > 0 && <div className="mx-2 my-1 h-px bg-slate-100" />}
                         {group.items.map((item) => {
                             const Icon = item.icon;
                             return (
@@ -118,9 +140,10 @@ function SidebarContent({ user, onNavigate, onLogout }) {
                                     to={item.to}
                                     onClick={onNavigate}
                                     className={linkClass}
+                                    title={collapsed ? item.label : undefined}
                                 >
                                     <Icon size={18} />
-                                    {item.label}
+                                    {!collapsed && item.label}
                                 </NavLink>
                             );
                         })}
@@ -130,34 +153,30 @@ function SidebarContent({ user, onNavigate, onLogout }) {
 
             <div className="border-t border-slate-100 p-3">
                 {/* Light / dark switch — lives in the bottom nav, on every page. */}
-                <ThemeToggle />
-                <div className="flex items-center gap-3 rounded-lg px-2 py-2">
+                {!collapsed && <ThemeToggle />}
+                <div className={cn("flex items-center rounded-lg py-2", collapsed ? "justify-center px-0" : "gap-3 px-2")}>
                     {user?.avatar ? (
-                        <img
-                            src={user.avatar}
-                            alt={user.name}
-                            className="h-9 w-9 rounded-full object-cover"
-                        />
+                        <img src={user.avatar} alt={user.name} className="h-9 w-9 shrink-0 rounded-full object-cover" />
                     ) : (
-                        <span className="grid h-9 w-9 place-items-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
+                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
                             {(user?.name || "U").charAt(0).toUpperCase()}
                         </span>
                     )}
-                    <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-slate-800">
-                            {user?.name || "User"}
-                        </p>
-                        <p className="truncate text-xs text-slate-400">
-                            {planLabel(user)}
-                        </p>
-                    </div>
-                    <button
-                        onClick={onLogout}
-                        className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-red-500"
-                        aria-label="Sign out"
-                    >
-                        <LogOut size={18} />
-                    </button>
+                    {!collapsed && (
+                        <>
+                            <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-semibold text-slate-800">{user?.name || "User"}</p>
+                                <p className="truncate text-xs text-slate-400">{planLabel(user)}</p>
+                            </div>
+                            <button
+                                onClick={onLogout}
+                                className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-red-500"
+                                aria-label="Sign out"
+                            >
+                                <LogOut size={18} />
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
@@ -254,6 +273,13 @@ export default function AppShell() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
+    // Collapsible desktop sidebar (Claude/GPT-style), remembered across sessions.
+    const [collapsed, setCollapsed] = useState(() => localStorage.getItem("ol_sidebar_collapsed") === "1");
+    const toggleCollapsed = () =>
+        setCollapsed((v) => {
+            localStorage.setItem("ol_sidebar_collapsed", v ? "0" : "1");
+            return !v;
+        });
     const isStaff = isStaffUser(user);
 
     // The profile is never a hard gate: students land in the app immediately and
@@ -272,10 +298,10 @@ export default function AppShell() {
 
     return (
         <div className="flex min-h-screen bg-[#FAF9F6]">
-            {/* Desktop sidebar */}
-            <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:block">
+            {/* Desktop sidebar (collapsible) */}
+            <aside className={cn("hidden shrink-0 border-r border-slate-200 bg-white transition-[width] duration-200 lg:block", collapsed ? "w-16" : "w-64")}>
                 <div className="sticky top-0 h-screen">
-                    <SidebarContent user={user} onLogout={handleLogout} />
+                    <SidebarContent user={user} onLogout={handleLogout} collapsed={collapsed} onToggleCollapse={toggleCollapsed} />
                 </div>
             </aside>
 
