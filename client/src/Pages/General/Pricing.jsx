@@ -139,20 +139,21 @@ export default function Pricing() {
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Counselling &amp; interview prep</h2>
                     <p className="mx-auto mt-2 max-w-xl text-sm text-slate-500 dark:text-slate-400">
                         These colleges admit through interview / counselling, not a written LEET — so this is a
-                        focused counselling + interview-prep pack. For exam batches above, counselling-only support
-                        is available at 20% of the batch price.
+                        focused counselling + interview-prep pack, <span className="font-semibold text-amber-600">launching soon</span>.
+                        For exam batches above, counselling-only support is available at 20% of the batch price.
                     </p>
                 </div>
                 <div className="mx-auto mt-6 grid max-w-3xl gap-4 sm:grid-cols-3">
                     {COUNSELLING_COURSES.map((c) => (
-                        <div key={c.slug} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 text-center dark:border-slate-700 dark:bg-slate-900">
+                        <div key={c.slug} className="relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 text-center dark:border-slate-700 dark:bg-slate-900">
+                            <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-500/15 dark:text-amber-400">Coming soon</span>
                             <GraduationCap className="mx-auto h-7 w-7 text-indigo-500" />
                             <h3 className="mt-2 text-base font-bold text-slate-900 dark:text-slate-100">{c.name}</h3>
                             <p className="text-xs text-slate-400">{c.subtitle}</p>
                             <p className="mt-3 text-2xl font-extrabold text-slate-900 dark:text-slate-100">{rupee(c.price)}</p>
-                            <Link to="/courses" className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-700">
-                                Get access <ArrowRight size={14} />
-                            </Link>
+                            <span className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                                <Clock size={14} /> Coming soon
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -216,8 +217,7 @@ export default function Pricing() {
                 </Link>
                 <p className="mx-auto mt-3 flex max-w-2xl items-start justify-center gap-1.5 text-[11px] text-slate-400">
                     <Info size={13} className="mt-0.5 shrink-0" />
-                    The Success Promise &amp; Terms are being finalised with legal counsel; the full policy is shown at
-                    checkout and must be accepted before payment.
+                    The full Success Promise &amp; Terms are shown at checkout and must be accepted before payment.
                 </p>
             </div>
         </div>

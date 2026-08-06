@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShieldCheck, Check, X, AlertTriangle, Info, FileText, ArrowRight } from "lucide-react";
+import { ShieldCheck, Check, X, Info, FileText, ArrowRight } from "lucide-react";
 import {
     LEGAL_UPDATED, LEGAL_ENTITY, SUCCESS_PROMISE_TABLE, ELIGIBILITY_CONDITIONS,
     VOID_CONDITIONS, PROTECTIONS, CLAIM_PROCESS, TERMS_OF_SERVICE, REFUND_POLICY,
@@ -26,10 +26,10 @@ export default function SuccessPromise() {
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{LEGAL_ENTITY} · {LEGAL_UPDATED}</p>
             </div>
 
-            {/* Advocate sign-off disclaimer */}
-            <div className="mt-6 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
-                <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-                <p>This is a launch draft prepared for clarity. It is pending review and sign-off by a practising Indian advocate before it becomes legally binding. The final terms shown at checkout will govern your purchase.</p>
+            {/* These terms are in effect and govern the purchase */}
+            <div className="mt-6 flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
+                <Info size={16} className="mt-0.5 shrink-0" />
+                <p>These terms govern your purchase of a OneLeet membership and the Success Promise that comes with it. If anything is unclear, reach us on WhatsApp Business before you buy — we&apos;re happy to walk you through it.</p>
             </div>
 
             <div className="mt-6 space-y-5">
