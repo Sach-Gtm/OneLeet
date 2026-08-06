@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
     ClipboardCheck,
     Target,
+    GraduationCap,
     CheckCircle2,
     Clock,
     Play,
@@ -11,7 +12,6 @@ import {
     Brain,
     Flame,
     Activity,
-    BookOpen,
     Loader2,
     ArrowRight,
     Camera,
@@ -249,19 +249,20 @@ export default function Dashboard() {
 
             {needsExams && (
                 <Link
-                    to="/profile"
+                    to="/courses"
                     className="flex items-center gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 transition hover:bg-indigo-100"
                 >
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-indigo-100 text-indigo-600">
-                        <Target size={18} />
+                        <GraduationCap size={18} />
                     </span>
                     <div className="text-sm">
                         <p className="font-semibold text-indigo-800">
-                            Pick your LEET exams to personalise your prep
+                            Enroll in your batch to unlock your prep
                         </p>
                         <p className="text-indigo-700">
-                            Tell us which universities / LEET you&apos;re preparing for and we&apos;ll show only the
-                            tests, syllabus and notes that matter to you. Tap to choose.
+                            Pick the college-wise batch for your target exam — it&apos;s free — and
+                            we&apos;ll show only the tests, syllabus and notes that matter to you. Tap
+                            to browse batches.
                         </p>
                     </div>
                     <ArrowRight size={16} className="ml-auto shrink-0 text-indigo-500" />
@@ -422,16 +423,11 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Continue learning */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-                <h2 className="mb-4 text-sm font-bold text-slate-800">Continue Learning</h2>
-                {continueLearning.length === 0 ? (
-                    <EmptyState
-                        icon={BookOpen}
-                        title="Nothing in progress"
-                        subtitle="Start a topic from PYQs or Notes and pick up where you left off."
-                    />
-                ) : (
+            {/* Continue learning — only shown once there's something in progress, so a
+                brand-new dashboard doesn't end on a big empty card. */}
+            {continueLearning.length > 0 && (
+                <div className="rounded-2xl border border-slate-200 bg-white p-6">
+                    <h2 className="mb-4 text-sm font-bold text-slate-800">Continue Learning</h2>
                     <div className="grid gap-4 sm:grid-cols-2">
                         {continueLearning.map((item, i) => (
                             <div key={i} className="rounded-xl border border-slate-100 p-4">
@@ -447,8 +443,8 @@ export default function Dashboard() {
                             </div>
                         ))}
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }

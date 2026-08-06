@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
 import {
     LayoutDashboard,
+    GraduationCap,
     FileQuestion,
     BookOpen,
     ClipboardList,
@@ -36,6 +37,7 @@ const NAV = [
         section: null,
         items: [
             { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+            { to: "/courses", label: "Courses", icon: GraduationCap },
             { to: "/prep-guide", label: "Prep Guide", icon: Compass },
             { to: "/exam-pattern", label: "Exam Pattern", icon: ScrollText },
             { to: "/pyqs", label: "PYQs", icon: FileQuestion },
