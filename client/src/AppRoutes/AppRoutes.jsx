@@ -14,6 +14,7 @@ import MarketingLayout from "@/Components/General/MarketingLayout";
 import ProtectedRoute from "@/Components/Auth/ProtectedRoute";
 import RequireCourse from "@/Components/Auth/RequireCourse";
 import ActivityTracker from "@/Components/App/ActivityTracker";
+import CartBar from "@/Components/General/CartBar";
 
 // The authenticated shell (sidebar, notifications, charts, …) is only needed
 // once a user is inside the app — code-split it so a landing/auth visitor never
@@ -38,6 +39,9 @@ const ForgotPassword = lazy(() => import("@/Pages/Auth/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/Pages/Auth/ResetPassword"));
 
 const Dashboard = lazy(() => import("@/Pages/App/Dashboard"));
+const Checkout = lazy(() => import("@/Pages/App/Checkout"));
+const Orders = lazy(() => import("@/Pages/App/Orders"));
+const Refer = lazy(() => import("@/Pages/App/Refer"));
 const Courses = lazy(() => import("@/Pages/App/Courses"));
 const CourseDetail = lazy(() => import("@/Pages/App/CourseDetail"));
 const PrepGuide = lazy(() => import("@/Pages/App/PrepGuide"));
@@ -69,6 +73,7 @@ const AppRoutes = () => {
     return (
         <Router>
             <ActivityTracker />
+            <CartBar />
             <Suspense fallback={<FullscreenLoader />}>
                 <Routes>
                     {/* Public marketing pages — light themed shell */}
@@ -110,6 +115,9 @@ const AppRoutes = () => {
                         }
                     >
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/checkout" element={<Checkout />} />
+                        <Route path="/orders" element={<Orders />} />
+                        <Route path="/refer" element={<Refer />} />
                         <Route path="/exam-pattern" element={<ExamPatternPage />} />
                         {/* Content routes — a signed-in student must have joined a
                             batch first (RequireCourse shows a "choose a course" gate). */}

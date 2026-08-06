@@ -61,6 +61,9 @@ export const cartExtraOff = (n) => {
 // The tier % applies to the WHOLE cart subtotal, but the rupee discount is
 // capped at ₹DISCOUNT_CAP (the margin protector — founder's call).
 export const DISCOUNT_CAP = 1000;
+// Split Payment (pay in two) costs this % more than paying once — shown at
+// checkout so the total is never a surprise. Mirrors the server.
+export const SPLIT_SURCHARGE = 30;
 export const computeCart = (items = []) => {
     const subtotal = items.reduce((s, i) => s + (Number(i.price) || 0), 0);
     const pct = cartExtraOff(items.length);

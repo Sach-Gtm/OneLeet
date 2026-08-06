@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import AppRoutes from "./AppRoutes/AppRoutes";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { CartProvider } from "@/context/CartContext";
 import ErrorBoundary from "@/Components/General/ErrorBoundary";
 import { GOOGLE_CLIENT_ID, GOOGLE_ENABLED } from "@/lib/googleAuth";
 
@@ -11,9 +12,11 @@ const App = () => {
   const app = (
     <ThemeProvider>
       <AuthProvider>
-        <ErrorBoundary>
-          <AppRoutes />
-        </ErrorBoundary>
+        <CartProvider>
+          <ErrorBoundary>
+            <AppRoutes />
+          </ErrorBoundary>
+        </CartProvider>
         <Toaster position="top-right" toastOptions={{ duration: 3500 }} />
       </AuthProvider>
     </ThemeProvider>

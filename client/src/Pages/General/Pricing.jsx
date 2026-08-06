@@ -2,12 +2,13 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
     Sparkles, BookOpen, ClipboardList, FileText, BarChart3, Target, Compass, Users,
-    Check, Crown, ArrowRight, ShieldCheck, Clock, Star, GraduationCap, Info,
+    Check, Crown, ArrowRight, ShieldCheck, Clock, Star, GraduationCap, Info, Plus,
 } from "lucide-react";
 import {
     EXAM_COURSES, COUNSELLING_COURSES, MEMBERSHIP_GROUPS, FREE_FEATURES,
     MEMBERSHIP_PROMISE, CART_TIERS,
 } from "@/data/pricing";
+import { useCart } from "@/context/CartContext";
 
 const GROUP_ICON = {
     sparkles: Sparkles, book: BookOpen, clipboard: ClipboardList, files: FileText,
@@ -18,6 +19,8 @@ const rupee = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 const off = (mrp, price) => (mrp > price ? Math.round((1 - price / mrp) * 100) : 0);
 
 function CourseCard({ c, featured }) {
+    const { has, toggle } = useCart();
+    const inCart = has(c.slug);
     return (
         <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -63,13 +66,21 @@ function CourseCard({ c, featured }) {
                 </div>
             )}
 
-            <Link
-                to={`/courses/${c.slug}`}
-                className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-700"
+            <button
+                type="button"
+                onClick={() => toggle({ slug: c.slug, name: c.name, price: c.price, subtitle: c.subtitle })}
+                className={
+                    "mt-4 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition " +
+                    (inCart
+                        ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                        : "bg-indigo-600 text-white hover:bg-indigo-700")
+                }
             >
-                <Crown size={16} /> Get access
+                {inCart ? <><Check size={16} /> Added to cart</> : <><Plus size={16} /> Add to cart</>}
+            </button>
+            <Link to={`/courses/${c.slug}`} className="mt-2 text-center text-[11px] text-slate-400 hover:text-indigo-500 hover:underline">
+                View what&apos;s inside →
             </Link>
-            <p className="mt-2 text-center text-[11px] text-slate-400">Full premium access · valid this cycle</p>
         </motion.div>
     );
 }
