@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
     Loader2, ArrowLeft, ArrowRight, ScrollText, GraduationCap, Building2, TrendingUp,
-    FileText, Lock, CheckCircle2, ExternalLink, CalendarDays, ClipboardList,
+    FileText, Lock, CheckCircle2, ExternalLink, CalendarDays, ClipboardList, Target, Compass,
 } from "lucide-react";
 import {
     getExamOverview, getExamPattern, getExamSyllabus, getExamSeatMatrix, getExamCutoffs, getExamPyqs,
@@ -32,6 +32,51 @@ const SignInLink = ({ children }) => (
         {children} <ArrowRight size={14} />
     </Link>
 );
+
+// Public teaser for the college predictor: a visitor enters a rank, and we invite
+// them to create a free account to see the full predicted-college list (the
+// engine + cut-off data live behind login; premium unlocks the complete list).
+function RankPredictorTeaser({ examName }) {
+    const [rank, setRank] = useState("");
+    const [submitted, setSubmitted] = useState(false);
+    return (
+        <div>
+            <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
+                Enter a target rank to see which {examName} colleges it could get you.
+            </p>
+            <form
+                onSubmit={(e) => { e.preventDefault(); if (rank) setSubmitted(true); }}
+                className="flex flex-wrap items-center gap-2"
+            >
+                <input
+                    type="number"
+                    min="1"
+                    value={rank}
+                    onChange={(e) => setRank(e.target.value)}
+                    placeholder="Your expected rank"
+                    className="h-10 w-44 rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+                />
+                <button type="submit" className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-700">
+                    <Target size={15} /> Predict
+                </button>
+            </form>
+            {submitted && (
+                <div className="mt-3 rounded-xl border border-indigo-100 bg-indigo-50/60 p-4 text-sm dark:border-indigo-500/25 dark:bg-indigo-500/10">
+                    <p className="font-semibold text-slate-800 dark:text-slate-100">
+                        Good news — a rank around {Number(rank).toLocaleString("en-IN")} opens up several {examName} colleges.
+                    </p>
+                    <p className="mt-1 text-slate-500 dark:text-slate-400">
+                        Create a free account to see the full college × branch list for your rank, backed by real
+                        previous-year cut-offs.
+                    </p>
+                    <Link to="/register" className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+                        See my colleges — free <ArrowRight size={15} />
+                    </Link>
+                </div>
+            )}
+        </div>
+    );
+}
 
 function PatternSection({ p }) {
     const facts = [
@@ -150,7 +195,9 @@ function ExamDetailInner({ code }) {
         has.syllabus && ["syllabus", "Syllabus"],
         has.seatMatrix && ["seats", "Seat matrix"],
         has.cutoffs && ["cutoffs", "Cut-offs"],
+        has.cutoffs && ["predictor", "Rank predictor"],
         has.pyqs && ["pyqs", "Sample PYQs"],
+        ["counselling", "Counselling"],
     ].filter(Boolean);
 
     return (
@@ -247,6 +294,22 @@ function ExamDetailInner({ code }) {
                         </p>
                     </Section>
                 )}
+
+                {has.cutoffs && (
+                    <Section id="predictor" icon={<Target size={16} />} title="Rank predictor">
+                        <RankPredictorTeaser examName={exam.name} />
+                    </Section>
+                )}
+
+                <Section id="counselling" icon={<Compass size={16} />} title="Counselling"
+                    action={<SignInLink>Get counselling help</SignInLink>}>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                        Choice-filling order, document checklist, round-by-round strategy and freeze
+                        vs float — counselling can make or break your seat. Enrolled students get a
+                        step-by-step counselling guide and, on the premium batch, 1:1 guidance during
+                        the process.
+                    </p>
+                </Section>
 
                 {has.pyqs && (
                     <Section id="pyqs" icon={<FileText size={16} />} title="Sample past papers"
