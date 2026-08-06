@@ -71,27 +71,43 @@ function sanitizeExams(input, { allowAll = true } = {}) {
     return [...set].filter((c) => codeSet.has(c));
 }
 
-// Mongo condition selecting content VISIBLE to a student with these chosen exams.
+// The clauses matching UNIVERSAL content — content shown to every student
+// regardless of enrollment (no `targets`, empty `targets`, or the "all" sentinel).
+const UNIVERSAL_CLAUSES = [
+    { targets: { $exists: false } },
+    { targets: { $size: 0 } },
+    { targets: "all" },
+];
+
+// Mongo condition selecting content VISIBLE to a student with these exam codes.
+//
+// Under the enrollment model a student's codes come from their (free) course
+// enrollments. The load-bearing invariant: a student with ZERO codes sees ONLY
+// universal content — NEVER everything. (This is why an empty list no longer
+// returns {}.) A student with N codes sees universal content PLUS content
+// targeted at those codes.
+//
+// This is a STUDENT filter — staff bypass it at the call site (they pass no
+// filter / {} to see drafts and every exam's content).
+//
+// NB: the legacy "all" sentinel (the old "All LEET" preference) still collapses
+// to see-everything so existing ["all"] users aren't cut off before the backfill
+// migration re-enrolls them; the picker that produced it is removed separately.
 function visibilityQuery(studentExams) {
-    if (!Array.isArray(studentExams) || studentExams.length === 0) return {};
-    // A student preparing for "All LEET" sees everything (including exam-specific
-    // content), so impose no filter.
-    if (studentExams.includes("all")) return {};
-    return {
-        $or: [
-            { targets: { $exists: false } },
-            { targets: { $size: 0 } },
-            { targets: "all" },
-            { targets: { $in: studentExams } },
-        ],
-    };
+    if (Array.isArray(studentExams) && studentExams.includes("all")) return {};
+    if (!Array.isArray(studentExams) || studentExams.length === 0) {
+        return { $or: [...UNIVERSAL_CLAUSES] };
+    }
+    return { $or: [...UNIVERSAL_CLAUSES, { targets: { $in: studentExams } }] };
 }
 
+// In-memory mirror of visibilityQuery for a single content item's `targets`.
+// Same invariant: zero student codes → only universal items are visible.
 function isVisibleTo(targets, studentExams) {
-    if (!Array.isArray(studentExams) || studentExams.length === 0) return true;
-    if (studentExams.includes("all")) return true; // "All LEET" student sees everything
-    if (!Array.isArray(targets) || targets.length === 0) return true;
-    if (targets.includes("all")) return true;
+    const universal = !Array.isArray(targets) || targets.length === 0 || targets.includes("all");
+    if (Array.isArray(studentExams) && studentExams.includes("all")) return true; // legacy "All LEET"
+    if (!Array.isArray(studentExams) || studentExams.length === 0) return universal;
+    if (universal) return true;
     return targets.some((t) => studentExams.includes(t));
 }
 

@@ -1,7 +1,9 @@
 const Test = require("../../models/testModel");
 const Attempt = require("../../models/attemptModel");
 const { visibilityQuery } = require("../../config/exams");
-const { isPremiumUser } = require("../../config/roles");
+const { STAFF, isPremiumUser } = require("../../config/roles");
+
+const isStaff = (u) => STAFF.includes(u?.role);
 // Registers the Question schema so populate("questions") / populate("answers.question")
 // works at runtime (Test/Attempt only reference it by name).
 require("../../models/questionModel");
@@ -42,8 +44,10 @@ async function applyAttemptToStats(user, { accuracy, durationTakenSeconds }) {
 // GET /api/tests — list available tests (no questions)
 async function listTests(req, res, next) {
     try {
-        // Show only tests targeted at the student's chosen exams (empty pref = all).
-        const tests = await Test.find({ isPublished: true, ...visibilityQuery(req.user?.exams) })
+        // Students see published tests targeted at the exams they're enrolled in
+        // (zero enrollments → universal tests only); staff preview every exam's.
+        const visible = isStaff(req.user) ? {} : visibilityQuery(req.user?.exams);
+        const tests = await Test.find({ isPublished: true, ...visible })
             .select("title description subject topic stateExam targets category format mode premium durationMinutes questions totalMarks closeAt openAt createdAt")
             .sort({ createdAt: -1 })
             .lean();
