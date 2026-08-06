@@ -144,12 +144,12 @@ function PrepGuideLocked({ onBack }) {
 
                     {/* The two ways in, plus a way out */}
                     <div className="mt-6 flex flex-col gap-2.5">
-                        <a
-                            href="mailto:help@oneleet.in?subject=OneLeet%20Premium%20%E2%80%94%20Prep%20Guide"
+                        <Link
+                            to="/pricing"
                             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
                         >
-                            <Crown size={17} /> Buy Premium
-                        </a>
+                            <Crown size={17} /> See Premium plans
+                        </Link>
                         <button
                             onClick={openCallback}
                             className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-3 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50 dark:border-indigo-500/30 dark:bg-slate-800 dark:text-indigo-300 dark:hover:bg-slate-700/60"

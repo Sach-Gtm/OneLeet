@@ -1,8 +1,8 @@
+import { Link } from "react-router-dom";
 import { Crown, X, Check } from "lucide-react";
 
-// Shown when a free student tries to open premium content. Explains the perk
-// and links to the same upgrade channel as the AI-quota nudge (mailto). Kept
-// deliberately simple — there's no self-serve checkout yet.
+// Shown when a free student tries to open premium content. Explains the perk and
+// sends them to the Pricing page (where checkout will live; today a placeholder).
 export default function PremiumGateModal({ open, onClose, itemTitle }) {
     if (!open) return null;
     return (
@@ -38,12 +38,13 @@ export default function PremiumGateModal({ open, onClose, itemTitle }) {
                         )
                     )}
                 </ul>
-                <a
-                    href="mailto:help@oneleet.in?subject=OneLeet%20Premium"
+                <Link
+                    to="/pricing"
+                    onClick={onClose}
                     className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
                 >
-                    <Crown size={16} /> Get Premium
-                </a>
+                    <Crown size={16} /> See Premium plans
+                </Link>
                 <button onClick={onClose} className="mt-2 text-xs font-medium text-slate-400 hover:text-slate-600">
                     Maybe later
                 </button>
