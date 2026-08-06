@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useParams, useLocation, Link } from "react-router-dom";
 import {
     Loader2, ArrowLeft, ArrowRight, ScrollText, GraduationCap, Building2, TrendingUp,
     FileText, Lock, CheckCircle2, ExternalLink, CalendarDays, ClipboardList, Target, Compass,
@@ -168,6 +168,20 @@ function ExamDetailInner({ code }) {
         });
         return () => { alive = false; };
     }, [code]);
+
+    // Deep-link scroll: the EXAMS mega-menu links to /exams/:code#seats etc. Content
+    // loads async, so scroll to the target section once it has actually rendered.
+    const { hash } = useLocation();
+    const scrolledTo = useRef(null);
+    useEffect(() => {
+        if (!hash) return;
+        if (scrolledTo.current === hash) return;
+        const el = document.getElementById(hash.slice(1));
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            scrolledTo.current = hash;
+        }
+    }, [hash, overview, pattern, syllabus, seat, cutoffs, pyqs]);
 
     if (overview === undefined) {
         return (

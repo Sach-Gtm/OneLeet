@@ -103,7 +103,7 @@ export default function Courses() {
     }, []);
 
     return (
-        <div className="mx-auto max-w-6xl space-y-6">
+        <div className="mx-auto max-w-6xl space-y-6 px-4 pb-16 pt-28 sm:pt-32">
             {/* Header */}
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white">
                 <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />

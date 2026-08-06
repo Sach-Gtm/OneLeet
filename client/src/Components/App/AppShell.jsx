@@ -96,7 +96,8 @@ function SidebarContent({ user, onNavigate, onLogout, collapsed = false, onToggl
     return (
         <div className="flex h-full flex-col">
             <div className={cn("flex items-center py-5", collapsed ? "justify-center px-2" : "justify-between px-5")}>
-                <Link to="/dashboard" onClick={onNavigate} className="flex items-center gap-2">
+                {/* Logo goes to the public landing page (no logout), per spec. */}
+                <Link to="/" onClick={onNavigate} className="flex items-center gap-2">
                     {collapsed ? <LogoMark size={30} /> : <Logo size={32} textClass="text-lg" />}
                 </Link>
                 {/* Collapse toggle — desktop only (onToggleCollapse is undefined in the mobile drawer). */}

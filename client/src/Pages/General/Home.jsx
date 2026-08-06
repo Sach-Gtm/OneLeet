@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Footer from "@/Components/General/Footer";
+import HomeCourses from "@/Components/General/HomeCourses";
 import { useSeo } from "@/lib/useSeo";
 
 // Heavy, non-critical pieces loaded off the critical path so the hero (the LCP)
@@ -157,6 +158,9 @@ export default function Home() {
                     </Suspense>
                 </div>
             </section>
+
+            {/* College-wise batches — browsable + free to join without login */}
+            <HomeCourses />
 
             {/* Features */}
             <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">

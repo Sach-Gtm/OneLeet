@@ -11,6 +11,12 @@ export const isSuperadmin = (u) => u?.role === "superadmin";
 // Anyone who can create content / push notifications (mentor, admin, super).
 export const isStaff = (u) => isMentor(u) || isAdmin(u);
 
+// Enrollment: a student's accessible exam-codes come from their course
+// enrollments (server keeps user.exams in sync). A student who hasn't joined any
+// batch must pick one before they can open content — staff are never gated.
+export const isEnrolled = (u) => Array.isArray(u?.exams) && u.exams.length > 0;
+export const needsCourse = (u) => isStudent(u) && !isEnrolled(u);
+
 // A student on the paid plan. Staff always have premium access (they author &
 // preview premium content). Mirrors the server's config/roles.isPremiumUser so
 // the UI never renders a "locked" state the API would actually let through.

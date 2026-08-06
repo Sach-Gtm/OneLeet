@@ -17,7 +17,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function CourseDetail() {
     const { slug } = useParams();
     const navigate = useNavigate();
-    const { refresh } = useAuth();
+    const { user, refresh } = useAuth();
 
     const [course, setCourse] = useState(null);
     const [notFound, setNotFound] = useState(false);
@@ -45,6 +45,11 @@ export default function CourseDetail() {
     }, [slug]);
 
     const doEnroll = async () => {
+        // A visitor must have an account to enroll — send them to sign up, then back.
+        if (!user) {
+            navigate("/register", { state: { from: { pathname: `/courses/${slug}` } } });
+            return;
+        }
         setBusy(true);
         try {
             await enrollApi({ slug });
@@ -74,7 +79,7 @@ export default function CourseDetail() {
 
     if (notFound) {
         return (
-            <div className="mx-auto max-w-3xl py-16 text-center">
+            <div className="mx-auto max-w-3xl px-4 py-16 pt-32 text-center">
                 <GraduationCap className="mx-auto h-10 w-10 text-slate-300" />
                 <h1 className="mt-4 text-lg font-bold text-slate-800 dark:text-slate-100">
                     This batch isn&apos;t available
@@ -94,14 +99,14 @@ export default function CourseDetail() {
 
     if (!course) {
         return (
-            <div className="flex h-64 items-center justify-center">
+            <div className="flex h-screen items-center justify-center">
                 <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
             </div>
         );
     }
 
     return (
-        <div className="mx-auto max-w-4xl space-y-6">
+        <div className="mx-auto max-w-4xl space-y-6 px-4 pb-16 pt-28 sm:pt-32">
             <Link
                 to="/courses"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
