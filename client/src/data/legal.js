@@ -19,8 +19,8 @@ export const SUCCESS_PROMISE_TABLE = [
     {
         exam: "IPU LEET",
         commitment:
-            "Admission in a top-6 IPU college for a CSE-family branch (CSE, CST, IT, AI-DS, DS, AIML, ITE) — USICT, MAIT, MSIT, BVCOE, BPIT, ADGITM or USAR; or admission in a top-3 college (USICT, MAIT, MSIT) for any other branch.",
-        reward: "100% of the course fee refunded if the committed admission is not secured.",
+            "Score well and secure admission in a top-6 IPU college for a CSE-family branch (CSE, CST, IT, AI-DS, DS, AIML, ITE) — USICT, MAIT, MSIT, BVCOE, BPIT, ADGITM or USAR; or a top-3 college (USICT, MAIT, MSIT) for any other branch.",
+        reward: "Refund policy: if you don't score and secure the promised admission, your course fee is refunded. Connect on WhatsApp Business for the exact terms.",
     },
     {
         exam: "DTU / NSUT LEET",
