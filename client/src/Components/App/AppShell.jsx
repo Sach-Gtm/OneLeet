@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Suspense } from "react";
-import { NavLink, Outlet, useNavigate, useLocation, Navigate, Link } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
 import {
     LayoutDashboard,
     FileQuestion,
@@ -29,7 +29,6 @@ import ThemeToggle from "@/Components/App/ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "@/Components/General/Logo";
 import Footer from "@/Components/General/Footer";
-import { isProfileComplete } from "@/lib/profile";
 import { isStaff as isStaffUser, roleLabel } from "@/lib/roles";
 
 const NAV = [
@@ -252,14 +251,12 @@ function UserMenu({ user, isStaff, onLogout }) {
 export default function AppShell() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
     const [mobileOpen, setMobileOpen] = useState(false);
     const isStaff = isStaffUser(user);
 
-    // Profile is mandatory: until every required field is filled, keep the user
-    // on /profile (they can still log out from the header). Once complete, the
-    // whole app opens up.
-    const gated = user && !isProfileComplete(user) && location.pathname !== "/profile";
+    // The profile is never a hard gate: students land in the app immediately and
+    // fill their details at their own pace (the Profile page shows a completion
+    // meter instead). Onboarding asks nothing beyond what signup already captured.
 
     const handleLogout = async () => {
         // Leave the protected area FIRST, then clear auth. The moment `user`
@@ -344,7 +341,7 @@ export default function AppShell() {
                             </div>
                         }
                     >
-                        {gated ? <Navigate to="/profile" replace /> : <Outlet />}
+                        <Outlet />
                     </Suspense>
                 </main>
                 {/* Site footer on every logged-in page too (not on login/register,
