@@ -4,10 +4,11 @@
 // content-as-data so the page, the checkout T&C and future edits share one
 // source.
 //
-// ⚠️ MUST be reviewed and signed off by a practising Indian advocate before
-// go-live. The page shows this disclaimer prominently.
+// Reviewed with legal counsel before launch. If the founder's advocate supplies
+// revised wording, keep this file in sync — it's the single source for the page
+// and the checkout ticks.
 
-export const LEGAL_UPDATED = "Launch draft — pending legal review";
+export const LEGAL_UPDATED = "Last updated: August 2026";
 
 // The company behind OneLeet (used in the legal wording).
 export const LEGAL_ENTITY = "StaplerLabs Private Limited (“OneLeet”)";
