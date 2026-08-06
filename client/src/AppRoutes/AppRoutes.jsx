@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import Home from "../Pages/General/Home";
 import MarketingLayout from "@/Components/General/MarketingLayout";
 import ProtectedRoute from "@/Components/Auth/ProtectedRoute";
+import RequireCourse from "@/Components/Auth/RequireCourse";
 import ActivityTracker from "@/Components/App/ActivityTracker";
 
 // The authenticated shell (sidebar, notifications, charts, …) is only needed
@@ -76,6 +77,9 @@ const AppRoutes = () => {
                         <Route path="/exams/:code" element={<ExamDetail />} />
                         <Route path="/colleges" element={<Colleges />} />
                         <Route path="/pricing" element={<Pricing />} />
+                        {/* Courses are public: browse + read the free syllabus before signing up. */}
+                        <Route path="/courses" element={<Courses />} />
+                        <Route path="/courses/:slug" element={<CourseDetail />} />
                         <Route path="/mentor" element={<Mentors />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
                         <Route path="/bug-report" element={<BugReport />} />
@@ -100,19 +104,21 @@ const AppRoutes = () => {
                         }
                     >
                         <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/courses" element={<Courses />} />
-                        <Route path="/courses/:slug" element={<CourseDetail />} />
                         <Route path="/prep-guide" element={<PrepGuide />} />
                         <Route path="/exam-pattern" element={<ExamPatternPage />} />
-                        <Route path="/pyqs" element={<PyqArchive />} />
-                        <Route path="/notes" element={<NotesLibrary />} />
-                        <Route path="/syllabus" element={<Syllabus />} />
-                        <Route path="/videos" element={<Videos />} />
-                        <Route path="/tests" element={<TestsList />} />
-                        <Route path="/tests/result/:attemptId" element={<TestResult />} />
-                        <Route path="/tests/:id/leaderboard" element={<TestLeaderboardPage />} />
-                        <Route path="/tests/:id" element={<TestTake />} />
-                        <Route path="/ai-tools" element={<AiTools />} />
+                        {/* Content routes — a signed-in student must have joined a
+                            batch first (RequireCourse shows a "choose a course" gate). */}
+                        <Route element={<RequireCourse />}>
+                            <Route path="/pyqs" element={<PyqArchive />} />
+                            <Route path="/notes" element={<NotesLibrary />} />
+                            <Route path="/syllabus" element={<Syllabus />} />
+                            <Route path="/videos" element={<Videos />} />
+                            <Route path="/tests" element={<TestsList />} />
+                            <Route path="/tests/result/:attemptId" element={<TestResult />} />
+                            <Route path="/tests/:id/leaderboard" element={<TestLeaderboardPage />} />
+                            <Route path="/tests/:id" element={<TestTake />} />
+                            <Route path="/ai-tools" element={<AiTools />} />
+                        </Route>
                         <Route path="/leaderboard" element={<Leaderboard />} />
                         <Route path="/analytics" element={<Analytics />} />
                         <Route path="/community" element={<Community />} />
