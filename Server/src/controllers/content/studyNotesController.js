@@ -4,9 +4,11 @@ const Note = require("../../models/noteModel");
 const aiService = require("../../services/ai/aiService");
 const { runAiFeature } = require("../../services/ai/aiRuntime");
 const { sanitizeExams, visibilityQuery } = require("../../config/exams");
-const { isPremiumUser } = require("../../config/roles");
+const { STAFF, isPremiumUser } = require("../../config/roles");
 
 const CATEGORY = "notes";
+
+const isStaff = (u) => STAFF.includes(u?.role);
 
 // A premium note stays visible to free students (shown locked), but they never
 // receive its file/content and can't open it — this 403 is the enforcement.
@@ -23,9 +25,7 @@ async function getNotes(req, res, next) {
     try {
         const { subject, difficulty, format, teacher, q, sort = "newest", page = 1, limit = 9 } = req.query;
 
-        // Students see notes targeted at their chosen exams (no preference → all;
-        // staff have no exams set, so they see all).
-        const filter = { category: CATEGORY, ...visibilityQuery(req.user?.exams) };
+        const filter = { category: CATEGORY };
         const subjectF = listFilter(subject);
         if (subjectF) filter.subject = subjectF;
         const difficultyF = listFilter(difficulty);
@@ -35,10 +35,17 @@ async function getNotes(req, res, next) {
         const teacherF = listFilter(teacher);
         if (teacherF) filter.teacher = teacherF;
 
+        // Students see notes targeted at the exams they're enrolled in (zero
+        // enrollments → universal notes only); staff see every note. The visibility
+        // clause and the free-text search clause are BOTH $or-shaped, so AND them
+        // together (a bare filter.$or would let the search silently drop visibility).
+        const clauses = [];
+        if (!isStaff(req.user)) clauses.push(visibilityQuery(req.user?.exams));
         if (q && q.trim()) {
             const rx = new RegExp(q.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
-            filter.$or = [{ title: rx }, { description: rx }, { subject: rx }, { teacher: rx }];
+            clauses.push({ $or: [{ title: rx }, { description: rx }, { subject: rx }, { teacher: rx }] });
         }
+        if (clauses.length) filter.$and = clauses;
 
         const pageNum = Math.max(1, parseInt(page, 10) || 1);
         const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10) || 9));

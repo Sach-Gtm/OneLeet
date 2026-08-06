@@ -104,7 +104,8 @@ async function listSyllabi(req, res, next) {
 // GET /api/syllabus/me/summary — overall coverage across published syllabi.
 async function myProgressSummary(req, res, next) {
     try {
-        const syllabi = await Syllabus.find({ published: true, ...visibilityQuery(req.user.exams) }).lean();
+        const visible = isStaff(req.user) ? {} : visibilityQuery(req.user.exams);
+        const syllabi = await Syllabus.find({ published: true, ...visible }).lean();
         const map = await progressMap(req.user._id, syllabi);
         let totalTopics = 0, doneTopics = 0, totalHours = 0, doneHours = 0;
         for (const s of syllabi) {

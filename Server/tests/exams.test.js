@@ -67,14 +67,16 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.ok(!titles.includes("DTU only"), "does NOT see DTU content");
     ok("a student sees only their exams' content (plus untargeted)");
 
-    // A student who hasn't chosen sees everything.
+    // A student with NO enrollments sees ONLY universal content — never every
+    // exam's. This is the load-bearing invariant of the enrollment model: an
+    // empty exam list must NOT collapse to "see everything".
     const fresh = await User.create({
         name: "F", email: "f@t.com", password: "secret123", phone: "9000000003",
         role: "student", isVerified: true, authProvider: "local",
     });
-    const fCount = (await request.get("/api/syllabus").set(...auth(generateToken(fresh._id)))).body.syllabi.length;
-    assert.strictEqual(fCount, 3, "no preference → sees all");
-    ok("a student with no chosen exams sees everything");
+    const fTitles = (await request.get("/api/syllabus").set(...auth(generateToken(fresh._id)))).body.syllabi.map((s) => s.title);
+    assert.deepStrictEqual(fTitles, ["Everyone"], "no enrollment → only universal content");
+    ok("a student with no enrollments sees ONLY universal content (not everything)");
 
     // Choosing exams via the profile is validated against the catalog.
     const upd = await request
