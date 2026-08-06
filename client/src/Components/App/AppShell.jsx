@@ -13,6 +13,8 @@ import {
     Trophy,
     Users,
     User,
+    Package,
+    Gift,
     Search,
     LogOut,
     Menu,
@@ -59,6 +61,8 @@ const NAV = [
         section: "Community",
         items: [
             { to: "/community", label: "Community", icon: Users },
+            { to: "/refer", label: "Refer & Earn", icon: Gift },
+            { to: "/orders", label: "My Orders", icon: Package },
             { to: "/profile", label: "Profile", icon: User },
         ],
     },
