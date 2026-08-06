@@ -80,6 +80,9 @@ const AppRoutes = () => {
                         {/* Courses are public: browse + read the free syllabus before signing up. */}
                         <Route path="/courses" element={<Courses />} />
                         <Route path="/courses/:slug" element={<CourseDetail />} />
+                        {/* Prep Guide is a free-but-limited public teaser; the full guide
+                            unlocks after sign-up, and 1:1 coaching on premium. */}
+                        <Route path="/prep-guide" element={<PrepGuide />} />
                         <Route path="/mentor" element={<Mentors />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
                         <Route path="/bug-report" element={<BugReport />} />
@@ -104,7 +107,6 @@ const AppRoutes = () => {
                         }
                     >
                         <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/prep-guide" element={<PrepGuide />} />
                         <Route path="/exam-pattern" element={<ExamPatternPage />} />
                         {/* Content routes — a signed-in student must have joined a
                             batch first (RequireCourse shows a "choose a course" gate). */}
