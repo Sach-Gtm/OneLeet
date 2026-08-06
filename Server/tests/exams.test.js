@@ -78,35 +78,24 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.deepStrictEqual(fTitles, ["Everyone"], "no enrollment → only universal content");
     ok("a student with no enrollments sees ONLY universal content (not everything)");
 
-    // Choosing exams via the profile is validated against the catalog.
+    // Under the enrollment model `exams` is NOT a self-set profile field — it's
+    // derived from course enrollments. The profile update must IGNORE any `exams`
+    // in the body (other fields still save), so a student can't grant themselves
+    // an exam by PATCHing their profile.
     const upd = await request
         .patch("/api/auth/me")
         .set(...auth(sToken))
-        .send({ exams: ["dtu-nsut-leet", "totally-fake", "dtu-nsut-leet"] });
+        .send({ exams: ["dtu-nsut-leet", "all"], college: "New College" });
     assert.strictEqual(upd.status, 200);
-    assert.deepStrictEqual(upd.body.user.exams, ["dtu-nsut-leet"], "bogus dropped + de-duped");
-    ok("a student's chosen exams are validated and de-duped on save");
+    assert.deepStrictEqual(upd.body.user.exams, ["ipu-leet"], "exams in the body are ignored (enrollment-derived)");
+    assert.strictEqual(upd.body.user.college, "New College", "other profile fields still update");
+    ok("the profile can't self-set exams — access comes from enrollments");
 
-    // After switching to DTU, they now see DTU + untargeted, not IPU.
+    // The student's visible content still follows their (enrollment-derived) exams,
+    // unchanged by the profile PATCH above.
     const t2 = (await request.get("/api/syllabus").set(...auth(sToken))).body.syllabi.map((s) => s.title);
-    assert.ok(t2.includes("DTU only") && t2.includes("Everyone") && !t2.includes("IPU only"), "filter follows the choice");
-    ok("changing the choice changes what the student sees — editable any time");
-
-    // Choosing "All LEET" collapses to exactly ["all"] and shows every exam's content.
-    const allUpd = await request
-        .patch("/api/auth/me")
-        .set(...auth(sToken))
-        .send({ exams: ["all", "ipu-leet"] });
-    assert.strictEqual(allUpd.status, 200);
-    assert.deepStrictEqual(allUpd.body.user.exams, ["all"], "\"all\" collapses to just [\"all\"]");
-    ok("a student can choose 'All LEET' (stored as [\"all\"])");
-
-    const t3 = (await request.get("/api/syllabus").set(...auth(sToken))).body.syllabi.map((s) => s.title);
-    assert.ok(
-        t3.includes("IPU only") && t3.includes("DTU only") && t3.includes("Everyone"),
-        "'All LEET' student sees every exam's content"
-    );
-    ok("an 'All LEET' student sees content targeted at every exam");
+    assert.ok(t2.includes("IPU only") && t2.includes("Everyone") && !t2.includes("DTU only"), "still scoped to IPU");
+    ok("content scoping is driven by enrollments, not a profile picker");
 
     await mongoose.disconnect();
     await mongod.stop();

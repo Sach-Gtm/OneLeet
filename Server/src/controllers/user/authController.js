@@ -3,7 +3,6 @@ const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/userModel");
 const cloudinary = require("../../config/cloudinary");
-const { sanitizeExams } = require("../../config/exams");
 const { buildCookieOptions } = require("../../utils/authCookie");
 const { startSession, endSession } = require("../../utils/authSession");
 const {
@@ -416,9 +415,10 @@ async function updateProfile(req, res, next) {
         for (const key of allowed) {
             if (req.body[key] !== undefined) updates[key] = req.body[key];
         }
-        // The LEET exams a student is preparing for (validated against the catalog).
-        // Students may pick specific exams or "All LEET" (stored as ["all"]).
-        if (Array.isArray(req.body.exams)) updates.exams = sanitizeExams(req.body.exams, { allowAll: true });
+        // NB: `exams` is intentionally NOT editable here. Under the enrollment
+        // model a student's exam access is derived from their course enrollments
+        // (see enrollmentController.syncUserExams) — it's not a self-set profile
+        // field, so we ignore any `exams` in the body.
         const user = await User.findByIdAndUpdate(req.user._id, updates, {
             returnDocument: "after",
             runValidators: true,

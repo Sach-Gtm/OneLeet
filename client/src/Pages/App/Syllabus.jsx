@@ -356,9 +356,9 @@ export default function Syllabus() {
 
     const examName = (code) => examList.find((e) => e.code === code)?.name || code;
 
-    // Group the syllabi by the exam(s) the student chose — one group per chosen
-    // exam, so they see only their exams (not every college). No exam chosen (or
-    // "all") → a single "All LEET" bucket rather than each college separately.
+    // Group the syllabi by the exam(s) the student is enrolled in — one group per
+    // exam, so they see only their exams (not every college). Not enrolled yet →
+    // a single "Common" bucket of the universal syllabi they can still see.
     const groups = useMemo(() => {
         const list = syllabi || [];
         if (list.length === 0) return [];
@@ -366,18 +366,18 @@ export default function Syllabus() {
         const untargeted = (s) => !(s.targets || []).length || (s.targets || []).includes("all");
 
         if (chosen.length === 0) {
-            return [{ key: "all", name: "All LEET", syllabi: list }];
+            return [{ key: "common", name: "Common", syllabi: list }];
         }
         const gs = [];
         for (const code of chosen) {
             const subs = list.filter((s) => (s.targets || []).includes(code));
             if (subs.length) gs.push({ key: code, name: examName(code), syllabi: subs });
         }
-        // Common syllabi (untargeted / "all") shown to every student.
+        // Common syllabi (untargeted) shown to every student.
         const general = list.filter(untargeted);
-        if (general.length) gs.push({ key: "__general", name: "All LEET (common)", syllabi: general });
-        // Fallback: nothing matched a chosen exam → show everything under one group.
-        return gs.length ? gs : [{ key: "all", name: "All LEET", syllabi: list }];
+        if (general.length) gs.push({ key: "__general", name: "Common (all exams)", syllabi: general });
+        // Fallback: nothing matched an enrolled exam → show everything under one group.
+        return gs.length ? gs : [{ key: "common", name: "Common", syllabi: list }];
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [syllabi, user, examList]);
 

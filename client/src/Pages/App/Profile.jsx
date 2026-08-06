@@ -26,7 +26,7 @@ import { useAuth } from "@/context/AuthContext";
 import { fmtDuration } from "@/lib/format";
 import { updateProfile, changePassword, uploadPassportPhoto } from "@/Api/AuthApis";
 import { getMyAnalytics } from "@/Api/ActivityApi";
-import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
+import { Link } from "react-router-dom";
 import RankMedal from "@/Components/App/RankMedal";
 import { profileCompletion } from "@/lib/profile";
 import { isStaff, roleLabel } from "@/lib/roles";
@@ -57,7 +57,6 @@ export default function Profile() {
         college: user?.college || "",
         branch: user?.branch || "",
         yearOfStudy: user?.yearOfStudy || "",
-        exams: user?.exams || [],
     });
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -272,22 +271,21 @@ export default function Profile() {
                         </div>
 
                         {!staffUser && (
-                            <>
-                                <h3 className="mb-1 mt-6 text-sm font-bold text-slate-800">
-                                    LEET exams you&apos;re preparing for
-                                </h3>
-                                <p className="mb-3 text-xs text-slate-500">
-                                    You&apos;ll see tests, syllabus and notes for these. Pick <b>All LEET</b> for everything,
-                                    or choose one or more specific exams — change any time.
-                                </p>
-                                <ExamMultiSelect
-                                    value={form.exams}
-                                    onChange={(next) => setForm((f) => ({ ...f, exams: next }))}
-                                    allowAll
-                                    allLabel="All LEET (every exam)"
-                                    height="max-h-52"
-                                />
-                            </>
+                            <div className="mt-6 flex items-center gap-3 rounded-xl border border-indigo-100 bg-indigo-50/60 p-4">
+                                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-indigo-100 text-indigo-600">
+                                    <GraduationCap size={18} />
+                                </span>
+                                <div className="text-sm">
+                                    <p className="font-semibold text-slate-800">Your exams follow your batches</p>
+                                    <p className="text-slate-500">
+                                        You&apos;ll see the tests, syllabus and notes for the batches you&apos;ve
+                                        enrolled in.{" "}
+                                        <Link to="/courses" className="font-semibold text-indigo-600 hover:underline">
+                                            Browse or manage your batches →
+                                        </Link>
+                                    </p>
+                                </div>
+                            </div>
                         )}
 
                         <div className="mt-6 flex items-center justify-between">
