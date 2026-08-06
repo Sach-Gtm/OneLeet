@@ -26,6 +26,7 @@ const { ensureComputerAppTestsSeeded } = require("./src/config/seedComputerAppTe
 const { ensureDtuNsutMerged } = require("./src/config/seedMergeDtuNsut");
 const { ensureDtuNsutSyllabusSeeded } = require("./src/config/seedDtuNsutSyllabus");
 const { ensureLeet2024PyqSeeded } = require("./src/config/seedLeet2024Pyq");
+const { ensureFoundationCoursesSeeded } = require("./src/config/seedFoundationCourses");
 
 // Provision the Super Admin out-of-band once the DB is up, seed the LEET exam
 // catalog + founding mentors + IPU LEET syllabus and exam pattern on first run,
@@ -57,6 +58,7 @@ connectDB().then(async () => {
     ensureAppliedMathAdvancedTestsSeeded();
     ensureComputerAppTestsSeeded();
     ensureLeet2024PyqSeeded();
+    ensureFoundationCoursesSeeded();
     startLeaderboardScheduler();
 });
 
