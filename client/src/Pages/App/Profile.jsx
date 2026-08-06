@@ -18,7 +18,6 @@ import {
     Clock,
     ChevronDown,
     ShieldCheck,
-    AlertTriangle,
     Upload,
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -29,7 +28,7 @@ import { updateProfile, changePassword, uploadPassportPhoto } from "@/Api/AuthAp
 import { getMyAnalytics } from "@/Api/ActivityApi";
 import ExamMultiSelect from "@/Components/App/ExamMultiSelect";
 import RankMedal from "@/Components/App/RankMedal";
-import { missingProfileFields } from "@/lib/profile";
+import { profileCompletion } from "@/lib/profile";
 import { isStaff, roleLabel } from "@/lib/roles";
 
 const MAX_PHOTO_BYTES = 1024 * 1024; // 1 MB
@@ -151,9 +150,8 @@ export default function Profile() {
 
     const studentUser = !staffUser;
     const photoUrl = user?.passportPhoto?.url || user?.avatar || "";
-    const missing = missingProfileFields(user);
-    const incomplete = missing.length > 0;
-    const req = <span className="text-red-500">*</span>;
+    const completion = profileCompletion(user);
+    const req = null; // nothing is mandatory — the completion meter nudges instead
 
     const stats = user?.stats || {};
     const overview = [
@@ -170,29 +168,26 @@ export default function Profile() {
         <div className="mx-auto max-w-5xl space-y-6">
             <h1 className="text-2xl font-bold text-slate-900">My Profile</h1>
 
-            {incomplete && (
-                <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center">
-                    <AlertTriangle className="h-5 w-5 shrink-0 text-amber-500" />
-                    <div className="text-sm">
-                        <p className="font-semibold text-amber-800">
-                            Complete your profile to continue
-                        </p>
-                        <p className="text-amber-700">
-                            All fields are required. Still needed:{" "}
-                            <span className="font-semibold">
-                                {missing.map((m) => m.label).join(", ")}
-                            </span>
-                            .
-                        </p>
+            {studentUser && completion.percent < 100 && (
+                <div className="rounded-xl border border-indigo-200 bg-indigo-50/60 p-4 dark:border-indigo-500/25 dark:bg-indigo-500/10">
+                    <div className="flex items-center justify-between gap-3">
+                        <div>
+                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                                Profile {completion.percent}% complete
+                            </p>
+                            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                                {completion.missing.length ? (
+                                    <>Optional — add {completion.missing.map((m) => m.label.toLowerCase()).join(", ")} to personalise your prep.</>
+                                ) : (
+                                    "You're all set."
+                                )}
+                            </p>
+                        </div>
+                        <span className="text-lg font-bold text-indigo-600 dark:text-indigo-300">{completion.percent}%</span>
                     </div>
-                    {missing.some((m) => m.key === "passportPhoto") && (
-                        <button
-                            onClick={() => fileRef.current?.click()}
-                            className="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600 sm:ml-auto"
-                        >
-                            Upload photo
-                        </button>
-                    )}
+                    <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/70 dark:bg-slate-700/60">
+                        <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${completion.percent}%` }} />
+                    </div>
                 </div>
             )}
 
@@ -334,14 +329,18 @@ export default function Profile() {
                         <div className="rounded-2xl border border-slate-200 bg-white p-6">
                             <div className="mb-3 flex items-center gap-2">
                                 <ShieldCheck size={16} className="text-indigo-600" />
-                                <h3 className="text-sm font-bold text-slate-800">Passport Photo</h3>
+                                <h3 className="text-sm font-bold text-slate-800">Profile Photo</h3>
                                 {user?.passportPhoto?.url ? (
                                     <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600">
                                         <CheckCircle2 size={12} /> Uploaded
                                     </span>
+                                ) : user?.avatar ? (
+                                    <span className="ml-auto rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-600">
+                                        From Google
+                                    </span>
                                 ) : (
-                                    <span className="ml-auto rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-600">
-                                        Required
+                                    <span className="ml-auto rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-500">
+                                        Optional
                                     </span>
                                 )}
                             </div>
@@ -356,7 +355,7 @@ export default function Profile() {
                                     )}
                                 </div>
                                 <div className="text-xs text-slate-500">
-                                    <p>Clear, front-facing photo on a plain background.</p>
+                                    <p>Optional. We use your Google photo by default — upload your own any time.</p>
                                     <p className="mt-1">
                                         JPG or PNG, <span className="font-semibold">max 1 MB</span>.
                                     </p>
