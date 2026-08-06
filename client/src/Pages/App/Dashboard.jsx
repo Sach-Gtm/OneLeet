@@ -137,9 +137,14 @@ function WeekActivity({ minutesByDay }) {
         <div className="rounded-2xl border border-slate-200 bg-white p-6">
             <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-sm font-bold text-slate-800">This week</h2>
-                <span className="text-xs font-medium text-slate-400">
-                    {total >= 60 ? `${Math.floor(total / 60)}h ${total % 60}m` : `${total}m`} studied
-                </span>
+                <div className="flex items-center gap-3">
+                    <span className="text-xs font-medium text-slate-400">
+                        {total >= 60 ? `${Math.floor(total / 60)}h ${total % 60}m` : `${total}m`} studied
+                    </span>
+                    <Link to="/analytics" className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:underline">
+                        Full analytics <ArrowRight size={12} />
+                    </Link>
+                </div>
             </div>
             <div className="flex h-24 items-end gap-2.5">
                 {days.map((d, i) => (
