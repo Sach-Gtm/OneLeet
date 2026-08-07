@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Clock, Loader2, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,8 @@ const fmt = (s) => {
 
 export default function TestTake() {
     const { id } = useParams();
+    const [searchParams] = useSearchParams();
+    const exam = searchParams.get("exam") || ""; // batch context (per-batch attempts)
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -34,7 +36,7 @@ export default function TestTake() {
 
     useEffect(() => {
         let active = true;
-        getTest(id)
+        getTest(id, exam)
             .then((res) => {
                 if (!active) return;
                 setTest(res.test);
@@ -63,7 +65,7 @@ export default function TestTake() {
         return () => {
             active = false;
         };
-    }, [id, navigate]);
+    }, [id, exam, navigate]);
 
     const handleSubmit = async () => {
         if (submittedRef.current) return;
@@ -72,6 +74,7 @@ export default function TestTake() {
         try {
             const payload = {
                 startedAt: startedAtRef.current,
+                examCode: exam, // record which batch this attempt was taken under
                 answers: Object.entries(answers).map(([questionId, selectedIndex]) => ({
                     questionId,
                     selectedIndex,

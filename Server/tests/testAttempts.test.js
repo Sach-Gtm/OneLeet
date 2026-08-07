@@ -98,6 +98,42 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(rrow.attempted, true, "re-seeded practice (new _id, same title) stays attempted");
     ok("a re-seeded practice test keeps its attempted state via title match");
 
+    // ── Per-batch attempts: a universal test is attemptable once PER batch ──
+    // Shubham is enrolled in two batches; a universal graded test appears in both
+    // and taking it in one batch must NOT mark it done in the other.
+    const shubham = await User.create({ name: "Shubham", email: "sh@t.com", password: "secret123", phone: "9000000009", role: "student", isVerified: true, authProvider: "local", exams: ["ipu-leet", "dtu-nsut-leet"] });
+    const shubhamT = generateToken(shubham._id);
+    const qUni = await mkQ();
+    const uni = await Test.create({ title: "Universal Mock", mode: "test", durationMinutes: 30, questions: [qUni._id], totalMarks: 1, status: "published", isPublished: true, targets: [], createdBy: admin._id });
+    const uid = String(uni._id);
+    const uniRow = (l) => l.find((t) => String(t._id) === uid);
+
+    // Fresh in both batches to start.
+    let ipuList = (await request.get("/api/tests?exam=ipu-leet").set(...auth(shubhamT))).body.tests;
+    let dtuList = (await request.get("/api/tests?exam=dtu-nsut-leet").set(...auth(shubhamT))).body.tests;
+    assert.strictEqual(uniRow(ipuList).attempted, false, "universal test not attempted in IPU yet");
+    assert.strictEqual(uniRow(dtuList).attempted, false, "universal test not attempted in DTU yet");
+
+    // Take it under the IPU batch.
+    const sub = await request.post(`/api/tests/${uid}/submit`).set(...auth(shubhamT)).send({ examCode: "ipu-leet", answers: [{ questionId: String(qUni._id), selectedIndex: 0 }] });
+    assert.strictEqual(sub.status, 201, "submit under IPU accepted");
+
+    // Blocked in IPU (already taken), but FRESH in DTU.
+    assert.strictEqual((await request.get(`/api/tests/${uid}?exam=ipu-leet`).set(...auth(shubhamT))).status, 403, "re-open under IPU is blocked");
+    assert.strictEqual((await request.get(`/api/tests/${uid}?exam=dtu-nsut-leet`).set(...auth(shubhamT))).status, 200, "still fresh under DTU");
+
+    ipuList = (await request.get("/api/tests?exam=ipu-leet").set(...auth(shubhamT))).body.tests;
+    dtuList = (await request.get("/api/tests?exam=dtu-nsut-leet").set(...auth(shubhamT))).body.tests;
+    assert.strictEqual(uniRow(ipuList).attempted, true, "IPU list marks it done");
+    assert.strictEqual(uniRow(dtuList).attempted, false, "DTU list still shows it as fresh");
+
+    // Take it again under DTU — a separate, valid attempt.
+    const sub2 = await request.post(`/api/tests/${uid}/submit`).set(...auth(shubhamT)).send({ examCode: "dtu-nsut-leet", answers: [{ questionId: String(qUni._id), selectedIndex: 0 }] });
+    assert.strictEqual(sub2.status, 201, "submit under DTU accepted (separate batch)");
+    dtuList = (await request.get("/api/tests?exam=dtu-nsut-leet").set(...auth(shubhamT))).body.tests;
+    assert.strictEqual(uniRow(dtuList).attempted, true, "DTU now marks it done too");
+    ok("a universal test is single-attempt PER batch — fresh in each, done independently");
+
     await mongoose.disconnect();
     await mongod.stop();
     console.log(`\n✅ All ${passed} test-attempt checks passed`);
