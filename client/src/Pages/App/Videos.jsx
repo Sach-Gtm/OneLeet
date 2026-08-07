@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     MonitorPlay,
     Play,
@@ -13,12 +13,14 @@ import {
     SlidersHorizontal,
     Maximize,
     Minimize,
+    CheckCircle2,
+    RotateCcw,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff as isStaffUser } from "@/lib/roles";
-import { getVideos, deleteVideo, updateVideo } from "@/Api/VideosApi";
+import { getVideos, deleteVideo, updateVideo, saveVideoProgress, toggleVideoComplete } from "@/Api/VideosApi";
 import { getExams } from "@/Api/ExamsApi";
 import { youTubeThumb, youTubeEmbed } from "@/lib/youtube";
 import PremiumBadge from "@/Components/General/PremiumBadge";
@@ -40,12 +42,35 @@ const matchesFilter = (v, f) =>
     (f.subject === "all" || (v.subject?.trim() || "General") === f.subject) &&
     (f.chapter === "all" || (v.chapter?.trim() || "") === f.chapter);
 
+// Loads the YouTube IFrame API once so we can read playback time for progress.
+// Everything that uses it is guarded — if it never loads, the video still plays,
+// we just don't auto-track the percent (manual "mark complete" still works).
+let ytApiPromise = null;
+function loadYouTubeAPI() {
+    if (typeof window === "undefined") return Promise.reject(new Error("no window"));
+    if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
+    if (ytApiPromise) return ytApiPromise;
+    ytApiPromise = new Promise((resolve, reject) => {
+        const prev = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = () => {
+            try { prev && prev(); } catch { /* ignore */ }
+            resolve(window.YT);
+        };
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        tag.onerror = () => reject(new Error("yt api failed to load"));
+        document.head.appendChild(tag);
+    });
+    return ytApiPromise;
+}
+
 // The in-site player: a YouTube embed in a branded modal so students watch inside
 // OneLeet instead of being sent to youtube.com. Closes on Escape / click outside.
-function PlayerModal({ video, onClose, guarded = false }) {
+function PlayerModal({ video, onClose, onProgress, guarded = false }) {
     // The watermarked stage — fullscreening THIS (not the bare iframe) keeps the
     // identity overlay on screen even in fullscreen.
     const stageRef = useRef(null);
+    const iframeRef = useRef(null);
     const [isFs, setIsFs] = useState(false);
 
     useEffect(() => {
@@ -58,6 +83,50 @@ function PlayerModal({ video, onClose, guarded = false }) {
             document.removeEventListener("fullscreenchange", onFs);
         };
     }, [onClose]);
+
+    // Track watch progress via the YouTube IFrame API — fully guarded, so if the
+    // API is blocked/fails the video still plays and we simply don't auto-track.
+    useEffect(() => {
+        if (!video?.youtubeId || !onProgress) return undefined;
+        let player = null;
+        let interval = null;
+        let disposed = false;
+        let watched = 0;
+        let duration = 0;
+        const report = () => { if (duration > 0 && watched > 0) onProgress(watched, duration); };
+        loadYouTubeAPI()
+            .then((YT) => {
+                if (disposed || !iframeRef.current || !YT?.Player) return;
+                try {
+                    player = new YT.Player(iframeRef.current, {
+                        events: {
+                            onReady: () => { try { duration = player.getDuration() || 0; } catch { /* ignore */ } },
+                            onStateChange: (e) => {
+                                try {
+                                    duration = player.getDuration() || duration;
+                                    if (e?.data === YT.PlayerState?.ENDED) { watched = duration; report(); }
+                                } catch { /* ignore */ }
+                            },
+                        },
+                    });
+                    interval = setInterval(() => {
+                        try {
+                            const t = player.getCurrentTime ? player.getCurrentTime() : 0;
+                            duration = (player.getDuration ? player.getDuration() : 0) || duration;
+                            if (t > watched) watched = t;
+                            report();
+                        } catch { /* ignore */ }
+                    }, 8000);
+                } catch { /* YT init failed — the iframe still plays */ }
+            })
+            .catch(() => { /* API blocked — no auto-tracking */ });
+        return () => {
+            disposed = true;
+            if (interval) clearInterval(interval);
+            report(); // final save on close
+            try { player && player.destroy && player.destroy(); } catch { /* ignore */ }
+        };
+    }, [video, onProgress]);
 
     if (!video) return null;
     const meta = [video.subject, video.chapter, video.topic].filter(Boolean).join(" · ");
@@ -73,7 +142,7 @@ function PlayerModal({ video, onClose, guarded = false }) {
     // overlay: native fullscreen and picture-in-picture both render the raw video
     // outside our DOM, so disable them and offer a watermarked custom fullscreen
     // instead. `fs=0` also hides YouTube's own fullscreen button.
-    const src = `${youTubeEmbed(video.youtubeId)}&autoplay=1${guarded ? "&fs=0" : ""}`;
+    const src = `${youTubeEmbed(video.youtubeId)}&autoplay=1&enablejsapi=1${guarded ? "&fs=0" : ""}`;
     const allow = guarded
         ? "accelerometer; autoplay; encrypted-media; gyroscope"
         : "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
@@ -99,6 +168,7 @@ function PlayerModal({ video, onClose, guarded = false }) {
                         className="aspect-video w-full bg-black"
                     >
                         <iframe
+                            ref={iframeRef}
                             src={src}
                             title={video.title}
                             className="h-full w-full"
@@ -130,9 +200,10 @@ function PlayerModal({ video, onClose, guarded = false }) {
 
 // Compact lecture card — small enough to show 4–5 per row on a laptop and 2 on a
 // phone. Staff controls reveal on hover so the grid stays clean for students.
-function VideoCard({ video, staff, onPlay, onEdit, onDelete, onTogglePremium }) {
+function VideoCard({ video, staff, onPlay, onEdit, onDelete, onTogglePremium, onToggleComplete }) {
     const locked = !!video.locked;
     const chapter = video.chapter?.trim();
+    const prog = video.progress || { percent: 0, completed: false };
     return (
         <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-lg">
             <div className="relative aspect-video overflow-hidden bg-slate-900">
@@ -176,12 +247,33 @@ function VideoCard({ video, staff, onPlay, onEdit, onDelete, onTogglePremium }) 
                         </button>
                     </div>
                 )}
+                {prog.percent > 0 && (
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-black/25">
+                        <div className={"h-full " + (prog.completed ? "bg-emerald-500" : "bg-indigo-500")} style={{ width: `${prog.percent}%` }} />
+                    </div>
+                )}
             </div>
             <button onClick={() => onPlay(video)} className="flex flex-1 flex-col p-2.5 text-left">
                 {chapter && <p className="mb-0.5 truncate text-[10px] font-bold uppercase tracking-wide text-indigo-500">{chapter}</p>}
                 <p className="line-clamp-2 min-h-[2.25rem] text-[13px] font-semibold leading-snug text-slate-800">{video.title}</p>
                 <p className="mt-auto pt-1 truncate text-[11px] text-slate-400">{video.author || "OneLeet"}</p>
             </button>
+            {!staff && !locked && onToggleComplete && (
+                <div className="border-t border-slate-100 px-2.5 py-1.5">
+                    {prog.completed ? (
+                        <button onClick={() => onToggleComplete(video)} className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 hover:text-emerald-700" title="Mark as not done">
+                            <CheckCircle2 size={12} /> Completed <RotateCcw size={10} className="text-slate-400" />
+                        </button>
+                    ) : (
+                        <div className="flex items-center justify-between gap-2">
+                            <span className="truncate text-[11px] text-amber-600">
+                                {prog.percent > 0 ? `${prog.percent}% · finish your lecture` : "Complete your lecture"}
+                            </span>
+                            <button onClick={() => onToggleComplete(video)} className="shrink-0 text-[11px] font-semibold text-indigo-600 hover:underline">Mark done</button>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
@@ -218,6 +310,29 @@ export default function Videos() {
             load();
         } catch (e) {
             toast.error(e.message || "Couldn't update the video.");
+        }
+    };
+
+    // Save watch progress for the currently-playing video (best-effort, silent).
+    const onProgress = useCallback(
+        (watchedSeconds, durationSeconds) => {
+            if (playing?._id) saveVideoProgress(playing._id, { watchedSeconds, durationSeconds }).catch(() => {});
+        },
+        [playing]
+    );
+    // Closing the player refreshes the list so cards show updated progress.
+    const closePlayer = () => {
+        setPlaying(null);
+        load();
+    };
+    // Manual complete / incomplete — reversible.
+    const markComplete = async (v) => {
+        try {
+            const p = await toggleVideoComplete(v._id, !v.progress?.completed);
+            toast.success(p.completed ? "Marked complete" : "Marked as not done");
+            load();
+        } catch (e) {
+            toast.error(e.message || "Couldn't update progress.");
         }
     };
 
@@ -436,6 +551,7 @@ export default function Videos() {
                                             onEdit={(vid) => setEditing({ video: vid })}
                                             onDelete={handleDelete}
                                             onTogglePremium={togglePremium}
+                                            onToggleComplete={markComplete}
                                         />
                                     </div>
                                 ))}
@@ -460,7 +576,8 @@ export default function Videos() {
             {playing && (
                 <PlayerModal
                     video={playing}
-                    onClose={() => setPlaying(null)}
+                    onClose={closePlayer}
+                    onProgress={onProgress}
                     guarded={Boolean(playing.premium) && !staff}
                 />
             )}

@@ -10,7 +10,7 @@
     "seed:notes": "node scripts/seedNotes.js",
     "seed:tests": "node scripts/seedTests.js",
     "create:admin": "node scripts/createAdmin.js",
-    "test": "node tests/auth.otp.test.js && node tests/singleDevice.test.js && node tests/admin.test.js && node tests/notification.test.js && node tests/activity.test.js && node tests/contact.inbox.test.js && node tests/question.test.js && node tests/passport.test.js && node tests/exams.test.js && node tests/visibility.test.js && node tests/examPattern.test.js && node tests/security.test.js && node tests/seatMatrix.test.js && node tests/cutoffs.test.js && node tests/notes.test.js && node tests/leet2024Pyq.test.js && node tests/courses.test.js && node tests/enrollmentBackfill.test.js && node tests/publicExams.test.js && node tests/payments.test.js && node tests/testAttempts.test.js"
+    "test": "node tests/auth.otp.test.js && node tests/singleDevice.test.js && node tests/admin.test.js && node tests/notification.test.js && node tests/activity.test.js && node tests/contact.inbox.test.js && node tests/question.test.js && node tests/passport.test.js && node tests/exams.test.js && node tests/visibility.test.js && node tests/examPattern.test.js && node tests/security.test.js && node tests/seatMatrix.test.js && node tests/cutoffs.test.js && node tests/notes.test.js && node tests/leet2024Pyq.test.js && node tests/courses.test.js && node tests/enrollmentBackfill.test.js && node tests/publicExams.test.js && node tests/payments.test.js && node tests/testAttempts.test.js && node tests/videos.test.js"
   },
   "keywords": [],
   "author": "",

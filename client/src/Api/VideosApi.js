@@ -19,6 +19,28 @@ export const getVideos = async () => {
     }
 };
 
+// --- Watch progress (any signed-in student) ---
+
+// Save how far the student has watched. Returns { percent, completed }.
+export const saveVideoProgress = async (id, { watchedSeconds, durationSeconds }) => {
+    try {
+        const { data } = await api.post(`/videos/${id}/progress`, { watchedSeconds, durationSeconds });
+        return data.progress;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Manually mark a video complete / incomplete (reversible). Returns { percent, completed }.
+export const toggleVideoComplete = async (id, completed) => {
+    try {
+        const { data } = await api.post(`/videos/${id}/complete`, { completed });
+        return data.progress;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // --- Staff management (mentor/admin) ---
 export const createVideo = async (payload) => {
     try {
