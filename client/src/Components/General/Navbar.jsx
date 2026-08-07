@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-    Menu, X, LogIn, LogOut, AlertTriangle, CheckCircle, ChevronDown, ArrowRight,
+    Menu, X, LogIn, LogOut, AlertTriangle, CheckCircle, ChevronDown, ArrowRight, LayoutDashboard,
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
@@ -90,6 +90,16 @@ export default function Navbar() {
                         {/* Desktop nav */}
                         <div className="hidden md:flex items-center gap-1 rounded-full border border-slate-200 bg-slate-100/70 p-1.5">
                             <Link to="/" className={linkClass}>Home</Link>
+
+                            {/* Straight back into the app — only for signed-in users. */}
+                            {isLoggedIn && (
+                                <Link
+                                    to="/dashboard"
+                                    className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-indigo-700 transition-colors hover:bg-white/70"
+                                >
+                                    <LayoutDashboard size={15} /> Dashboard
+                                </Link>
+                            )}
 
                             {/* Courses dropdown */}
                             <div className="relative" onMouseEnter={() => setOpenMenu("courses")}>
@@ -215,6 +225,12 @@ export default function Navbar() {
                             >
                                 <div onClick={(e) => e.target.closest("a") && closeMenus()} className="mt-4 flex flex-col gap-1 border-t border-slate-200 pt-4">
                                     <Link to="/" className="rounded-xl p-3 text-base font-medium text-slate-700 hover:bg-slate-100">Home</Link>
+
+                                    {isLoggedIn && (
+                                        <Link to="/dashboard" className="flex items-center gap-2 rounded-xl p-3 text-base font-semibold text-indigo-700 hover:bg-slate-100">
+                                            <LayoutDashboard size={18} /> Dashboard
+                                        </Link>
+                                    )}
 
                                     <MobileAccordion label="Courses" open={mobileSection === "courses"} onToggle={() => setMobileSection(mobileSection === "courses" ? null : "courses")}>
                                         {FLAGSHIP.map((e) => (
