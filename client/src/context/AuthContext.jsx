@@ -8,6 +8,7 @@ import {
     useRef,
 } from "react";
 import { getMe, loginUser, logoutUser } from "@/Api/AuthApis";
+import { clearTestPrefs } from "@/lib/testPrefs";
 
 const AuthContext = createContext(null);
 
@@ -57,6 +58,7 @@ export function AuthProvider({ children }) {
         } catch {
             // ignore — clearing local state below is what matters to the UI
         }
+        clearTestPrefs(); // so the Tests popup asks again on the next login
         setUser(null);
     }, []);
 
