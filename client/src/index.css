@@ -326,3 +326,74 @@
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; }
 }
+
+/* -------------------------------------------------------------------------
+   PREMIUM — the warm "gold membership" treatment a pro student sees. Ambient,
+   always-on motion lives here as CSS (cheap, GPU-friendly) and is switched off
+   under reduced-motion; entrance motion stays in framer-motion. Decorative only.
+   ------------------------------------------------------------------------- */
+
+/* A soft gold sheen sweeping diagonally across a surface. Give the host
+   `position: relative; overflow: hidden`. */
+@keyframes ol-shimmer {
+  0%   { transform: translateX(-130%) skewX(-14deg); }
+  60%, 100% { transform: translateX(240%) skewX(-14deg); }
+}
+.ol-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(100deg, transparent 25%, rgba(255, 240, 200, 0.35) 50%, transparent 75%);
+  transform: translateX(-130%) skewX(-14deg);
+  animation: ol-shimmer 6s ease-in-out infinite;
+  animation-delay: var(--ol-shimmer-delay, 1.4s);
+  pointer-events: none;
+}
+
+/* Gentle floating for the sparkle motes. */
+@keyframes ol-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+  50%      { transform: translateY(-9px) rotate(10deg); opacity: 1; }
+}
+.ol-float { animation: ol-float var(--ol-float-dur, 5s) ease-in-out infinite; }
+
+/* Slow warm aurora drift behind the hero. */
+@keyframes ol-aurora {
+  0%   { transform: translate3d(-8%, 0, 0) scale(1.1); }
+  50%  { transform: translate3d(8%, -5%, 0) scale(1.28); }
+  100% { transform: translate3d(-8%, 0, 0) scale(1.1); }
+}
+.ol-aurora { animation: ol-aurora 16s ease-in-out infinite; will-change: transform; }
+
+/* Soft breathing glow. */
+@keyframes ol-glow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%      { opacity: 0.6; transform: scale(1.1); }
+}
+.ol-glow { animation: ol-glow 6.5s ease-in-out infinite; }
+
+/* Gold-foil text with a slowly panning sheen (the name in the hero). */
+.ol-gold-text {
+  background: linear-gradient(92deg, #f7e39c 0%, #e8b44a 22%, #fff3c9 42%, #d99a2b 62%, #f7e39c 82%, #e8b44a 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ol-gold-pan 7s linear infinite;
+}
+@keyframes ol-gold-pan { to { background-position: 200% center; } }
+
+/* Slow spin for the crown's conic halo. */
+@keyframes ol-spin-slow { to { transform: rotate(360deg); } }
+.ol-spin-slow { animation: ol-spin-slow 20s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ol-shimmer::after,
+  .ol-float,
+  .ol-aurora,
+  .ol-glow,
+  .ol-gold-text,
+  .ol-spin-slow { animation: none; }
+  .ol-gold-text { background-position: 0 center; }
+}

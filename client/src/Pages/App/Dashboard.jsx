@@ -29,7 +29,8 @@ import ExamPatternSection from "@/Components/App/ExamPatternSection";
 import PrepCoachCard from "@/Components/App/PrepCoachCard";
 import CollegePredictorCard from "@/Components/App/CollegePredictorCard";
 import FloatingWhatsApp from "@/Components/App/FloatingWhatsApp";
-import { isStudent } from "@/lib/roles";
+import { PremiumWelcome, PremiumPerks } from "@/Components/App/premium/PremiumFx";
+import { isStudent, isPremium } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
 function CountUp({ value = 0, format = (v) => v, duration = 1000 }) {
@@ -218,6 +219,7 @@ export default function Dashboard() {
     const streak = stats.streak || 0;
     const recentActivity = data?.recentActivity || [];
     const continueLearning = data?.continueLearning || [];
+    const premium = isPremium(user);
 
     if (loading) {
         return (
@@ -282,43 +284,55 @@ export default function Dashboard() {
             {/* Premium WhatsApp — floating pulsing button, self-gates for non-premium. */}
             <FloatingWhatsApp context="from dashboard" />
 
-            {/* Welcome + Overall Prep */}
+            {/* Welcome + Overall Prep — premium students get the warm "gold
+                membership" hero; everyone else keeps the brand-blue welcome. */}
             <div className="grid gap-6 lg:grid-cols-3">
-                <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white lg:col-span-2"
-                >
-                    <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-                    <h1 className="flex items-center gap-2 text-2xl font-bold">
-                        Welcome back, {firstName}!
-                        <Hand className="h-6 w-6 shrink-0 text-amber-300" />
-                    </h1>
-                    <p className="mt-1 max-w-md text-sm text-indigo-100">
-                        {streak > 0
-                            ? `You've maintained a ${streak}-day streak! Keep up the momentum to crack your dream college.`
-                            : "Let's build your prep streak — start with a mock test or a set of PYQs today."}
-                    </p>
-                    <div className="mt-5 flex flex-wrap gap-3">
-                        <Link
-                            to="/pyqs"
-                            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-50"
-                        >
-                            <Play size={15} /> Start Practice
-                        </Link>
-                        <Link
-                            to="/ai-tools"
-                            className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
-                        >
-                            <CalendarDays size={15} /> Study Planner
-                        </Link>
+                {premium ? (
+                    <div className="lg:col-span-2">
+                        <PremiumWelcome user={user} streak={streak} />
                     </div>
-                </motion.div>
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white lg:col-span-2"
+                    >
+                        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+                        <h1 className="flex items-center gap-2 text-2xl font-bold">
+                            Welcome back, {firstName}!
+                            <Hand className="h-6 w-6 shrink-0 text-amber-300" />
+                        </h1>
+                        <p className="mt-1 max-w-md text-sm text-indigo-100">
+                            {streak > 0
+                                ? `You've maintained a ${streak}-day streak! Keep up the momentum to crack your dream college.`
+                                : "Let's build your prep streak — start with a mock test or a set of PYQs today."}
+                        </p>
+                        <div className="mt-5 flex flex-wrap gap-3">
+                            <Link
+                                to="/pyqs"
+                                className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-50"
+                            >
+                                <Play size={15} /> Start Practice
+                            </Link>
+                            <Link
+                                to="/ai-tools"
+                                className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                            >
+                                <CalendarDays size={15} /> Study Planner
+                            </Link>
+                        </div>
+                    </motion.div>
+                )}
 
                 <Link
                     to="/syllabus"
-                    className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-indigo-200 hover:shadow-md"
+                    className={cn(
+                        "flex items-center gap-4 rounded-2xl border bg-white p-6 transition hover:shadow-md",
+                        premium
+                            ? "border-amber-200/80 hover:border-amber-300 hover:shadow-amber-200/40"
+                            : "border-slate-200 hover:border-indigo-200"
+                    )}
                 >
                     <PrepRing value={syllabus?.totalTopics ? syllabus.percent : stats.overallPrep || 0} />
                     <div>
@@ -337,6 +351,9 @@ export default function Dashboard() {
                 </Link>
             </div>
 
+            {/* Premium perks — the "what your membership gives you" strip. */}
+            {premium && <PremiumPerks />}
+
             {/* Stat cards */}
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 {STAT_META.map((meta, idx) => {
@@ -348,7 +365,12 @@ export default function Dashboard() {
                             initial={{ opacity: 0, y: 14 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.4, delay: idx * 0.08, ease: "easeOut" }}
-                            className="rounded-2xl border border-slate-200 bg-white p-5 transition-shadow hover:shadow-md"
+                            className={cn(
+                                "rounded-2xl border bg-white p-5 transition-shadow hover:shadow-md",
+                                premium
+                                    ? "border-amber-200/80 hover:shadow-amber-200/50 dark:border-amber-500/20"
+                                    : "border-slate-200"
+                            )}
                         >
                             <span
                                 className={cn(
