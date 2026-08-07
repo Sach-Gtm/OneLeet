@@ -9,6 +9,40 @@ const unwrap = (error) => {
     throw e;
 };
 
+// --- Admin: manage the full catalog (published + drafts) ---
+export const adminListCourses = async () => {
+    try {
+        const { data } = await api.get("/courses/manage");
+        return data.courses || [];
+    } catch (error) {
+        unwrap(error);
+    }
+};
+export const adminCreateCourse = async (body) => {
+    try {
+        const { data } = await api.post("/courses", body);
+        return data.course;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+export const adminUpdateCourse = async (id, body) => {
+    try {
+        const { data } = await api.patch(`/courses/${id}`, body);
+        return data.course;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+export const adminDeleteCourse = async (id) => {
+    try {
+        const { data } = await api.delete(`/courses/${id}`);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // --- Public catalog (annotates `enrolled` when signed in) ---
 
 // The published course catalog. Returns [] on failure so the page can render an

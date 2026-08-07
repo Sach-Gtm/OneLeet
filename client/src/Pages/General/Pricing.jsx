@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -9,6 +10,7 @@ import {
     MEMBERSHIP_PROMISE, CART_TIERS,
 } from "@/data/pricing";
 import { useCart } from "@/context/CartContext";
+import { getCourses } from "@/Api/CoursesApi";
 
 const GROUP_ICON = {
     sparkles: Sparkles, book: BookOpen, clipboard: ClipboardList, files: FileText,
@@ -87,6 +89,21 @@ function CourseCard({ c, featured }) {
 }
 
 export default function Pricing() {
+    // Live prices come from the DB (admin-editable in Admin → Batches); the static
+    // config is the fallback for name/tagline/promise and for any not yet seeded.
+    const [dbBySlug, setDbBySlug] = useState({});
+    useEffect(() => {
+        getCourses()
+            .then((list) => setDbBySlug(Object.fromEntries((list || []).map((c) => [c.slug, c]))))
+            .catch(() => {});
+    }, []);
+    const examCourses = EXAM_COURSES.map((c) => {
+        const db = dbBySlug[c.slug];
+        return db
+            ? { ...c, name: db.name || c.name, price: db.price ?? c.price, mrp: db.mrp ?? c.mrp, promise: db.successPromise || c.promise }
+            : c;
+    });
+
     return (
         <div className="mx-auto max-w-6xl px-4 pb-28 pt-28 sm:pt-32">
             {/* Hero */}
@@ -151,7 +168,7 @@ export default function Pricing() {
             {/* Exam courses */}
             <h2 className="mt-12 text-center text-2xl font-bold text-slate-900 dark:text-slate-100">Choose your exam batch</h2>
             <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {EXAM_COURSES.map((c) => (
+                {examCourses.map((c) => (
                     <CourseCard key={c.slug} c={c} featured={c.featured} />
                 ))}
             </div>
