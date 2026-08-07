@@ -38,10 +38,13 @@ staff-deleted items. Staff can also create/edit live via the in-app **Content St
 
 ## Git workflow
 
-Develop on `claude/oneleet-code-kickoff-ciqm6w`; ship **one squash-merged PR per feature**; reset
-the local branch to `origin/main` after each merge. Author/committer email: `noreply@anthropic.com`.
-The GitHub squash-merge commit shows as "Unverified" (GitHub's own committer) — that's expected and
-must not be amended (it's already-merged `main` history).
+Develop on `claude/oneleet-code-kickoff-ciqm6w`. **Batch several ready features into one PR** — one
+merge = one Vercel deploy, so this keeps us well under Vercel's Hobby **100-deploys/day** cap. Keep
+each feature as its **own commit** inside the PR (don't squash them into one) so any single feature
+can still be reverted with `git revert <sha>`, and only ship a **solo PR** when a change is an urgent
+hotfix that can't wait for the batch. Reset the local branch to `origin/main` after each merge.
+Author/committer email: `noreply@anthropic.com`. The GitHub merge commit shows as "Unverified"
+(GitHub's own committer) — that's expected and must not be amended (it's already-merged `main` history).
 
 ## Conventions worth keeping
 
