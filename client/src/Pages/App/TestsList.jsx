@@ -3,18 +3,21 @@ import { Link, useNavigate } from "react-router-dom";
 import {
     ClipboardList, Clock, ListChecks, Play, Loader2, ChevronRight, Lock,
     CalendarClock, RotateCcw, Eye, ArrowLeft, SlidersHorizontal, Check, X,
-    Brain, Calculator, Cog, Atom, FlaskConical, Cpu, Target, Layers,
+    Brain, Calculator, Cog, Atom, FlaskConical, Cpu, Target, Layers, GraduationCap,
 } from "lucide-react";
 import { listTests, listAttempts } from "@/Api/TestsApi";
+import { getExams } from "@/Api/ExamsApi";
 import { TEST_FORMATS, TEST_FORMAT_KEYS } from "@/lib/testFormats";
 import { loadTestPrefs, saveTestPrefs, DEFAULT_TEST_PREFS } from "@/lib/testPrefs";
+import { useAuth } from "@/context/AuthContext";
+import { isStaff } from "@/lib/roles";
 import PremiumBadge from "@/Components/General/PremiumBadge";
 import PremiumGateModal from "@/Components/General/PremiumGateModal";
 
 const fmtDate = (d) => new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 const isRealMock = (t) => t.category === "full-mock" || t.format === "real-exam";
+const isUniversal = (t) => !t.targets?.length || t.targets.includes("all");
 
-// Ordered subjects with an icon + tint for the tiles.
 const SUBJECTS = ["Reasoning", "Mathematics", "Mechanics", "Physics", "Chemistry", "Computer Application"];
 const SUBJECT_META = {
     Reasoning: { icon: Brain, tint: "bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400" },
@@ -33,7 +36,6 @@ const MODES = [
     { key: "graded", label: "Live graded" },
 ];
 
-// Does a test match the chosen mode? mode field is "test" (graded) | "practice".
 const matchMode = (t, mode) => mode === "all" || (mode === "practice" ? t.mode === "practice" : t.mode !== "practice");
 const matchFormat = (t, format) => format === "all" || t.format === format;
 
@@ -89,7 +91,6 @@ function TestCard({ t, onStart, onLocked, onResult }) {
     );
 }
 
-// A subject / category tile on the landing view.
 function Tile({ icon, label, sub, count, tint, onClick }) {
     return (
         <button
@@ -115,12 +116,10 @@ const Chip = ({ active, onClick, children }) => (
     </button>
 );
 
-// The "choose mode + format" popup. Mounted fresh each open, so state seeds from
-// the current prefs without an effect.
+// Mounted fresh each open, so state seeds from the current prefs without an effect.
 function PrefsModal({ initial, formatKeys, onSave, onClose }) {
     const [mode, setMode] = useState(initial?.mode || "all");
     const [format, setFormat] = useState(initial?.format || "all");
-
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
             <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
@@ -141,9 +140,7 @@ function PrefsModal({ initial, formatKeys, onSave, onClose }) {
                 <div className="mt-2 flex flex-wrap gap-2">
                     <Chip active={format === "all"} onClick={() => setFormat("all")}>All formats</Chip>
                     {formatKeys.map((k) => (
-                        <Chip key={k} active={format === k} onClick={() => setFormat(k)}>
-                            {TEST_FORMATS[k].emoji} {TEST_FORMATS[k].label}
-                        </Chip>
+                        <Chip key={k} active={format === k} onClick={() => setFormat(k)}>{TEST_FORMATS[k].emoji} {TEST_FORMATS[k].label}</Chip>
                     ))}
                 </div>
 
@@ -157,34 +154,47 @@ function PrefsModal({ initial, formatKeys, onSave, onClose }) {
 
 export default function TestsList() {
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const staff = isStaff(user);
+    const exams = useMemo(() => user?.exams || [], [user]);
+    const multiExam = !staff && exams.length >= 2;
+
     const [tests, setTests] = useState([]);
     const [attempts, setAttempts] = useState([]);
+    const [examList, setExamList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [gate, setGate] = useState(null);
-    const [prefs, setPrefs] = useState(loadTestPrefs); // null until the student chooses
+    const [prefs, setPrefs] = useState(loadTestPrefs);
+    // Which batch we're viewing. null = "pick a batch" (only shown when in 2+).
+    const [activeExam, setActiveExam] = useState(() => (multiExam ? null : staff ? "" : exams[0] || ""));
     const [selected, setSelected] = useState(null); // subject | "__realmock__" | "__mixed__" | null
     const [modal, setModal] = useState({ open: false, pending: null });
     const [limit, setLimit] = useState(9);
 
     useEffect(() => {
+        getExams().then((e) => setExamList(e || [])).catch(() => {});
+        listAttempts().then((a) => setAttempts(a.attempts || [])).catch(() => {});
+    }, []);
+    const examMap = useMemo(() => new Map((examList || []).map((e) => [e.code, e.name])), [examList]);
+
+    // (Re)load tests scoped to the active batch — universal content included, and
+    // "attempted" flags scoped to this batch. null → all enrolled (for counts).
+    useEffect(() => {
         let active = true;
-        Promise.all([listTests(), listAttempts().catch(() => ({ attempts: [] }))])
-            .then(([t, a]) => {
-                if (!active) return;
-                setTests(t.tests || []);
-                setAttempts(a.attempts || []);
-            })
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- show the loader before each batch fetch
+        setLoading(true);
+        listTests(activeExam || undefined)
+            .then((t) => active && setTests(t.tests || []))
             .catch(() => active && setTests([]))
             .finally(() => active && setLoading(false));
         return () => { active = false; };
-    }, []);
+    }, [activeExam]);
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset paging when the view or filter changes
-    useEffect(() => setLimit(9), [selected, prefs]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset paging on view/filter/batch change
+    useEffect(() => setLimit(9), [selected, prefs, activeExam]);
 
     const eff = prefs || DEFAULT_TEST_PREFS;
 
-    // Bucket tests into subjects, real mocks, and "mixed" (no subject).
     const { subjectMap, realMocks, mixed } = useMemo(() => {
         const map = new Map();
         const rm = [];
@@ -197,7 +207,6 @@ export default function TestsList() {
         return { subjectMap: map, realMocks: rm, mixed: mx };
     }, [tests]);
 
-    // Formats present among the per-subject (non-real-mock) tests, in canonical order.
     const formatKeys = useMemo(
         () => TEST_FORMAT_KEYS.filter((k) => k !== "real-exam" && tests.some((t) => !isRealMock(t) && t.format === k)),
         [tests]
@@ -208,16 +217,12 @@ export default function TestsList() {
             const ia = SUBJECTS.indexOf(a), ib = SUBJECTS.indexOf(b);
             return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
         });
-        return present.map((s) => ({
-            key: s,
-            count: subjectMap.get(s).filter((t) => matchMode(t, eff.mode) && matchFormat(t, eff.format)).length,
-        }));
+        return present.map((s) => ({ key: s, count: subjectMap.get(s).filter((t) => matchMode(t, eff.mode) && matchFormat(t, eff.format)).length }));
     }, [subjectMap, eff]);
 
     const realMockCount = useMemo(() => realMocks.filter((t) => matchMode(t, eff.mode)).length, [realMocks, eff]);
     const mixedCount = useMemo(() => mixed.filter((t) => matchMode(t, eff.mode) && matchFormat(t, eff.format)).length, [mixed, eff]);
 
-    // Tests to render inside a selected tile.
     const shown = useMemo(() => {
         if (!selected) return [];
         if (selected === "__realmock__") return realMocks.filter((t) => matchMode(t, eff.mode));
@@ -225,43 +230,79 @@ export default function TestsList() {
         return list.filter((t) => matchMode(t, eff.mode) && matchFormat(t, eff.format));
     }, [selected, subjectMap, realMocks, mixed, eff]);
 
-    const openTile = (key) => {
-        if (!prefs) setModal({ open: true, pending: key });
-        else setSelected(key);
-    };
+    const openTile = (key) => { if (!prefs) setModal({ open: true, pending: key }); else setSelected(key); };
     const saveModal = (p) => {
         setPrefs(p);
         saveTestPrefs(p);
         const pending = modal.pending;
         setModal({ open: false, pending: null });
-        if (pending) setSelected(pending); // entered from a tile → open it
+        if (pending) setSelected(pending);
     };
 
-    const start = (id) => navigate(`/tests/${id}`);
+    const start = (id) => navigate(`/tests/${id}${activeExam ? `?exam=${encodeURIComponent(activeExam)}` : ""}`);
     const result = (attemptId) => navigate(`/tests/result/${attemptId}`);
-
     const selectedLabel = selected === "__realmock__" ? "Real Mock Tests" : selected === "__mixed__" ? "Mixed sets" : selected;
 
-    if (loading) {
-        return <div className="flex h-64 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-indigo-600" /></div>;
+    const recentAttempts = attempts.length > 0 && (
+        <div>
+            <h2 className="mb-3 text-sm font-bold text-slate-800 dark:text-slate-100">Your recent attempts</h2>
+            <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:divide-slate-800 dark:border-slate-700 dark:bg-slate-900">
+                {attempts.slice(0, 6).map((a) => (
+                    <Link key={a._id} to={`/tests/result/${a._id}`} className="flex items-center justify-between px-5 py-3 transition hover:bg-slate-50 dark:hover:bg-slate-800">
+                        <div>
+                            <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{a.testTitle}</p>
+                            <p className="text-xs text-slate-400">Score {a.score}/{a.totalMarks} · {a.accuracy}% accuracy</p>
+                        </div>
+                        <ChevronRight size={16} className="text-slate-300" />
+                    </Link>
+                ))}
+            </div>
+        </div>
+    );
+
+    if (loading) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-indigo-600" /></div>;
+
+    // ── Level 0: pick a batch (only when enrolled in 2+ batches) ──
+    if (multiExam && activeExam === null) {
+        return (
+            <div className="mx-auto max-w-6xl space-y-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Tests &amp; Practice</h1>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">You&apos;re in {exams.length} batches — pick one to see its tests. Shared content shows fresh in every batch.</p>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {exams.map((code) => {
+                        const count = tests.filter((t) => isUniversal(t) || t.targets.includes(code)).length;
+                        return (
+                            <Tile key={code} icon={<GraduationCap size={22} />} label={examMap.get(code) || code} sub="Your batch" count={count} tint="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400" onClick={() => { setActiveExam(code); setSelected(null); }} />
+                        );
+                    })}
+                </div>
+                {recentAttempts}
+                {modal.open && <PrefsModal initial={prefs} formatKeys={formatKeys} onSave={saveModal} onClose={() => setModal({ open: false, pending: null })} />}
+                <PremiumGateModal open={!!gate} onClose={() => setGate(null)} itemTitle={gate?.title} />
+            </div>
+        );
     }
 
+    // ── Within a batch (or single-exam / staff): subject tiles → tests ──
     return (
         <div className="mx-auto max-w-6xl space-y-6">
             <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
+                    {multiExam && (
+                        <button onClick={() => { setActiveExam(null); setSelected(null); }} className="mb-1 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200">
+                            <ArrowLeft size={15} /> All batches
+                        </button>
+                    )}
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Tests &amp; Practice</h1>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Practice sets reveal the answer as you go; graded tests are timed &amp; ranked like the real exam.
+                        {activeExam ? (examMap.get(activeExam) || "This batch") + " · " : ""}practice reveals answers as you go; graded tests are timed &amp; ranked.
                     </p>
                 </div>
                 {prefs && (
-                    <button
-                        onClick={() => setModal({ open: true, pending: null })}
-                        className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-                    >
-                        <SlidersHorizontal size={15} />
-                        {MODE_LABEL[eff.mode]} · {eff.format === "all" ? "All formats" : TEST_FORMATS[eff.format]?.label}
+                    <button onClick={() => setModal({ open: true, pending: null })} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                        <SlidersHorizontal size={15} /> {MODE_LABEL[eff.mode]} · {eff.format === "all" ? "All formats" : TEST_FORMATS[eff.format]?.label}
                         <span className="text-indigo-600 dark:text-indigo-400">Change</span>
                     </button>
                 )}
@@ -274,7 +315,6 @@ export default function TestsList() {
                     <p className="mt-0.5 text-xs text-slate-400">Your mentors&apos; tests and practice sets show up here.</p>
                 </div>
             ) : selected ? (
-                // ── A subject/category is open: its filtered tests ──
                 <div className="space-y-4">
                     <button onClick={() => setSelected(null)} className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200">
                         <ArrowLeft size={15} /> All subjects
@@ -305,7 +345,6 @@ export default function TestsList() {
                     )}
                 </div>
             ) : (
-                // ── Landing: subject + category tiles ──
                 <>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {subjectTiles.map((s) => {
@@ -320,33 +359,12 @@ export default function TestsList() {
                             <Tile icon={<Target size={22} />} label="Real Mock Tests" sub="Full-length · 100 Q" count={realMockCount} tint="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400" onClick={() => openTile("__realmock__")} />
                         )}
                     </div>
-
-                    {attempts.length > 0 && (
-                        <div>
-                            <h2 className="mb-3 text-sm font-bold text-slate-800 dark:text-slate-100">Your recent attempts</h2>
-                            <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:divide-slate-800 dark:border-slate-700 dark:bg-slate-900">
-                                {attempts.slice(0, 6).map((a) => (
-                                    <Link key={a._id} to={`/tests/result/${a._id}`} className="flex items-center justify-between px-5 py-3 transition hover:bg-slate-50 dark:hover:bg-slate-800">
-                                        <div>
-                                            <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{a.testTitle}</p>
-                                            <p className="text-xs text-slate-400">Score {a.score}/{a.totalMarks} · {a.accuracy}% accuracy</p>
-                                        </div>
-                                        <ChevronRight size={16} className="text-slate-300" />
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                    {recentAttempts}
                 </>
             )}
 
             {modal.open && (
-                <PrefsModal
-                    initial={prefs}
-                    formatKeys={formatKeys}
-                    onSave={saveModal}
-                    onClose={() => setModal({ open: false, pending: null })}
-                />
+                <PrefsModal initial={prefs} formatKeys={formatKeys} onSave={saveModal} onClose={() => setModal({ open: false, pending: null })} />
             )}
             <PremiumGateModal open={!!gate} onClose={() => setGate(null)} itemTitle={gate?.title} />
         </div>

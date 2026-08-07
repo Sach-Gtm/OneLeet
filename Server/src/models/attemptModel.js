@@ -23,6 +23,11 @@ const AttemptSchema = new mongoose.Schema(
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
         test: { type: mongoose.Schema.Types.ObjectId, ref: "Test", required: true },
         testTitle: { type: String }, // denormalised for history/activity display
+        // The batch/exam this attempt was taken under (from the ?exam= context).
+        // A universal ("all"-targeted) test is attemptable ONCE PER BATCH, so
+        // single-attempt and the "attempted" flag are scoped by this. "" = legacy
+        // / no batch context (behaves globally).
+        examCode: { type: String, default: "", index: true },
         answers: [AnswerSchema],
         score: { type: Number, default: 0 },
         totalMarks: { type: Number, default: 0 },
@@ -44,5 +49,7 @@ const AttemptSchema = new mongoose.Schema(
 AttemptSchema.index({ user: 1, submittedAt: -1 });
 // Finalisation groups attempts by test and picks each user's best.
 AttemptSchema.index({ test: 1, score: -1 });
+// Per-batch single-attempt / "attempted" lookup.
+AttemptSchema.index({ user: 1, test: 1, examCode: 1 });
 
 module.exports = mongoose.model("Attempt", AttemptSchema);

@@ -46,7 +46,10 @@ async function listTests(req, res, next) {
     try {
         // Students see published tests targeted at the exams they're enrolled in
         // (zero enrollments → universal tests only); staff preview every exam's.
-        const visible = isStaff(req.user) ? {} : visibilityQuery(req.user?.exams);
+        // With ?exam=<code>, scope to that one batch: its targeted tests PLUS
+        // universal content (which appears fresh in every batch).
+        const exam = (req.query.exam || "").trim();
+        const visible = isStaff(req.user) && !exam ? {} : visibilityQuery(exam ? [exam] : req.user?.exams);
         const tests = await Test.find({ isPublished: true, ...visible })
             .select("title description subject topic stateExam targets category format mode premium durationMinutes questions totalMarks closeAt openAt createdAt")
             .sort({ createdAt: -1 })
@@ -59,10 +62,12 @@ async function listTests(req, res, next) {
         // Matching on the (stable, unique) title as well means a test that was
         // re-seeded with a new _id still surfaces the earlier attempt, instead of
         // reverting the card to "Start".
+        // Scope "attempted" to THIS batch: an attempt of a universal test taken
+        // under another batch must not mark it done here (it's fresh per batch).
         const latestByTest = new Map();
         const latestByTitle = new Map();
         if (req.user) {
-            const attempts = await Attempt.find({ user: req.user._id })
+            const attempts = await Attempt.find({ user: req.user._id, ...(exam ? { examCode: exam } : {}) })
                 .select("test testTitle submittedAt")
                 .sort({ submittedAt: -1 })
                 .lean();
@@ -128,11 +133,12 @@ async function getTest(req, res, next) {
             });
         }
 
-        // Single-attempt: a graded mock test can only be taken once. If they've
-        // already done it, send them to their result instead of a fresh attempt.
+        // Single-attempt: a graded mock test can only be taken once PER BATCH. If
+        // they've already done it in this batch, send them to their result instead.
         // (Practice sets stay repeatable — drilling is the point.)
         if (test.mode === "test") {
-            const prev = await Attempt.findOne({ user: req.user._id, test: test._id })
+            const exam = (req.query.exam || "").trim();
+            const prev = await Attempt.findOne({ user: req.user._id, test: test._id, ...(exam ? { examCode: exam } : {}) })
                 .select("_id")
                 .sort({ submittedAt: -1 })
                 .lean();
@@ -210,9 +216,11 @@ async function submitTest(req, res, next) {
             });
         }
 
-        // Single-attempt: never accept a second submission of a graded mock test.
+        // Single-attempt: never accept a second submission of a graded mock test
+        // in the same batch (universal tests are attemptable once per batch).
+        const exam = (req.body?.examCode || req.query.exam || "").trim();
         if (test.mode === "test") {
-            const prev = await Attempt.findOne({ user: req.user._id, test: test._id }).select("_id").lean();
+            const prev = await Attempt.findOne({ user: req.user._id, test: test._id, ...(exam ? { examCode: exam } : {}) }).select("_id").lean();
             if (prev) {
                 return res.status(409).json({
                     success: false,
@@ -288,6 +296,7 @@ async function submitTest(req, res, next) {
             user: req.user._id,
             test: test._id,
             testTitle: test.title,
+            examCode: exam, // the batch this attempt was taken under
             answers,
             score,
             totalMarks,
