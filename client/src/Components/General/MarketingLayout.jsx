@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "@/Components/General/Navbar";
+import FloatingWhatsApp from "@/Components/App/FloatingWhatsApp";
 
 // Light marketing shell (soft gradient + navbar) for the public pages.
 export default function MarketingLayout() {
@@ -10,6 +11,9 @@ export default function MarketingLayout() {
             <div className="relative z-10">
                 <Outlet />
             </div>
+            {/* Premium WhatsApp support — self-gates to null for non-premium, so it
+                shows on the public site (home included) only for pro students. */}
+            <FloatingWhatsApp context="from the OneLeet site" />
         </div>
     );
 }
