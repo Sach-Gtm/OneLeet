@@ -34,14 +34,18 @@ const shape = (c, { enrolled } = {}) => ({
     slug: c.slug,
     examCode: c.examCode,
     examName: c.examName || "",
+    kind: c.kind || "exam",
     tagline: c.tagline || "",
     description: c.description || "",
     whatsInside: c.whatsInside || [],
     termsAndConditions: c.termsAndConditions || "",
+    successPromise: c.successPromise || "",
+    validityDays: c.validityDays || 365,
     coverImage: c.coverImage?.url ? { url: c.coverImage.url } : null,
     price: c.price || 0,
     mrp: c.mrp || 0,
     seatCap: c.seatCap || 0,
+    order: c.order || 0,
     startDate: c.startDate || null,
     published: c.published,
     createdAt: c.createdAt,
@@ -111,22 +115,27 @@ async function uniqueSlug(base, ignoreId) {
 async function createCourse(req, res, next) {
     try {
         const b = req.body || {};
+        const kind = b.kind === "counselling" ? "counselling" : "exam";
         const examCode = String(b.examCode || "").trim();
-        if (examCode === "all" || !isValidExam(examCode)) {
+        // Exam batches must target one real exam; counselling packs have none.
+        if (kind === "exam" && (examCode === "all" || !isValidExam(examCode))) {
             return res.status(400).json({ success: false, message: "A course must target one valid exam (not 'all')." });
         }
         const name = str(b.name, 140);
         if (!name) return res.status(400).json({ success: false, message: "Course name is required." });
-        const examName = getExams().find((e) => e.code === examCode)?.name || "";
+        const examName = kind === "exam" ? getExams().find((e) => e.code === examCode)?.name || "" : "";
         const course = await Course.create({
             name,
             slug: await uniqueSlug(b.slug || name),
-            examCode,
+            examCode: kind === "exam" ? examCode : "",
             examName,
+            kind,
             tagline: str(b.tagline, 200),
             description: str(b.description, 4000),
             whatsInside: Array.isArray(b.whatsInside) ? b.whatsInside.map((x) => str(x, 200)).filter(Boolean).slice(0, 30) : [],
             termsAndConditions: str(b.termsAndConditions, 8000),
+            successPromise: str(b.successPromise, 2000),
+            validityDays: num(b.validityDays) ?? 365,
             price: num(b.price) ?? 0,
             mrp: num(b.mrp) ?? 0,
             seatCap: num(b.seatCap) ?? 0,
@@ -165,6 +174,9 @@ async function updateCourse(req, res, next) {
         if (b.termsAndConditions !== undefined) course.termsAndConditions = str(b.termsAndConditions, 8000);
         if (b.price !== undefined) course.price = num(b.price) ?? course.price;
         if (b.mrp !== undefined) course.mrp = num(b.mrp) ?? course.mrp;
+        if (b.successPromise !== undefined) course.successPromise = str(b.successPromise, 2000);
+        if (b.validityDays !== undefined) course.validityDays = num(b.validityDays) ?? course.validityDays;
+        if (b.kind !== undefined && ["exam", "counselling"].includes(b.kind)) course.kind = b.kind;
         if (b.seatCap !== undefined) course.seatCap = num(b.seatCap) ?? course.seatCap;
         if (b.startDate !== undefined) course.startDate = b.startDate ? new Date(b.startDate) : undefined;
         if (b.order !== undefined) course.order = num(b.order) ?? course.order;
