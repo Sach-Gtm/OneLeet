@@ -15,6 +15,7 @@ import {
     User,
     Package,
     Gift,
+    Home,
     Search,
     LogOut,
     Menu,
@@ -39,6 +40,7 @@ const NAV = [
     {
         section: null,
         items: [
+            { to: "/", label: "Home", icon: Home, end: true }, // back to the public landing page
             { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
             { to: "/courses", label: "Courses", icon: GraduationCap },
             { to: "/prep-guide", label: "Prep Guide", icon: Compass },
@@ -143,6 +145,7 @@ function SidebarContent({ user, onNavigate, onLogout, collapsed = false, onToggl
                                 <NavLink
                                     key={item.to}
                                     to={item.to}
+                                    end={item.end}
                                     onClick={onNavigate}
                                     className={linkClass}
                                     title={collapsed ? item.label : undefined}
