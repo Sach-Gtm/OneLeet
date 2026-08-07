@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -89,20 +89,29 @@ function CourseCard({ c, featured }) {
 }
 
 export default function Pricing() {
-    // Live prices come from the DB (admin-editable in Admin → Batches); the static
-    // config is the fallback for name/tagline/promise and for any not yet seeded.
-    const [dbBySlug, setDbBySlug] = useState({});
+    // Fully dynamic: the exam batches come from the DB (published, admin-editable
+    // in Admin → Batches), sorted by `order`. The static config is only a fallback
+    // until the fetch lands, or if nothing is seeded yet.
+    const [dbCourses, setDbCourses] = useState(null);
     useEffect(() => {
-        getCourses()
-            .then((list) => setDbBySlug(Object.fromEntries((list || []).map((c) => [c.slug, c]))))
-            .catch(() => {});
+        getCourses().then((list) => setDbCourses(list || [])).catch(() => setDbCourses([]));
     }, []);
-    const examCourses = EXAM_COURSES.map((c) => {
-        const db = dbBySlug[c.slug];
-        return db
-            ? { ...c, name: db.name || c.name, price: db.price ?? c.price, mrp: db.mrp ?? c.mrp, promise: db.successPromise || c.promise }
-            : c;
-    });
+    const examCourses = useMemo(() => {
+        const exam = (dbCourses || []).filter((c) => (c.kind || "exam") === "exam");
+        if (!exam.length) return EXAM_COURSES;
+        return exam
+            .slice()
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            .map((c, i) => ({
+                slug: c.slug,
+                name: c.name,
+                subtitle: c.examName || "",
+                price: c.price,
+                mrp: c.mrp,
+                promise: c.successPromise || "",
+                featured: i === 0,
+            }));
+    }, [dbCourses]);
 
     return (
         <div className="mx-auto max-w-6xl px-4 pb-28 pt-28 sm:pt-32">
