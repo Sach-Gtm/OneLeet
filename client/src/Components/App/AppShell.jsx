@@ -27,6 +27,7 @@ import {
     ScrollText,
     PanelLeftClose,
     PanelLeftOpen,
+    Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
@@ -34,7 +35,8 @@ import ThemeToggle from "@/Components/App/ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 import Logo, { LogoMark } from "@/Components/General/Logo";
 import Footer from "@/Components/General/Footer";
-import { isStaff as isStaffUser, roleLabel } from "@/lib/roles";
+import { PremiumAvatar, PremiumMemberPill } from "@/Components/App/premium/PremiumFx";
+import { isStaff as isStaffUser, isPremium, roleLabel } from "@/lib/roles";
 
 const NAV = [
     {
@@ -86,6 +88,7 @@ function SidebarContent({ user, onNavigate, onLogout, collapsed = false, onToggl
 
     // Staff (mentor/admin/super admin) get an extra Admin section.
     const isStaff = isStaffUser(user);
+    const premium = isPremium(user);
     const navGroups = isStaff
         ? [
               ...NAV,
@@ -163,18 +166,18 @@ function SidebarContent({ user, onNavigate, onLogout, collapsed = false, onToggl
                 {/* Light / dark switch — lives in the bottom nav, on every page. */}
                 {!collapsed && <ThemeToggle />}
                 <div className={cn("flex items-center rounded-lg py-2", collapsed ? "justify-center px-0" : "gap-3 px-2")}>
-                    {user?.avatar ? (
-                        <img src={user.avatar} alt={user.name} className="h-9 w-9 shrink-0 rounded-full object-cover" />
-                    ) : (
-                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
-                            {(user?.name || "U").charAt(0).toUpperCase()}
-                        </span>
-                    )}
+                    <PremiumAvatar user={user} size={36} premium={premium} />
                     {!collapsed && (
                         <>
                             <div className="min-w-0 flex-1">
                                 <p className="truncate text-sm font-semibold text-slate-800">{user?.name || "User"}</p>
-                                <p className="truncate text-xs text-slate-400">{planLabel(user)}</p>
+                                {premium ? (
+                                    <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400">
+                                        <Crown size={11} className="text-amber-500" fill="currentColor" /> Premium Member
+                                    </span>
+                                ) : (
+                                    <p className="truncate text-xs text-slate-400">{planLabel(user)}</p>
+                                )}
                             </div>
                             <button
                                 onClick={onLogout}
@@ -206,17 +209,7 @@ function UserMenu({ user, isStaff, onLogout }) {
         return () => document.removeEventListener("mousedown", h);
     }, [open]);
 
-    const Avatar = user?.avatar ? (
-        <img
-            src={user.avatar}
-            alt={user.name}
-            className="h-9 w-9 rounded-full object-cover"
-        />
-    ) : (
-        <span className="grid h-9 w-9 place-items-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
-            {(user?.name || "U").charAt(0).toUpperCase()}
-        </span>
-    );
+    const Avatar = <PremiumAvatar user={user} size={36} premium={isPremium(user)} />;
 
     return (
         <div className="relative" ref={ref}>
@@ -238,9 +231,12 @@ function UserMenu({ user, isStaff, onLogout }) {
             {open && (
                 <div className="absolute right-0 top-12 z-50 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
                     <div className="px-3 py-2">
-                        <p className="truncate text-sm font-semibold text-slate-800">
-                            {user?.name || "User"}
-                        </p>
+                        <div className="flex items-center gap-2">
+                            <p className="truncate text-sm font-semibold text-slate-800">
+                                {user?.name || "User"}
+                            </p>
+                            {isPremium(user) && <PremiumMemberPill />}
+                        </div>
                         <p className="truncate text-xs text-slate-400">
                             {user?.email}
                         </p>
@@ -289,6 +285,7 @@ export default function AppShell() {
             return !v;
         });
     const isStaff = isStaffUser(user);
+    const premium = isPremium(user);
 
     // The profile is never a hard gate: students land in the app immediately and
     // fill their details at their own pace (the Profile page shows a completion
@@ -339,7 +336,11 @@ export default function AppShell() {
 
             {/* Main column */}
             <div className="flex min-w-0 flex-1 flex-col">
-                <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur sm:px-6">
+                <header className="relative sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur sm:px-6">
+                    {/* Premium members carry a faint gold hairline on every page. */}
+                    {premium && (
+                        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-400/70 to-transparent" />
+                    )}
                     <button
                         onClick={() => setMobileOpen(true)}
                         className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden"
