@@ -1,4 +1,5 @@
 const Video = require("../../models/videoModel");
+const VideoProgress = require("../../models/videoProgressModel");
 const { STAFF, isPremiumUser } = require("../../config/roles");
 const { sanitizeExams, visibilityQuery } = require("../../config/exams");
 const { parseYouTubeId } = require("../../utils/youtube");
@@ -20,9 +21,20 @@ async function listVideos(req, res, next) {
         // Premium videos stay visible to everyone (shown locked), but a free
         // student never receives the playable youtubeId — so it can't be embedded.
         const canPremium = isPremiumUser(req.user);
+        // The caller's watch progress for these videos (percent + completed).
+        let progByVideo = new Map();
+        if (req.user && videos.length) {
+            const rows = await VideoProgress.find({ user: req.user._id, video: { $in: videos.map((v) => v._id) } })
+                .select("video percent completed")
+                .lean();
+            progByVideo = new Map(rows.map((p) => [String(p.video), p]));
+        }
         const out = videos.map((v) => {
             const locked = !!v.premium && !canPremium;
-            return locked ? { ...v, youtubeId: undefined, locked: true } : { ...v, locked: false };
+            const p = progByVideo.get(String(v._id));
+            const progress = { percent: p?.percent || 0, completed: !!p?.completed };
+            const base = locked ? { ...v, youtubeId: undefined, locked: true } : { ...v, locked: false };
+            return { ...base, progress };
         });
         return res.status(200).json({ success: true, videos: out });
     } catch (e) {
@@ -167,4 +179,49 @@ async function deleteVideo(req, res, next) {
     }
 }
 
-module.exports = { listVideos, createVideo, bulkCreateVideos, updateVideo, deleteVideo };
+// POST /api/videos/:id/progress — a student records watch progress. Keeps the
+// furthest point reached; auto-marks complete near the end (≥90%).
+async function saveProgress(req, res, next) {
+    try {
+        const video = await Video.findById(req.params.id).select("_id premium");
+        if (!video) return res.status(404).json({ success: false, message: "Video not found" });
+        if (video.premium && !isPremiumUser(req.user)) {
+            return res.status(403).json({ success: false, code: "PREMIUM_REQUIRED", message: "This is a Premium video." });
+        }
+        const watched = Math.max(0, Math.round(Number(req.body?.watchedSeconds) || 0));
+        const duration = Math.max(0, Math.round(Number(req.body?.durationSeconds) || 0));
+
+        const existing = await VideoProgress.findOne({ user: req.user._id, video: video._id });
+        const bestWatched = Math.max(watched, existing?.watchedSeconds || 0);
+        const dur = duration || existing?.durationSeconds || 0;
+        const percent = dur > 0 ? Math.min(100, Math.round((bestWatched / dur) * 100)) : existing?.percent || 0;
+        const completed = existing?.completed || percent >= 90;
+
+        const doc = await VideoProgress.findOneAndUpdate(
+            { user: req.user._id, video: video._id },
+            { $set: { watchedSeconds: bestWatched, durationSeconds: dur, percent, completed } },
+            { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
+        );
+        return res.status(200).json({ success: true, progress: { percent: doc.percent, completed: doc.completed } });
+    } catch (e) {
+        next(e);
+    }
+}
+
+// POST /api/videos/:id/complete — manually mark complete / incomplete (reversible).
+async function toggleComplete(req, res, next) {
+    try {
+        const completed = req.body?.completed !== false; // default true
+        const set = completed ? { completed: true, percent: 100 } : { completed: false };
+        const doc = await VideoProgress.findOneAndUpdate(
+            { user: req.user._id, video: req.params.id },
+            { $set: set },
+            { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
+        );
+        return res.status(200).json({ success: true, progress: { percent: doc.percent, completed: doc.completed } });
+    } catch (e) {
+        next(e);
+    }
+}
+
+module.exports = { listVideos, createVideo, bulkCreateVideos, updateVideo, deleteVideo, saveProgress, toggleComplete };

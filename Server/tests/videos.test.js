@@ -147,6 +147,25 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(upd.body.video.title, "Set Theory — Updated", "title updated");
     ok("staff can edit a video");
 
+    // --- Watch progress: save %, auto-complete near the end, reversible toggle ---
+    const p1 = await request.post(`/api/videos/${vidId}/progress`).set(...auth(studentToken)).send({ watchedSeconds: 30, durationSeconds: 100 });
+    assert.strictEqual(p1.status, 200, "progress accepted");
+    assert.strictEqual(p1.body.progress.percent, 30, "saved as 30%");
+    assert.strictEqual(p1.body.progress.completed, false, "not complete at 30%");
+    const vrow = (await request.get("/api/videos").set(...auth(studentToken))).body.videos.find((v) => String(v._id) === String(vidId));
+    assert.strictEqual(vrow.progress.percent, 30, "the list carries the 30% watch progress");
+
+    const p2 = await request.post(`/api/videos/${vidId}/progress`).set(...auth(studentToken)).send({ watchedSeconds: 95, durationSeconds: 100 });
+    assert.strictEqual(p2.body.progress.percent, 95, "furthest point kept");
+    assert.strictEqual(p2.body.progress.completed, true, "auto-complete at ≥90%");
+
+    const un = await request.post(`/api/videos/${vidId}/complete`).set(...auth(studentToken)).send({ completed: false });
+    assert.strictEqual(un.body.progress.completed, false, "completion can be reversed");
+    const re = await request.post(`/api/videos/${vidId}/complete`).set(...auth(studentToken)).send({ completed: true });
+    assert.strictEqual(re.body.progress.completed, true, "and re-marked complete");
+    assert.strictEqual(re.body.progress.percent, 100, "manual complete fills the bar");
+    ok("watch progress: saves %, auto-completes ≥90%, manual complete is reversible");
+
     // A student can't delete.
     const delForbid = await request.delete(`/api/videos/${vidId}`).set(...auth(studentToken));
     assert.strictEqual(delForbid.status, 403, "student cannot delete");

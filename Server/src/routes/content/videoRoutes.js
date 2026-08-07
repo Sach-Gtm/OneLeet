@@ -9,6 +9,10 @@ const ctrl = require("../../controllers/content/videoController");
 // their universities; staff see everything.
 router.get("/", verifyToken, ctrl.listVideos);
 
+// Watch progress — any authenticated user (records their own progress).
+router.post("/:id/progress", verifyToken, ctrl.saveProgress);
+router.post("/:id/complete", verifyToken, ctrl.toggleComplete);
+
 // Manage the video library — STAFF ONLY (mentors/admins). Students can only
 // watch, never add/edit/remove.
 router.post("/", verifyToken, requireStaff, ctrl.createVideo);
