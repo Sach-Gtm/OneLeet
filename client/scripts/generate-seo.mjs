@@ -20,7 +20,7 @@ import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { BASE, BRAND, STATES, SUBJECTS, COLLEGES, GUIDES, APP_REGISTER } from "./seo/data.mjs";
-import { layout, faq, ctaBlock, featureStrip, esc, url } from "./seo/render.mjs";
+import { layout, faq, ctaBlock, featureStrip, courseJsonld, esc, url } from "./seo/render.mjs";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = resolve(__dir, "..", "public");
@@ -103,7 +103,7 @@ ${f.html}`;
         ogType: "website", eyebrow: "LEET / Lateral Entry",
         h1: "LEET Preparation: your diploma-to-B.Tech shortcut",
         crumbs: [{ name: "Home", url: `${BASE}/` }, { name: "LEET Guide", url: "/leet/" }],
-        bodyHtml: body, jsonld: [f.jsonld],
+        bodyHtml: body, jsonld: [f.jsonld, courseJsonld()],
     }), 1.0, "weekly");
 }
 
@@ -482,6 +482,7 @@ ${ctaBlock()}`,
             title: "LEET Previous Year Papers (PYQs) — Free Practice | OneLeet",
             desc: "Practise real LEET / lateral-entry previous year question papers (PYQs). See exactly what's asked and train on the real pattern — free on OneLeet.",
             eyebrow: "Past papers",
+            course: { name: "LEET Previous Year Papers — Practice", description: "Practise real LEET (Lateral Entry Entrance Test) previous-year question papers with instant scoring and explanations — free on OneLeet.", path: "/leet/previous-year-papers/" },
             body: `<p class="lead">Nothing prepares you like the real thing. Previous year papers show you exactly what LEET asks — and reveal what you can safely ignore.</p>
 <section><h2>Why past papers beat everything else</h2>
 <p>Thick guides cover far more than the exam needs. Past papers cut straight to what's actually tested, so your hours go where the marks are. Attempt one early to diagnose your level, then use them to benchmark your progress.</p></section>
@@ -497,6 +498,7 @@ ${ctaBlock("Practise real LEET papers free", "Sign up to access past papers, tim
             title: "LEET Mock Tests — Free Exam-Pattern Practice | OneLeet",
             desc: "Take free exam-pattern LEET mock tests: timed, instantly scored, every mistake explained. Build speed and accuracy for lateral entry into B.Tech.",
             eyebrow: "Mock tests",
+            course: { name: "LEET Mock Test Series", description: "Free, timed, exam-pattern LEET mock tests with instant scoring and every mistake explained — build speed and accuracy for lateral entry into B.Tech.", path: "/leet/mock-tests/" },
             body: `<p class="lead">Mock tests turn knowledge into a rank. Timed, exam-pattern practice builds the speed, accuracy and temperament the real paper demands.</p>
 <section><h2>How to use mocks well</h2>
 <ol>
@@ -570,11 +572,13 @@ ${ctaBlock()}`,
     ];
     for (const u of U) {
         const f = faq(u.faqs);
+        const jsonld = [f.jsonld];
+        if (u.course) jsonld.push(courseJsonld(u.course));
         await writePage(`/leet/${u.slug}`, layout({
             path: `/leet/${u.slug}/`,
             title: u.title, description: u.desc, eyebrow: u.eyebrow, h1: u.h1,
             crumbs: [{ name: "Home", url: `${BASE}/` }, { name: "LEET Guide", url: "/leet/" }, { name: u.eyebrow, url: `/leet/${u.slug}/` }],
-            bodyHtml: u.body + f.html, jsonld: [f.jsonld],
+            bodyHtml: u.body + f.html, jsonld,
         }), u.pr || 0.8, "monthly");
     }
 }
@@ -719,9 +723,17 @@ async function writeRootFile(name, content) {
 }
 
 async function buildSitemap() {
-    // Public SPA routes worth indexing, plus every generated static page.
+    // Public SPA routes worth indexing, plus every generated static page. (The
+    // dynamic /exams/:code and /courses/:slug pages are intentionally left out —
+    // the pre-rendered /leet/[state] pages are the crawlable SEO surface for that
+    // intent, so we don't split ranking signals across two URLs.)
     const spaRoutes = [
         { path: "/", priority: 1.0, changefreq: "weekly" },
+        { path: "/exams", priority: 0.7, changefreq: "monthly" },
+        { path: "/courses", priority: 0.7, changefreq: "weekly" },
+        { path: "/pricing", priority: 0.7, changefreq: "monthly" },
+        { path: "/prep-guide", priority: 0.6, changefreq: "monthly" },
+        { path: "/colleges", priority: 0.6, changefreq: "monthly" },
         { path: "/mentor", priority: 0.5, changefreq: "monthly" },
     ];
     const all = [...spaRoutes, ...pages].sort((a, b) => b.priority - a.priority);

@@ -179,6 +179,40 @@ export function faq(items) {
 
 const stripTags = (s) => String(s).replace(/<[^>]+>/g, "");
 
+// Course schema — OneLeet's LEET preparation as a Course provided by the org.
+// Rich-result eligible (name + description + provider + hasCourseInstance +
+// a free Offer). Honest: the core prep really is free to start.
+export function courseJsonld({ name, description, path = "/leet/" } = {}) {
+    return {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        name: name || "LEET Preparation Course",
+        description:
+            description ||
+            "Complete LEET (Lateral Entry Entrance Test) preparation for diploma holders — real previous-year papers, exam-pattern mock tests, subject notes and AI practice, for direct admission into 2nd-year B.Tech.",
+        url: url(path),
+        provider: { "@type": "EducationalOrganization", "@id": `${BASE}/#organization`, name: BRAND },
+        inLanguage: "en-IN",
+        isAccessibleForFree: true,
+        about: "Lateral Entry Entrance Test (LEET)",
+        educationalLevel: "Undergraduate — B.Tech 2nd-year lateral entry",
+        audience: { "@type": "EducationalAudience", educationalRole: "student" },
+        hasCourseInstance: {
+            "@type": "CourseInstance",
+            courseMode: "online",
+            courseWorkload: "PT40H",
+        },
+        offers: {
+            "@type": "Offer",
+            category: "Free",
+            price: "0",
+            priceCurrency: "INR",
+            availability: "https://schema.org/InStock",
+            url: `${BASE}/register`,
+        },
+    };
+}
+
 const NAV = `<nav>
 <a href="${BASE}/leet/">LEET Guide</a>
 <a href="${BASE}/leet/after-diploma/">After Diploma</a>
