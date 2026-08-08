@@ -233,16 +233,16 @@ function VideoCard({ video, staff, onPlay, onEdit, onDelete, onTogglePremium, on
                     <div className="absolute right-1.5 top-1.5 z-10 flex gap-1 opacity-0 transition duration-150 focus-within:opacity-100 group-hover:opacity-100">
                         <button
                             onClick={() => onTogglePremium(video)}
-                            className={"grid h-6 w-6 place-items-center rounded-md shadow-sm transition " + (video.premium ? "bg-amber-500 text-white hover:bg-amber-600" : "bg-white/95 text-slate-600 hover:bg-white hover:text-amber-600")}
+                            className={"grid h-6 w-6 place-items-center rounded-md shadow-sm transition " + (video.premium ? "bg-amber-500 text-white hover:bg-amber-600" : "bg-white text-slate-600 hover:bg-white hover:text-amber-600")}
                             aria-label={video.premium ? "Make free" : "Make premium"}
                             title={video.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
                         >
                             <Crown size={12} />
                         </button>
-                        <button onClick={() => onEdit(video)} className="grid h-6 w-6 place-items-center rounded-md bg-white/95 text-slate-600 shadow-sm hover:bg-white hover:text-indigo-600" aria-label="Edit video">
+                        <button onClick={() => onEdit(video)} className="grid h-6 w-6 place-items-center rounded-md bg-white text-slate-600 shadow-sm hover:bg-white hover:text-indigo-600" aria-label="Edit video">
                             <Pencil size={12} />
                         </button>
-                        <button onClick={() => onDelete(video)} className="grid h-6 w-6 place-items-center rounded-md bg-white/95 text-slate-600 shadow-sm hover:bg-white hover:text-rose-500" aria-label="Delete video">
+                        <button onClick={() => onDelete(video)} className="grid h-6 w-6 place-items-center rounded-md bg-white text-slate-600 shadow-sm hover:bg-white hover:text-rose-500" aria-label="Delete video">
                             <Trash2 size={12} />
                         </button>
                     </div>

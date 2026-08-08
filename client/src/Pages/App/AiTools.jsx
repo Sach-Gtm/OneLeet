@@ -73,7 +73,7 @@ function TrendingTopics() {
     }, []);
     if (topics.length === 0) return null;
     return (
-        <div className="mb-6 rounded-2xl border border-orange-100 bg-gradient-to-br from-orange-50/70 to-amber-50/40 p-4">
+        <div className="mb-6 rounded-2xl border border-orange-100 bg-gradient-to-br from-orange-50/70 to-amber-50/40 p-4 dark:border-orange-500/20 dark:from-orange-500/10 dark:to-transparent">
             <div className="mb-2.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-orange-600">
                 <Flame size={14} /> Trending on OneLeet · last 24h
             </div>

@@ -83,7 +83,7 @@ export function Celebration({ rank, timesAtRank = 0 }) {
     const nth =
         timesAtRank > 1 ? ` This is your ${ordinal(timesAtRank)} time reaching Rank #${rank}!` : "";
     return (
-        <div className="relative overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-indigo-50 p-6 text-center">
+        <div className="relative overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-indigo-50 p-6 text-center dark:from-amber-950 dark:via-slate-900 dark:to-indigo-950">
             <Confetti />
             <div className="relative">
                 <div className="flex justify-center">
