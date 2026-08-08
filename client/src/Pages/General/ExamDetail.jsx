@@ -7,6 +7,7 @@ import {
 import {
     getExamOverview, getExamPattern, getExamSyllabus, getExamSeatMatrix, getExamCutoffs, getExamPyqs,
 } from "@/Api/PublicApi";
+import { useSeo } from "@/lib/useSeo";
 
 // A light section shell with an anchor id (for the mega-menu deep-links). `icon`
 // is a rendered element (matching the codebase's Section convention).
@@ -182,6 +183,12 @@ function ExamDetailInner({ code }) {
             scrolledTo.current = hash;
         }
     }, [hash, overview, pattern, syllabus, seat, cutoffs, pyqs]);
+
+    useSeo({
+        title: overview?.exam ? `${overview.exam.name} — Pattern, Eligibility, Syllabus & Cut-offs | OneLeet` : "LEET Exam — Pattern, Eligibility & Cut-offs | OneLeet",
+        description: overview?.exam ? `${overview.exam.name}: exam pattern, eligibility, syllabus, seat matrix, previous-year cut-offs and sample papers — everything a diploma student needs, free.` : "Explore LEET / lateral-entry exam details — pattern, eligibility, syllabus, seats and previous-year cut-offs — free on OneLeet.",
+        path: `/exams/${code}`,
+    });
 
     if (overview === undefined) {
         return (

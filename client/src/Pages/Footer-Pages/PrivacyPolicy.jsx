@@ -1,4 +1,5 @@
 import { ShieldCheck } from "lucide-react";
+import { useSeo } from "@/lib/useSeo";
 
 function Section({ title, children }) {
     return (
@@ -10,6 +11,11 @@ function Section({ title, children }) {
 }
 
 export default function PrivacyPolicy() {
+    useSeo({
+        title: "Privacy Policy & Terms of Use | OneLeet",
+        description: "How OneLeet collects, uses and protects your data, and the terms of use for our LEET preparation platform.",
+        path: "/privacy",
+    });
     return (
         <div className="mx-auto max-w-3xl px-4 pb-24 pt-32 sm:px-6">
             <div className="text-center">

@@ -10,7 +10,6 @@ import {
     Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import Footer from "@/Components/General/Footer";
 import HomeCourses from "@/Components/General/HomeCourses";
 import { useSeo } from "@/lib/useSeo";
 
@@ -202,12 +201,11 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Student reviews — a moving marquee, just before the footer. */}
+            {/* Student reviews — a moving marquee, just before the footer.
+                (The site <Footer> is rendered once by MarketingLayout now.) */}
             <Suspense fallback={null}>
                 <ReviewsSection />
             </Suspense>
-
-            <Footer />
         </>
     );
 }

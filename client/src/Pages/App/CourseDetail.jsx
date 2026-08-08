@@ -14,6 +14,7 @@ import {
 import { getCourse, enroll as enrollApi, unenroll as unenrollApi } from "@/Api/CoursesApi";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useSeo } from "@/lib/useSeo";
 
 export default function CourseDetail() {
     const { slug } = useParams();
@@ -51,6 +52,12 @@ export default function CourseDetail() {
             active = false;
         };
     }, [slug]);
+
+    useSeo({
+        title: course ? `${course.name} — LEET Batch | OneLeet` : "LEET Batch | OneLeet",
+        description: course ? (course.tagline || `Join the ${course.name} batch on OneLeet — past papers, ranked mock tests, notes and a plan tied to your exam.`) : "Join a college-wise LEET batch on OneLeet — past papers, ranked mock tests, notes and an exam-tied plan.",
+        path: `/courses/${slug}`,
+    });
 
     const doEnroll = async () => {
         // A visitor must have an account to enroll — send them to sign up, then back.

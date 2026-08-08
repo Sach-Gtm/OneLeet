@@ -9,6 +9,7 @@ import {
     Sparkles,
 } from "lucide-react";
 import { getCourses } from "@/Api/CoursesApi";
+import { useSeo } from "@/lib/useSeo";
 
 function CourseCard({ course, index }) {
     return (
@@ -85,6 +86,12 @@ export default function Courses() {
             active = false;
         };
     }, []);
+
+    useSeo({
+        title: "LEET Batches — College-wise B.Tech Lateral Entry Prep | OneLeet",
+        description: "Join your college-wise LEET batch free — real past papers, ranked mock tests, seat & cut-off data and a plan tied to your exam date. IPU, DTU, UP, Bihar and more.",
+        path: "/courses",
+    });
 
     return (
         <div className="mx-auto max-w-6xl space-y-6 px-4 pb-16 pt-28 sm:pt-32">

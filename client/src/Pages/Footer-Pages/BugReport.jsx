@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Bug, Loader2, Upload, CheckCircle2, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { submitBug } from "@/Api/ContactApi";
+import { useSeo } from "@/lib/useSeo";
 
 const inputCls =
     "h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
@@ -13,6 +14,14 @@ export default function BugReport() {
     const [file, setFile] = useState(null);
     const [busy, setBusy] = useState(false);
     const [done, setDone] = useState(false);
+
+    useSeo({
+        title: "Report a Bug | OneLeet",
+        description: "Spotted something broken on OneLeet? Tell us what happened and we'll fix it fast.",
+        path: "/bug-report",
+        noindex: true,
+    });
+
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
     const submit = async (e) => {

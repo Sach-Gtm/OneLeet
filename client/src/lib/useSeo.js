@@ -19,7 +19,9 @@ function upsertMeta(attr, key, content) {
     el.setAttribute("content", content);
 }
 
-export function useSeo({ title, description, path }) {
+const DEFAULT_ROBOTS = "index,follow,max-image-preview:large,max-snippet:-1";
+
+export function useSeo({ title, description, path, noindex = false }) {
     useEffect(() => {
         if (title) {
             document.title = title;
@@ -29,6 +31,7 @@ export function useSeo({ title, description, path }) {
         if (description) {
             upsertMeta("name", "description", description);
             upsertMeta("property", "og:description", description);
+            upsertMeta("name", "twitter:description", description);
         }
         if (path) {
             const href = `${BASE}${path}`;
@@ -41,5 +44,9 @@ export function useSeo({ title, description, path }) {
             link.setAttribute("href", href);
             upsertMeta("property", "og:url", href);
         }
-    }, [title, description, path]);
+        // Every page that calls the hook now owns its robots directive — thin
+        // utility/404 pages pass noindex, everything else re-asserts the default
+        // so a previous route's value can never linger during SPA navigation.
+        upsertMeta("name", "robots", noindex ? "noindex,follow" : DEFAULT_ROBOTS);
+    }, [title, description, path, noindex]);
 }
