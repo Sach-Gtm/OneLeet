@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MapPin, GraduationCap, ArrowRight } from "lucide-react";
 import { COLLEGES } from "@/data/colleges";
+import { useSeo } from "@/lib/useSeo";
 
 // A gradient fallback for colleges without a photo (and while one loads / if it
 // fails). Deterministic per index so it doesn't churn on re-render.
@@ -49,6 +50,11 @@ function CollegeCard({ c, i }) {
 }
 
 export default function Colleges() {
+    useSeo({
+        title: "Engineering Colleges via Lateral Entry (LEET) | OneLeet",
+        description: "The B.Tech colleges you can reach through lateral entry as a diploma holder — DTU, NSUT, VJTI, IPU and more. See where LEET can take you.",
+        path: "/colleges",
+    });
     return (
         <div className="mx-auto max-w-6xl px-4 pb-20 pt-28 sm:pt-32">
             <div className="text-center">

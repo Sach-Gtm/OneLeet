@@ -4,6 +4,7 @@ import {
     LEGAL_UPDATED, LEGAL_ENTITY, SUCCESS_PROMISE_TABLE, ELIGIBILITY_CONDITIONS,
     VOID_CONDITIONS, PROTECTIONS, CLAIM_PROCESS, TERMS_OF_SERVICE, REFUND_POLICY,
 } from "@/data/legal";
+import { useSeo } from "@/lib/useSeo";
 
 const Section = ({ id, icon, title, children }) => (
     <section id={id} className="scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-900">
@@ -16,6 +17,11 @@ const Section = ({ id, icon, title, children }) => (
 );
 
 export default function SuccessPromise() {
+    useSeo({
+        title: "The Success Promise & Terms | OneLeet",
+        description: "OneLeet's Success Promise, Terms of Service and refund policy for LEET preparation — what we commit to, the conditions, and how to claim.",
+        path: "/success-promise",
+    });
     return (
         <div className="mx-auto max-w-3xl px-4 pb-24 pt-28 sm:pt-32">
             <div className="text-center">

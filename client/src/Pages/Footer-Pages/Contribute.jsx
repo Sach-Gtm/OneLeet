@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { HeartHandshake, Loader2, Upload, CheckCircle2, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { submitContribution } from "@/Api/ContactApi";
+import { useSeo } from "@/lib/useSeo";
 
 const inputCls =
     "h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
@@ -21,6 +22,13 @@ export default function Contribute() {
     const [file, setFile] = useState(null);
     const [busy, setBusy] = useState(false);
     const [done, setDone] = useState(false);
+
+    useSeo({
+        title: "Contribute LEET Papers & Notes | OneLeet",
+        description: "Share a past paper, an important question, or notes that helped you — and help the next batch of LEET aspirants.",
+        path: "/contribute",
+    });
+
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
     const submit = async (e) => {

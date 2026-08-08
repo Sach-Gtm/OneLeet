@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, ArrowRight, Loader2, BookOpenCheck } from "lucide-react";
 import { getPublicExams } from "@/Api/PublicApi";
+import { useSeo } from "@/lib/useSeo";
 
 // Public directory of every LEET / lateral-entry exam we cover. Grouped by
 // region, searchable, and each card deep-links to the exam's public page. No
@@ -9,6 +10,12 @@ import { getPublicExams } from "@/Api/PublicApi";
 export default function ExamsIndex() {
     const [exams, setExams] = useState(null);
     const [q, setQ] = useState("");
+
+    useSeo({
+        title: "LEET Exams by State — Pattern, Eligibility & Syllabus | OneLeet",
+        description: "Explore every LEET (Lateral Entry Entrance Test) — IPU, DTU/NSUT, UP (AKTU), Bihar, Haryana and more. Compare exam pattern, eligibility, syllabus, seats and cut-offs, free.",
+        path: "/exams",
+    });
 
     useEffect(() => {
         getPublicExams().then(setExams);

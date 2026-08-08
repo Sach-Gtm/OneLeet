@@ -20,6 +20,7 @@ import { openCallback } from "@/lib/callback";
 import { useAuth } from "@/context/AuthContext";
 import { canAccessPremiumContent, isStaff } from "@/lib/roles";
 import ProtectedContent from "@/Components/Security/ProtectedContent";
+import { useSeo } from "@/lib/useSeo";
 
 const reveal = {
     initial: { opacity: 0, y: 18 },
@@ -151,6 +152,13 @@ function PrepGuidePublicTeaser({ currentId }) {
 export default function PrepGuide() {
     const { user } = useAuth();
     const countdown = useExamCountdown();
+
+    useSeo({
+        title: "How to Prepare for LEET — Free Study Plan & Roadmap | OneLeet",
+        description: "A stage-by-stage LEET preparation roadmap for diploma students — from your first month to exam day. Free overview; unlock the full day-by-day plan.",
+        path: "/prep-guide",
+    });
+
     const daysLeft = countdown?.daysLeft ?? null;
     const currentId = phaseForDays(daysLeft);
     const windowLabel =

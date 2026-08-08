@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
+import { useSeo } from "@/lib/useSeo";
 
 export default function NotFound() {
+    useSeo({ title: "Page not found | OneLeet", noindex: true });
     return (
         <div className="flex min-h-screen items-center justify-center px-4 py-12">
             <motion.div

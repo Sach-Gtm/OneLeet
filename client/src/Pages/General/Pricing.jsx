@@ -11,6 +11,7 @@ import {
 } from "@/data/pricing";
 import { useCart } from "@/context/CartContext";
 import { getCourses } from "@/Api/CoursesApi";
+import { useSeo } from "@/lib/useSeo";
 
 const GROUP_ICON = {
     sparkles: Sparkles, book: BookOpen, clipboard: ClipboardList, files: FileText,
@@ -112,6 +113,12 @@ export default function Pricing() {
                 featured: i === 0,
             }));
     }, [dbCourses]);
+
+    useSeo({
+        title: "LEET Courses & Mock Test Series — Pricing | OneLeet Premium",
+        description: "OneLeet membership: exam-wise LEET batches, ranked mock tests, past papers, notes, AI practice and counselling support. See plans, discounts and the Success Promise.",
+        path: "/pricing",
+    });
 
     return (
         <div className="mx-auto max-w-6xl px-4 pb-28 pt-28 sm:pt-32">
