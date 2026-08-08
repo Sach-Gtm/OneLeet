@@ -64,7 +64,7 @@ export default function Navbar() {
         setTimeout(() => setShowSuccessMsg(false), 3000);
     };
 
-    const linkClass = "px-3 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/70 transition-colors flex items-center gap-1";
+    const linkClass = "px-3 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/70 dark:hover:bg-white/10 transition-colors flex items-center gap-1";
 
     return (
         <>
@@ -88,14 +88,14 @@ export default function Navbar() {
                         </Link>
 
                         {/* Desktop nav */}
-                        <div className="hidden md:flex items-center gap-1 rounded-full border border-slate-200 bg-slate-100/70 p-1.5">
+                        <div className="hidden md:flex items-center gap-1 rounded-full border border-slate-200 bg-slate-100/70 p-1.5 dark:border-white/10 dark:bg-white/10">
                             <Link to="/" className={linkClass}>Home</Link>
 
                             {/* Straight back into the app — only for signed-in users. */}
                             {isLoggedIn && (
                                 <Link
                                     to="/dashboard"
-                                    className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-indigo-700 transition-colors hover:bg-white/70"
+                                    className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-indigo-700 transition-colors hover:bg-white/70 dark:hover:bg-white/10"
                                 >
                                     <LayoutDashboard size={15} /> Dashboard
                                 </Link>
