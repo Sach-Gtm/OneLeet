@@ -274,6 +274,9 @@
 .dark .text-red-600 { color: #fb7185; }
 .dark .text-sky-600,
 .dark .text-sky-700 { color: #38bdf8; }
+.dark .text-orange-500,
+.dark .text-orange-600,
+.dark .text-orange-700 { color: #fb923c; }
 
 /* Accent CHIP fills — darken the pastel -50 fills so they aren't blinding */
 .dark .bg-indigo-50 { background-color: rgb(20 122 158 / 0.18); }
@@ -283,6 +286,7 @@
 .dark .bg-rose-50,
 .dark .bg-red-50 { background-color: rgb(244 63 94 / 0.15); }
 .dark .bg-sky-50 { background-color: rgb(56 189 248 / 0.15); }
+.dark .bg-orange-50 { background-color: rgb(249 115 22 / 0.14); }
 .dark .hover\:bg-indigo-50:hover { background-color: rgb(20 122 158 / 0.22); }
 .dark .hover\:bg-rose-50:hover,
 .dark .hover\:bg-red-50:hover { background-color: rgb(244 63 94 / 0.18); }
@@ -302,6 +306,7 @@
 .dark .bg-amber-100 { background-color: rgb(245 158 11 / 0.22); }
 .dark .bg-emerald-100 { background-color: rgb(16 185 129 / 0.22); }
 .dark .bg-green-100 { background-color: rgb(34 197 94 / 0.22); }
+.dark .bg-rose-100 { background-color: rgb(244 63 94 / 0.22); }
 
 /* Deeper accent-text shades used occasionally */
 .dark .text-indigo-800 { color: #57c0e4; }

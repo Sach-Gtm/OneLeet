@@ -13,11 +13,11 @@ const rupee = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 const inCls = "h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
 
 const STATUS = {
-    created: "bg-amber-100 text-amber-700",
-    partially_paid: "bg-blue-100 text-blue-700",
-    paid: "bg-emerald-100 text-emerald-700",
-    locked: "bg-rose-100 text-rose-700",
-    cancelled: "bg-slate-100 text-slate-600",
+    created: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
+    partially_paid: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400",
+    paid: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
+    locked: "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400",
+    cancelled: "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300",
 };
 
 export default function PaymentsAdmin({ isSuper = false }) {
