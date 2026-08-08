@@ -107,48 +107,27 @@ export default function Footer() {
         return () => window.removeEventListener(CALLBACK_EVENT, open);
     }, []);
 
+    const social = "grid h-8 w-8 place-items-center rounded-full border border-slate-200 bg-white text-slate-400 transition-colors";
     return (
-        <footer className="mt-24 w-full border-t border-slate-200 bg-[#FAF9F6] text-slate-600">
-            <div className="border-b border-slate-200 bg-white">
-                <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 sm:flex-row">
-                    <p className="text-xs font-semibold uppercase tracking-widest text-indigo-600">
-                        Get Connected With Us
+        <footer className="mt-20 w-full border-t border-slate-200 bg-[#FAF9F6] text-slate-600">
+            <div className="mx-auto grid max-w-5xl grid-cols-2 gap-x-8 gap-y-10 px-6 py-11 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
+                {/* Brand + socials */}
+                <div className="col-span-2 lg:col-span-1">
+                    <Logo size={28} textClass="text-lg" />
+                    <p className="mt-3 max-w-xs text-[13px] leading-relaxed text-slate-500">
+                        Everything for the Lateral Entry Entrance Test — past papers, notes, smart practice and AI tools, in one place.
                     </p>
-                    <div className="flex items-center gap-6">
-                        <button type="button" onClick={comingSoon} className="text-slate-400 transition-colors hover:scale-110 hover:text-green-500" aria-label="WhatsApp">
-                            <MessageCircle size={20} />
-                        </button>
-                        <button type="button" onClick={comingSoon} className="text-slate-400 transition-colors hover:scale-110 hover:text-pink-500" aria-label="Instagram">
-                            <Instagram size={20} />
-                        </button>
-                        <button type="button" onClick={comingSoon} className="text-slate-400 transition-colors hover:scale-110 hover:text-indigo-600" aria-label="LinkedIn">
-                            <Linkedin size={20} />
-                        </button>
-                        <button type="button" onClick={comingSoon} className="text-slate-400 transition-colors hover:scale-110 hover:text-sky-500" aria-label="Twitter">
-                            <Twitter size={20} />
-                        </button>
+                    <div className="mt-4 flex items-center gap-2.5">
+                        <button type="button" onClick={comingSoon} className={social + " hover:border-green-300 hover:text-green-500"} aria-label="WhatsApp"><MessageCircle size={15} /></button>
+                        <button type="button" onClick={comingSoon} className={social + " hover:border-pink-300 hover:text-pink-500"} aria-label="Instagram"><Instagram size={15} /></button>
+                        <button type="button" onClick={comingSoon} className={social + " hover:border-indigo-300 hover:text-indigo-600"} aria-label="LinkedIn"><Linkedin size={15} /></button>
+                        <button type="button" onClick={comingSoon} className={social + " hover:border-sky-300 hover:text-sky-500"} aria-label="Twitter"><Twitter size={15} /></button>
                     </div>
-                </div>
-            </div>
-
-            <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-12 sm:grid-cols-2 sm:gap-8 sm:py-16 lg:grid-cols-4">
-                <div className="space-y-4">
-                    <Logo size={34} textClass="text-2xl" />
-                    <p className="max-w-xs text-sm leading-relaxed text-slate-500">
-                        Your one-stop platform for the Lateral Entry Entrance Test —
-                        past papers, notes, smart practice and AI tools, all in one place.
-                    </p>
-                    <p className="text-xs font-medium text-slate-500">
-                        A unit of{" "}
-                        <span className="font-semibold text-slate-700">StaplerLabs Private Limited</span>.
-                    </p>
                 </div>
 
                 <div>
-                    <h3 className="mb-5 border-l-2 border-indigo-500 pl-3 text-sm font-bold uppercase tracking-widest text-slate-900">
-                        Navigate
-                    </h3>
-                    <ul className="space-y-3 text-sm">
+                    <h3 className="mb-3.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">Navigate</h3>
+                    <ul className="space-y-2.5 text-[13.5px]">
                         <li><Link to="/" className={linkCls}>Home</Link></li>
                         <li><Link to="/mentor" className={linkCls}>Mentors</Link></li>
                         <li><Link to="/privacy" className={linkCls}>Privacy Policy</Link></li>
@@ -156,51 +135,32 @@ export default function Footer() {
                 </div>
 
                 <div>
-                    <h3 className="mb-5 border-l-2 border-indigo-500 pl-3 text-sm font-bold uppercase tracking-widest text-slate-900">
-                        Resources
-                    </h3>
-                    <ul className="space-y-3 text-sm">
+                    <h3 className="mb-3.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">Resources</h3>
+                    <ul className="space-y-2.5 text-[13.5px]">
                         <li><Link to="/login" className={linkCls}>Join Community</Link></li>
                         <li><Link to="/contribute" className={linkCls}>Contribute a Paper</Link></li>
-                        <li><Link to="/bug-report" className="flex items-center gap-2 text-slate-500 transition-all hover:pl-1 hover:text-red-500"><Bug size={14} /> Report a Bug</Link></li>
+                        <li><Link to="/bug-report" className="inline-flex items-center gap-1.5 text-slate-500 transition-all hover:pl-1 hover:text-red-500"><Bug size={13} /> Report a Bug</Link></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h3 className="mb-5 border-l-2 border-violet-500 pl-3 text-sm font-bold uppercase tracking-widest text-slate-900">
-                        Contact
-                    </h3>
-                    <div className="flex flex-col gap-3">
-                        <a
-                            href="mailto:help@oneleet.in"
-                            className="group flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 transition-all hover:border-indigo-300 hover:bg-indigo-50/50"
-                        >
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 transition-transform group-hover:scale-110">
-                                <Mail size={16} />
-                            </div>
-                            <span className="text-sm text-slate-600 group-hover:text-slate-900">help@oneleet.in</span>
+                    <h3 className="mb-3.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">Contact</h3>
+                    <div className="space-y-2 text-[13.5px]">
+                        <a href="mailto:help@oneleet.in" className="inline-flex items-center gap-2 text-slate-500 transition-colors hover:text-indigo-600">
+                            <Mail size={14} className="text-slate-400" /> help@oneleet.in
                         </a>
-                        <button
-                            type="button"
-                            onClick={() => setCallbackOpen(true)}
-                            className="group flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 text-left transition-all hover:border-indigo-300 hover:bg-indigo-50/50"
-                        >
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 transition-transform group-hover:scale-110">
-                                <Phone size={16} />
-                            </div>
-                            <span className="text-sm text-slate-600 group-hover:text-slate-900">Request a callback</span>
+                        <button type="button" onClick={() => setCallbackOpen(true)} className="flex items-center gap-2 text-slate-500 transition-colors hover:text-indigo-600">
+                            <Phone size={14} className="text-slate-400" /> Request a callback
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div className="border-t border-slate-200 bg-white">
-                <p className="mx-auto max-w-4xl px-6 py-6 text-center text-xs leading-relaxed text-slate-400">
-                    &copy; {new Date().getFullYear()} OneLeet · A unit of StaplerLabs Private Limited. All rights reserved.
-                    <br className="hidden sm:block" />
-                    DISCLAIMER: All study materials on OneLeet are provided solely for educational
-                    purposes. We do not claim ownership of any external materials unless stated otherwise.
-                </p>
+            <div className="border-t border-slate-200">
+                <div className="mx-auto flex max-w-5xl flex-col gap-1.5 px-6 py-5 text-[11.5px] leading-relaxed text-slate-400 sm:flex-row sm:items-start sm:justify-between">
+                    <p className="shrink-0">&copy; {new Date().getFullYear()} OneLeet · A unit of StaplerLabs Private Limited. All rights reserved.</p>
+                    <p className="sm:max-w-md sm:text-right">All study materials are provided solely for educational purposes; we don&apos;t claim ownership of external materials unless stated otherwise.</p>
+                </div>
             </div>
 
             {callbackOpen && <CallbackModal onClose={() => setCallbackOpen(false)} />}
