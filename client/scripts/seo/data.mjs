@@ -165,13 +165,13 @@ export const GUIDES = [
     {
         slug: "how-to-prepare-for-leet",
         title: "How to prepare for LEET: a step-by-step study plan",
-        desc: "A realistic, coaching-free LEET preparation plan built around past papers, exam-pattern mocks and AI practice — for students who are also finishing their diploma.",
+        desc: "A realistic, coaching-free LEET preparation plan built around past papers, exam-pattern mocks and AI practice, for students who are also finishing their diploma.",
         intent: "Preparation methodology.",
     },
     {
         slug: "leet-vs-jee-which-path-after-diploma",
         title: "LEET vs JEE after a diploma: which path is right for you?",
-        desc: "Diploma done — should you attempt lateral entry (LEET) or restart with JEE? An honest comparison of time, cost, eligibility and outcomes.",
+        desc: "Diploma done. Should you attempt lateral entry (LEET) or restart with JEE? An honest comparison of time, cost, eligibility and outcomes.",
         intent: "Decision / comparison.",
     },
     {
@@ -189,13 +189,13 @@ export const GUIDES = [
     {
         slug: "diploma-to-btech-complete-roadmap",
         title: "Diploma to B.Tech: the complete roadmap",
-        desc: "Every step from your final diploma semester to a B.Tech seat via lateral entry — eligibility, entrance test, counselling, documents and preparation.",
+        desc: "Every step from your final diploma semester to a B.Tech seat via lateral entry: eligibility, entrance test, counselling, documents and preparation.",
         intent: "End-to-end roadmap.",
     },
     {
         slug: "leet-syllabus-overview",
         title: "LEET syllabus overview: what to actually study",
-        desc: "The subjects and topics most LEET / lateral-entry papers test — Mathematics, Physics, Chemistry and core engineering — and where to focus first.",
+        desc: "The subjects and topics most LEET / lateral-entry papers test (Mathematics, Physics, Chemistry and core engineering), and where to focus first.",
         intent: "Syllabus authority.",
     },
     {
@@ -225,19 +225,19 @@ export const GUIDES = [
     {
         slug: "common-mistakes-in-leet-preparation",
         title: "7 common mistakes in LEET preparation (and how to avoid them)",
-        desc: "The avoidable errors that cost diploma students marks and ranks in LEET — from ignoring past papers to skipping mock analysis.",
+        desc: "The avoidable errors that cost diploma students marks and ranks in LEET, from ignoring past papers to skipping mock analysis.",
         intent: "Mistakes / engagement.",
     },
     {
         slug: "leet-preparation-without-coaching",
         title: "How to crack LEET without expensive coaching",
-        desc: "A self-study blueprint for LEET using free past papers, structured notes, exam-pattern mocks and an AI coach — no costly classes required.",
+        desc: "A self-study blueprint for LEET using free past papers, structured notes, exam-pattern mocks and an AI coach. No costly classes required.",
         intent: "No-coaching angle.",
     },
     {
         slug: "last-30-days-leet-revision-plan",
         title: "Last 30 days: a LEET revision plan that works",
-        desc: "A focused four-week LEET revision plan for the final stretch — what to revise, how many mocks to take, and how to analyse them.",
+        desc: "A focused four-week LEET revision plan for the final stretch: what to revise, how many mocks to take, and how to analyse them.",
         intent: "Time-boxed revision.",
     },
 ];

@@ -28,9 +28,9 @@ export const EXAM_COURSES = [
     { slug: "up-leet-2027", code: "up-leet", name: "CUET / UP LEET", subtitle: "AKTU lateral entry", price: 1499, mrp: 12999,
       promise: "Top-10 rank → 100% back. Admission in a top-3 college → 40% back." },
     { slug: "gujarat-d2d-2027", code: "gujarat-d2d", name: "Gujarat LEET", subtitle: "ACPDC D2D", price: 599, mrp: 9999,
-      promise: "Performance-based Success Reward — see the full terms." },
+      promise: "Performance-based Success Reward. See the full terms." },
     { slug: "sliet-leet-2027", code: "sliet-leet", name: "SLIET LEET", subtitle: "Longowal", price: 999, mrp: 8999,
-      promise: "Performance-based Success Reward — see the full terms." },
+      promise: "Performance-based Success Reward. See the full terms." },
 ];
 
 // ── Counselling & Interview-prep only (these colleges admit via interview, not a
@@ -82,14 +82,14 @@ export const MEMBERSHIP_GROUPS = [
     { icon: "chart", title: "Smart Analytics", items: ["Daily & weekly progress", "Accuracy & speed", "Strong / weak topics", "AI suggestions"] },
     { icon: "target", title: "Rank & College Predictor Pro", items: ["Expected rank & trends", "Round & category-wise", "Safe / dream / backup colleges"] },
     { icon: "compass", title: "Counselling Hub", items: ["Process & key dates", "Documents & choice-filling", "Freeze / float guide", "Round updates"] },
-    { icon: "users", title: "Live Sessions & Mentor Support", items: ["Live classes & doubt sessions", "1:1 / 1:M mentorship", "Premium WhatsApp support — 6-hour response", "Career & college guidance", "Premium community"] },
+    { icon: "users", title: "Live Sessions & Mentor Support", items: ["Live classes & doubt sessions", "1:1 / 1:M mentorship", "Premium WhatsApp support: 6-hour response", "Career & college guidance", "Premium community"] },
 ];
 
 // Kept FREE (SEO + trust): what anyone can see without paying.
 export const FREE_FEATURES = [
     "Exam pattern, eligibility & syllabus", "Seat matrix & previous-year cut-offs",
-    "Basic college info & important dates", "20–30 free PYQs", "2 free mock tests",
-    "2–3 sample videos", "Demo AI, dashboard & rank predictor",
+    "Basic college info & important dates", "20 to 30 free PYQs", "2 free mock tests",
+    "2 to 3 sample videos", "Demo AI, dashboard & rank predictor",
 ];
 
 // The one-line promise the membership makes (shown at the top of the page).

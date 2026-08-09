@@ -103,7 +103,7 @@ function PrepGuidePublicTeaser({ currentId }) {
                     <h1 className="mt-3 text-2xl font-bold sm:text-3xl">Your roadmap to cracking LEET</h1>
                     <p className="mt-2 max-w-xl text-sm text-indigo-100 sm:text-base">
                         A clear stage-by-stage plan from the first month to exam day. Here&apos;s the
-                        overview — create a free account to unlock the full day-by-day tips, the mistakes
+                        overview. Create a free account to unlock the full day-by-day tips, the mistakes
                         that cost marks and your exam-day checklist.
                     </p>
                 </div>
@@ -135,7 +135,7 @@ function PrepGuidePublicTeaser({ currentId }) {
             <div className="flex flex-col items-center gap-4 rounded-2xl border border-indigo-200 bg-indigo-50/60 p-6 text-center dark:border-indigo-500/30 dark:bg-indigo-500/10">
                 <Lock className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
                 <div>
-                    <p className="text-base font-bold text-slate-900 dark:text-slate-100">Unlock the full plan — free</p>
+                    <p className="text-base font-bold text-slate-900 dark:text-slate-100">Unlock the full plan, free</p>
                     <p className="mx-auto mt-1 max-w-md text-sm text-slate-500 dark:text-slate-400">
                         Sign up (no course needed) to get the day-by-day tips for every stage, the full
                         mistakes list and your exam-day kit.
@@ -154,8 +154,8 @@ export default function PrepGuide() {
     const countdown = useExamCountdown();
 
     useSeo({
-        title: "How to Prepare for LEET — Free Study Plan & Roadmap | OneLeet",
-        description: "A stage-by-stage LEET preparation roadmap for diploma students — from your first month to exam day. Free overview; unlock the full day-by-day plan.",
+        title: "How to Prepare for LEET: Free Study Plan & Roadmap | OneLeet",
+        description: "A stage-by-stage LEET preparation roadmap for diploma students, from your first month to exam day. Free overview; unlock the full day-by-day plan.",
         path: "/prep-guide",
     });
 
@@ -205,7 +205,7 @@ export default function PrepGuide() {
                     <h1 className="mt-3 text-2xl font-bold sm:text-3xl">Your roadmap to cracking LEET</h1>
                     <p className="mt-2 max-w-xl text-sm text-indigo-100 sm:text-base">
                         {daysLeft == null
-                            ? "You're at the start of your journey — perfect timing. Here's exactly what to focus on at each stage, the mistakes to avoid, and what to carry on exam day."
+                            ? "You're at the start of your journey, perfect timing. Here's exactly what to focus on at each stage, the mistakes to avoid, and what to carry on exam day."
                             : "Here's exactly what to focus on for where you are now, the mistakes to avoid, and what to carry on exam day."}
                     </p>
                 </div>
@@ -274,7 +274,7 @@ export default function PrepGuide() {
                     </span>
                     <div>
                         <h2 className="text-lg font-bold text-slate-900">What to carry on exam day</h2>
-                        <p className="text-xs text-slate-400">Pack it the night before — always follow your admit card too.</p>
+                        <p className="text-xs text-slate-400">Pack it the night before. Always follow your admit card too.</p>
                     </div>
                 </div>
                 <motion.ul {...reveal} className="grid gap-2 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2 dark:border-slate-700/70">
@@ -291,7 +291,7 @@ export default function PrepGuide() {
             <div className="flex flex-col items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-center sm:flex-row sm:text-left dark:border-slate-700/70 dark:bg-slate-800/40">
                 <div>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Stuck or unsure where to start?</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Get a free call with our team — we&apos;ll help you build a plan that fits your timeline.</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Get a free call with our team. We&apos;ll help you build a plan that fits your timeline.</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <Link
@@ -320,7 +320,7 @@ export default function PrepGuide() {
                     <h2 className="mt-3 text-xl font-bold">1:1 mentor strategy sessions</h2>
                     <p className="mt-1 max-w-xl text-sm text-indigo-100">
                         A personalised plan built around your rank goal and weak topics, plus limited
-                        one-on-one calls with a mentor who cleared LEET — part of the premium batch.
+                        one-on-one calls with a mentor who cleared LEET, part of the premium batch.
                     </p>
                     <div className="mt-4">
                         {premium ? (

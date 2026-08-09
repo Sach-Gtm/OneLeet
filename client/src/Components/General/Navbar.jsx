@@ -202,7 +202,7 @@ export default function Navbar() {
                                     </div>
                                     {/* Section side-panel for the hovered exam */}
                                     <div className="w-1/2 p-2">
-                                        <p className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-400">Explore — free</p>
+                                        <p className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-400">Explore, free</p>
                                         {SECTIONS.map((s) => (
                                             <Link key={s.id} to={`/exams/${hoverExam}#${s.id}`} className="block rounded-lg px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900">
                                                 {s.label}

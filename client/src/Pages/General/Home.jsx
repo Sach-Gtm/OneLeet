@@ -22,7 +22,7 @@ const JourneyReveal = lazy(() => import("@/Components/General/JourneyReveal"));
 const ReviewsSection = lazy(() => import("@/Components/General/ReviewsSection"));
 
 const features = [
-    { icon: FileText, title: "Real past papers", desc: "Actual LEET papers — practise what the exam really asks.", tint: "bg-indigo-50 border-indigo-100", iconBg: "bg-indigo-500" },
+    { icon: FileText, title: "Real past papers", desc: "Actual LEET papers. Practise what the exam really asks.", tint: "bg-indigo-50 border-indigo-100", iconBg: "bg-indigo-500" },
     { icon: ClipboardCheck, title: "Exam-pattern mocks", desc: "Timed tests, instant scoring, every mistake explained.", tint: "bg-rose-50 border-rose-100", iconBg: "bg-rose-500" },
     { icon: Brain, title: "AI practice", desc: "Unlimited questions on any topic, any difficulty, in seconds.", tint: "bg-violet-50 border-violet-100", iconBg: "bg-violet-500" },
     { icon: BookOpen, title: "Smart notes", desc: "High-yield notes and flashcards for last-mile revision.", tint: "bg-amber-50 border-amber-100", iconBg: "bg-amber-500" },
@@ -35,11 +35,11 @@ const features = [
 const conversation = [
     {
         q: "Honestly, I don't know where to begin.",
-        a: "Open one real past paper. In ten minutes you'll see exactly what LEET tests — and what you can ignore.",
+        a: "Open one real past paper. In ten minutes you'll see exactly what LEET tests, and what you can ignore.",
     },
     {
         q: "Coaching is way too expensive for me.",
-        a: "You don't need pricey coaching to crack this. Real papers, mocks, and an AI coach — all in one place, built around you.",
+        a: "You don't need pricey coaching to crack this. Real papers, mocks, and an AI coach. All in one place, built around you.",
     },
     {
         q: "What if I've already left it too late?",
@@ -49,7 +49,7 @@ const conversation = [
 
 export default function Home() {
     useSeo({
-        title: "OneLeet — AI-powered LEET / Lateral Entry Entrance Test preparation",
+        title: "OneLeet: AI-powered LEET / Lateral Entry Entrance Test preparation",
         description:
             "Crack LEET and get into 2nd year B.Tech after your diploma. Free past papers, exam-pattern mock tests, notes and AI practice for every state.",
         path: "/",
@@ -85,7 +85,7 @@ export default function Home() {
                     </h1>
 
                     <p className="mx-auto max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
-                        Everything for your Lateral Entry Entrance Test, in one place —
+                        Everything for your Lateral Entry Entrance Test, in one place:
                         real papers, exam-pattern mocks, and an AI coach that adapts to
                         you.
                     </p>
@@ -115,7 +115,7 @@ export default function Home() {
             {/* Real talk — the questions in a student's head, answered */}
             <section className="mx-auto max-w-2xl px-4 pb-20 sm:px-6">
                 <h2 className="mb-8 text-center text-2xl font-bold text-slate-900 sm:text-3xl">
-                    The questions in your head — answered.
+                    The questions in your head, answered.
                 </h2>
                 <div className="space-y-5">
                     {conversation.map((c, i) => (

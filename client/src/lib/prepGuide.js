@@ -16,23 +16,23 @@ export const PHASES = [
         color: "emerald",
         focus: "Cover the syllabus and build a routine you can keep for months.",
         tips: [
-            "Go subject-by-subject through the syllabus — tick topics off in the Syllabus tracker as you finish.",
-            "Solve 5–10 past-paper questions daily to see how each topic is actually tested.",
-            "Build a simple daily routine now — steady work for months beats a last-month panic.",
+            "Go subject-by-subject through the syllabus. Tick topics off in the Syllabus tracker as you finish.",
+            "Solve 5 to 10 past-paper questions daily to see how each topic is actually tested.",
+            "Build a simple daily routine now. Steady work for months beats a last-month panic.",
             "Start an “error log”: note every question you get wrong and the reason why.",
         ],
     },
     {
         id: "build",
         label: "Build",
-        window: "~4–2 months to go",
+        window: "~4 to 2 months to go",
         icon: Layers,
         color: "sky",
         focus: "Finish the syllabus and make mock tests a habit.",
         tips: [
             "Complete full syllabus coverage, then do one clean revision pass.",
-            "Take 2–3 full-length mock tests every week and review each one.",
-            "Attack your weak subjects now — don't push them to the last month.",
+            "Take 2 to 3 full-length mock tests every week and review each one.",
+            "Attack your weak subjects now. Don't push them to the last month.",
             "Practise PYQs topic-wise to spot the high-frequency questions.",
         ],
     },
@@ -45,7 +45,7 @@ export const PHASES = [
         focus: "Build speed and accuracy; close your weak gaps.",
         tips: [
             "Alternate full mocks with focused revision of your weakest topics (check Analytics).",
-            "Study by marks-weight × your accuracy — spend time where it moves your score most.",
+            "Study by marks-weight × your accuracy. Spend time where it moves your score most.",
             "Time every section so you're fast and accurate under pressure.",
             "Revise formulas, shortcuts and your error log daily.",
         ],
@@ -56,10 +56,10 @@ export const PHASES = [
         window: "Last 7 days",
         icon: CalendarClock,
         color: "amber",
-        focus: "Consolidate — revise, don't cram new things.",
+        focus: "Consolidate: revise, don't cram new things.",
         tips: [
             "One timed mock a day, then carefully review every mistake.",
-            "Revise short notes, formulas and your error log — no brand-new topics.",
+            "Revise short notes, formulas and your error log. No brand-new topics.",
             "Sleep well and shift your routine to match the exam's timing.",
             "Confirm your exam centre, reporting time and documents.",
         ],
@@ -75,7 +75,7 @@ export const PHASES = [
             "Reach the centre ~45 minutes early with your admit card and photo ID.",
             "Read all instructions and note the marking scheme before you start.",
             "Attempt the questions you're sure of first; be careful with negative marking.",
-            "Watch your time per section — don't get stuck on one hard question.",
+            "Watch your time per section. Don't get stuck on one hard question.",
         ],
     },
 ];
@@ -104,7 +104,7 @@ export const MISTAKES = [
     },
     {
         title: "Studying by comfort, not weight",
-        body: "Give the most time to the sections that carry the most marks — check the paper pattern for the split.",
+        body: "Give the most time to the sections that carry the most marks. Check the paper pattern for the split.",
     },
     {
         title: "Skipping exam-day logistics",
@@ -121,7 +121,7 @@ export const MISTAKES = [
 export const EXAM_DAY_KIT = [
     "Printed admit card / hall ticket",
     "Original photo ID (Aadhaar / college ID)",
-    "2–3 passport-size photographs",
+    "2 to 3 passport-size photographs",
     "Blue / black ballpoint pens",
     "Transparent water bottle",
     "Analog watch (if the centre allows)",

@@ -52,7 +52,7 @@ function CollegeCard({ c, i }) {
 export default function Colleges() {
     useSeo({
         title: "Engineering Colleges via Lateral Entry (LEET) | OneLeet",
-        description: "The B.Tech colleges you can reach through lateral entry as a diploma holder — DTU, NSUT, VJTI, IPU and more. See where LEET can take you.",
+        description: "The B.Tech colleges you can reach through lateral entry as a diploma holder: DTU, NSUT, VJTI, IPU and more. See where LEET can take you.",
         path: "/colleges",
     });
     return (
@@ -65,7 +65,7 @@ export default function Colleges() {
                     Colleges you can reach through lateral entry
                 </h1>
                 <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
-                    The same degrees the JEE grind is chasing — DTU, NSUT, VJTI, IPU and more — reachable
+                    The same degrees the JEE grind is chasing (DTU, NSUT, VJTI, IPU and more), reachable
                     as a diploma holder through LEET. Aspiration, not a placement guarantee.
                 </p>
             </div>

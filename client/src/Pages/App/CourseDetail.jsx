@@ -54,8 +54,8 @@ export default function CourseDetail() {
     }, [slug]);
 
     useSeo({
-        title: course ? `${course.name} — LEET Batch | OneLeet` : "LEET Batch | OneLeet",
-        description: course ? (course.tagline || `Join the ${course.name} batch on OneLeet — past papers, ranked mock tests, notes and a plan tied to your exam.`) : "Join a college-wise LEET batch on OneLeet — past papers, ranked mock tests, notes and an exam-tied plan.",
+        title: course ? `${course.name}: LEET Batch | OneLeet` : "LEET Batch | OneLeet",
+        description: course ? (course.tagline || `Join the ${course.name} batch on OneLeet: past papers, ranked mock tests, notes and a plan tied to your exam.`) : "Join a college-wise LEET batch on OneLeet: past papers, ranked mock tests, notes and an exam-tied plan.",
         path: `/courses/${slug}`,
     });
 
@@ -70,7 +70,7 @@ export default function CourseDetail() {
             await enrollApi({ slug });
             await refresh(); // pull the fresh user so user.exams reflects the new batch
             setEnrolled(true);
-            toast.success(`You're in — welcome to ${course.name}`);
+            toast.success(`You're in, welcome to ${course.name}`);
         } catch (e) {
             toast.error(e.message || "Couldn't enroll");
         } finally {
@@ -226,12 +226,12 @@ export default function CourseDetail() {
             {/* What's included — free vs premium */}
             <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800">
                 <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                    What&apos;s included — free vs premium
+                    What&apos;s included: free vs premium
                 </h2>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                     <div className="rounded-xl border border-slate-100 p-4 dark:border-slate-700">
                         <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600">
-                            <CheckCircle2 size={15} /> Free — just create an account
+                            <CheckCircle2 size={15} /> Free, just create an account
                         </span>
                         <ul className="mt-2.5 space-y-1.5">
                             {[
@@ -256,7 +256,7 @@ export default function CourseDetail() {
                                 "Every full-length ranked mock",
                                 "Complete PYQ archive with solutions",
                                 "Premium chapter notes & formula sheets",
-                                "AI mentor — doubts, weak topics, planner",
+                                "AI mentor: doubts, weak topics, planner",
                                 "Weekly live doubt class + 1:1 sessions",
                                 "Counselling & interview support",
                             ].map((t) => (
@@ -267,7 +267,7 @@ export default function CourseDetail() {
                         </ul>
                         {course.price ? (
                             <button onClick={goPremium} className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
-                                Go Premium — ₹{course.price.toLocaleString("en-IN")} <ArrowRight size={14} />
+                                Go Premium, ₹{course.price.toLocaleString("en-IN")} <ArrowRight size={14} />
                             </button>
                         ) : (
                             <Link to="/pricing" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400">

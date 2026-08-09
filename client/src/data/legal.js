@@ -20,7 +20,7 @@ export const SUCCESS_PROMISE_TABLE = [
     {
         exam: "IPU LEET",
         commitment:
-            "Score well and secure admission in a top-6 IPU college for a CSE-family branch (CSE, CST, IT, AI-DS, DS, AIML, ITE) — USICT, MAIT, MSIT, BVCOE, BPIT, ADGITM or USAR; or a top-3 college (USICT, MAIT, MSIT) for any other branch.",
+            "Score well and secure admission in a top-6 IPU college for a CSE-family branch (CSE, CST, IT, AI-DS, DS, AIML, ITE): USICT, MAIT, MSIT, BVCOE, BPIT, ADGITM or USAR; or a top-3 college (USICT, MAIT, MSIT) for any other branch.",
         reward: "Refund policy: if you don't score and secure the promised admission, your course fee is refunded. Connect on WhatsApp Business for the exact terms.",
     },
     {
@@ -40,13 +40,13 @@ export const SUCCESS_PROMISE_TABLE = [
     },
     {
         exam: "Bihar LEET (BCECE-LE)",
-        commitment: "Admission in a top-2 college — MIT Muzaffarpur or BCE Bhagalpur.",
+        commitment: "Admission in a top-2 college: MIT Muzaffarpur or BCE Bhagalpur.",
         reward: "Admission in a top-2 college → 50% refund.",
     },
     {
         exam: "Gujarat LEET · SLIET LEET",
         commitment: "A performance-linked Success Reward; exact thresholds are confirmed on the course page before purchase.",
-        reward: "Partial refund on meeting the stated threshold — see the course page.",
+        reward: "Partial refund on meeting the stated threshold. See the course page.",
     },
 ];
 
@@ -95,7 +95,7 @@ export const VOID_CONDITIONS = [
 
 // Protections OneLeet reserves.
 export const PROTECTIONS = [
-    { head: "Force majeure", body: "No refund obligation arising solely from events outside OneLeet's reasonable control — natural disasters, war, internet outages or widespread government restrictions affecting the examination." },
+    { head: "Force majeure", body: "No refund obligation arising solely from events outside OneLeet's reasonable control: natural disasters, war, internet outages or widespread government restrictions affecting the examination." },
     { head: "Single attempt", body: "The Success Promise applies only to the single examination attempt associated with the purchased course, unless stated otherwise on the course page." },
     { head: "Data authenticity", body: "Providing forged or altered documents immediately and permanently voids the Success Promise." },
     { head: "Interpretation", body: "Where there is any ambiguity, the official university notification and admission brochure prevail over any interpretation on OneLeet." },
@@ -103,14 +103,14 @@ export const PROTECTIONS = [
 
 // How a valid reward is claimed.
 export const CLAIM_PROCESS = [
-    "Apply through the official OneLeet refund process within the defined window after the counselling result (15–30 days, as stated at checkout).",
+    "Apply through the official OneLeet refund process within the defined window after the counselling result (15 to 30 days, as stated at checkout).",
     "Submit your official scorecard, official rank card, official counselling result and (if applicable) admission letter, plus identity proof matching your OneLeet account.",
     "Approved rewards are paid to the original payment method / registered payer only.",
 ];
 
 // Terms of Service — concise, protective.
 export const TERMS_OF_SERVICE = [
-    { head: "Your account", body: "You must give accurate details, keep your login secure, and use OneLeet on a single authorised device. One account is for one student — sharing, reselling or transferring access is prohibited and may void the Success Promise and terminate access without refund." },
+    { head: "Your account", body: "You must give accurate details, keep your login secure, and use OneLeet on a single authorised device. One account is for one student. Sharing, reselling or transferring access is prohibited and may void the Success Promise and terminate access without refund." },
     { head: "What you get", body: "A paid membership unlocks the full premium content for your selected course for the stated validity period, including future updates for that exam during the cycle. Free features remain available to everyone." },
     { head: "Content & IP", body: "All content is owned by or licensed to OneLeet and is for your personal preparation only. Copying, recording, redistributing, leaking or commercially using any content is strictly prohibited and monitored." },
     { head: "Acceptable use", body: "No bots, scraping, automated tools, security bypassing, or use of multiple unauthorised devices. OneLeet may suspend or terminate accounts that violate these terms." },

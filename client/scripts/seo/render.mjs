@@ -74,7 +74,7 @@ a.pill:hover{border-color:#c7d2fe;color:var(--indigo);text-decoration:none}
 .faq summary{cursor:pointer;font-weight:700;padding:14px 0;list-style:none;font-size:17px}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary::after{content:"+";float:right;color:var(--indigo);font-weight:700}
-.faq details[open] summary::after{content:"–"}
+.faq details[open] summary::after{content:"-"}
 .faq details>p{margin:0 0 14px;color:var(--muted);font-size:16px}
 .feat{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));margin:14px 0}
 .feat div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
@@ -97,7 +97,7 @@ export function orgJsonld() {
         "@type": "EducationalOrganization",
         "@id": `${BASE}/#organization`,
         name: BRAND,
-        alternateName: "OneLeet — LEET Preparation",
+        alternateName: "OneLeet: LEET Preparation",
         url: `${BASE}/`,
         logo: `${BASE}/favicon.svg`,
         image: OG_IMAGE,
@@ -189,13 +189,13 @@ export function courseJsonld({ name, description, path = "/leet/" } = {}) {
         name: name || "LEET Preparation Course",
         description:
             description ||
-            "Complete LEET (Lateral Entry Entrance Test) preparation for diploma holders — real previous-year papers, exam-pattern mock tests, subject notes and AI practice, for direct admission into 2nd-year B.Tech.",
+            "Complete LEET (Lateral Entry Entrance Test) preparation for diploma holders: real previous-year papers, exam-pattern mock tests, subject notes and AI practice, for direct admission into 2nd-year B.Tech.",
         url: url(path),
         provider: { "@type": "EducationalOrganization", "@id": `${BASE}/#organization`, name: BRAND },
         inLanguage: "en-IN",
         isAccessibleForFree: true,
         about: "Lateral Entry Entrance Test (LEET)",
-        educationalLevel: "Undergraduate — B.Tech 2nd-year lateral entry",
+        educationalLevel: "Undergraduate: B.Tech 2nd-year lateral entry",
         audience: { "@type": "EducationalAudience", educationalRole: "student" },
         hasCourseInstance: {
             "@type": "CourseInstance",
@@ -224,7 +224,7 @@ const NAV = `<nav>
 function footer() {
     return `<footer class="site"><div class="wrap">
 <a class="brand" href="${BASE}/leet/">${LOGO}<span><span class="o">One</span><span class="l">Leet</span></span></a>
-<p style="color:var(--soft);font-size:14.5px;max-width:40em;margin:12px 0 20px">Everything for your Lateral Entry Entrance Test in one place — real past papers, exam-pattern mock tests, smart notes and an AI coach that adapts to you.</p>
+<p style="color:var(--soft);font-size:14.5px;max-width:40em;margin:12px 0 20px">Everything for your Lateral Entry Entrance Test in one place: real past papers, exam-pattern mock tests, smart notes and an AI coach that adapts to you.</p>
 <div class="cols">
 <div><h4>LEET Guide</h4>
 <a href="${BASE}/leet/">What is LEET</a>
@@ -251,7 +251,7 @@ function footer() {
 <a href="${BASE}/mentor">Mentors</a>
 <a href="mailto:help@oneleet.in">help@oneleet.in</a></div>
 </div>
-<p class="fine">&copy; ${new Date().getFullYear()} OneLeet · A unit of StaplerLabs Private Limited. Study materials are provided for educational purposes. LEET / lateral-entry exam names, dates, eligibility and cut-offs vary by state and change every year — always confirm the current details in the official notification of your state's admission authority before applying.</p>
+<p class="fine">&copy; ${new Date().getFullYear()} OneLeet · A unit of StaplerLabs Private Limited. Study materials are provided for educational purposes. LEET / lateral-entry exam names, dates, eligibility and cut-offs vary by state and change every year. Always confirm the current details in the official notification of your state's admission authority before applying.</p>
 </div></footer>`;
 }
 
@@ -307,7 +307,7 @@ ${footer()}
 }
 
 // Standard OneLeet CTA block reused across pages.
-export function ctaBlock(heading = "Start preparing for LEET — free", sub = "Real past papers, exam-pattern mock tests and unlimited AI practice. Built for diploma students. No coaching fees.") {
+export function ctaBlock(heading = "Start preparing for LEET, free", sub = "Real past papers, exam-pattern mock tests and unlimited AI practice. Built for diploma students. No coaching fees.") {
     return `<div class="callout"><h2>${esc(heading)}</h2><p>${esc(sub)}</p><a class="btn" href="${BASE}/register">Create your free account →</a></div>`;
 }
 

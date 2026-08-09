@@ -64,14 +64,14 @@ function RankPredictorTeaser({ examName }) {
             {submitted && (
                 <div className="mt-3 rounded-xl border border-indigo-100 bg-indigo-50/60 p-4 text-sm dark:border-indigo-500/25 dark:bg-indigo-500/10">
                     <p className="font-semibold text-slate-800 dark:text-slate-100">
-                        Good news — a rank around {Number(rank).toLocaleString("en-IN")} opens up several {examName} colleges.
+                        Good news, a rank around {Number(rank).toLocaleString("en-IN")} opens up several {examName} colleges.
                     </p>
                     <p className="mt-1 text-slate-500 dark:text-slate-400">
                         Create a free account to see the full college × branch list for your rank, backed by real
                         previous-year cut-offs.
                     </p>
                     <Link to="/register" className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
-                        See my colleges — free <ArrowRight size={15} />
+                        See my colleges, free <ArrowRight size={15} />
                     </Link>
                 </div>
             )}
@@ -185,8 +185,8 @@ function ExamDetailInner({ code }) {
     }, [hash, overview, pattern, syllabus, seat, cutoffs, pyqs]);
 
     useSeo({
-        title: overview?.exam ? `${overview.exam.name} — Pattern, Eligibility, Syllabus & Cut-offs | OneLeet` : "LEET Exam — Pattern, Eligibility & Cut-offs | OneLeet",
-        description: overview?.exam ? `${overview.exam.name}: exam pattern, eligibility, syllabus, seat matrix, previous-year cut-offs and sample papers — everything a diploma student needs, free.` : "Explore LEET / lateral-entry exam details — pattern, eligibility, syllabus, seats and previous-year cut-offs — free on OneLeet.",
+        title: overview?.exam ? `${overview.exam.name}: Pattern, Eligibility, Syllabus & Cut-offs | OneLeet` : "LEET Exam: Pattern, Eligibility & Cut-offs | OneLeet",
+        description: overview?.exam ? `${overview.exam.name}: exam pattern, eligibility, syllabus, seat matrix, previous-year cut-offs and sample papers: everything a diploma student needs, free.` : "Explore LEET / lateral-entry exam details: pattern, eligibility, syllabus, seats and previous-year cut-offs, free on OneLeet.",
         path: `/exams/${code}`,
     });
 
@@ -232,7 +232,7 @@ function ExamDetailInner({ code }) {
                 <p className="text-xs font-semibold uppercase tracking-wide text-indigo-200">{exam.group}</p>
                 <h1 className="mt-1 text-2xl font-extrabold sm:text-3xl">{exam.name}</h1>
                 <p className="mt-2 max-w-2xl text-sm text-indigo-100">
-                    Everything you need to plan for {exam.name} — free to explore. Enroll in the batch when
+                    Everything you need to plan for {exam.name}, free to explore. Enroll in the batch when
                     you&apos;re ready for ranked mocks and the full paper archive.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
@@ -311,7 +311,7 @@ function ExamDetailInner({ code }) {
                     <Section id="cutoffs" icon={<TrendingUp size={16} />} title="Previous-year cut-offs"
                         action={<SignInLink>Round-wise ranks</SignInLink>}>
                         <p className="text-sm text-slate-500 dark:text-slate-400">
-                            {cutoffs.rounds?.length || 0} counselling round{(cutoffs.rounds?.length || 0) === 1 ? "" : "s"} of closing ranks published — sign in for the full college × branch × category table, or try the rank predictor.
+                            {cutoffs.rounds?.length || 0} counselling round{(cutoffs.rounds?.length || 0) === 1 ? "" : "s"} of closing ranks published. Sign in for the full college × branch × category table, or try the rank predictor.
                         </p>
                     </Section>
                 )}
@@ -326,7 +326,7 @@ function ExamDetailInner({ code }) {
                     action={<SignInLink>Get counselling help</SignInLink>}>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
                         Choice-filling order, document checklist, round-by-round strategy and freeze
-                        vs float — counselling can make or break your seat. Enrolled students get a
+                        vs float. Counselling can make or break your seat. Enrolled students get a
                         step-by-step counselling guide and, on the premium batch, 1:1 guidance during
                         the process.
                     </p>
@@ -362,7 +362,7 @@ function ExamDetailInner({ code }) {
                 <Link to="/courses" className="group flex items-center justify-between gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-5 transition hover:shadow-md dark:border-indigo-500/30 dark:bg-indigo-500/10">
                     <div>
                         <p className="text-sm font-bold text-indigo-800 dark:text-indigo-200">Ready to start?</p>
-                        <p className="text-xs text-indigo-600/80 dark:text-indigo-300/80">Enroll in the batch — free to join.</p>
+                        <p className="text-xs text-indigo-600/80 dark:text-indigo-300/80">Enroll in the batch, free to join.</p>
                     </div>
                     <ArrowRight size={16} className="shrink-0 text-indigo-500 transition group-hover:translate-x-0.5" />
                 </Link>
