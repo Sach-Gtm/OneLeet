@@ -19,7 +19,7 @@ const Section = ({ id, icon, title, children }) => (
 export default function SuccessPromise() {
     useSeo({
         title: "The Success Promise & Terms | OneLeet",
-        description: "OneLeet's Success Promise, Terms of Service and refund policy for LEET preparation — what we commit to, the conditions, and how to claim.",
+        description: "OneLeet's Success Promise, Terms of Service and refund policy for LEET preparation: what we commit to, the conditions, and how to claim.",
         path: "/success-promise",
     });
     return (
@@ -35,7 +35,7 @@ export default function SuccessPromise() {
             {/* These terms are in effect and govern the purchase */}
             <div className="mt-6 flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
                 <Info size={16} className="mt-0.5 shrink-0" />
-                <p>These terms govern your purchase of a OneLeet membership and the Success Promise that comes with it. If anything is unclear, reach us on WhatsApp Business before you buy — we&apos;re happy to walk you through it.</p>
+                <p>These terms govern your purchase of a OneLeet membership and the Success Promise that comes with it. If anything is unclear, reach us on WhatsApp Business before you buy. We&apos;re happy to walk you through it.</p>
             </div>
 
             <div className="mt-6 space-y-5">
@@ -67,7 +67,7 @@ export default function SuccessPromise() {
                     </div>
                 </Section>
 
-                <Section id="eligibility" icon={<Check size={16} />} title="Your side — eligibility conditions (all required)">
+                <Section id="eligibility" icon={<Check size={16} />} title="Your side: eligibility conditions (all required)">
                     <ul className="space-y-2">
                         {ELIGIBILITY_CONDITIONS.map((c, i) => (
                             <li key={i} className="flex items-start gap-2"><Check size={15} className="mt-0.5 shrink-0 text-emerald-500" /><span>{c}</span></li>

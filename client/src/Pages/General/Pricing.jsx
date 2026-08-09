@@ -115,7 +115,7 @@ export default function Pricing() {
     }, [dbCourses]);
 
     useSeo({
-        title: "LEET Courses & Mock Test Series — Pricing | OneLeet Premium",
+        title: "LEET Courses & Mock Test Series: Pricing | OneLeet Premium",
         description: "OneLeet membership: exam-wise LEET batches, ranked mock tests, past papers, notes, AI practice and counselling support. See plans, discounts and the Success Promise.",
         path: "/pricing",
     });
@@ -142,7 +142,7 @@ export default function Pricing() {
                 <motion.p
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }}
                     className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
-                    One membership for your exam — AI mentor, premium PYQs, mock series, rank & college
+                    One membership for your exam: AI mentor, premium PYQs, mock series, rank & college
                     predictor, counselling support and a Success Promise. Built by someone who cleared LEET.
                 </motion.p>
                 <div className="mx-auto mt-5 flex max-w-3xl flex-wrap justify-center gap-2">
@@ -178,7 +178,7 @@ export default function Pricing() {
                         </motion.div>
                     ))}
                 </div>
-                <p className="mt-2 text-center text-[11px] text-indigo-200">Applies to your whole cart, on top of every early-bird price — up to ₹1,000 off.</p>
+                <p className="mt-2 text-center text-[11px] text-indigo-200">Applies to your whole cart, on top of every early-bird price, up to ₹1,000 off.</p>
             </div>
 
             {/* Exam courses */}
@@ -194,7 +194,7 @@ export default function Pricing() {
                 <div className="text-center">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Counselling &amp; interview prep</h2>
                     <p className="mx-auto mt-2 max-w-xl text-sm text-slate-500 dark:text-slate-400">
-                        These colleges admit through interview / counselling, not a written LEET — so this is a
+                        These colleges admit through interview / counselling, not a written LEET, so this is a
                         focused counselling + interview-prep pack, <span className="font-semibold text-amber-600">launching soon</span>.
                         For exam batches above, counselling-only support is available at 20% of the batch price.
                     </p>
@@ -253,10 +253,10 @@ export default function Pricing() {
 
             {/* Free vs premium */}
             <div className="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-slate-800/40">
-                <h2 className="text-center text-lg font-bold text-slate-900 dark:text-slate-100">Free to explore — sign up free to learn</h2>
+                <h2 className="text-center text-lg font-bold text-slate-900 dark:text-slate-100">Free to explore, sign up free to learn</h2>
                 <p className="mx-auto mt-1 max-w-xl text-center text-sm text-slate-500 dark:text-slate-400">
                     Look around the exams, syllabus and cut-offs without an account. Make a free account to actually
-                    start practising — free PYQs, mock tests and your dashboard. Go Premium when you want the full mocks,
+                    start practising: free PYQs, mock tests and your dashboard. Go Premium when you want the full mocks,
                     notes and AI mentor.
                 </p>
                 <div className="mx-auto mt-4 flex max-w-3xl flex-wrap justify-center gap-2">
@@ -274,7 +274,7 @@ export default function Pricing() {
                 <h2 className="mt-3 text-lg font-bold text-slate-900 dark:text-slate-100">The Success Promise</h2>
                 <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
                     Hit the goals on your batch and complete the required prep, and if we don&apos;t deliver the promised
-                    result, you get money back — the exact terms differ per exam and are shown on each course. Eligibility
+                    result, you get money back. The exact terms differ per exam and are shown on each course. Eligibility
                     conditions (minimum tests, PYQs, mentor guidance and counselling participation) apply.
                 </p>
                 <Link to="/success-promise" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400">

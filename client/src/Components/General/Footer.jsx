@@ -18,7 +18,7 @@ import { CALLBACK_EVENT } from "@/lib/callback";
 
 // No socials yet — clicking one drops a cheeky nudge instead of a dead link.
 const FUNNY_LINES = [
-    "No socials yet — we're too busy building. Go study! 📚",
+    "No socials yet. We're too busy building. Go study! 📚",
     "Coming soon. For now, go crack some PYQs 😉",
     "Nothing here yet. Back to the mocks, champ! 💪",
     "Socials loading… meanwhile, one more mock test? 🚀",
@@ -116,7 +116,7 @@ export default function Footer() {
                 <div className="col-span-2 lg:col-span-1">
                     <Logo size={28} textClass="text-lg" />
                     <p className="mt-3 max-w-xs text-[13px] leading-relaxed text-slate-500">
-                        Everything for the Lateral Entry Entrance Test — past papers, notes, smart practice and AI tools, in one place.
+                        Everything for the Lateral Entry Entrance Test: past papers, notes, smart practice and AI tools, in one place.
                     </p>
                     <div className="mt-4 flex items-center gap-2.5">
                         <button type="button" onClick={comingSoon} className={social + " hover:border-green-300 hover:text-green-500"} aria-label="WhatsApp"><MessageCircle size={15} /></button>

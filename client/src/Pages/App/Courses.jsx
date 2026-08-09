@@ -88,8 +88,8 @@ export default function Courses() {
     }, []);
 
     useSeo({
-        title: "LEET Batches — College-wise B.Tech Lateral Entry Prep | OneLeet",
-        description: "Join your college-wise LEET batch free — real past papers, ranked mock tests, seat & cut-off data and a plan tied to your exam date. IPU, DTU, UP, Bihar and more.",
+        title: "LEET Batches: College-wise B.Tech Lateral Entry Prep | OneLeet",
+        description: "Join your college-wise LEET batch free: real past papers, ranked mock tests, seat & cut-off data and a plan tied to your exam date. IPU, DTU, UP, Bihar and more.",
         path: "/courses",
     });
 
@@ -104,7 +104,7 @@ export default function Courses() {
                 <h1 className="mt-3 text-2xl font-bold">Enroll in your batch</h1>
                 <p className="mt-1 max-w-lg text-sm text-indigo-100">
                     Pick the college-wise batch that matches your target exam. Joining is
-                    <strong className="font-semibold text-white"> free</strong> — real past
+                    <strong className="font-semibold text-white"> free</strong>: real past
                     papers, ranked mocks, seat &amp; cut-off data and a plan tied to your exam
                     date, all in one place.
                 </p>
@@ -125,7 +125,7 @@ export default function Courses() {
                         {error || "No batches are open yet"}
                     </p>
                     <p className="mt-1 text-sm text-slate-400">
-                        New batches are added regularly — check back soon.
+                        New batches are added regularly. Check back soon.
                     </p>
                 </div>
             )}

@@ -12,8 +12,8 @@ export default function ExamsIndex() {
     const [q, setQ] = useState("");
 
     useSeo({
-        title: "LEET Exams by State — Pattern, Eligibility & Syllabus | OneLeet",
-        description: "Explore every LEET (Lateral Entry Entrance Test) — IPU, DTU/NSUT, UP (AKTU), Bihar, Haryana and more. Compare exam pattern, eligibility, syllabus, seats and cut-offs, free.",
+        title: "LEET Exams by State: Pattern, Eligibility & Syllabus | OneLeet",
+        description: "Explore every LEET (Lateral Entry Entrance Test): IPU, DTU/NSUT, UP (AKTU), Bihar, Haryana and more. Compare exam pattern, eligibility, syllabus, seats and cut-offs, free.",
         path: "/exams",
     });
 
@@ -44,7 +44,7 @@ export default function ExamsIndex() {
                 </h1>
                 <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
                     Pattern, eligibility, syllabus, seat matrix, cut-offs and sample papers for each
-                    exam — all free to explore, no sign-up needed.
+                    exam, all free to explore, no sign-up needed.
                 </p>
             </div>
 

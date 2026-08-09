@@ -78,7 +78,7 @@ function MentorCard({ mentor, index }) {
                             ) : (
                                 <p className="mt-3 flex items-start gap-2 text-sm leading-relaxed text-slate-500">
                                     <Quote className="mt-0.5 h-4 w-4 shrink-0 -scale-x-100 text-indigo-300" />
-                                    Sat exactly where you are — and cracked it. They know precisely what it
+                                    Sat exactly where you are, and cracked it. They know precisely what it
                                     takes to get in.
                                 </p>
                             )}
@@ -92,9 +92,9 @@ function MentorCard({ mentor, index }) {
 
 export default function Mentors() {
     useSeo({
-        title: "LEET Mentors — Learn from students who cracked it | OneLeet",
+        title: "LEET Mentors: Learn from students who cracked it | OneLeet",
         description:
-            "Meet OneLeet's mentors — LEET qualifiers who've sat exactly where you are and know what it takes to get into 2nd year B.Tech through lateral entry.",
+            "Meet OneLeet's mentors, LEET qualifiers who've sat exactly where you are and know what it takes to get into 2nd year B.Tech through lateral entry.",
         path: "/mentor",
     });
 
@@ -158,7 +158,7 @@ export default function Mentors() {
                     transition={{ duration: 0.6, delay: 0.12 }}
                     className="mx-auto mt-3 max-w-xl text-slate-500"
                 >
-                    LEET qualifiers who&apos;ve sat exactly where you are — and know precisely what it
+                    LEET qualifiers who&apos;ve sat exactly where you are, and know precisely what it
                     takes to get in. Scroll to meet them.
                 </motion.p>
                 <motion.div
@@ -187,7 +187,7 @@ export default function Mentors() {
             {/* Closing line */}
             <div className="mx-auto max-w-2xl px-4 pb-24 text-center">
                 <p className="text-sm text-slate-400">
-                    More mentors join every season — each one cracked LEET and now helps you do the same.
+                    More mentors join every season. Each one cracked LEET and now helps you do the same.
                 </p>
             </div>
         </div>
