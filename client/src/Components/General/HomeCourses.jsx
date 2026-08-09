@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { GraduationCap, ArrowRight, CheckCircle2 } from "lucide-react";
 import { getCourses } from "@/Api/CoursesApi";
 
-// Landing-page batches strip — every published course, browsable and free to
+// Landing-page batches strip: every published course, browsable and free to
 // join WITHOUT logging in. Cards deep-link to the public course page. Hides
-// itself if nothing is published yet.
+// itself if nothing is published yet. Cards reflect the signed-in student's
+// enrollment (an "Enrolled" badge + "Open" action) via course.enrolled.
 export default function HomeCourses() {
     const [courses, setCourses] = useState(null);
     useEffect(() => {
@@ -20,7 +21,7 @@ export default function HomeCourses() {
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
                     <GraduationCap size={13} /> College-wise batches
                 </span>
-                <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">Pick your batch — free to join</h2>
+                <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">Pick your batch, free to join</h2>
                 <p className="mx-auto mt-2 max-w-xl text-sm text-slate-600">
                     Enroll free and get all the free content of your batch. Premium unlocks ranked mocks,
                     the full paper archive and live doubt classes.
@@ -34,19 +35,24 @@ export default function HomeCourses() {
                         to={`/courses/${c.slug}`}
                         className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg"
                     >
-                        <div className="flex h-24 items-center gap-2 bg-gradient-to-br from-indigo-600 to-indigo-800 px-5 text-white">
+                        <div className="relative flex h-24 items-center gap-2 bg-gradient-to-br from-indigo-600 to-indigo-800 px-5 text-white">
                             <GraduationCap className="h-6 w-6 shrink-0 opacity-90" />
                             <span className="text-sm font-semibold opacity-90">{c.examName || "LEET"}</span>
+                            {c.enrolled && (
+                                <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
+                                    <CheckCircle2 size={12} /> Enrolled
+                                </span>
+                            )}
                         </div>
                         <div className="flex flex-1 flex-col p-5">
                             <h3 className="text-base font-bold text-slate-900">{c.name}</h3>
                             {c.tagline && <p className="mt-1.5 line-clamp-2 text-sm text-slate-500">{c.tagline}</p>}
                             <div className="mt-auto flex items-center justify-between pt-4">
                                 <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                                    <CheckCircle2 size={13} /> Free to join
+                                    <CheckCircle2 size={13} /> {c.enrolled ? "Enrolled" : "Free to join"}
                                 </span>
                                 <span className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600">
-                                    View <ArrowRight size={14} className="transition group-hover:translate-x-0.5" />
+                                    {c.enrolled ? "Open" : "View"} <ArrowRight size={14} className="transition group-hover:translate-x-0.5" />
                                 </span>
                             </div>
                         </div>
