@@ -109,8 +109,9 @@ export default function Footer() {
 
     const social = "grid h-8 w-8 place-items-center rounded-full border border-slate-200 bg-white text-slate-400 transition-colors";
     return (
-        <footer className="mt-20 w-full border-t border-slate-200 bg-[#FAF9F6] text-slate-600">
-            <div className="mx-auto grid max-w-5xl grid-cols-2 gap-x-8 gap-y-10 px-6 py-11 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
+        <footer className="mt-20 w-full bg-[#FAF9F6] text-slate-600">
+            <div className="mx-auto max-w-5xl px-6">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-10 border-t border-slate-200 py-11 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
                 {/* Brand + socials */}
                 <div className="col-span-2 lg:col-span-1">
                     <Logo size={28} textClass="text-lg" />
@@ -156,11 +157,10 @@ export default function Footer() {
                 </div>
             </div>
 
-            <div className="border-t border-slate-200">
-                <div className="mx-auto flex max-w-5xl flex-col gap-1.5 px-6 py-5 text-[11.5px] leading-relaxed text-slate-400 sm:flex-row sm:items-start sm:justify-between">
-                    <p className="shrink-0">&copy; {new Date().getFullYear()} OneLeet · A unit of StaplerLabs Private Limited. All rights reserved.</p>
-                    <p className="sm:max-w-md sm:text-right">All study materials are provided solely for educational purposes; we don&apos;t claim ownership of external materials unless stated otherwise.</p>
-                </div>
+            <div className="flex flex-col gap-1.5 border-t border-slate-200 py-5 text-[11.5px] leading-relaxed text-slate-400 sm:flex-row sm:items-start sm:justify-between">
+                <p className="shrink-0">&copy; {new Date().getFullYear()} OneLeet · A unit of StaplerLabs Private Limited. All rights reserved.</p>
+                <p className="sm:max-w-md sm:text-right">All study materials are provided solely for educational purposes; we don&apos;t claim ownership of external materials unless stated otherwise.</p>
+            </div>
             </div>
 
             {callbackOpen && <CallbackModal onClose={() => setCallbackOpen(false)} />}
