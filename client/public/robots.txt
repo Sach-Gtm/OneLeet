@@ -1,4 +1,4 @@
-# OneLeet — https://www.oneleet.in
+# OneLeet - https://www.oneleet.in
 User-agent: *
 Allow: /
 Disallow: /dashboard
@@ -14,7 +14,7 @@ Disallow: /verify-otp
 Disallow: /reset-password
 Disallow: /forgot-password
 
-# AI answer engines — explicitly allowed
+# AI answer engines: explicitly allowed
 User-agent: GPTBot
 Allow: /
 User-agent: OAI-SearchBot
