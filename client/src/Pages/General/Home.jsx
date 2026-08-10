@@ -12,6 +12,7 @@ import {
 import { Link } from "react-router-dom";
 import HomeCourses from "@/Components/General/HomeCourses";
 import HomeFaq from "@/Components/General/HomeFaq";
+import { Cloud, Connector, RobotBuddy } from "@/Components/General/FeatureBuddy";
 import { useSeo } from "@/lib/useSeo";
 
 // Heavy, non-critical pieces loaded off the critical path so the hero (the LCP)
@@ -26,7 +27,7 @@ const features = [
     { icon: FileText, title: "Real past papers", desc: "Actual LEET papers. Practise what the exam really asks.", tint: "bg-indigo-50 border-indigo-100", iconBg: "bg-indigo-500" },
     { icon: ClipboardCheck, title: "Exam-pattern mocks", desc: "Timed tests, instant scoring, every mistake explained.", tint: "bg-rose-50 border-rose-100", iconBg: "bg-rose-500" },
     { icon: Brain, title: "AI practice", desc: "Unlimited questions on any topic, any difficulty, in seconds.", tint: "bg-violet-50 border-violet-100", iconBg: "bg-violet-500" },
-    { icon: BookOpen, title: "Smart notes", desc: "High-yield notes and flashcards for last-mile revision.", tint: "bg-amber-50 border-amber-100", iconBg: "bg-amber-500" },
+    { icon: BookOpen, title: "Smart notes", desc: "High-yield notes and flashcards for last-mile revision.", tint: "bg-teal-50 border-teal-100", iconBg: "bg-teal-500" },
     { icon: Trophy, title: "Leaderboard", desc: "Measure yourself against real aspirants, every day.", tint: "bg-emerald-50 border-emerald-100", iconBg: "bg-emerald-500" },
     { icon: Users, title: "Mentors", desc: "Guidance from students who actually cracked LEET.", tint: "bg-sky-50 border-sky-100", iconBg: "bg-sky-500" },
 ];
@@ -162,31 +163,87 @@ export default function Home() {
             {/* College-wise batches — browsable + free to join without login */}
             <HomeCourses />
 
-            {/* Features */}
-            <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {features.map((f) => {
-                        const Icon = f.icon;
-                        return (
-                            <div
-                                key={f.title}
-                                className={`group rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-md ${f.tint}`}
-                            >
-                                <span className={`mb-4 inline-grid h-11 w-11 place-items-center rounded-xl text-white shadow-sm ${f.iconBg}`}>
-                                    <Icon className="h-5 w-5" />
-                                </span>
-                                <h3 className="text-lg font-semibold text-slate-900">{f.title}</h3>
-                                <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
-                                    {f.desc}
-                                </p>
-                            </div>
-                        );
-                    })}
+            {/* Features — the OneLeet buddy: a friendly robot with the six
+                tools connected around it, under a soft sky with drifting
+                clouds. Pure SVG + CSS motion (no images, no framer here). */}
+            <section className="relative overflow-hidden pb-24">
+                {/* sky wash + clouds (full-bleed, decorative) */}
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-sky-100/70 to-transparent dark:via-slate-900/70"
+                />
+                <Cloud className="left-[6%] top-10 w-40" dur="34s" />
+                <Cloud className="right-[8%] top-24 w-56" dur="46s" delay="-12s" />
+                <Cloud className="left-[40%] top-2 hidden w-32 sm:block" dur="40s" delay="-25s" />
+
+                <div className="relative mx-auto max-w-6xl px-4 pt-16 sm:px-6">
+                    <div className="text-center">
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-white/70 px-3 py-1 text-xs font-semibold text-sky-700 backdrop-blur dark:border-sky-500/30 dark:bg-slate-900/60 dark:text-sky-300">
+                            Meet your prep buddy
+                        </span>
+                        <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">
+                            Everything you need to crack LEET
+                        </h2>
+                        <p className="mx-auto mt-2 max-w-xl text-sm text-slate-600 sm:text-base">
+                            One system that plans your prep, drills you on real papers and
+                            keeps a mentor within reach.
+                        </p>
+                    </div>
+
+                    <div className="mt-12 gap-6 lg:grid lg:grid-cols-[1fr_15rem_1fr] lg:items-center">
+                        {/* the buddy: first on mobile, centre column on desktop */}
+                        <div className="lg:col-start-2 lg:row-start-1">
+                            <RobotBuddy className="mx-auto mb-10 w-36 sm:w-40 lg:mb-0 lg:w-48" />
+                        </div>
+
+                        <div className="grid gap-4 sm:grid-cols-2 lg:col-start-1 lg:row-start-1 lg:grid-cols-1 lg:gap-6">
+                            {features.slice(0, 3).map((f) => {
+                                const Icon = f.icon;
+                                return (
+                                    <div
+                                        key={f.title}
+                                        className={`group relative rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-md ${f.tint}`}
+                                    >
+                                        <Connector side="right" className="hidden lg:block" />
+                                        <span className={`mb-4 inline-grid h-11 w-11 place-items-center rounded-xl text-white shadow-sm ${f.iconBg}`}>
+                                            <Icon className="h-5 w-5" />
+                                        </span>
+                                        <h3 className="text-lg font-semibold text-slate-900">{f.title}</h3>
+                                        <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+                                            {f.desc}
+                                        </p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:col-start-3 lg:row-start-1 lg:mt-0 lg:grid-cols-1 lg:gap-6">
+                            {features.slice(3).map((f) => {
+                                const Icon = f.icon;
+                                return (
+                                    <div
+                                        key={f.title}
+                                        className={`group relative rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-md ${f.tint}`}
+                                    >
+                                        <Connector side="left" className="hidden lg:block" />
+                                        <span className={`mb-4 inline-grid h-11 w-11 place-items-center rounded-xl text-white shadow-sm ${f.iconBg}`}>
+                                            <Icon className="h-5 w-5" />
+                                        </span>
+                                        <h3 className="text-lg font-semibold text-slate-900">{f.title}</h3>
+                                        <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+                                            {f.desc}
+                                        </p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Closing CTA — a bold brand-gradient band (theme-independent, so it
                     reads the same in light and dark). */}
-                <div className="relative mt-14 flex flex-col items-center gap-4 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-600 p-10 text-center shadow-xl shadow-indigo-600/25">
+                <div className="relative mx-auto mt-14 max-w-6xl px-4 sm:px-6">
+                <div className="relative flex flex-col items-center gap-4 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-600 p-10 text-center shadow-xl shadow-indigo-600/25">
                     <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
                     <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-violet-300/20 blur-2xl" />
                     <h3 className="relative text-xl font-bold text-white sm:text-2xl">
@@ -199,6 +256,7 @@ export default function Home() {
                         Start preparing
                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
+                </div>
                 </div>
             </section>
 
