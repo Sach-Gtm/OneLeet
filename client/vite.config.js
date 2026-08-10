@@ -18,8 +18,11 @@ export default defineConfig({
       injectRegister: "auto",
       includeAssets: ["favicon.svg", "apple-touch-icon.png"],
       workbox: {
+        // Bring the Web Push handlers (push + notificationclick) into the
+        // generated worker so background notifications keep working under the PWA.
+        importScripts: ["/push-sw.js"],
         globPatterns: ["**/*.{js,css,woff2}", "index.html", "favicon.svg", "apple-touch-icon.png", "pwa-192x192.png", "pwa-512x512.png"],
-        globIgnores: ["**/leet/**", "**/guides/**"],
+        globIgnores: ["**/leet/**", "**/guides/**", "push-sw.js"],
         navigateFallback: "/index.html",
         // Real static docs (and non-SPA files) must NOT fall back to the SPA shell.
         navigateFallbackDenylist: [/^\/leet\//, /^\/guides\//, /^\/api\//, /\.xml$/, /\.txt$/],

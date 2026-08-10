@@ -1,7 +1,8 @@
 /* global clients */
-// OneLeet service worker — shows background Web Push notifications (delivered
-// even when the app tab is closed) and focuses/opens the app when one is
-// clicked. Registered by the app only after the user enables notifications.
+// OneLeet push handlers, imported into the PWA service worker (see
+// vite.config.js workbox.importScripts). Shows a background Web Push
+// notification (delivered even when the app is closed) and focuses/opens the
+// app when one is tapped. Server payload: { title, body, url?, tag? }.
 
 self.addEventListener("push", (event) => {
     let data = {};
@@ -13,8 +14,8 @@ self.addEventListener("push", (event) => {
     const title = data.title || "OneLeet";
     const options = {
         body: data.body || "",
-        icon: "/favicon.svg",
-        badge: "/favicon.svg",
+        icon: "/pwa-192x192.png",
+        badge: "/pwa-192x192.png",
         tag: data.tag,
         data: { url: data.url || "/dashboard" },
     };
