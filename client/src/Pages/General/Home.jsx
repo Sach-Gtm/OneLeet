@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import HomeCourses from "@/Components/General/HomeCourses";
+import HomeFaq from "@/Components/General/HomeFaq";
 import { useSeo } from "@/lib/useSeo";
 
 // Heavy, non-critical pieces loaded off the critical path so the hero (the LCP)
@@ -206,6 +207,9 @@ export default function Home() {
             <Suspense fallback={null}>
                 <ReviewsSection />
             </Suspense>
+
+            {/* SEO FAQ — the last section before the footer. */}
+            <HomeFaq />
         </>
     );
 }
