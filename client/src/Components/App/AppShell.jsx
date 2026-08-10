@@ -273,6 +273,44 @@ function UserMenu({ user, isStaff, onLogout }) {
     );
 }
 
+// Native-style bottom tab bar (mobile only). Four core destinations plus a
+// "More" tab that opens the full drawer — the app pattern instead of a website
+// hamburger. Sits above the home indicator via pb-safe.
+const TAB_ITEMS = [
+    { to: "/dashboard", label: "Home", icon: LayoutDashboard },
+    { to: "/tests", label: "Tests", icon: ClipboardList },
+    { to: "/videos", label: "Videos", icon: MonitorPlay },
+    { to: "/pyqs", label: "PYQs", icon: FileQuestion },
+];
+function MobileTabBar({ onMore }) {
+    const cls = ({ isActive }) =>
+        cn(
+            "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold transition-colors",
+            isActive ? "text-indigo-600" : "text-slate-400"
+        );
+    return (
+        <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-slate-200 bg-white/95 backdrop-blur lg:hidden">
+            {TAB_ITEMS.map((t) => {
+                const Icon = t.icon;
+                return (
+                    <NavLink key={t.to} to={t.to} className={cls}>
+                        <Icon size={21} />
+                        {t.label}
+                    </NavLink>
+                );
+            })}
+            <button
+                type="button"
+                onClick={onMore}
+                className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold text-slate-400"
+            >
+                <Menu size={21} />
+                More
+            </button>
+        </nav>
+    );
+}
+
 export default function AppShell() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -334,20 +372,17 @@ export default function AppShell() {
                 </div>
             )}
 
-            {/* Main column */}
-            <div className="flex min-w-0 flex-1 flex-col">
+            {/* Main column (bottom padding on mobile so content clears the tab bar) */}
+            <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.75rem+env(safe-area-inset-bottom))] lg:pb-0">
                 <header className="relative sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur sm:px-6">
                     {/* Premium members carry a faint gold hairline on every page. */}
                     {premium && (
                         <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-400/70 to-transparent" />
                     )}
-                    <button
-                        onClick={() => setMobileOpen(true)}
-                        className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden"
-                        aria-label="Open menu"
-                    >
-                        <Menu size={20} />
-                    </button>
+                    {/* Mobile: brand top-left (nav lives in the bottom bar). */}
+                    <Link to="/dashboard" className="lg:hidden" aria-label="OneLeet home">
+                        <Logo size={26} textClass="text-base" />
+                    </Link>
                     <div className="relative hidden max-w-md flex-1 sm:block">
                         <Search
                             size={16}
@@ -385,6 +420,9 @@ export default function AppShell() {
                     which don't use this shell). */}
                 <Footer />
             </div>
+
+            {/* App-style bottom navigation (mobile only) */}
+            <MobileTabBar onMore={() => setMobileOpen(true)} />
         </div>
     );
 }

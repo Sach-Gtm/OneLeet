@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "@/Components/General/Navbar";
 import Footer from "@/Components/General/Footer";
 import FloatingWhatsApp from "@/Components/App/FloatingWhatsApp";
+import InstallPrompt from "@/Components/General/InstallPrompt";
 
 // Light marketing shell (soft gradient + navbar) for the public pages. The
 // <main> landmark and the site <Footer> live here so every public route — not
@@ -19,6 +20,8 @@ export default function MarketingLayout() {
             {/* Premium WhatsApp support — self-gates to null for non-premium, so it
                 shows on the public site (home included) only for pro students. */}
             <FloatingWhatsApp context="from the OneLeet site" />
+            {/* "Install the app" banner — self-gates unless the PWA is installable. */}
+            <InstallPrompt />
         </div>
     );
 }
