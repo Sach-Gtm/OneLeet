@@ -202,7 +202,7 @@ export default function Home() {
                                 return (
                                     <div
                                         key={f.title}
-                                        className={`group relative rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-md ${f.tint}`}
+                                        className={`group relative rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-md dark:border-white/10 ${f.tint}`}
                                     >
                                         <Connector side="right" className="hidden lg:block" />
                                         <span className={`mb-4 inline-grid h-11 w-11 place-items-center rounded-xl text-white shadow-sm ${f.iconBg}`}>
@@ -223,7 +223,7 @@ export default function Home() {
                                 return (
                                     <div
                                         key={f.title}
-                                        className={`group relative rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-md ${f.tint}`}
+                                        className={`group relative rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-md dark:border-white/10 ${f.tint}`}
                                     >
                                         <Connector side="left" className="hidden lg:block" />
                                         <span className={`mb-4 inline-grid h-11 w-11 place-items-center rounded-xl text-white shadow-sm ${f.iconBg}`}>

@@ -35,10 +35,10 @@ export function CourseSky({ hue }) {
                 className="ol-aurora absolute -left-1/4 -top-1/2 h-[180%] w-2/3 rounded-full blur-2xl"
                 style={{ background: `radial-gradient(closest-side, ${h.blob}, transparent)` }}
             />
-            <span className="ol-twinkle absolute left-[14%] top-[24%] h-0.5 w-0.5 rounded-full bg-white" />
-            <span className="ol-twinkle absolute right-[16%] top-[30%] h-1 w-1 rounded-full bg-white" style={{ "--ol-tw-delay": "-1.6s" }} />
-            <span className="ol-twinkle absolute bottom-[26%] left-[32%] h-0.5 w-0.5 rounded-full bg-white" style={{ "--ol-tw-delay": "-2.8s" }} />
-            <span className="ol-twinkle absolute right-[34%] top-[14%] h-0.5 w-0.5 rounded-full bg-white" style={{ "--ol-tw-delay": "-0.9s" }} />
+            <span className="ol-twinkle absolute left-[14%] top-[24%] h-0.5 w-0.5 rounded-full" style={{ background: "#fff" }} />
+            <span className="ol-twinkle absolute right-[16%] top-[30%] h-1 w-1 rounded-full" style={{ background: "#fff", "--ol-tw-delay": "-1.6s" }} />
+            <span className="ol-twinkle absolute bottom-[26%] left-[32%] h-0.5 w-0.5 rounded-full" style={{ background: "#fff", "--ol-tw-delay": "-2.8s" }} />
+            <span className="ol-twinkle absolute right-[34%] top-[14%] h-0.5 w-0.5 rounded-full" style={{ background: "#fff", "--ol-tw-delay": "-0.9s" }} />
         </div>
     );
 }

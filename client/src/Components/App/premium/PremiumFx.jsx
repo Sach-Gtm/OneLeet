@@ -63,8 +63,9 @@ export function Sparkles() {
             {STARS.map((st, i) => (
                 <span
                     key={`star-${i}`}
-                    className="ol-twinkle absolute rounded-full bg-white"
+                    className="ol-twinkle absolute rounded-full"
                     style={{
+                        background: "#fff",
                         top: st.top,
                         left: st.left,
                         height: st.s,
@@ -225,7 +226,7 @@ export function CrownEmblem({ size = 88 }) {
             />
             {/* orbiting spark */}
             <span className="ol-orbit absolute -inset-2.5 rounded-full">
-                <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-white shadow-[0_0_10px_3px_rgba(167,139,252,0.65)]" />
+                <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full shadow-[0_0_10px_3px_rgba(167,139,252,0.65)]" style={{ background: "#fff" }} />
             </span>
             <Crown className="relative text-white drop-shadow" style={{ height: size * 0.42, width: size * 0.42 }} fill="currentColor" />
         </span>
@@ -271,7 +272,7 @@ export function PremiumWelcome({ user, streak = 0 }) {
                     <div className="mt-5 flex flex-wrap gap-3">
                         <Link
                             to="/pyqs"
-                            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-bold text-indigo-950 shadow-lg shadow-indigo-950/40 transition hover:bg-indigo-50"
+                            className="inline-flex items-center gap-2 rounded-lg bg-[#fff] px-4 py-2 text-sm font-bold text-indigo-950 shadow-lg shadow-indigo-950/40 transition hover:bg-[#eef2ff]"
                         >
                             <Play size={15} /> Start practice
                         </Link>
@@ -344,8 +345,8 @@ export function PremiumPerks() {
                                 style={{ background: p.glow }}
                             />
                             <span
-                                className="ol-twinkle absolute right-3 top-3 h-1 w-1 rounded-full bg-white"
-                                style={{ "--ol-tw-delay": `${-i * 0.9}s` }}
+                                className="ol-twinkle absolute right-3 top-3 h-1 w-1 rounded-full"
+                                style={{ background: "#fff", "--ol-tw-delay": `${-i * 0.9}s` }}
                             />
                             <span
                                 className={`relative grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br ${p.orb} text-white shadow-md shadow-indigo-950/40`}
