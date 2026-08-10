@@ -27,17 +27,16 @@ async function createGatewayOrder({ amountRupees, receipt, notes }) {
     if (!isLive()) {
         return { id: `manual_${receipt || Date.now()}`, live: false, keyId: "" };
     }
-    // --- LIVE (uncomment once razorpay is installed + keys set) ---
-    // const Razorpay = require("razorpay");
-    // const rzp = new Razorpay({ key_id: KEY_ID, key_secret: KEY_SECRET });
-    // const order = await rzp.orders.create({
-    //     amount: Math.round(amountRupees * 100), // paise
-    //     currency: "INR",
-    //     receipt: String(receipt || ""),
-    //     notes: notes || {},
-    // });
-    // return { id: order.id, live: true, keyId: KEY_ID };
-    throw new Error("Razorpay keys are set but the razorpay client is not installed. See services/paymentGateway.js.");
+    // --- LIVE ---  (reached only when RAZORPAY_KEY_ID + _SECRET are set)
+    const Razorpay = require("razorpay");
+    const rzp = new Razorpay({ key_id: KEY_ID, key_secret: KEY_SECRET });
+    const order = await rzp.orders.create({
+        amount: Math.round(amountRupees * 100), // paise
+        currency: "INR",
+        receipt: String(receipt || ""),
+        notes: notes || {},
+    });
+    return { id: order.id, live: true, keyId: KEY_ID };
 }
 
 // Verify the checkout signature Razorpay returns after a successful payment.
