@@ -6,9 +6,9 @@ import { whatsappLink, WHATSAPP_RESPONSE } from "@/config/support";
 // The premium (pro) visual world: a deep "aurora summit" night. A rich
 // indigo/violet sky with drifting aurora ribbons, twinkling stars and the
 // occasional shooting star, above a mountain range whose summit carries a
-// glowing beacon: the climb every topper finished. Gold stays the membership
-// accent (crown, buttons, foil text) so premium still reads gold, but on a
-// canvas with real depth instead of a flat brown.
+// glowing beacon: the climb every topper finished. The accent language is
+// platinum and aurora (silver foil, violet/indigo/cyan) - no gold anywhere,
+// by request: a black-card feel rather than a gold-card one.
 //
 // Everything here is decorative and pointer-safe; ambient motion is CSS (see
 // index.css, all guarded by prefers-reduced-motion) and entrance motion is
@@ -20,13 +20,13 @@ import { whatsappLink, WHATSAPP_RESPONSE } from "@/config/support";
 export function PremiumAura() {
     return (
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-            <div className="ol-aurora absolute -left-1/4 -top-1/2 h-[170%] w-3/4 rounded-full bg-gradient-to-br from-violet-500/30 via-indigo-400/15 to-transparent blur-3xl" />
+            <div className="ol-aurora absolute -left-1/4 -top-1/2 h-[170%] w-3/4 rounded-full bg-gradient-to-br from-purple-500/30 via-blue-400/15 to-transparent blur-3xl" />
             {/* second glow field rests on phones: fewer simultaneous movers */}
             <div
                 className="ol-aurora absolute -right-1/4 -top-1/3 hidden h-[150%] w-2/3 rounded-full bg-gradient-to-bl from-teal-400/25 via-cyan-500/10 to-transparent blur-3xl sm:block"
                 style={{ animationDelay: "-7s" }}
             />
-            <div className="ol-glow absolute right-16 top-4 h-36 w-36 rounded-full bg-amber-300/20 blur-2xl" />
+            <div className="ol-glow absolute right-16 top-4 h-36 w-36 rounded-full bg-cyan-300/15 blur-2xl" />
         </div>
     );
 }
@@ -48,7 +48,7 @@ const STARS = [
     { top: "57%", left: "58%", s: 2 },
 ];
 
-// Four-point gold sparkles that drift, plus the twinkling starfield and two
+// Four-point ice sparkles that drift, plus the twinkling starfield and two
 // shooting stars. All positions are fixed.
 const SPARKS = [
     { top: "18%", left: "12%", size: 10, dur: "5.4s", delay: "0s" },
@@ -77,7 +77,7 @@ export function Sparkles() {
             {SPARKS.map((s, i) => (
                 <span
                     key={`spark-${i}`}
-                    className={`ol-float absolute text-amber-200 drop-shadow-[0_0_5px_rgba(251,191,36,0.7)] ${s.desktopOnly ? "hidden sm:block" : ""}`}
+                    className={`ol-float absolute text-indigo-200 drop-shadow-[0_0_5px_rgba(165,180,252,0.7)] ${s.desktopOnly ? "hidden sm:block" : ""}`}
                     style={{ top: s.top, left: s.left, "--ol-float-dur": s.dur, animationDelay: s.delay }}
                 >
                     <svg width={s.size} height={s.size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -86,7 +86,7 @@ export function Sparkles() {
                 </span>
             ))}
             {/* shooting stars: bright head, fading tail, long quiet gaps */}
-            <span className="ol-shoot absolute left-[6%] top-[10%] h-px w-16 bg-gradient-to-r from-transparent via-amber-100/70 to-white opacity-0" />
+            <span className="ol-shoot absolute left-[6%] top-[10%] h-px w-16 bg-gradient-to-r from-transparent via-slate-100/70 to-white opacity-0" />
             <span
                 className="ol-shoot absolute left-[52%] top-[6%] hidden h-px w-12 bg-gradient-to-r from-transparent via-indigo-100/70 to-white opacity-0 sm:block"
                 style={{ "--ol-shoot-delay": "6.5s", "--ol-shoot-dur": "13s" }}
@@ -131,8 +131,8 @@ function AuroraRibbons() {
                         <linearGradient id="olRibbonB" x1="0" y1="0" x2="1" y2="0">
                             <stop offset="0" stopColor="#f0abfc" stopOpacity="0" />
                             <stop offset="0.4" stopColor="#f0abfc" stopOpacity="0.35" />
-                            <stop offset="0.75" stopColor="#fbbf24" stopOpacity="0.4" />
-                            <stop offset="1" stopColor="#fbbf24" stopOpacity="0" />
+                            <stop offset="0.75" stopColor="#67e8f9" stopOpacity="0.4" />
+                            <stop offset="1" stopColor="#67e8f9" stopOpacity="0" />
                         </linearGradient>
                     </defs>
                     <path
@@ -150,7 +150,7 @@ function AuroraRibbons() {
 }
 
 // The mountain range along the bottom of the hero: a moonlit back range, a
-// darker front range, a dotted climbing trail and a pulsing gold beacon + flag
+// darker front range, a dotted climbing trail and a pulsing ice beacon + flag
 // on the summit. The quiet story: the top is a place you can reach.
 function SummitScene() {
     return (
@@ -172,9 +172,9 @@ function SummitScene() {
                 {/* soft beacon halo as a gradient fill: no filter, so the pulse
                     only ever animates opacity (compositor-cheap) */}
                 <radialGradient id="olBeacon" cx="0.5" cy="0.5" r="0.5">
-                    <stop offset="0" stopColor="#fcd34d" stopOpacity="0.7" />
-                    <stop offset="0.5" stopColor="#fcd34d" stopOpacity="0.25" />
-                    <stop offset="1" stopColor="#fcd34d" stopOpacity="0" />
+                    <stop offset="0" stopColor="#a5f3fc" stopOpacity="0.65" />
+                    <stop offset="0.5" stopColor="#a5f3fc" stopOpacity="0.22" />
+                    <stop offset="1" stopColor="#a5f3fc" stopOpacity="0" />
                 </radialGradient>
             </defs>
             <path
@@ -190,7 +190,7 @@ function SummitScene() {
             <path
                 d="M60 152 C 180 140, 260 128, 340 106 S 445 72, 468 58"
                 fill="none"
-                stroke="#fcd34d"
+                stroke="#c7d2fe"
                 strokeWidth="2"
                 strokeDasharray="0.5 9"
                 strokeLinecap="round"
@@ -198,13 +198,13 @@ function SummitScene() {
             />
             {/* summit beacon + flag */}
             <circle className="ol-pulse" cx="470" cy="52" r="14" fill="url(#olBeacon)" />
-            <circle cx="470" cy="52" r="2.4" fill="#fef3c7" />
-            <path d="M470 50 L470 34 L484 39 L470 44" fill="#fbbf24" stroke="#fbbf24" strokeWidth="1.6" strokeLinejoin="round" />
+            <circle cx="470" cy="52" r="2.4" fill="#ffffff" />
+            <path d="M470 50 L470 34 L484 39 L470 44" fill="#a78bfa" stroke="#a78bfa" strokeWidth="1.6" strokeLinejoin="round" />
         </svg>
     );
 }
 
-// The crown emblem: a gilded planet with a slowly rotating conic halo, a faint
+// The crown emblem: a royal-violet planet with a slowly rotating conic halo, a faint
 // tilted ring and a spark orbiting it. Gently floats.
 export function CrownEmblem({ size = 88 }) {
     return (
@@ -214,18 +214,18 @@ export function CrownEmblem({ size = 88 }) {
         >
             <span
                 className="ol-spin-slow absolute inset-0 rounded-full"
-                style={{ background: "conic-gradient(from 0deg, transparent 0deg, rgba(251,215,116,0.65) 70deg, transparent 150deg, transparent 360deg)" }}
+                style={{ background: "conic-gradient(from 0deg, transparent 0deg, rgba(196,181,253,0.55) 70deg, transparent 150deg, transparent 360deg)" }}
             />
-            <span className="absolute inset-[4px] rounded-full bg-gradient-to-br from-amber-300 via-amber-500 to-orange-600 shadow-lg shadow-indigo-950/60" />
+            <span className="absolute inset-[4px] rounded-full bg-gradient-to-br from-sky-400 via-purple-500 to-purple-800 shadow-lg shadow-indigo-950/60" />
             <span className="absolute inset-[4px] rounded-full ring-1 ring-inset ring-white/40" />
             {/* planet ring */}
             <span
-                className="absolute left-1/2 top-1/2 h-[46%] w-[140%] rounded-[50%] border border-amber-200/30"
+                className="absolute left-1/2 top-1/2 h-[46%] w-[140%] rounded-[50%] border border-purple-200/40"
                 style={{ transform: "translate(-50%, -50%) rotate(-16deg)" }}
             />
             {/* orbiting spark */}
             <span className="ol-orbit absolute -inset-2.5 rounded-full">
-                <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-200 shadow-[0_0_10px_3px_rgba(251,191,36,0.6)]" />
+                <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-white shadow-[0_0_10px_3px_rgba(167,139,252,0.65)]" />
             </span>
             <Crown className="relative text-white drop-shadow" style={{ height: size * 0.42, width: size * 0.42 }} fill="currentColor" />
         </span>
@@ -242,7 +242,7 @@ export function PremiumWelcome({ user, streak = 0 }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: "easeOut" }}
-            className="ol-shimmer relative h-full overflow-hidden rounded-2xl p-6 pb-16 text-white shadow-xl ring-1 ring-indigo-400/30 sm:p-7 sm:pb-16"
+            className="ol-shimmer relative h-full overflow-hidden rounded-2xl p-6 pb-16 text-white shadow-xl ring-1 ring-purple-400/25 sm:p-7 sm:pb-16"
             style={{
                 background:
                     "radial-gradient(120% 140% at 15% -10%, #312e81 0%, #1e1b4b 34%, #131240 62%, #070a23 100%)",
@@ -252,16 +252,16 @@ export function PremiumWelcome({ user, streak = 0 }) {
             <AuroraRibbons />
             <Sparkles />
             <SummitScene />
-            {/* gold hairline along the top edge */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-px bg-gradient-to-r from-transparent via-amber-300/80 to-transparent" />
+            {/* aurora hairline along the top edge */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-px bg-gradient-to-r from-transparent via-purple-300/70 to-transparent" />
 
             <div className="relative z-[2] flex flex-wrap items-center justify-between gap-5">
                 <div className="min-w-0">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/40 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-amber-200 backdrop-blur">
-                        <Crown size={12} className="text-amber-300" fill="currentColor" /> Premium Member
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-100 backdrop-blur">
+                        <Crown size={12} className="text-slate-200" fill="currentColor" /> Premium Member
                     </span>
                     <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
-                        Welcome back, <span className="ol-gold-text">{firstName}</span>
+                        Welcome back, <span className="ol-foil-text">{firstName}</span>
                     </h1>
                     <p className="mt-2 max-w-md text-sm leading-relaxed text-indigo-100/85">
                         {streak > 0
@@ -271,7 +271,7 @@ export function PremiumWelcome({ user, streak = 0 }) {
                     <div className="mt-5 flex flex-wrap gap-3">
                         <Link
                             to="/pyqs"
-                            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-300 to-amber-500 px-4 py-2 text-sm font-bold text-amber-950 shadow-lg shadow-amber-500/20 transition hover:brightness-105"
+                            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-bold text-indigo-950 shadow-lg shadow-indigo-950/40 transition hover:bg-indigo-50"
                         >
                             <Play size={15} /> Start practice
                         </Link>
@@ -298,22 +298,22 @@ const PERKS = [
         icon: Unlock,
         label: "Everything unlocked",
         sub: "All mocks, notes & PYQs",
-        orb: "from-amber-300 to-orange-500",
-        glow: "rgba(251,191,36,0.35)",
+        orb: "from-blue-400 to-blue-600",
+        glow: "rgba(96,165,250,0.38)",
     },
     {
         icon: Headphones,
         label: "Priority support",
         sub: `WhatsApp · ${WHATSAPP_RESPONSE}`,
-        orb: "from-teal-300 to-cyan-500",
-        glow: "rgba(45,212,191,0.32)",
+        orb: "from-cyan-300 to-sky-500",
+        glow: "rgba(103,232,249,0.32)",
     },
     {
         icon: Brain,
         label: "AI tools & analytics",
         sub: "Personalised coaching",
-        orb: "from-violet-400 to-fuchsia-500",
-        glow: "rgba(167,139,250,0.35)",
+        orb: "from-fuchsia-400 to-purple-500",
+        glow: "rgba(232,121,249,0.34)",
     },
     {
         icon: Trophy,
@@ -333,15 +333,15 @@ export function PremiumPerks() {
                         key={p.label}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ y: -4 }}
+                        whileHover={{ y: -4, transition: { duration: 0.2, delay: 0 } }}
                         transition={{ duration: 0.4, delay: 0.12 + i * 0.07, ease: "easeOut" }}
                         className="ol-glass-card group rounded-2xl transition-shadow duration-300 hover:shadow-lg hover:shadow-indigo-950/40"
                     >
                         <div className="ol-glass-inner p-3.5">
                             {/* hue glow leaking in from the corner */}
                             <span
-                                className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full blur-2xl transition-opacity duration-300 group-hover:opacity-100"
-                                style={{ background: p.glow, opacity: 0.7 }}
+                                className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full opacity-70 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
+                                style={{ background: p.glow }}
                             />
                             <span
                                 className="ol-twinkle absolute right-3 top-3 h-1 w-1 rounded-full bg-white"
@@ -362,13 +362,13 @@ export function PremiumPerks() {
     );
 }
 
-// A compact "Premium" pill (crown + gold gradient) for the member themself,
+// A compact "Premium" pill (violet-ringed platinum chip) for the member themself,
 // distinct from PremiumBadge, which marks locked/premium *content*.
 export function PremiumMemberPill({ className = "" }) {
     return (
         <span
             className={
-                "inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm shadow-amber-500/30 " +
+                "inline-flex items-center gap-1 rounded-full bg-slate-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-purple-200 shadow-sm ring-1 ring-inset ring-purple-400/60 dark:bg-slate-950 " +
                 className
             }
         >
@@ -377,7 +377,7 @@ export function PremiumMemberPill({ className = "" }) {
     );
 }
 
-// Gilds a user avatar for premium members: a gold gradient ring + a small crown
+// Rings a premium member's avatar in the aurora gradient + a small crown
 // badge. Falls back to the plain avatar/initial for everyone else.
 export function PremiumAvatar({ user, size = 36, premium = false }) {
     const inner = user?.avatar ? (
@@ -396,12 +396,12 @@ export function PremiumAvatar({ user, size = 36, premium = false }) {
     }
     return (
         <span className="relative block shrink-0" style={{ height: size, width: size }}>
-            <span className="block h-full w-full rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-orange-500 p-[2px] shadow-sm shadow-amber-500/30">
+            <span className="block h-full w-full rounded-full bg-gradient-to-br from-sky-400 via-purple-400 to-fuchsia-400 p-[2px] shadow-sm shadow-purple-500/30">
                 <span className="block h-full w-full rounded-full bg-white p-[1.5px] dark:bg-slate-900">
                     <span className="block h-full w-full overflow-hidden rounded-full">{inner}</span>
                 </span>
             </span>
-            <span className="absolute -bottom-0.5 -right-0.5 grid h-[42%] w-[42%] min-h-[15px] min-w-[15px] place-items-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 ring-2 ring-white dark:ring-slate-900">
+            <span className="absolute -bottom-0.5 -right-0.5 grid h-[42%] w-[42%] min-h-[15px] min-w-[15px] place-items-center rounded-full bg-gradient-to-br from-purple-500 to-purple-700 ring-2 ring-white dark:ring-slate-900">
                 <Crown className="h-[55%] w-[55%] text-white" fill="currentColor" />
             </span>
         </span>
