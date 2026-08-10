@@ -402,3 +402,18 @@
   .ol-spin-slow { animation: none; }
   .ol-gold-text { background-position: 0 center; }
 }
+
+/* -------------------------------------------------------------------------
+   PWA / installed-app behaviour. Safe-area helpers for the notch and the home
+   indicator, plus small touches so the installed app doesn't feel like a web
+   page. viewport-fit=cover (in index.html) is what exposes the safe-area env().
+   ------------------------------------------------------------------------- */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+/* No grey tap flash on touch — reads as a website tell. */
+* { -webkit-tap-highlight-color: transparent; }
+/* Only inside the installed app: stop the rubber-band scroll from bouncing the
+   whole page (leaves the website scroll untouched). */
+@media (display-mode: standalone) {
+  html { overscroll-behavior-y: none; }
+}
