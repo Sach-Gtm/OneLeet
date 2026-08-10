@@ -12,6 +12,7 @@ import {
     Sparkles,
 } from "lucide-react";
 import { getCourse, enroll as enrollApi, unenroll as unenrollApi } from "@/Api/CoursesApi";
+import { CourseSky, hueFor } from "@/Components/General/CourseBanner";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useSeo } from "@/lib/useSeo";
@@ -130,8 +131,8 @@ export default function CourseDetail() {
             </Link>
 
             {/* Hero */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white sm:p-8">
-                <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+            <div className="relative overflow-hidden rounded-2xl p-6 text-white sm:p-8">
+                <CourseSky hue={hueFor(course.examName || "LEET")} />
                 <div className="relative">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
                         <GraduationCap size={13} /> {course.examName || "LEET"}
