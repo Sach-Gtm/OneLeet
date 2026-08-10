@@ -393,14 +393,106 @@
 @keyframes ol-spin-slow { to { transform: rotate(360deg); } }
 .ol-spin-slow { animation: ol-spin-slow 20s linear infinite; }
 
+/* Star twinkle in the premium night sky. */
+@keyframes ol-twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.75); }
+  50%      { opacity: 1;   transform: scale(1.1); }
+}
+.ol-twinkle {
+  animation: ol-twinkle var(--ol-tw-dur, 4s) ease-in-out infinite;
+  animation-delay: var(--ol-tw-delay, 0s);
+}
+
+/* Aurora ribbon sway (the curved light bands in the premium hero). */
+@keyframes ol-ribbon {
+  0%, 100% { transform: translate3d(-2.5%, 0, 0); }
+  50%      { transform: translate3d(2.5%, -8px, 0); }
+}
+.ol-ribbon { animation: ol-ribbon 13s ease-in-out infinite; will-change: transform; }
+
+/* A shooting star: streaks across the sky briefly, then a long quiet gap.
+   The element itself carries opacity-0 so it stays invisible when animations
+   are off (reduced motion). */
+@keyframes ol-shoot {
+  0%  { transform: translate3d(0, 0, 0) rotate(18deg); opacity: 0; }
+  3%  { opacity: 0.9; }
+  11% { transform: translate3d(300px, 110px, 0) rotate(18deg); opacity: 0; }
+  100% { transform: translate3d(300px, 110px, 0) rotate(18deg); opacity: 0; }
+}
+.ol-shoot {
+  animation: ol-shoot var(--ol-shoot-dur, 11s) ease-in infinite;
+  animation-delay: var(--ol-shoot-delay, 2s);
+}
+
+/* Slow orbit for the spark circling the crown planet. */
+.ol-orbit { animation: ol-spin-slow var(--ol-orbit-dur, 9s) linear infinite; }
+
+/* Gentle opacity pulse (summit beacon). */
+@keyframes ol-pulse {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.95; }
+}
+.ol-pulse { animation: ol-pulse 3.4s ease-in-out infinite; }
+
+/* Premium glass card: a deep-night surface wearing a slowly circling aurora
+   border (gold -> violet -> teal -> pink). GPU-only: the gradient lives on a
+   ::before that rotates with `transform` (composited, never repainted); the
+   inner surface masks everything but a 1px rim. */
+.ol-glass-card {
+  position: relative;
+  overflow: hidden;
+  padding: 1px;
+  background: rgba(129, 140, 248, 0.28); /* static rim fallback (reduced motion / paint-before-anim) */
+}
+.ol-glass-card::before {
+  content: "";
+  position: absolute;
+  inset: -150%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(251, 191, 36, 0.8),
+    rgba(167, 139, 250, 0.65),
+    rgba(94, 234, 212, 0.6),
+    rgba(244, 114, 182, 0.55),
+    rgba(251, 191, 36, 0.8)
+  );
+  animation: ol-spin-slow 9s linear infinite;
+  will-change: transform;
+}
+.ol-glass-inner {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(1rem - 1px);
+  background: radial-gradient(130% 130% at 18% 0%, #1d234f 0%, #111539 55%, #0a0d28 100%);
+}
+
+/* Smaller screens keep the world but calm it down: fewer simultaneous movers
+   (some layers are hidden via `sm:` utilities in the components) and slower
+   cycles for the ones that remain. */
+@media (max-width: 640px) {
+  .ol-ribbon { animation-duration: 19s; }
+  .ol-glass-card::before { animation-duration: 14s; }
+  .ol-shimmer::after { animation-duration: 9s; }
+  .ol-aurora { animation-duration: 22s; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ol-shimmer::after,
   .ol-float,
   .ol-aurora,
   .ol-glow,
   .ol-gold-text,
+  .ol-twinkle,
+  .ol-ribbon,
+  .ol-shoot,
+  .ol-orbit,
+  .ol-pulse,
+  .ol-glass-card::before,
   .ol-spin-slow { animation: none; }
   .ol-gold-text { background-position: 0 center; }
+  .ol-twinkle { opacity: 0.7; transform: none; }
+  .ol-pulse { opacity: 0.5; }
 }
 
 /* -------------------------------------------------------------------------
