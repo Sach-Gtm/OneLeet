@@ -124,6 +124,9 @@
         <p><a href="/register">Create your free account →</a></p>
       </main>
     </noscript>
+    <!-- Razorpay Checkout (defer so it never blocks the hero paint). Provides
+         window.Razorpay, which the checkout page opens once the gateway is live. -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

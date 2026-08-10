@@ -180,6 +180,41 @@ async function verifyPayment(req, res, next) {
     }
 }
 
+// POST /api/payments/webhook — Razorpay server-to-server confirmation. Verified
+// by the webhook signature (NOT a user token), so it confirms a payment even if
+// the buyer closed the tab before the /verify callback ran. Idempotent: it only
+// marks an installment that isn't already paid, and markInstallmentPaid is a
+// no-op on an already-paid installment.
+async function webhook(req, res) {
+    try {
+        const signature = req.headers["x-razorpay-signature"];
+        // The raw request bytes (captured in app.js) are what the signature is
+        // computed over — re-stringifying the parsed body would not match.
+        const raw = req.rawBody || Buffer.from(JSON.stringify(req.body || {}));
+        if (!gateway.verifyWebhookSignature(raw, signature)) {
+            return res.status(400).json({ success: false, message: "Invalid webhook signature." });
+        }
+        const event = req.body?.event || "";
+        const payment = req.body?.payload?.payment?.entity;
+        const orderEntity = req.body?.payload?.order?.entity;
+        const gatewayOrderId = payment?.order_id || orderEntity?.id || "";
+        if ((event === "payment.captured" || event === "order.paid") && gatewayOrderId) {
+            const order = await Order.findOne({ "installments.gatewayOrderId": gatewayOrderId });
+            if (order) {
+                const inst = order.installments.find((i) => i.gatewayOrderId === gatewayOrderId);
+                if (inst && inst.status !== "paid") {
+                    await svc.markInstallmentPaid(order, inst.n, { paymentId: payment?.id || "", gatewayOrderId });
+                }
+            }
+        }
+        // 200 so Razorpay marks the event delivered (idempotent, so re-delivery is safe).
+        return res.json({ success: true, received: true });
+    } catch (e) {
+        // Unexpected failure: 500 so Razorpay retries the webhook later.
+        return res.status(500).json({ success: false });
+    }
+}
+
 // ── Admin ──────────────────────────────────────────────────────────────────
 
 // POST /api/payments/admin/orders/:id/confirm — manual confirm (UPI/bank), the
@@ -246,6 +281,6 @@ async function adminSetPremium(req, res, next) {
 }
 
 module.exports = {
-    createOrder, myOrders, getOrder, payInstallment, verifyPayment,
+    createOrder, myOrders, getOrder, payInstallment, verifyPayment, webhook,
     adminConfirm, adminReopen, adminListOrders, adminSetPremium,
 };

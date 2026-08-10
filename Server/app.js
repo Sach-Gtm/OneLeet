@@ -72,7 +72,10 @@ const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
     .map((o) => o.trim())
     .filter(Boolean);
 
-app.use(express.json());
+// Stash the raw request bytes on req.rawBody so the Razorpay webhook can verify
+// its HMAC signature against the exact payload (a re-stringified body wouldn't
+// match). Harmless for every other route.
+app.use(express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
 app.use(express.urlencoded({ extended: true }));
 app.use(
     cors({

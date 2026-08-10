@@ -5,6 +5,9 @@ const { verifyToken } = require("../../middlewares/authMiddleware");
 const { requireAdmin, requireSuperadmin } = require("../../middlewares/roleMiddleware");
 const ctrl = require("../../controllers/commerce/paymentController");
 
+// ── Razorpay webhook (no user token — authenticated by the signature) ──
+router.post("/webhook", ctrl.webhook);
+
 // ── Student ──
 router.post("/orders", verifyToken, ctrl.createOrder);
 router.get("/orders/me", verifyToken, ctrl.myOrders);
