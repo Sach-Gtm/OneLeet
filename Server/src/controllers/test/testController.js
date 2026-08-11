@@ -2,6 +2,7 @@ const Test = require("../../models/testModel");
 const Attempt = require("../../models/attemptModel");
 const { visibilityQuery } = require("../../config/exams");
 const { STAFF, isPremiumUser } = require("../../config/roles");
+const { bumpStreak } = require("../../utils/streak");
 
 const isStaff = (u) => STAFF.includes(u?.role);
 // Registers the Question schema so populate("questions") / populate("answers.question")
@@ -23,18 +24,11 @@ async function applyAttemptToStats(user, { accuracy, durationTakenSeconds }) {
         Math.round(((user.stats.studyHours || 0) + durationTakenSeconds / 3600) * 100) / 100;
     user.stats.overallPrep = Math.min(100, (user.stats.overallPrep || 0) + 3);
 
-    // streak: consecutive calendar days with activity
+    // streak: consecutive active days (IST) — shared with the activity heartbeat
+    // so browsing and graded submits advance the same counter off the same day
+    // boundary. lastActiveAt stays "last seen" only (no longer the streak anchor).
     const now = new Date();
-    const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-    const last = user.stats.lastActiveAt ? new Date(user.stats.lastActiveAt) : null;
-    if (!last) {
-        user.stats.streak = 1;
-    } else {
-        const diffDays = Math.round((startOfDay(now) - startOfDay(last)) / 86400000);
-        if (diffDays === 0) user.stats.streak = user.stats.streak || 1;
-        else if (diffDays === 1) user.stats.streak = (user.stats.streak || 0) + 1;
-        else user.stats.streak = 1;
-    }
+    bumpStreak(user.stats, now);
     user.stats.lastActiveAt = now;
 
     user.markModified("stats");

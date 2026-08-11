@@ -1,5 +1,6 @@
 const Activity = require("../../models/activityModel");
 const User = require("../../models/userModel");
+const { bumpStreak } = require("../../utils/streak");
 
 const DAY = 24 * 60 * 60 * 1000;
 const toMin = (s) => Math.round((s || 0) / 60);
@@ -23,15 +24,26 @@ async function recordHeartbeat(req, res, next) {
 
         await Activity.create({ user: userId, anonId, path, seconds });
 
-        // Reflect browsing (not just tests) in "active today" — throttled to at
-        // most one write per 10 min per user so heartbeats stay cheap.
+        // Reflect daily browsing (not just tests) in the streak + "active today".
+        // The streak advances here so any real activity — PYQs, notes, AI tools —
+        // keeps it alive, not only graded submits. bumpStreak is idempotent within
+        // an IST day, so it writes at most once per day; lastActiveAt stays
+        // throttled to one write / 10 min for the admin "active today" metric.
         if (userId) {
-            const last = req.user.stats?.lastActiveAt;
-            if (!last || Date.now() - new Date(last).getTime() > 10 * 60 * 1000) {
-                await User.updateOne(
-                    { _id: userId },
-                    { $set: { "stats.lastActiveAt": new Date() } }
-                );
+            const now = new Date();
+            const stats = req.user.stats || {};
+            const set = {};
+
+            if (bumpStreak(stats, now)) {
+                set["stats.streak"] = stats.streak;
+                set["stats.streakLastDay"] = stats.streakLastDay;
+            }
+            const last = stats.lastActiveAt;
+            if (!last || now.getTime() - new Date(last).getTime() > 10 * 60 * 1000) {
+                set["stats.lastActiveAt"] = now;
+            }
+            if (Object.keys(set).length) {
+                await User.updateOne({ _id: userId }, { $set: set });
             }
         }
         return res.status(200).json({ success: true });

@@ -9,9 +9,10 @@ const StatsSchema = new mongoose.Schema(
         pyqsSolved: { type: Number, default: 0 },
         studyHours: { type: Number, default: 0 },
         accuracy: { type: Number, default: 0 },     // percentage, 0-100
-        streak: { type: Number, default: 0 },       // consecutive active days
+        streak: { type: Number, default: 0 },       // consecutive active days (IST)
+        streakLastDay: { type: String },            // "YYYY-MM-DD" (IST) the streak last advanced — the streak anchor
         overallPrep: { type: Number, default: 0 },  // syllabus coverage %, 0-100
-        lastActiveAt: { type: Date },               // for streak calculation
+        lastActiveAt: { type: Date },               // "last seen" (admin "active today") — NOT the streak anchor
     },
     { _id: false }
 );
