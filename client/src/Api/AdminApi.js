@@ -186,6 +186,16 @@ export const getAiUsage = async () => {
     }
 };
 
+// Captured client + server errors for the System Health panel (audit C3).
+export const getErrorLogs = async ({ source = "", limit = 100 } = {}) => {
+    try {
+        const { data } = await api.get("/admin/errors", { params: { source: source || undefined, limit } });
+        return data; // { success, errors, last24h: { client, server } }
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // Download the achievements CSV (triggers a browser download).
 export const exportAchievements = async () => {
     try {

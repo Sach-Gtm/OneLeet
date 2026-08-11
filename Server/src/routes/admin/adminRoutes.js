@@ -23,6 +23,8 @@ router.get("/achievements/export", admin.exportAchievements);
 
 // AI spend dashboard.
 router.get("/ai-usage", admin.aiUsage);
+// Captured client + server errors (audit C3 health panel).
+router.get("/errors", admin.errorLogs);
 router.patch("/students/:id/achievements/reset", admin.resetStudentAchievements);
 
 // Premium and the full Hall-of-Fame wipe are Super-Admin-only levers.

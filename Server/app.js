@@ -35,6 +35,8 @@ const paymentRoutes = require("./src/routes/commerce/paymentRoutes");
 const couponRoutes = require("./src/routes/commerce/couponRoutes");
 const referralRoutes = require("./src/routes/commerce/referralRoutes");
 const publicRoutes = require("./src/routes/publicRoutes");
+const telemetryRoutes = require("./src/routes/telemetry/telemetryRoutes");
+const { logServerError } = require("./src/controllers/telemetry/telemetryController");
 
 // Builds and returns the configured Express app WITHOUT starting a server or
 // connecting to the database. server.js wires those up for real runs; tests
@@ -130,6 +132,7 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/referrals", referralRoutes);
 app.use("/api/public", publicRoutes);
+app.use("/api/telemetry", telemetryRoutes);
 
 // 404 for unmatched routes
 app.use((req, res) => {
@@ -151,6 +154,9 @@ app.use((err, req, res, next) => {
     // In production, never echo internal error details (stack hints, driver
     // messages, file paths) to the client — log them, return a generic message.
     const status = err.status || 500;
+    // Capture server faults for the admin error panel (audit C3). Fire-and-forget
+    // — never block or fail the response on the logger.
+    if (status >= 500) logServerError(err, req, status);
     const isProd = process.env.NODE_ENV === "production";
     const message =
         status >= 500 && isProd

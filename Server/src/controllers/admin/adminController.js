@@ -6,6 +6,7 @@ const AiQuery = require("../../models/aiQueryModel");
 const Blocklist = require("../../models/blocklistModel");
 const Exam = require("../../models/examModel");
 const aiRuntime = require("../../services/ai/aiRuntime");
+const ErrorLog = require("../../models/errorLogModel");
 const { SUPERADMIN_EMAIL } = require("../../config/roles");
 const { refreshExams } = require("../../config/exams");
 const { timeSummary } = require("../activity/activityController");
@@ -560,8 +561,39 @@ async function removeExam(req, res, next) {
     }
 }
 
+// GET /api/admin/errors — recent captured errors (audit C3) for the health
+// panel, newest first, with a 24h count by source. ?source=client|server and
+// ?limit filter the list.
+async function errorLogs(req, res, next) {
+    try {
+        const source = ["client", "server"].includes(req.query.source) ? req.query.source : null;
+        const limit = Math.min(200, Math.max(1, Number(req.query.limit) || 100));
+        const filter = source ? { source } : {};
+
+        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const [errors, clientDay, serverDay] = await Promise.all([
+            ErrorLog.find(filter)
+                .sort({ createdAt: -1 })
+                .limit(limit)
+                .populate("user", "name email")
+                .lean(),
+            ErrorLog.countDocuments({ source: "client", createdAt: { $gte: dayAgo } }),
+            ErrorLog.countDocuments({ source: "server", createdAt: { $gte: dayAgo } }),
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            errors,
+            last24h: { client: clientDay, server: serverDay },
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     overview,
+    errorLogs,
     listStudents,
     setStudentPlan,
     setUserRole,

@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { reloadOnceForStaleChunk } from "@/lib/reloadOnce";
+import { reportError } from "@/lib/telemetry";
 
 // Secondary net for stale-chunk failures that reach React as a render error
 // (the primary handler is the `vite:preloadError` listener in main.jsx). Without
@@ -25,11 +26,16 @@ class ErrorBoundary extends Component {
         return { hasError: true, error };
     }
 
-    componentDidCatch(error) {
+    componentDidCatch(error, errorInfo) {
         // Try a one-time reload for stale-chunk errors; if that's exhausted (or
         // it's a different error) we render the retry screen below.
         if (isChunkLoadError(error) && reloadOnceForStaleChunk()) return;
         console.error("App error boundary caught:", error);
+        // Report the render crash (with the component stack) to the admin panel.
+        reportError(error, {
+            kind: "boundary",
+            componentStack: errorInfo?.componentStack?.slice(0, 3000),
+        });
     }
 
     render() {

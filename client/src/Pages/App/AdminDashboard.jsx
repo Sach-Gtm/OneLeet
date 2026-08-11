@@ -38,6 +38,7 @@ import {
     removeUser,
 } from "@/Api/AdminApi";
 import StudentActivityModal from "@/Components/App/StudentActivityModal";
+import AdminErrorPanel from "@/Components/App/AdminErrorPanel";
 import CompetitionAdmin from "@/Components/App/CompetitionAdmin";
 import AiUsageAdmin from "@/Components/App/AiUsageAdmin";
 import BlocklistAdmin from "@/Components/App/BlocklistAdmin";
@@ -423,6 +424,9 @@ export default function AdminDashboard() {
                     ))}
                 </div>
             )}
+
+            {/* System health — captured client + server errors (audit C3). */}
+            {canManageStudents && <AdminErrorPanel />}
 
             {/* Requests inbox — every bug report, contribution & callback lands
                 here. Admins + super admin only; mentors never see it. */}
