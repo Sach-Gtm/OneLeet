@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
     ArrowRight,
     FileText,
@@ -14,6 +14,7 @@ import HomeCourses from "@/Components/General/HomeCourses";
 import HomeFaq from "@/Components/General/HomeFaq";
 import { Cloud, Connector, RobotBuddy } from "@/Components/General/FeatureBuddy";
 import { useSeo } from "@/lib/useSeo";
+import { track } from "@/lib/telemetry";
 
 // Heavy, non-critical pieces loaded off the critical path so the hero (the LCP)
 // paints fast: the WebGL shader background (ogl) and the below-the-fold sections
@@ -56,6 +57,10 @@ export default function Home() {
             "Crack LEET and get into 2nd year B.Tech after your diploma. Free past papers, exam-pattern mock tests, notes and AI practice for every state.",
         path: "/",
     });
+    // Funnel: top-of-funnel landing view (audit C3).
+    useEffect(() => {
+        track("land");
+    }, []);
     return (
         <>
             {/* Hero */}

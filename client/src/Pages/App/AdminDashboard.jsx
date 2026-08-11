@@ -39,6 +39,7 @@ import {
 } from "@/Api/AdminApi";
 import StudentActivityModal from "@/Components/App/StudentActivityModal";
 import AdminErrorPanel from "@/Components/App/AdminErrorPanel";
+import AdminFunnelPanel from "@/Components/App/AdminFunnelPanel";
 import CompetitionAdmin from "@/Components/App/CompetitionAdmin";
 import AiUsageAdmin from "@/Components/App/AiUsageAdmin";
 import BlocklistAdmin from "@/Components/App/BlocklistAdmin";
@@ -425,8 +426,9 @@ export default function AdminDashboard() {
                 </div>
             )}
 
-            {/* System health — captured client + server errors (audit C3). */}
+            {/* System health + acquisition funnel — telemetry we own (audit C3). */}
             {canManageStudents && <AdminErrorPanel />}
+            {canManageStudents && <AdminFunnelPanel />}
 
             {/* Requests inbox — every bug report, contribution & callback lands
                 here. Admins + super admin only; mentors never see it. */}

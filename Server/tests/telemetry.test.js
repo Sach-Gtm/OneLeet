@@ -65,6 +65,29 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(denied.status, 403, "a student cannot read the error panel");
     ok("source filter works and the panel is staff-only");
 
+    // --- Funnel analytics ---
+    // Two anon browsers land; one registers (as the student) and pays.
+    await request.post("/api/telemetry/event").send({ name: "land", anonId: "browserA" });
+    await request.post("/api/telemetry/event").send({ name: "land", anonId: "browserB" });
+    await request.post("/api/telemetry/event").send({ name: "land", anonId: "browserA" }); // dupe → still 1 identity
+    await request.post("/api/telemetry/event").set(...auth(studentT)).send({ name: "register_done" });
+    await request.post("/api/telemetry/event").set(...auth(studentT)).send({ name: "payment_done" });
+    // Unknown event names are accepted-but-ignored (not stored).
+    const ignored = await request.post("/api/telemetry/event").send({ name: "definitely_not_a_funnel_step" });
+    assert.strictEqual(ignored.status, 204, "unknown events are accepted (204) but ignored");
+
+    const fun = await request.get("/api/admin/funnel?days=7").set(...auth(adminT));
+    assert.strictEqual(fun.status, 200, "admin can read the funnel");
+    const step = (n) => fun.body.steps.find((s) => s.name === n);
+    assert.strictEqual(step("land").count, 2, "two distinct identities landed (dupe collapsed)");
+    assert.strictEqual(step("register_done").count, 1, "one registered");
+    assert.strictEqual(step("payment_done").count, 1, "one paid");
+    assert.strictEqual(step("register_done").pctOfTop, 50, "conversion vs top is computed (1/2 = 50%)");
+    assert.strictEqual((await require("../src/models/eventModel").countDocuments({ name: "definitely_not_a_funnel_step" })), 0, "junk events are never stored");
+    const funDenied = await request.get("/api/admin/funnel").set(...auth(studentT));
+    assert.strictEqual(funDenied.status, 403, "a student cannot read the funnel");
+    ok("the funnel counts distinct identities per step with conversion, staff-only");
+
     console.log(`\n✅ All ${passed} telemetry checks passed`);
     await mongoose.disconnect();
     await mongod.stop();

@@ -7,6 +7,8 @@ const Blocklist = require("../../models/blocklistModel");
 const Exam = require("../../models/examModel");
 const aiRuntime = require("../../services/ai/aiRuntime");
 const ErrorLog = require("../../models/errorLogModel");
+const Event = require("../../models/eventModel");
+const { FUNNEL_EVENTS } = require("../telemetry/telemetryController");
 const { SUPERADMIN_EMAIL } = require("../../config/roles");
 const { refreshExams } = require("../../config/exams");
 const { timeSummary } = require("../activity/activityController");
@@ -591,9 +593,47 @@ async function errorLogs(req, res, next) {
     }
 }
 
+// GET /api/admin/funnel?days=7 — the acquisition funnel (audit C3): distinct
+// identities (user or anon browser) who reached each step, with drop-off vs the
+// top of the funnel, so the founder can see where students fall out.
+async function funnel(req, res, next) {
+    try {
+        const days = Math.min(90, Math.max(1, Number(req.query.days) || 7));
+        const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+        // Count DISTINCT identities per step (a user counts once no matter how
+        // many times they fire an event); anon events key on anonId.
+        const rows = await Event.aggregate([
+            { $match: { name: { $in: FUNNEL_EVENTS }, createdAt: { $gte: since } } },
+            { $group: { _id: { name: "$name", who: { $ifNull: ["$user", "$anonId"] } } } },
+            { $group: { _id: "$_id.name", count: { $sum: 1 } } },
+        ]);
+
+        const counts = new Map(rows.map((r) => [r._id, r.count]));
+        const base = counts.get(FUNNEL_EVENTS[0]) || 0;
+        let prev = base;
+        const steps = FUNNEL_EVENTS.map((name) => {
+            const count = counts.get(name) || 0;
+            const step = {
+                name,
+                count,
+                pctOfTop: base ? Math.round((count / base) * 1000) / 10 : 0,
+                pctOfPrev: prev ? Math.round((count / prev) * 1000) / 10 : 0,
+            };
+            prev = count;
+            return step;
+        });
+
+        return res.status(200).json({ success: true, days, base, steps });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     overview,
     errorLogs,
+    funnel,
     listStudents,
     setStudentPlan,
     setUserRole,

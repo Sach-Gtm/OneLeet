@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAttempt } from "@/Api/TestsApi";
+import { track } from "@/lib/telemetry";
 import TestLeaderboardPanel from "@/Components/App/TestLeaderboardPanel";
 
 const fmtDuration = (s = 0) => {
@@ -25,6 +26,10 @@ export default function TestResult() {
     const navigate = useNavigate();
     const [attempt, setAttempt] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        track("results_viewed"); // funnel: saw a results screen (audit C3)
+    }, []);
 
     useEffect(() => {
         let active = true;

@@ -10,4 +10,7 @@ const c = require("../../controllers/telemetry/telemetryController");
 // loop or abuse can't flood the collection; the client also dedupes + caps.
 router.post("/client-error", rateLimit("client-error", 60, 60 * 60), optionalAuth, c.reportClientError);
 
+// Funnel analytics events — a handful fire per session, so the cap is generous.
+router.post("/event", rateLimit("event", 300, 60 * 60), optionalAuth, c.recordEvent);
+
 module.exports = router;

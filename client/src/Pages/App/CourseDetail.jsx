@@ -12,6 +12,7 @@ import {
     Sparkles,
 } from "lucide-react";
 import { getCourse, enroll as enrollApi, unenroll as unenrollApi } from "@/Api/CoursesApi";
+import { track } from "@/lib/telemetry";
 import { CourseSky, hueFor } from "@/Components/General/CourseBanner";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
@@ -69,6 +70,7 @@ export default function CourseDetail() {
         setBusy(true);
         try {
             await enrollApi({ slug });
+            track("onboarding_done"); // funnel: picked a batch/exam (audit C3)
             await refresh(); // pull the fresh user so user.exams reflects the new batch
             setEnrolled(true);
             toast.success(`You're in, welcome to ${course.name}`);

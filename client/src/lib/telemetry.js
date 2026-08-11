@@ -1,4 +1,5 @@
 import api from "@/Api/axios";
+import { getAnonId } from "@/Api/ActivityApi";
 
 // Best-effort client crash reporting to our own backend (audit C3): so a broken
 // deploy on some phone surfaces in the admin panel instead of silently losing a
@@ -32,6 +33,25 @@ export function reportError(error, meta) {
             .catch(() => {}); // observability must never break the app
     } catch {
         // Never throw from the error reporter itself.
+    }
+}
+
+// Fire a funnel analytics event (audit C3): land → register → onboarding →
+// first test → paywall → payment. Best-effort and non-blocking; carries the
+// stable anon browser id so pre-login steps join to the user later. Unknown
+// names are ignored server-side, so callers never need to guard.
+export function track(name, props) {
+    try {
+        api
+            .post("/telemetry/event", {
+                name,
+                anonId: getAnonId(),
+                path: typeof window !== "undefined" ? window.location.pathname : undefined,
+                props: props && typeof props === "object" ? props : undefined,
+            })
+            .catch(() => {});
+    } catch {
+        // never throw from analytics
     }
 }
 

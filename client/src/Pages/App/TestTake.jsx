@@ -4,6 +4,7 @@ import { Clock, Loader2, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { getTest, submitTest } from "@/Api/TestsApi";
+import { track } from "@/lib/telemetry";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff } from "@/lib/roles";
 import ProtectedContent from "@/Components/Security/ProtectedContent";
@@ -43,6 +44,7 @@ export default function TestTake() {
                 setSecondsLeft((res.test.durationMinutes || 30) * 60);
                 startedAtRef.current = new Date().toISOString();
                 setStarted(true);
+                track("first_test_start"); // funnel: opened a test (audit C3)
             })
             .catch((err) => {
                 if (!active) return;
@@ -81,6 +83,7 @@ export default function TestTake() {
                 })),
             };
             const res = await submitTest(id, payload);
+            track("first_test_done"); // funnel: completed a test (audit C3)
             navigate(`/tests/result/${res.attemptId}`, { replace: true });
         } catch (err) {
             // Raced a second submit of a single-attempt test: go to the first result.

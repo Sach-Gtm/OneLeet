@@ -1,9 +1,15 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Crown, X, Check } from "lucide-react";
+import { track } from "@/lib/telemetry";
 
 // Shown when a free student tries to open premium content. Explains the perk and
 // sends them to the Pricing page (where checkout will live; today a placeholder).
 export default function PremiumGateModal({ open, onClose, itemTitle }) {
+    // Funnel: the paywall was shown (audit C3).
+    useEffect(() => {
+        if (open) track("paywall_viewed");
+    }, [open]);
     if (!open) return null;
     return (
         <div

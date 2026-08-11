@@ -196,6 +196,16 @@ export const getErrorLogs = async ({ source = "", limit = 100 } = {}) => {
     }
 };
 
+// Acquisition funnel counts for the analytics panel (audit C3).
+export const getFunnel = async (days = 7) => {
+    try {
+        const { data } = await api.get("/admin/funnel", { params: { days } });
+        return data; // { success, days, base, steps: [{ name, count, pctOfTop, pctOfPrev }] }
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // Download the achievements CSV (triggers a browser download).
 export const exportAchievements = async () => {
     try {
