@@ -168,10 +168,11 @@ export default function TestTake() {
                     )}
                     {isPractice ? (
                         <button
-                            onClick={() => navigate("/tests")}
-                            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                            onClick={() => (answeredCount > 0 ? handleSubmit() : navigate("/tests"))}
+                            disabled={submitting}
+                            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
                         >
-                            Finish
+                            {submitting ? "Saving…" : "Finish"}
                         </button>
                     ) : (
                         <button

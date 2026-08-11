@@ -55,6 +55,12 @@ export default function TestResult() {
         );
     }
 
+    // A deadline (competitive) test that hasn't closed yet keeps its answer key
+    // sealed — the server strips correct answers/explanations until closeAt, and
+    // we show a neutral "answers unlock after close" review instead.
+    const locked = Boolean(attempt.reviewLocked);
+    const unlockAt = attempt.reviewUnlocksAt ? new Date(attempt.reviewUnlocksAt) : null;
+
     const summary = [
         { label: "Correct", value: attempt.correctCount, icon: CheckCircle2, wrap: "border-emerald-200 bg-emerald-50", ring: "bg-emerald-100 text-emerald-600", num: "text-emerald-700" },
         { label: "Incorrect", value: attempt.incorrectCount, icon: XCircle, wrap: "border-rose-200 bg-rose-50", ring: "bg-rose-100 text-rose-600", num: "text-rose-600" },
@@ -121,6 +127,22 @@ export default function TestResult() {
             {/* Review */}
             <div className="space-y-4">
                 <h2 className="text-sm font-bold text-slate-800">Review</h2>
+                {locked && (
+                    <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/30 dark:bg-amber-500/10">
+                        <Clock size={18} className="mt-0.5 shrink-0 text-amber-600" />
+                        <div className="text-sm">
+                            <p className="font-semibold text-amber-800 dark:text-amber-300">
+                                Answers unlock after the test closes
+                            </p>
+                            <p className="text-amber-700 dark:text-amber-200/80">
+                                This is a timed test that&apos;s still open for others. You can see your
+                                score now, but the correct answers and explanations stay sealed
+                                {unlockAt ? ` until ${unlockAt.toLocaleString()}` : " until it closes"} to
+                                keep it fair. Check back then for the full review.
+                            </p>
+                        </div>
+                    </div>
+                )}
                 {attempt.answers.map((a, i) => {
                     // Prefer the immutable snapshot saved with the attempt; fall back
                     // to the (populated) live question for attempts saved before we
@@ -130,7 +152,16 @@ export default function TestResult() {
                     const options = (a.options && a.options.length ? a.options : q.options) || [];
                     const correctIndex = a.correctIndex ?? q.correctIndex;
                     const explanation = a.explanation ?? q.explanation;
-                    const badge = (
+                    const badge = locked ? (
+                        <span
+                            className={cn(
+                                "shrink-0 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase",
+                                a.selectedIndex === null ? "bg-slate-100 text-slate-500" : "bg-indigo-50 text-indigo-600"
+                            )}
+                        >
+                            {a.selectedIndex === null ? "Skipped" : "Answered"}
+                        </span>
+                    ) : (
                         <span
                             className={cn(
                                 "shrink-0 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase",
@@ -170,8 +201,11 @@ export default function TestResult() {
                             </div>
                             <div className="mt-3 space-y-2">
                                 {options.map((opt, idx) => {
-                                    const isCorrect = idx === correctIndex;
                                     const isChosen = a.selectedIndex === idx;
+                                    // While locked, never reveal the key — only mark what the
+                                    // student picked, in a neutral colour.
+                                    const isCorrect = !locked && idx === correctIndex;
+                                    const showWrong = !locked && isChosen && idx !== correctIndex;
                                     return (
                                         <div
                                             key={idx}
@@ -179,8 +213,10 @@ export default function TestResult() {
                                                 "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm",
                                                 isCorrect
                                                     ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                                                    : isChosen
+                                                    : showWrong
                                                     ? "border-red-300 bg-red-50 text-red-700"
+                                                    : locked && isChosen
+                                                    ? "border-indigo-300 bg-indigo-50 text-indigo-800"
                                                     : "border-slate-200 text-slate-600"
                                             )}
                                         >
@@ -189,7 +225,12 @@ export default function TestResult() {
                                             </span>
                                             {opt}
                                             {isCorrect && <CheckCircle2 size={15} className="ml-auto text-emerald-600" />}
-                                            {isChosen && !isCorrect && <XCircle size={15} className="ml-auto text-red-500" />}
+                                            {showWrong && <XCircle size={15} className="ml-auto text-red-500" />}
+                                            {locked && isChosen && (
+                                                <span className="ml-auto text-[10px] font-semibold uppercase text-indigo-500">
+                                                    Your pick
+                                                </span>
+                                            )}
                                         </div>
                                     );
                                 })}

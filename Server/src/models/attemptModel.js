@@ -36,6 +36,10 @@ const AttemptSchema = new mongoose.Schema(
         unattemptedCount: { type: Number, default: 0 },
         accuracy: { type: Number, default: 0 }, // percentage of attempted that were correct
         durationTakenSeconds: { type: Number, default: 0 },
+        // Whether this attempt is of a graded (mode "test") test. Graded attempts
+        // are single-attempt per batch and enforced unique at the DB level (below);
+        // practice attempts (false) are repeatable and unconstrained.
+        graded: { type: Boolean, default: false },
         startedAt: { type: Date },
         submittedAt: { type: Date },
         // Final leaderboard position within this attempt's test, written once the
@@ -51,5 +55,15 @@ AttemptSchema.index({ user: 1, submittedAt: -1 });
 AttemptSchema.index({ test: 1, score: -1 });
 // Per-batch single-attempt / "attempted" lookup.
 AttemptSchema.index({ user: 1, test: 1, examCode: 1 });
+// DB-level single-attempt guarantee for GRADED tests only: closes the tiny
+// two-tab/two-device race where the app-level findOne-then-create in submitTest
+// could both pass and create duplicate graded attempts. Practice attempts
+// (graded:false) and legacy docs (no `graded` field) are excluded by the
+// partial filter, so this is safe to add to an existing collection — it never
+// constrains historical data, only new graded attempts.
+AttemptSchema.index(
+    { user: 1, test: 1, examCode: 1 },
+    { unique: true, partialFilterExpression: { graded: true }, name: "uniq_graded_attempt" }
+);
 
 module.exports = mongoose.model("Attempt", AttemptSchema);

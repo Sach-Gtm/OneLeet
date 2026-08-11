@@ -286,24 +286,50 @@ async function submitTest(req, res, next) {
             Math.max(0, Math.round((submittedAt - startedAt) / 1000))
         );
 
-        const attempt = await Attempt.create({
-            user: req.user._id,
-            test: test._id,
-            testTitle: test.title,
-            examCode: exam, // the batch this attempt was taken under
-            answers,
-            score,
-            totalMarks,
-            correctCount,
-            incorrectCount,
-            unattemptedCount,
-            accuracy,
-            durationTakenSeconds,
-            startedAt,
-            submittedAt,
-        });
+        const graded = test.mode === "test";
 
-        await applyAttemptToStats(req.user, { accuracy, durationTakenSeconds });
+        let attempt;
+        try {
+            attempt = await Attempt.create({
+                user: req.user._id,
+                test: test._id,
+                testTitle: test.title,
+                examCode: exam, // the batch this attempt was taken under
+                answers,
+                score,
+                totalMarks,
+                correctCount,
+                incorrectCount,
+                unattemptedCount,
+                accuracy,
+                durationTakenSeconds,
+                graded, // drives the DB-level single-attempt guarantee for mock tests
+                startedAt,
+                submittedAt,
+            });
+        } catch (err) {
+            // The partial-unique index caught a graded re-submit that raced past the
+            // findOne check above (two tabs/devices). Return the existing attempt.
+            if (err?.code === 11000) {
+                const prev = await Attempt.findOne({ user: req.user._id, test: test._id, examCode: exam })
+                    .select("_id")
+                    .lean();
+                return res.status(409).json({
+                    success: false,
+                    code: "ALREADY_ATTEMPTED",
+                    attemptId: prev?._id,
+                    message: "You've already submitted this test.",
+                });
+            }
+            throw err;
+        }
+
+        // Only graded mock tests feed the dashboard stats (Tests Taken, accuracy,
+        // syllabus %). Practice is repeatable, so counting it would inflate those;
+        // the streak stays alive via the activity heartbeat instead.
+        if (graded) {
+            await applyAttemptToStats(req.user, { accuracy, durationTakenSeconds });
+        }
 
         return res.status(201).json({
             success: true,
@@ -341,11 +367,39 @@ async function getAttempt(req, res, next) {
                 path: "answers.question",
                 select: "text options correctIndex explanation subject topic difficulty marks",
             })
-            .populate("test", "title durationMinutes mode");
+            .populate("test", "title durationMinutes mode closeAt");
         if (!attempt) return res.status(404).json({ success: false, message: "Attempt not found" });
         if (String(attempt.user) !== String(req.user._id)) {
             return res.status(403).json({ success: false, message: "Not your attempt" });
         }
+
+        // Integrity: for a competitive (deadline) test that is STILL OPEN, an
+        // early submitter must not see the answer key + explanations — that would
+        // let them leak answers to others still taking it, the same fairness rule
+        // the leaderboard already enforces. Their own score/what-they-picked is
+        // fine to show; only the correct answers stay sealed until closeAt.
+        // Lifetime graded tests (no closeAt) and practice sets are never locked,
+        // so the normal "see all your answers right after" behaviour is unchanged.
+        const t = attempt.test;
+        const reviewLocked = Boolean(
+            t && t.mode === "test" && t.closeAt && Date.now() < new Date(t.closeAt).getTime()
+        );
+
+        if (reviewLocked) {
+            const obj = attempt.toObject();
+            obj.answers = (obj.answers || []).map((a) => {
+                const { correctIndex, explanation, correct, ...rest } = a;
+                if (rest.question) {
+                    const { correctIndex: _c, explanation: _e, ...q } = rest.question;
+                    rest.question = q;
+                }
+                return rest; // selectedIndex + question text/options remain; key removed
+            });
+            obj.reviewLocked = true;
+            obj.reviewUnlocksAt = t.closeAt;
+            return res.status(200).json({ success: true, attempt: obj });
+        }
+
         return res.status(200).json({ success: true, attempt });
     } catch (error) {
         next(error);
