@@ -284,8 +284,8 @@ export default function Dashboard() {
             {/* Premium WhatsApp — floating pulsing button, self-gates for non-premium. */}
             <FloatingWhatsApp context="from dashboard" />
 
-            {/* Welcome + Overall Prep — premium students get the warm "gold
-                membership" hero; everyone else keeps the brand-blue welcome. */}
+            {/* Welcome + Overall Prep — premium students get the aurora-night
+                membership hero; everyone else keeps the brand-blue welcome. */}
             <div className="grid gap-6 lg:grid-cols-3">
                 {premium ? (
                     <div className="lg:col-span-2">
@@ -330,7 +330,7 @@ export default function Dashboard() {
                     className={cn(
                         "flex items-center gap-4 rounded-2xl border bg-white p-6 transition hover:shadow-md",
                         premium
-                            ? "border-amber-200/80 hover:border-amber-300 hover:shadow-amber-200/40"
+                            ? "border-purple-200/70 hover:border-purple-300 hover:shadow-purple-200/40 dark:border-purple-500/25"
                             : "border-slate-200 hover:border-indigo-200"
                     )}
                 >
@@ -368,7 +368,7 @@ export default function Dashboard() {
                             className={cn(
                                 "rounded-2xl border bg-white p-5 transition-shadow hover:shadow-md",
                                 premium
-                                    ? "border-amber-200/80 hover:shadow-amber-200/50 dark:border-amber-500/20"
+                                    ? "border-purple-200/70 hover:shadow-purple-200/40 dark:border-purple-500/25"
                                     : "border-slate-200"
                             )}
                         >

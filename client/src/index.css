@@ -283,6 +283,7 @@
 .dark .bg-violet-50 { background-color: rgb(203 72 38 / 0.18); }
 .dark .bg-amber-50 { background-color: rgb(245 158 11 / 0.15); }
 .dark .bg-emerald-50 { background-color: rgb(16 185 129 / 0.15); }
+.dark .bg-teal-50 { background-color: rgb(20 184 166 / 0.15); }
 .dark .bg-rose-50,
 .dark .bg-red-50 { background-color: rgb(244 63 94 / 0.15); }
 .dark .bg-sky-50 { background-color: rgb(56 189 248 / 0.15); }
@@ -349,7 +350,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(100deg, transparent 25%, rgba(255, 240, 200, 0.35) 50%, transparent 75%);
+  background: linear-gradient(100deg, transparent 25%, rgba(226, 232, 240, 0.24) 50%, transparent 75%);
   transform: translateX(-130%) skewX(-14deg);
   animation: ol-shimmer 6s ease-in-out infinite;
   animation-delay: var(--ol-shimmer-delay, 1.4s);
@@ -378,29 +379,198 @@
 }
 .ol-glow { animation: ol-glow 6.5s ease-in-out infinite; }
 
-/* Gold-foil text with a slowly panning sheen (the name in the hero). */
-.ol-gold-text {
-  background: linear-gradient(92deg, #f7e39c 0%, #e8b44a 22%, #fff3c9 42%, #d99a2b 62%, #f7e39c 82%, #e8b44a 100%);
+/* Platinum-foil text with a slowly panning sheen (the name in the hero). */
+.ol-foil-text {
+  background: linear-gradient(92deg, #e2e8f0 0%, #c7d2fe 22%, #ffffff 42%, #a5b4fc 62%, #e2e8f0 82%, #c7d2fe 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: ol-gold-pan 7s linear infinite;
+  animation: ol-foil-pan 7s linear infinite;
 }
-@keyframes ol-gold-pan { to { background-position: 200% center; } }
+@keyframes ol-foil-pan { to { background-position: 200% center; } }
 
 /* Slow spin for the crown's conic halo. */
 @keyframes ol-spin-slow { to { transform: rotate(360deg); } }
 .ol-spin-slow { animation: ol-spin-slow 20s linear infinite; }
+
+/* Star twinkle in the premium night sky. */
+@keyframes ol-twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.75); }
+  50%      { opacity: 1;   transform: scale(1.1); }
+}
+.ol-twinkle {
+  animation: ol-twinkle var(--ol-tw-dur, 4s) ease-in-out infinite;
+  animation-delay: var(--ol-tw-delay, 0s);
+}
+
+/* Aurora ribbon sway (the curved light bands in the premium hero). */
+@keyframes ol-ribbon {
+  0%, 100% { transform: translate3d(-2.5%, 0, 0); }
+  50%      { transform: translate3d(2.5%, -8px, 0); }
+}
+.ol-ribbon { animation: ol-ribbon 13s ease-in-out infinite; will-change: transform; }
+
+/* A shooting star: streaks across the sky briefly, then a long quiet gap.
+   The element itself carries opacity-0 so it stays invisible when animations
+   are off (reduced motion). */
+@keyframes ol-shoot {
+  0%  { transform: translate3d(0, 0, 0) rotate(18deg); opacity: 0; }
+  3%  { opacity: 0.9; }
+  11% { transform: translate3d(300px, 110px, 0) rotate(18deg); opacity: 0; }
+  100% { transform: translate3d(300px, 110px, 0) rotate(18deg); opacity: 0; }
+}
+.ol-shoot {
+  animation: ol-shoot var(--ol-shoot-dur, 11s) ease-in infinite;
+  animation-delay: var(--ol-shoot-delay, 2s);
+}
+
+/* Slow orbit for the spark circling the crown planet. */
+.ol-orbit { animation: ol-spin-slow var(--ol-orbit-dur, 9s) linear infinite; }
+
+/* Course-banner "write-on": the exam name draws itself in stroke, then the
+   fill fades up and the stroke settles to a faint outline. Runs once. */
+@keyframes ol-write {
+  0%   { stroke-dashoffset: 300; fill-opacity: 0; stroke-opacity: 1; }
+  60%  { fill-opacity: 0; }
+  85%  { fill-opacity: 1; }
+  100% { stroke-dashoffset: 0; fill-opacity: 1; stroke-opacity: 0.35; }
+}
+.ol-write {
+  paint-order: stroke;
+  stroke-width: 1.2;
+  stroke-dasharray: 300;
+  stroke-opacity: 0.35;
+  animation: ol-write 2.4s ease-out forwards;
+}
+
+/* ...and its underline sweeps open from the middle just after. */
+@keyframes ol-underline-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.ol-underline {
+  transform-origin: center;
+  animation: ol-underline-grow 0.9s 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Gentle opacity pulse (summit beacon). */
+@keyframes ol-pulse {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.95; }
+}
+.ol-pulse { animation: ol-pulse 3.4s ease-in-out infinite; }
+
+/* Premium glass card: a deep-night surface wearing a slowly circling aurora
+   border (gold -> violet -> teal -> pink). GPU-only: the gradient lives on a
+   ::before that rotates with `transform` (composited, never repainted); the
+   inner surface masks everything but a 1px rim. */
+.ol-glass-card {
+  position: relative;
+  overflow: hidden;
+  padding: 1px;
+  background: rgba(129, 140, 248, 0.28); /* static rim fallback (reduced motion / paint-before-anim) */
+}
+.ol-glass-card::before {
+  content: "";
+  position: absolute;
+  /* -100% (3x each axis) is the minimum that keeps the rotating gradient
+     covering the card's diagonal; bigger just wastes GPU texture memory. */
+  inset: -100%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(167, 139, 250, 0.75),
+    rgba(103, 232, 249, 0.6),
+    rgba(232, 121, 249, 0.55),
+    rgba(129, 140, 248, 0.6),
+    rgba(167, 139, 250, 0.75)
+  );
+  animation: ol-spin-slow 9s linear infinite;
+  will-change: transform;
+}
+.ol-glass-inner {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(1rem - 1px);
+  background: radial-gradient(130% 130% at 18% 0%, #1d234f 0%, #111539 55%, #0a0d28 100%);
+}
+
+/* Smaller screens keep the world but calm it down: fewer simultaneous movers
+   (some layers are hidden via `sm:` utilities in the components) and slower
+   cycles for the ones that remain. */
+@media (max-width: 640px) {
+  .ol-ribbon { animation-duration: 19s; }
+  .ol-glass-card::before { animation-duration: 14s; }
+  .ol-shimmer::after { animation-duration: 9s; }
+  .ol-aurora { animation-duration: 22s; }
+}
+
+/* -------------------------------------------------------------------------
+   HOME "buddy" scene: drifting clouds, the robot mascot's wave + blink, and
+   the marching dashed connectors between the feature tiles and the robot.
+   ------------------------------------------------------------------------- */
+
+/* A cloud drifting gently side to side. */
+@keyframes ol-cloud {
+  0%, 100% { transform: translate3d(-14px, 0, 0); }
+  50%      { transform: translate3d(14px, -4px, 0); }
+}
+.ol-cloud { animation: ol-cloud var(--ol-cloud-dur, 36s) ease-in-out infinite; will-change: transform; }
+
+/* The buddy's raised arm waving from the shoulder. */
+@keyframes ol-wave {
+  0%, 100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(14deg); }
+}
+.ol-wave {
+  transform-box: fill-box;
+  transform-origin: 30% 90%;
+  animation: ol-wave 2.6s ease-in-out infinite;
+}
+
+/* Both eyes blink together every few seconds. */
+@keyframes ol-blink {
+  0%, 91%, 100% { transform: scaleY(1); }
+  95%           { transform: scaleY(0.12); }
+}
+.ol-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ol-blink 4.8s ease-in-out infinite;
+}
+
+/* Connector dashes marching toward the robot (tiny painted area). */
+@keyframes ol-dash-march { to { stroke-dashoffset: -18; } }
+@keyframes ol-dash-march-rev { to { stroke-dashoffset: 18; } }
+.ol-dash { animation: ol-dash-march 1.6s linear infinite; }
+.ol-dash-rev { animation: ol-dash-march-rev 1.6s linear infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   .ol-shimmer::after,
   .ol-float,
   .ol-aurora,
   .ol-glow,
-  .ol-gold-text,
+  .ol-foil-text,
+  .ol-twinkle,
+  .ol-ribbon,
+  .ol-shoot,
+  .ol-orbit,
+  .ol-pulse,
+  .ol-glass-card::before,
+  .ol-write,
+  .ol-underline,
+  .ol-cloud,
+  .ol-wave,
+  .ol-blink,
+  .ol-dash,
+  .ol-dash-rev,
   .ol-spin-slow { animation: none; }
-  .ol-gold-text { background-position: 0 center; }
+  .ol-foil-text { background-position: 0 center; }
+  .ol-twinkle { opacity: 0.7; transform: none; }
+  .ol-pulse { opacity: 0.5; }
+  /* motionless layers must not stay GPU-promoted */
+  .ol-aurora,
+  .ol-ribbon,
+  .ol-cloud,
+  .ol-glass-card::before { will-change: auto; }
 }
 
 /* -------------------------------------------------------------------------

@@ -172,8 +172,8 @@ function SidebarContent({ user, onNavigate, onLogout, collapsed = false, onToggl
                             <div className="min-w-0 flex-1">
                                 <p className="truncate text-sm font-semibold text-slate-800">{user?.name || "User"}</p>
                                 {premium ? (
-                                    <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400">
-                                        <Crown size={11} className="text-amber-500" fill="currentColor" /> Premium Member
+                                    <span className="inline-flex items-center gap-1 text-xs font-bold text-purple-600 dark:text-purple-300">
+                                        <Crown size={11} className="text-purple-500 dark:text-purple-400" fill="currentColor" /> Premium Member
                                     </span>
                                 ) : (
                                     <p className="truncate text-xs text-slate-400">{planLabel(user)}</p>
@@ -375,9 +375,9 @@ export default function AppShell() {
             {/* Main column (bottom padding on mobile so content clears the tab bar) */}
             <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.75rem+env(safe-area-inset-bottom))] lg:pb-0">
                 <header className="relative sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur sm:px-6">
-                    {/* Premium members carry a faint gold hairline on every page. */}
+                    {/* Premium members carry a faint aurora hairline on every page. */}
                     {premium && (
-                        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-400/70 to-transparent" />
+                        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-purple-400/60 to-transparent" />
                     )}
                     {/* Mobile: brand top-left (nav lives in the bottom bar). */}
                     <Link to="/dashboard" className="lg:hidden" aria-label="OneLeet home">

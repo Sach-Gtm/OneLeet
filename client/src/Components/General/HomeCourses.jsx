@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { GraduationCap, ArrowRight, CheckCircle2 } from "lucide-react";
 import { getCourses } from "@/Api/CoursesApi";
+import CourseBanner from "@/Components/General/CourseBanner";
 
 // Landing-page batches strip: every published course, browsable and free to
 // join WITHOUT logging in. Cards deep-link to the public course page. Hides
@@ -35,15 +36,13 @@ export default function HomeCourses() {
                         to={`/courses/${c.slug}`}
                         className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg"
                     >
-                        <div className="relative flex h-24 items-center gap-2 bg-gradient-to-br from-indigo-600 to-indigo-800 px-5 text-white">
-                            <GraduationCap className="h-6 w-6 shrink-0 opacity-90" />
-                            <span className="text-sm font-semibold opacity-90">{c.examName || "LEET"}</span>
+                        <CourseBanner label={c.examName || "LEET"} className="h-24">
                             {c.enrolled && (
                                 <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
                                     <CheckCircle2 size={12} /> Enrolled
                                 </span>
                             )}
-                        </div>
+                        </CourseBanner>
                         <div className="flex flex-1 flex-col p-5">
                             <h3 className="text-base font-bold text-slate-900">{c.name}</h3>
                             {c.tagline && <p className="mt-1.5 line-clamp-2 text-sm text-slate-500">{c.tagline}</p>}

@@ -9,6 +9,7 @@ import {
     Sparkles,
 } from "lucide-react";
 import { getCourses } from "@/Api/CoursesApi";
+import CourseBanner, { CourseSky, hueFor } from "@/Components/General/CourseBanner";
 import { useSeo } from "@/lib/useSeo";
 
 function CourseCard({ course, index }) {
@@ -22,28 +23,29 @@ function CourseCard({ course, index }) {
                 to={`/courses/${course.slug}`}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800"
             >
-                {/* Cover — image if set, else a branded gradient with the exam name. */}
-                <div className="relative h-32 overflow-hidden bg-gradient-to-br from-indigo-600 to-indigo-800">
-                    {course.coverImage?.url ? (
+                {/* Cover — image if set, else the animated night banner with the exam name. */}
+                {course.coverImage?.url ? (
+                    <div className="relative h-32 overflow-hidden bg-gradient-to-br from-indigo-600 to-indigo-800">
                         <img
                             src={course.coverImage.url}
                             alt={course.name}
                             className="h-full w-full object-cover transition group-hover:scale-105"
                         />
-                    ) : (
-                        <div className="flex h-full items-center gap-2 px-5 text-white">
-                            <GraduationCap className="h-7 w-7 shrink-0 opacity-90" />
-                            <span className="text-sm font-semibold opacity-90">
-                                {course.examName || "LEET"}
+                        {course.enrolled && (
+                            <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
+                                <CheckCircle2 size={12} /> Enrolled
                             </span>
-                        </div>
-                    )}
-                    {course.enrolled && (
-                        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
-                            <CheckCircle2 size={12} /> Enrolled
-                        </span>
-                    )}
-                </div>
+                        )}
+                    </div>
+                ) : (
+                    <CourseBanner label={course.examName || "LEET"} className="h-32">
+                        {course.enrolled && (
+                            <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
+                                <CheckCircle2 size={12} /> Enrolled
+                            </span>
+                        )}
+                    </CourseBanner>
+                )}
 
                 <div className="flex flex-1 flex-col p-5">
                     <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
@@ -96,18 +98,20 @@ export default function Courses() {
     return (
         <div className="mx-auto max-w-6xl space-y-6 px-4 pb-16 pt-28 sm:pt-32">
             {/* Header */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white">
-                <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
-                    <Sparkles size={13} /> Batches
-                </span>
-                <h1 className="mt-3 text-2xl font-bold">Enroll in your batch</h1>
-                <p className="mt-1 max-w-lg text-sm text-indigo-100">
-                    Pick the college-wise batch that matches your target exam. Joining is
-                    <strong className="font-semibold text-white"> free</strong>: real past
-                    papers, ranked mocks, seat &amp; cut-off data and a plan tied to your exam
-                    date, all in one place.
-                </p>
+            <div className="relative overflow-hidden rounded-2xl p-6 text-white">
+                <CourseSky hue={hueFor("Batches")} />
+                <div className="relative">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
+                        <Sparkles size={13} /> Batches
+                    </span>
+                    <h1 className="mt-3 text-2xl font-bold">Enroll in your batch</h1>
+                    <p className="mt-1 max-w-lg text-sm text-indigo-100">
+                        Pick the college-wise batch that matches your target exam. Joining is
+                        <strong className="font-semibold text-white"> free</strong>: real past
+                        papers, ranked mocks, seat &amp; cut-off data and a plan tied to your exam
+                        date, all in one place.
+                    </p>
+                </div>
             </div>
 
             {/* Loading */}
