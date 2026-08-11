@@ -115,7 +115,6 @@ export default function Navbar() {
                                 </button>
                             </div>
 
-                            <Link to="/community" className={linkClass}>Community</Link>
                             <Link to="/mentor" className={linkClass}>Mentors</Link>
                             <Link to="/pricing" className={linkClass}>Pricing</Link>
                         </div>
@@ -247,7 +246,6 @@ export default function Navbar() {
                                         <Link to="/colleges" className="block rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100">Colleges</Link>
                                     </MobileAccordion>
 
-                                    <Link to="/community" className="rounded-xl p-3 text-base font-medium text-slate-700 hover:bg-slate-100">Community</Link>
                                     <Link to="/mentor" className="rounded-xl p-3 text-base font-medium text-slate-700 hover:bg-slate-100">Mentors</Link>
                                     <Link to="/pricing" className="rounded-xl p-3 text-base font-medium text-slate-700 hover:bg-slate-100">Pricing</Link>
 
