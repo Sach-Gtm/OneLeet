@@ -5,6 +5,7 @@ const bootstrapSuperadmin = require("./src/config/bootstrapSuperadmin");
 const { startEmailHealthChecks } = require("./src/utils/email");
 const { startKeepAwake } = require("./src/utils/keepAwake");
 const { startLeaderboardScheduler } = require("./src/jobs/leaderboardScheduler");
+const { startTestLifecycleScheduler } = require("./src/jobs/testLifecycleScheduler");
 const { ensureExamsSeeded } = require("./src/config/exams");
 const { ensureMentorsSeeded } = require("./src/config/seedMentors");
 const { ensureIpuSyllabusSeeded } = require("./src/config/seedIpuSyllabus");
@@ -66,6 +67,7 @@ connectDB().then(async () => {
     await ensurePaidCoursesSeeded();
     await ensureEnrollmentBackfill();
     startLeaderboardScheduler();
+    startTestLifecycleScheduler();
 });
 
 // Probe email deliverability so OTP only turns on when mail can actually be

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Bell, BellRing, Loader2, Trophy } from "lucide-react";
+import { Bell, BellRing, Loader2, Trophy, Clock } from "lucide-react";
 import { getNotifications, markAllNotificationsRead } from "@/Api/NotificationApi";
 import {
     notificationsSupported,
@@ -9,6 +9,15 @@ import {
     showSystemNotification,
 } from "@/lib/systemNotify";
 import { enableBackgroundPush } from "@/lib/webPush";
+
+// Where a notification deep-links, by type. Leaderboard → the ranked board;
+// a test went-live / closing-soon alert → the test itself. Others don't link.
+function deepLink(n) {
+    if (!n.test) return undefined;
+    if (n.type === "leaderboard") return `/tests/${n.test}/leaderboard`;
+    if (n.type === "test-live" || n.type === "test-closing") return `/tests/${n.test}`;
+    return undefined;
+}
 
 function timeAgo(date) {
     const s = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -53,7 +62,7 @@ export default function NotificationBell() {
                         showSystemNotification(n.title, {
                             body: n.body,
                             tag: String(n._id),
-                            url: n.type === "leaderboard" && n.test ? `/tests/${n.test}/leaderboard` : undefined,
+                            url: deepLink(n),
                         })
                     );
             }
@@ -169,6 +178,8 @@ export default function NotificationBell() {
                         ) : (
                             items.map((n) => {
                                 const isLeaderboard = n.type === "leaderboard" && n.test;
+                                const isTestAlert = (n.type === "test-live" || n.type === "test-closing") && n.test;
+                                const link = deepLink(n);
                                 const cls =
                                     "block border-b border-slate-50 px-4 py-3 last:border-0 hover:bg-slate-50";
                                 const inner = (
@@ -183,20 +194,24 @@ export default function NotificationBell() {
                                                 {isLeaderboard && (
                                                     <Trophy className="h-3.5 w-3.5 shrink-0 text-amber-500" />
                                                 )}
+                                                {isTestAlert && (
+                                                    <Clock className="h-3.5 w-3.5 shrink-0 text-indigo-500" />
+                                                )}
                                                 {n.title}
                                             </p>
                                             <p className="text-sm text-slate-600">{n.body}</p>
                                             <p className="mt-0.5 text-xs text-slate-400">
                                                 {timeAgo(n.createdAt)}
                                                 {isLeaderboard && " · Tap to view your rank"}
+                                                {isTestAlert && " · Tap to open the test"}
                                             </p>
                                         </div>
                                     </div>
                                 );
-                                return isLeaderboard ? (
+                                return link ? (
                                     <Link
                                         key={n._id}
-                                        to={`/tests/${n.test}/leaderboard`}
+                                        to={link}
                                         onClick={() => setOpen(false)}
                                         className={cls}
                                     >
