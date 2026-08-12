@@ -21,7 +21,7 @@ function CourseCard({ course, index }) {
         >
             <Link
                 to={`/courses/${course.slug}`}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800"
+                className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-500/10 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-indigo-500/40"
             >
                 {/* Cover — image if set, else the animated night banner with the exam name. */}
                 {course.coverImage?.url ? (
@@ -47,25 +47,38 @@ function CourseCard({ course, index }) {
                     </CourseBanner>
                 )}
 
-                <div className="flex flex-1 flex-col p-5">
-                    <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                        {course.name}
-                    </h3>
-                    {course.tagline && (
-                        <p className="mt-1.5 line-clamp-3 text-sm text-slate-500 dark:text-slate-400">
-                            {course.tagline}
-                        </p>
-                    )}
-                    <div className="mt-auto flex items-center justify-between pt-4">
-                        <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                            <CheckCircle2 size={14} /> Free to join
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
-                            {course.enrolled ? "Open" : "View batch"}
-                            <ArrowRight size={15} className="transition group-hover:translate-x-0.5" />
-                        </span>
+                <div className="relative flex flex-1 flex-col p-5">
+                    {/* Soft drifting highlight so the body isn't a flat panel. */}
+                    <span
+                        aria-hidden="true"
+                        className="ol-float pointer-events-none absolute -right-6 -top-8 h-20 w-20 rounded-full bg-indigo-400/10 blur-2xl dark:bg-indigo-400/20"
+                    />
+                    <div className="relative z-10 flex flex-1 flex-col">
+                        <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                            {course.name}
+                        </h3>
+                        {course.tagline && (
+                            <p className="mt-1.5 line-clamp-3 text-sm text-slate-500 dark:text-slate-400">
+                                {course.tagline}
+                            </p>
+                        )}
+                        <div className="mt-auto flex items-center justify-between pt-4">
+                            <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                                <CheckCircle2 size={14} /> Free to join
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+                                {course.enrolled ? "Open" : "View batch"}
+                                <ArrowRight size={15} className="transition group-hover:translate-x-0.5" />
+                            </span>
+                        </div>
                     </div>
                 </div>
+
+                {/* Liquid-glass sheen: a soft light band sweeps across on hover. */}
+                <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 z-20 -translate-x-full -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[130%]"
+                />
             </Link>
         </motion.div>
     );

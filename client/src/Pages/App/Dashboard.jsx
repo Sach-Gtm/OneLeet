@@ -32,6 +32,7 @@ import FloatingWhatsApp from "@/Components/App/FloatingWhatsApp";
 import { PremiumWelcome, PremiumPerks } from "@/Components/App/premium/PremiumFx";
 import GetStartedChecklist from "@/Components/App/GetStartedChecklist";
 import ProUpgradeTeaser from "@/Components/App/ProUpgradeTeaser";
+import TopoLines from "@/Components/General/TopoLines";
 import { useCelebrate } from "@/context/CelebrationContext";
 import { isStudent, isPremium } from "@/lib/roles";
 
@@ -267,22 +268,23 @@ export default function Dashboard() {
             {needsExams && (
                 <Link
                     to="/courses"
-                    className="flex items-center gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 transition hover:bg-indigo-100"
+                    className="relative flex items-center gap-3 overflow-hidden rounded-2xl border border-indigo-200 bg-indigo-50 p-4 transition hover:bg-indigo-100 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/15"
                 >
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-indigo-100 text-indigo-600">
+                    <TopoLines color="rgb(99 102 241)" opacity={0.1} />
+                    <span className="relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
                         <GraduationCap size={18} />
                     </span>
-                    <div className="text-sm">
-                        <p className="font-semibold text-indigo-800">
+                    <div className="relative z-10 text-sm">
+                        <p className="font-semibold text-indigo-800 dark:text-indigo-200">
                             Enroll in your batch to unlock your prep
                         </p>
-                        <p className="text-indigo-700">
+                        <p className="text-indigo-700 dark:text-indigo-300/90">
                             Pick the college-wise batch for your target exam — it&apos;s free — and
                             we&apos;ll show only the tests, syllabus and notes that matter to you. Tap
                             to browse batches.
                         </p>
                     </div>
-                    <ArrowRight size={16} className="ml-auto shrink-0 text-indigo-500" />
+                    <ArrowRight size={16} className="relative z-10 ml-auto shrink-0 text-indigo-500 dark:text-indigo-400" />
                 </Link>
             )}
 
