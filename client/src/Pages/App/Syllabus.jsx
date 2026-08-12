@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { getSyllabi, toggleTopic } from "@/Api/SyllabusApi";
 import { getExams } from "@/Api/ExamsApi";
+import { useCelebrate } from "@/context/CelebrationContext";
 import { useAuth } from "@/context/AuthContext";
 import PremiumBadge from "@/Components/General/PremiumBadge";
 import PremiumGateModal from "@/Components/General/PremiumGateModal";
@@ -345,6 +346,7 @@ function ExamGroup({ name, syllabi, gi, startIndex, onToggle, onLocked, defaultO
 export default function Syllabus() {
     const { user } = useAuth();
     const [syllabi, setSyllabi] = useState(null);
+    const { celebrateOnce } = useCelebrate();
     const [examList, setExamList] = useState([]);
     const [gate, setGate] = useState(null); // premium syllabus a free student tapped
 
@@ -397,6 +399,18 @@ export default function Syllabus() {
             setSyllabi((prev) =>
                 (prev || []).map((s) => (String(s._id) === String(syllabusId) ? { ...s, completedTopics: res.completedTopics } : s))
             );
+            // Subject-complete doodle: if marking this topic just took the whole
+            // subject to 100%, celebrate it (once per subject). Chapters are stable
+            // across a toggle, so the closed-over syllabus is safe to measure.
+            if (done) {
+                const s = (syllabi || []).find((x) => String(x._id) === String(syllabusId));
+                if (s?.chapters) {
+                    const p = computeProgress(s.chapters, new Set((res.completedTopics || []).map(String)));
+                    if (p.total > 0 && p.percent === 100) {
+                        celebrateOnce(`subject-${syllabusId}`, "syllabus", { subject: s.subject || s.title });
+                    }
+                }
+            }
         } catch {
             toast.error("Couldn't save that — please try again.");
             load();
