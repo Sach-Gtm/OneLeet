@@ -6,7 +6,7 @@ import {
     ArrowRight, MessageCircle, Sparkles, X,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { createOrder, applyCoupon, verifyPayment } from "@/Api/PaymentsApi";
+import { createOrder, applyCoupon, verifyPayment, validateReferral } from "@/Api/PaymentsApi";
 import { track } from "@/lib/telemetry";
 import { useCelebrate } from "@/context/CelebrationContext";
 import { whatsappLink, WHATSAPP_RESPONSE } from "@/config/support";
@@ -21,6 +21,9 @@ export default function Checkout() {
     const [coupon, setCoupon] = useState(null); // { code, discount }
     const [couponBusy, setCouponBusy] = useState(false);
     const [referral, setReferral] = useState("");
+    const [referralApplied, setReferralApplied] = useState(false);
+    const [referralBusy, setReferralBusy] = useState(false);
+    const [referralMsg, setReferralMsg] = useState(null); // { ok, text }
     const [ticks, setTicks] = useState({ terms: false, successPromise: false, noRefund: false });
     const [placing, setPlacing] = useState(false);
     const [placed, setPlaced] = useState(null); // the created order (manual mode)
@@ -53,6 +56,26 @@ export default function Checkout() {
             toast.error(e.message || "Invalid coupon");
         } finally {
             setCouponBusy(false);
+        }
+    }
+
+    async function onApplyReferral() {
+        if (!referral.trim()) return;
+        setReferralBusy(true);
+        try {
+            const res = await validateReferral(referral.trim());
+            if (res?.valid) {
+                setReferralApplied(true);
+                setReferralMsg({ ok: true, text: res.message || "Referral applied successfully" });
+            } else {
+                setReferralApplied(false);
+                setReferralMsg({ ok: false, text: res?.message || "Invalid referral code" });
+            }
+        } catch (e) {
+            setReferralApplied(false);
+            setReferralMsg({ ok: false, text: e.message || "Couldn't check that code" });
+        } finally {
+            setReferralBusy(false);
         }
     }
 
@@ -204,12 +227,27 @@ export default function Checkout() {
                 </div>
                 <div>
                     <label className="text-xs font-semibold text-slate-500 dark:text-slate-400">Referral code <span className="font-normal text-slate-400">(optional)</span></label>
-                    <input
-                        value={referral}
-                        onChange={(e) => setReferral(e.target.value.toUpperCase())}
-                        placeholder="Friend's code"
-                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-                    />
+                    <div className="mt-1 flex gap-2">
+                        <input
+                            value={referral}
+                            onChange={(e) => { setReferral(e.target.value.toUpperCase()); setReferralApplied(false); setReferralMsg(null); }}
+                            disabled={referralApplied}
+                            placeholder="Friend's code"
+                            className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm disabled:opacity-70 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                        />
+                        {referralApplied ? (
+                            <button onClick={() => { setReferral(""); setReferralApplied(false); setReferralMsg(null); }} className="rounded-lg border border-slate-300 px-3 text-slate-500 dark:border-slate-600" title="Remove"><X size={15} /></button>
+                        ) : (
+                            <button onClick={onApplyReferral} disabled={referralBusy || !referral.trim()} className="rounded-lg bg-slate-900 px-4 text-sm font-semibold text-white disabled:opacity-60 dark:bg-slate-100 dark:text-slate-900">
+                                {referralBusy ? <Loader2 size={15} className="animate-spin" /> : "Apply"}
+                            </button>
+                        )}
+                    </div>
+                    {referralMsg && (
+                        <p className={"mt-1 text-[11px] font-medium " + (referralMsg.ok ? "text-emerald-600" : "text-rose-500")}>
+                            {referralMsg.ok ? "✓ " : ""}{referralMsg.text}
+                        </p>
+                    )}
                 </div>
             </div>
 

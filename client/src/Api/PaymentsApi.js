@@ -73,3 +73,13 @@ export const getMyReferral = async () => {
         unwrap(error);
     }
 };
+
+// Validate a friend's referral code at checkout → { valid, message, code? }.
+export const validateReferral = async (code) => {
+    try {
+        const { data } = await api.post("/referrals/validate", { code });
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};

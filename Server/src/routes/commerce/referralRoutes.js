@@ -7,6 +7,8 @@ const ctrl = require("../../controllers/commerce/referralController");
 
 // Student — my referral code + progress.
 router.get("/me", verifyToken, ctrl.myReferral);
+// Student — validate a friend's referral code at checkout.
+router.post("/validate", verifyToken, ctrl.validateReferral);
 
 // Admin — see who's earned the reward, mark it fulfilled.
 router.get("/admin", verifyToken, requireAdmin, ctrl.adminListReferrals);
