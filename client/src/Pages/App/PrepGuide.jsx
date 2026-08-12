@@ -14,6 +14,7 @@ import {
     Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import TopoLines from "@/Components/General/TopoLines";
 import { PHASES, MISTAKES, EXAM_DAY_KIT, PHASE_STYLES, phaseForDays } from "@/lib/prepGuide";
 import { useExamCountdown } from "@/lib/useExamCountdown";
 import { openCallback } from "@/lib/callback";
@@ -95,8 +96,9 @@ function PrepGuidePublicTeaser({ currentId }) {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white sm:p-8"
             >
+                <TopoLines color="rgb(255 255 255)" opacity={0.1} />
                 <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/10 blur-2xl" />
-                <div className="relative">
+                <div className="relative z-10">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
                         <Compass size={13} /> Free Prep Guide
                     </span>
@@ -188,9 +190,10 @@ export default function PrepGuide() {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white sm:p-8"
             >
+                <TopoLines color="rgb(255 255 255)" opacity={0.1} />
                 <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/10 blur-2xl" />
                 <div className="pointer-events-none absolute -bottom-16 right-24 h-40 w-40 rounded-full bg-violet-500/20 blur-2xl" />
-                <div className="relative">
+                <div className="relative z-10">
                     <div className="flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
                             <Compass size={13} /> Prep Guide
@@ -312,8 +315,9 @@ export default function PrepGuide() {
             {/* Premium coaching — the 1:1 tier. Active for premium; a locked
                 upsell for free students (the "30% + 1:1" part of the guide). */}
             <div className="relative overflow-hidden rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white dark:border-indigo-500/30">
+                <TopoLines color="rgb(255 255 255)" opacity={0.1} />
                 <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
-                <div className="relative">
+                <div className="relative z-10">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
                         <Crown size={13} /> Premium coaching
                     </span>
