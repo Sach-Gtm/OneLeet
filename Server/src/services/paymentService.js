@@ -124,9 +124,19 @@ async function markInstallmentPaid(order, installmentN, { paymentId = "", gatewa
     if (isFirst) await enrollAndSync(order.user, order.items);
     if (isFirst && order.referralCode && !order.referralCredited) await creditReferral(order);
     // Burn one coupon use on the first successful payment (not at cart time, so
-    // abandoned carts don't consume the allowance).
+    // abandoned carts don't consume the allowance). Atomic + limit-gated so the
+    // counter can never exceed usageLimit even if several orders reach payment at
+    // once (0 = unlimited). (Fully closing the create→pay window would mean
+    // reserving the slot at order-create and releasing it on abandonment — a UX
+    // trade-off with limited coupons, left to the founder to opt into.)
     if (isFirst && order.couponCode) {
-        await Coupon.updateOne({ code: order.couponCode.toUpperCase() }, { $inc: { usedCount: 1 } });
+        await Coupon.updateOne(
+            {
+                code: order.couponCode.toUpperCase(),
+                $or: [{ usageLimit: 0 }, { $expr: { $lt: ["$usedCount", "$usageLimit"] } }],
+            },
+            { $inc: { usedCount: 1 } }
+        );
     }
 
     await order.save();

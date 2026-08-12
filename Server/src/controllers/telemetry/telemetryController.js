@@ -3,6 +3,18 @@ const Event = require("../../models/eventModel");
 
 const clip = (s, n) => (typeof s === "string" ? s.slice(0, n) : undefined);
 
+// Keep a client-supplied object only if it's a small plain object, so the
+// telemetry endpoints can't be used to store arbitrary large blobs. Dropped
+// otherwise (best-effort — telemetry never blocks the client).
+const smallObject = (o, max = 2000) => {
+    try {
+        if (o && typeof o === "object" && !Array.isArray(o) && JSON.stringify(o).length <= max) return o;
+    } catch {
+        /* circular / non-serialisable */
+    }
+    return undefined;
+};
+
 // The acquisition funnel, in order. Only these event names are stored — anything
 // else is silently ignored so the collection can't fill with junk. The admin
 // funnel view reads the same list (config/funnel).
@@ -70,7 +82,7 @@ async function reportClientError(req, res) {
         release: b.release,
         userAgent: req.get && req.get("user-agent"),
         user: req.user && req.user._id,
-        meta: b.meta,
+        meta: smallObject(b.meta),
     });
     return res.status(204).end();
 }
@@ -86,7 +98,7 @@ async function recordEvent(req, res) {
             user: req.user ? req.user._id : undefined,
             anonId: req.user ? undefined : clip(req.body?.anonId, 60),
             path: clip(req.body?.path, 200),
-            props: req.body?.props && typeof req.body.props === "object" ? req.body.props : undefined,
+            props: smallObject(req.body?.props),
         });
     } catch {
         // best-effort — never surface an analytics failure to the client

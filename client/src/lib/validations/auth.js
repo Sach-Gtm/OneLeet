@@ -10,7 +10,7 @@ export const registerSchema = z
             .min(10, "Enter a valid phone number")
             .max(20, "Phone number too long")
             .regex(/^\+?[0-9][0-9\s-]{8,}$/, "Enter a valid phone number"),
-        password: z.string().min(6, "Password must be at least 6 characters"),
+        password: z.string().min(8, "Password must be at least 8 characters"),
         confirmPassword: z.string(),
     })
     .refine((d) => d.password === d.confirmPassword, {
@@ -29,7 +29,7 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z
     .object({
-        password: z.string().min(6, "Password must be at least 6 characters"),
+        password: z.string().min(8, "Password must be at least 8 characters"),
         confirmPassword: z.string(),
     })
     .refine((d) => d.password === d.confirmPassword, {

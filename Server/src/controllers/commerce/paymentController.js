@@ -163,6 +163,20 @@ async function verifyPayment(req, res, next) {
         const order = await Order.findOne({ _id: orderId, user: req.user._id });
         if (!order) return res.status(404).json({ success: false, message: "Order not found." });
 
+        // Bind the payment to THIS order's installment. `razorpay_order_id` must be
+        // the gateway order we created server-side for this installment — that
+        // gateway order fixes the amount on Razorpay's side, so a genuine but
+        // unrelated (e.g. ₹1) payment's signature can't be replayed to confirm this
+        // one. Without this check, verifyPaymentSignature only proves the triplet is
+        // a real merchant-account payment, not that it paid for THIS order. The
+        // webhook already binds this way (see below).
+        const n = Number(installmentN) || 1;
+        const inst = order.installments.find((i) => i.n === n);
+        if (!inst) return res.status(400).json({ success: false, message: "Installment not found." });
+        if (!inst.gatewayOrderId || inst.gatewayOrderId !== razorpay_order_id) {
+            return res.status(400).json({ success: false, message: "Payment does not match this order." });
+        }
+
         const ok = gateway.verifyPaymentSignature({
             orderId: razorpay_order_id,
             paymentId: razorpay_payment_id,
@@ -172,7 +186,7 @@ async function verifyPayment(req, res, next) {
 
         order.gateway.paymentId = razorpay_payment_id || "";
         order.gateway.signature = razorpay_signature || "";
-        await svc.markInstallmentPaid(order, Number(installmentN) || 1, {
+        await svc.markInstallmentPaid(order, n, {
             paymentId: razorpay_payment_id,
             gatewayOrderId: razorpay_order_id,
         });

@@ -57,9 +57,9 @@ async function createPost(req, res, next) {
             return res.status(400).json({ success: false, message: "Title and body are required" });
         }
         const post = await Post.create({
-            title: title.trim(),
-            body: body.trim(),
-            subject: subject?.trim() || undefined,
+            title: title.trim().slice(0, 160),
+            body: body.trim().slice(0, 5000),
+            subject: subject?.trim().slice(0, 80) || undefined,
             author: req.user._id,
             authorName: req.user.name,
         });
@@ -100,7 +100,7 @@ async function addReply(req, res, next) {
         const post = await Post.findById(req.params.id);
         if (!post) return res.status(404).json({ success: false, message: "Post not found" });
 
-        post.replies.push({ author: req.user._id, authorName: req.user.name, body: body.trim() });
+        post.replies.push({ author: req.user._id, authorName: req.user.name, body: body.trim().slice(0, 3000) });
         await post.save();
 
         const reply = post.replies[post.replies.length - 1];

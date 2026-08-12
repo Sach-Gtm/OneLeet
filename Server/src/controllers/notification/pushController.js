@@ -15,8 +15,11 @@ async function subscribe(req, res, next) {
         if (!endpoint || !keys || !keys.p256dh || !keys.auth) {
             return res.status(400).json({ success: false, message: "Invalid subscription" });
         }
+        // Key by (endpoint, user) so a caller who learns another user's endpoint
+        // can't reassign that subscription to themselves — the owner's row is left
+        // untouched.
         await PushSubscription.updateOne(
-            { endpoint },
+            { endpoint, user: req.user._id },
             { $set: { user: req.user._id, endpoint, keys: { p256dh: keys.p256dh, auth: keys.auth } } },
             { upsert: true }
         );

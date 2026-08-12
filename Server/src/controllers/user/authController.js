@@ -27,6 +27,7 @@ const sanitize = (user) => {
     delete obj.otpHash;
     delete obj.otpExpire;
     delete obj.otpLastSentAt;
+    delete obj.otpAttempts;
     return obj;
 };
 
@@ -38,6 +39,7 @@ function setOtp(user) {
     user.otpHash = hashOtp(otp);
     user.otpExpire = Date.now() + OTP_TTL_MS;
     user.otpLastSentAt = Date.now();
+    user.otpAttempts = 0; // fresh code → reset the wrong-guess counter
     return otp;
 }
 
@@ -229,7 +231,7 @@ async function verifyOtp(req, res, next) {
     try {
         const { email, otp } = req.body;
         const user = await User.findOne({ email }).select(
-            "+otpHash +otpExpire"
+            "+otpHash +otpExpire +otpAttempts"
         );
 
         if (!user) {
@@ -254,6 +256,21 @@ async function verifyOtp(req, res, next) {
         }
 
         if (hashOtp(otp) !== user.otpHash) {
+            // Count wrong guesses and burn the code after too many, so the 6-digit
+            // space can't be brute-forced within the 10-minute window (the per-IP
+            // rate limit alone is bypassable by rotating source IPs).
+            user.otpAttempts = (user.otpAttempts || 0) + 1;
+            if (user.otpAttempts >= 5) {
+                user.otpHash = undefined;
+                user.otpExpire = undefined;
+                user.otpAttempts = 0;
+                await user.save({ validateBeforeSave: false });
+                return res.status(400).json({
+                    success: false,
+                    message: "Too many incorrect attempts. Please request a new code.",
+                });
+            }
+            await user.save({ validateBeforeSave: false });
             return res
                 .status(400)
                 .json({ success: false, message: "Incorrect code. Please try again." });
@@ -262,6 +279,7 @@ async function verifyOtp(req, res, next) {
         user.isVerified = true;
         user.otpHash = undefined;
         user.otpExpire = undefined;
+        user.otpAttempts = 0;
         await user.save({ validateBeforeSave: false });
 
         const token = await startSession(res, req, user);
@@ -548,7 +566,7 @@ async function logout(req, res) {
             token = req.headers.authorization.split(" ")[1];
         }
         if (token) {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ["HS256"] });
             if (decoded?.id) await endSession(decoded.id);
         }
     } catch {

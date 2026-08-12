@@ -71,13 +71,18 @@ async function listQuestions(req, res, next) {
     }
 }
 
-// DELETE /api/questions/:id — remove a question (teacher/admin).
+// DELETE /api/questions/:id — remove a question (teacher/admin). A mentor may
+// only delete their own questions; admin/superadmin can delete any.
 async function deleteQuestion(req, res, next) {
     try {
-        const deleted = await Question.findByIdAndDelete(req.params.id);
-        if (!deleted) {
+        const question = await Question.findById(req.params.id);
+        if (!question) {
             return res.status(404).json({ success: false, message: "Question not found." });
         }
+        if (req.user.role === "teacher" && String(question.createdBy) !== String(req.user._id)) {
+            return res.status(404).json({ success: false, message: "Question not found." });
+        }
+        await Question.deleteOne({ _id: question._id });
         return res.status(200).json({ success: true, message: "Question deleted." });
     } catch (error) {
         next(error);

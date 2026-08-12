@@ -46,6 +46,10 @@ const app = express();
 // Behind Render's proxy: trust the first hop so req.ip is the real client IP
 // (used by the rate limiter and Turnstile's remoteip), not the proxy's.
 app.set("trust proxy", 1);
+// Pin the "simple" query parser so `?x[$ne]=` can't build a nested object in
+// req.query (operator injection). Express 5 already defaults to this; making it
+// explicit guards against a future default change.
+app.set("query parser", "simple");
 app.disable("x-powered-by");
 
 // Baseline security headers (helmet-style, no extra dependency). The API only
@@ -92,6 +96,22 @@ app.use(
     })
 );
 app.use(cookieParser());
+
+// Defense-in-depth NoSQL guard: strip `$`-prefixed keys from request bodies so a
+// future endpoint that drops a body field into a Mongo filter can't be hit with
+// operator injection (e.g. {"$gt":""}). No legitimate field starts with `$`.
+app.use((req, res, next) => {
+    const scrub = (o) => {
+        if (!o || typeof o !== "object") return;
+        for (const k of Object.keys(o)) {
+            if (k.charCodeAt(0) === 36) { delete o[k]; continue; } // '$'
+            const v = o[k];
+            if (v && typeof v === "object") scrub(v);
+        }
+    };
+    scrub(req.body);
+    next();
+});
 
 // Health check (useful for Railway/Render uptime checks)
 app.get("/api/health", (req, res) => {

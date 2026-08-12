@@ -117,6 +117,10 @@ async function getTest(req, res, next) {
         if (!isValidId(req.params.id)) return notFound(res);
         const test = await Test.findById(req.params.id).populate("questions");
         if (!test) return notFound(res);
+        // A mentor (teacher) may only touch their own content — listMine already
+        // scopes them, so per-id ops must too (else horizontal privilege escalation
+        // within the staff tier). Admin/superadmin keep full access.
+        if (req.user.role === "teacher" && String(test.createdBy) !== String(req.user._id)) return notFound(res);
         return res.status(200).json({ success: true, test });
     } catch (err) {
         next(err);
@@ -161,6 +165,10 @@ async function updateTest(req, res, next) {
         if (!isValidId(req.params.id)) return notFound(res);
         const test = await Test.findById(req.params.id);
         if (!test) return notFound(res);
+        // A mentor (teacher) may only touch their own content — listMine already
+        // scopes them, so per-id ops must too (else horizontal privilege escalation
+        // within the staff tier). Admin/superadmin keep full access.
+        if (req.user.role === "teacher" && String(test.createdBy) !== String(req.user._id)) return notFound(res);
         const b = req.body || {};
         if (b.title != null) test.title = String(b.title).slice(0, 140);
         if (b.description != null) test.description = String(b.description).slice(0, 400);
@@ -203,6 +211,10 @@ async function publishTest(req, res, next) {
         if (!isValidId(req.params.id)) return notFound(res);
         const test = await Test.findById(req.params.id);
         if (!test) return notFound(res);
+        // A mentor (teacher) may only touch their own content — listMine already
+        // scopes them, so per-id ops must too (else horizontal privilege escalation
+        // within the staff tier). Admin/superadmin keep full access.
+        if (req.user.role === "teacher" && String(test.createdBy) !== String(req.user._id)) return notFound(res);
         if (!test.questions || test.questions.length === 0) {
             return res
                 .status(400)
@@ -231,6 +243,10 @@ async function removeTest(req, res, next) {
         if (!isValidId(req.params.id)) return notFound(res);
         const test = await Test.findById(req.params.id);
         if (!test) return notFound(res);
+        // A mentor (teacher) may only touch their own content — listMine already
+        // scopes them, so per-id ops must too (else horizontal privilege escalation
+        // within the staff tier). Admin/superadmin keep full access.
+        if (req.user.role === "teacher" && String(test.createdBy) !== String(req.user._id)) return notFound(res);
         await Promise.all([
             Question.deleteMany({ _id: { $in: test.questions } }),
             Test.deleteOne({ _id: test._id }),

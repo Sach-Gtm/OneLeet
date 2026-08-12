@@ -23,7 +23,7 @@ const verifyToken = async (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ["HS256"] });
         const user = await User.findById(decoded.id).select("-password +sessionId");
 
         if (!user) {
@@ -70,7 +70,7 @@ const optionalAuth = async (req, res, next) => {
     }
     if (!token) return next();
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ["HS256"] });
         const user = await User.findById(decoded.id).select("-password +sessionId");
         // Honour single-device: a stale token (superseded by a newer login) is
         // treated as anonymous rather than attributed to the user.
