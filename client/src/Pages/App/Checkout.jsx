@@ -3,23 +3,20 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
     ShoppingCart, Trash2, ShieldCheck, Check, Loader2, CreditCard,
-    Split, Wallet, ArrowRight, MessageCircle, Sparkles, X,
+    ArrowRight, MessageCircle, Sparkles, X,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { createOrder, applyCoupon, verifyPayment } from "@/Api/PaymentsApi";
 import { track } from "@/lib/telemetry";
 import { useCelebrate } from "@/context/CelebrationContext";
-import { SPLIT_SURCHARGE } from "@/data/pricing";
 import { whatsappLink, WHATSAPP_RESPONSE } from "@/config/support";
 
 const rupee = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
-const SURCHARGE = 1.3; // split payment costs 30% more (mirrors server)
 
 export default function Checkout() {
     const { items, totals, remove, clear, count } = useCart();
     const navigate = useNavigate();
 
-    const [plan, setPlan] = useState("full");
     const [couponInput, setCouponInput] = useState("");
     const [coupon, setCoupon] = useState(null); // { code, discount }
     const [couponBusy, setCouponBusy] = useState(false);
@@ -29,15 +26,13 @@ export default function Checkout() {
     const [placed, setPlaced] = useState(null); // the created order (manual mode)
     const { celebrate } = useCelebrate();
 
-    // Money (mirrors the server): cart discount → coupon → split surcharge.
+    // Money (mirrors the server): cart discount → coupon.
     const money = useMemo(() => {
         const afterCart = totals.total; // subtotal − whole-cart tier discount
         const couponDiscount = coupon ? Math.min(coupon.discount, afterCart) : 0;
-        const baseTotal = Math.max(0, afterCart - couponDiscount);
-        const payable = plan === "split" ? Math.round(baseTotal * SURCHARGE) : baseTotal;
-        const half = Math.round(payable / 2);
-        return { afterCart, couponDiscount, baseTotal, payable, installments: [half, payable - half] };
-    }, [totals, coupon, plan]);
+        const payable = Math.max(0, afterCart - couponDiscount);
+        return { afterCart, couponDiscount, payable };
+    }, [totals, coupon]);
 
     const allTicked = ticks.terms && ticks.successPromise && ticks.noRefund;
 
@@ -105,7 +100,7 @@ export default function Checkout() {
         try {
             const { order, gateway } = await createOrder({
                 slugs: items.map((i) => i.slug),
-                plan,
+                plan: "full",
                 couponCode: coupon?.code || "",
                 referralCode: referral.trim(),
                 acceptedTerms: ticks,
@@ -167,7 +162,7 @@ export default function Checkout() {
     return (
         <div className="mx-auto max-w-2xl pb-16">
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Checkout</h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Review your batches, choose how to pay, and accept the policies.</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Review your batches and accept the policies.</p>
 
             {/* Items */}
             <div className="mt-5 space-y-2">
@@ -184,36 +179,6 @@ export default function Checkout() {
                         </button>
                     </div>
                 ))}
-            </div>
-
-            {/* Payment plan */}
-            <div className="mt-6">
-                <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100">How would you like to pay?</h2>
-                <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                    <button
-                        type="button"
-                        onClick={() => setPlan("full")}
-                        className={"rounded-xl border p-4 text-left transition " + (plan === "full" ? "border-indigo-500 bg-indigo-50/60 ring-1 ring-indigo-500 dark:bg-indigo-500/10" : "border-slate-200 dark:border-slate-700")}
-                    >
-                        <p className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-slate-100"><Wallet size={15} /> Pay in full</p>
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">One payment of {rupee(money.baseTotal)}. Best value.</p>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setPlan("split")}
-                        className={"rounded-xl border p-4 text-left transition " + (plan === "split" ? "border-indigo-500 bg-indigo-50/60 ring-1 ring-indigo-500 dark:bg-indigo-500/10" : "border-slate-200 dark:border-slate-700")}
-                    >
-                        <p className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-slate-100"><Split size={15} /> Split payment</p>
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                            2 × {rupee(money.installments[0])} (total {rupee(Math.round(money.baseTotal * SURCHARGE))}, {SPLIT_SURCHARGE}% more).
-                        </p>
-                    </button>
-                </div>
-                {plan === "split" && (
-                    <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-[11px] text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
-                        Pay {rupee(money.installments[0])} now for 30 days of premium (+3 days grace). Pay the second {rupee(money.installments[1])} within that window to keep full access — miss it and premium pauses (free features stay) until you resume.
-                    </p>
-                )}
             </div>
 
             {/* Coupon + referral */}
@@ -253,9 +218,8 @@ export default function Checkout() {
                 <Row label="Subtotal" value={rupee(totals.subtotal)} />
                 {totals.discount > 0 && <Row label={`Multi-course discount (${totals.pct}%${totals.capped ? ", capped" : ""})`} value={`− ${rupee(totals.discount)}`} good />}
                 {money.couponDiscount > 0 && <Row label={`Coupon ${coupon.code}`} value={`− ${rupee(money.couponDiscount)}`} good />}
-                {plan === "split" && <Row label={`Split-payment surcharge (${SPLIT_SURCHARGE}%)`} value={`+ ${rupee(money.payable - money.baseTotal)}`} />}
                 <div className="mt-2 flex items-center justify-between border-t border-slate-200 pt-2 dark:border-slate-700">
-                    <span className="font-bold text-slate-900 dark:text-slate-100">{plan === "split" ? "Total (in 2 installments)" : "Total payable"}</span>
+                    <span className="font-bold text-slate-900 dark:text-slate-100">Total payable</span>
                     <span className="text-lg font-extrabold text-slate-900 dark:text-slate-100">{rupee(money.payable)}</span>
                 </div>
             </div>
@@ -280,7 +244,7 @@ export default function Checkout() {
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {placing ? <Loader2 size={18} className="animate-spin" /> : <CreditCard size={18} />}
-                {plan === "split" ? `Pay ${rupee(money.installments[0])} now` : `Pay ${rupee(money.payable)}`}
+                Pay {rupee(money.payable)}
             </button>
             <p className="mt-2 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
                 <ShieldCheck size={12} /> Secure payment · enrolling unlocks full premium access for your batch

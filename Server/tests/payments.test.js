@@ -96,13 +96,24 @@ const DAY = 86400000;
     assert.strictEqual(isPremiumUser({ role: "teacher" }), true, "staff always premium");
     ok("premium gate honours admin lock, expiry, and staff bypass");
 
-    // ── 5. Split payment: 2 installments, window, then full validity ──
-    const splitCreated = await request.post("/api/payments/orders").set(...auth(priyaT))
+    // ── 5. Split payment is retired: the API coerces any split request to full ──
+    const coerced = await request.post("/api/payments/orders").set(...auth(priyaT))
         .send({ slugs: ["ipu-leet-2027"], plan: "split", acceptedTerms: ok3 });
-    assert.strictEqual(splitCreated.status, 201);
-    assert.strictEqual(splitCreated.body.order.payable, Math.round(999 * 1.3), "split payable = 999 × 1.3");
-    assert.strictEqual(splitCreated.body.order.installments.length, 2, "two installments");
-    const splitId = splitCreated.body.order._id;
+    assert.strictEqual(coerced.status, 201);
+    assert.strictEqual(coerced.body.order.paymentPlan, "full", "a split request is coerced to a full order");
+    assert.strictEqual(coerced.body.order.installments.length, 1, "full order has a single installment");
+    assert.strictEqual(coerced.body.order.payable, 999, "full payable = base (no 30% surcharge)");
+    ok("split payment retired: the API coerces split → full");
+
+    // ── 5b. Legacy split orders still complete: 30+3 window on first, full validity on second ──
+    const splitOrder0 = await Order.create({
+        user: priya._id,
+        items: [{ course: dtu._id, courseSlug: "dtu-leet-2027", courseName: "DTU", examCode: "dtu-nsut-leet", price: 799 }],
+        subtotal: 799, baseTotal: 799, payable: 1039, surchargePct: 30, paymentPlan: "split", validityDays: 365,
+        installments: [{ n: 1, amount: 520, status: "pending" }, { n: 2, amount: 519, status: "pending" }],
+        status: "created",
+    });
+    const splitId = splitOrder0._id;
 
     await request.post(`/api/payments/admin/orders/${splitId}/confirm`).set(...auth(adminT)).send({ installmentN: 1 });
     let splitOrder = await Order.findById(splitId);

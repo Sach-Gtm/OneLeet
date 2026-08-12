@@ -27,15 +27,17 @@ const publicOrder = (o) => ({
 });
 
 // POST /api/payments/orders — create a pending order from a cart.
-// body: { slugs: [String], plan: "full"|"split", couponCode?, referralCode?,
+// body: { slugs: [String], couponCode?, referralCode?,
 //         acceptedTerms: { terms, successPromise, noRefund } }
 async function createOrder(req, res, next) {
     try {
-        const { slugs, plan = "full", couponCode = "", referralCode = "", acceptedTerms = {} } = req.body || {};
+        const { slugs, couponCode = "", referralCode = "", acceptedTerms = {} } = req.body || {};
+        // Split payment has been retired: every NEW order is pay-in-full, whatever
+        // the client sends. Existing split orders stay valid — their second
+        // installment, admin reopen, and lapse handling all still work below.
+        const plan = "full";
         if (!Array.isArray(slugs) || slugs.length === 0)
             return res.status(400).json({ success: false, message: "Add at least one course to your cart." });
-        if (!["full", "split"].includes(plan))
-            return res.status(400).json({ success: false, message: "Invalid payment plan." });
         // All three consents are mandatory before an order can be created.
         if (!acceptedTerms.terms || !acceptedTerms.successPromise || !acceptedTerms.noRefund)
             return res.status(400).json({ success: false, message: "Please accept the Terms, Success Promise and Refund policy to continue." });
