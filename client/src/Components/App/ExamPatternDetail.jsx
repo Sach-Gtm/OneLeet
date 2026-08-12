@@ -21,6 +21,7 @@ import {
     TrendingDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import TopoLines from "@/Components/General/TopoLines";
 import { daysUntil } from "@/lib/useExamCountdown";
 import { openCallback } from "@/lib/callback";
 import SeatMatrixModal from "@/Components/App/SeatMatrixModal";
@@ -79,9 +80,10 @@ export function PatternHeaderBand({ p, children }) {
     const daysLeft = daysUntil(p.examDate);
     return (
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-5 text-white">
+            <TopoLines color="rgb(255 255 255)" opacity={0.1} />
             <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
             <div className="pointer-events-none absolute -bottom-12 right-16 h-32 w-32 rounded-full bg-violet-500/20 blur-2xl" />
-            <div className="relative">
+            <div className="relative z-10">
                 <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm">
                         <ScrollText size={12} /> Paper Pattern & Exam Guide

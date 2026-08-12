@@ -310,6 +310,7 @@ export default function Dashboard() {
                         transition={{ duration: 0.5, ease: "easeOut" }}
                         className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 p-6 text-white lg:col-span-2"
                     >
+                        <TopoLines color="rgb(255 255 255)" opacity={0.1} />
                         {/* Slow-floating orbs + a one-off shine sweep so the hero feels alive. */}
                         <motion.div
                             aria-hidden="true"
@@ -330,7 +331,7 @@ export default function Dashboard() {
                             transition={{ duration: 2.2, delay: 0.6, ease: "easeInOut" }}
                             className="pointer-events-none absolute inset-y-0 left-0 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/15 to-transparent"
                         />
-                        <div className="relative">
+                        <div className="relative z-10">
                             <h1 className="flex items-center gap-2 text-2xl font-bold">
                                 Welcome back, {firstName}!
                                 <motion.span

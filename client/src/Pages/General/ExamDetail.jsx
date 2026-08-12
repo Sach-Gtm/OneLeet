@@ -8,6 +8,7 @@ import {
     getExamOverview, getExamPattern, getExamSyllabus, getExamSeatMatrix, getExamCutoffs, getExamPyqs,
 } from "@/Api/PublicApi";
 import { useSeo } from "@/lib/useSeo";
+import TopoLines from "@/Components/General/TopoLines";
 
 // A light section shell with an anchor id (for the mega-menu deep-links). `icon`
 // is a rendered element (matching the codebase's Section convention).
@@ -228,7 +229,9 @@ function ExamDetailInner({ code }) {
             </Link>
 
             {/* Hero */}
-            <div className="mt-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white sm:p-8">
+            <div className="relative mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white sm:p-8">
+                <TopoLines color="rgb(255 255 255)" opacity={0.1} />
+                <div className="relative z-10">
                 <p className="text-xs font-semibold uppercase tracking-wide text-indigo-200">{exam.group}</p>
                 <h1 className="mt-1 text-2xl font-extrabold sm:text-3xl">{exam.name}</h1>
                 <p className="mt-2 max-w-2xl text-sm text-indigo-100">
@@ -239,6 +242,7 @@ function ExamDetailInner({ code }) {
                     <Link to="/courses" className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-bold text-indigo-700 hover:bg-indigo-50">
                         <GraduationCap size={16} /> See the batch
                     </Link>
+                </div>
                 </div>
             </div>
 
