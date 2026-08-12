@@ -5,6 +5,7 @@ import AppRoutes from "./AppRoutes/AppRoutes";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { CartProvider } from "@/context/CartContext";
+import { CelebrationProvider } from "@/context/CelebrationContext";
 import ErrorBoundary from "@/Components/General/ErrorBoundary";
 import { GOOGLE_CLIENT_ID, GOOGLE_ENABLED } from "@/lib/googleAuth";
 
@@ -13,9 +14,11 @@ const App = () => {
     <ThemeProvider>
       <AuthProvider>
         <CartProvider>
-          <ErrorBoundary>
-            <AppRoutes />
-          </ErrorBoundary>
+          <CelebrationProvider>
+            <ErrorBoundary>
+              <AppRoutes />
+            </ErrorBoundary>
+          </CelebrationProvider>
         </CartProvider>
         <Toaster position="top-right" toastOptions={{ duration: 3500 }} />
       </AuthProvider>

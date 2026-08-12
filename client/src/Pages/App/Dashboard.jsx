@@ -32,6 +32,7 @@ import FloatingWhatsApp from "@/Components/App/FloatingWhatsApp";
 import { PremiumWelcome, PremiumPerks } from "@/Components/App/premium/PremiumFx";
 import GetStartedChecklist from "@/Components/App/GetStartedChecklist";
 import ProUpgradeTeaser from "@/Components/App/ProUpgradeTeaser";
+import { useCelebrate } from "@/context/CelebrationContext";
 import { isStudent, isPremium } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
@@ -185,12 +186,18 @@ export default function Dashboard() {
     const [timeMinutes, setTimeMinutes] = useState(0);
     const [syllabus, setSyllabus] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { celebrateOnce } = useCelebrate();
 
     useEffect(() => {
         let active = true;
         getDashboard()
             .then((res) => {
-                if (active) setData(res);
+                if (!active) return;
+                setData(res);
+                // Streak comeback: once per day, greet a student who's kept a
+                // running streak with a celebratory doodle.
+                const s = res?.stats?.streak || 0;
+                if (s >= 2) celebrateOnce(`streak-${new Date().toDateString()}`, "streak", { streak: s });
             })
             .catch(() => {
                 if (active) setData(null);
@@ -214,7 +221,7 @@ export default function Dashboard() {
         return () => {
             active = false;
         };
-    }, []);
+    }, [celebrateOnce]);
 
     const firstName = (user?.name || "there").split(" ")[0];
     const stats = data?.stats || {};

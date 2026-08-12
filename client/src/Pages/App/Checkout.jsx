@@ -8,6 +8,7 @@ import {
 import { useCart } from "@/context/CartContext";
 import { createOrder, applyCoupon, verifyPayment } from "@/Api/PaymentsApi";
 import { track } from "@/lib/telemetry";
+import { useCelebrate } from "@/context/CelebrationContext";
 import { SPLIT_SURCHARGE } from "@/data/pricing";
 import { whatsappLink, WHATSAPP_RESPONSE } from "@/config/support";
 
@@ -26,6 +27,7 @@ export default function Checkout() {
     const [ticks, setTicks] = useState({ terms: false, successPromise: false, noRefund: false });
     const [placing, setPlacing] = useState(false);
     const [placed, setPlaced] = useState(null); // the created order (manual mode)
+    const { celebrate } = useCelebrate();
 
     // Money (mirrors the server): cart discount → coupon → split surcharge.
     const money = useMemo(() => {
@@ -82,6 +84,7 @@ export default function Checkout() {
                         });
                         track("payment_done"); // funnel: paid (audit C3)
                         clear();
+                        celebrate("premium"); // went-Premium doodle (persists across the navigate)
                         toast.success("Payment successful — welcome to Premium!");
                         navigate("/dashboard");
                     } catch (e) {

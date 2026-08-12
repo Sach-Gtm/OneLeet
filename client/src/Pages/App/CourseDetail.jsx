@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getCourse, enroll as enrollApi, unenroll as unenrollApi } from "@/Api/CoursesApi";
 import { track } from "@/lib/telemetry";
+import { useCelebrate } from "@/context/CelebrationContext";
 import { CourseSky, hueFor } from "@/Components/General/CourseBanner";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
@@ -34,6 +35,7 @@ export default function CourseDetail() {
     const [notFound, setNotFound] = useState(false);
     const [enrolled, setEnrolled] = useState(false);
     const [busy, setBusy] = useState(false);
+    const { celebrate } = useCelebrate();
 
     useEffect(() => {
         let active = true;
@@ -73,6 +75,7 @@ export default function CourseDetail() {
             track("onboarding_done"); // funnel: picked a batch/exam (audit C3)
             await refresh(); // pull the fresh user so user.exams reflects the new batch
             setEnrolled(true);
+            celebrate("course", { name: course.name }); // joined-a-batch doodle
             toast.success(`You're in, welcome to ${course.name}`);
         } catch (e) {
             toast.error(e.message || "Couldn't enroll");

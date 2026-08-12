@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { getTestLeaderboard } from "@/Api/LeaderboardApi";
 import { Celebration, Encourage } from "@/Components/App/Celebration";
 import RankMedal from "@/Components/App/RankMedal";
+import { useCelebrate } from "@/context/CelebrationContext";
 
 function fmtCountdown(ms) {
     const total = Math.ceil(ms / 1000);
@@ -22,6 +23,7 @@ export default function TestLeaderboardPanel({ testId }) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [now, setNow] = useState(() => Date.now());
+    const { celebrateOnce } = useCelebrate();
 
     const load = useCallback(() => {
         if (!testId) return Promise.resolve();
@@ -34,6 +36,17 @@ export default function TestLeaderboardPanel({ testId }) {
     useEffect(() => {
         load();
     }, [load]);
+
+    // Top-3 on a LIVE board fires the doodle overlay once per test (competitive
+    // final boards keep their existing inline Celebration card below). Guarded on
+    // a real podium (3+ participants) so being "first of one" isn't celebrated.
+    useEffect(() => {
+        if (loading || !data || data.status !== "published" || data.competitive) return;
+        const me = data.me;
+        if (me?.attempted && me.rank <= 3 && (data.total || 0) >= 3) {
+            celebrateOnce(`rank3-${testId}`, "rank", { rank: me.rank });
+        }
+    }, [loading, data, testId, celebrateOnce]);
 
     // Tick the countdown while frozen.
     const pending = data?.status === "pending";
