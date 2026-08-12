@@ -1,4 +1,5 @@
 const Attempt = require("../../models/attemptModel");
+const { liveStreak } = require("../../utils/streak");
 
 // Aggregated data for the student dashboard: the user's denormalised stats plus
 // their most recent activity (completed mock tests). `continueLearning` stays
@@ -26,7 +27,7 @@ async function getDashboard(req, res, next) {
                 accuracy: s.accuracy || 0,
                 pyqsSolved: s.pyqsSolved || 0,
                 studyHours: s.studyHours || 0,
-                streak: s.streak || 0,
+                streak: liveStreak(s), // live: decays to 0 the moment it lapses
                 overallPrep: s.overallPrep || 0,
             },
             recentActivity,

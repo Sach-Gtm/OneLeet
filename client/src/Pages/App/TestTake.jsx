@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { Clock, Loader2, AlertTriangle } from "lucide-react";
+import { Clock, Loader2, AlertTriangle, Flag, LayoutGrid } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { getTest, submitTest } from "@/Api/TestsApi";
+import { track } from "@/lib/telemetry";
 import { useAuth } from "@/context/AuthContext";
 import { isStaff } from "@/lib/roles";
 import ProtectedContent from "@/Components/Security/ProtectedContent";
+import TestPalette from "@/Components/App/TestPalette";
 
 const fmt = (s) => {
     const m = Math.floor(s / 60);
@@ -29,7 +31,12 @@ export default function TestTake() {
     const [secondsLeft, setSecondsLeft] = useState(0);
     const [submitting, setSubmitting] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [marked, setMarked] = useState({}); // questionId -> flagged for review
+    const [currentQ, setCurrentQ] = useState(0); // which question is in view (palette highlight)
+    const [flashQ, setFlashQ] = useState(null); // briefly ring a question after a jump
+    const [paletteOpen, setPaletteOpen] = useState(false); // mobile bottom sheet
 
+    const questionRefs = useRef([]);
     const startedAtRef = useRef(null);
     const submitRef = useRef(null);
     const submittedRef = useRef(false);
@@ -43,6 +50,7 @@ export default function TestTake() {
                 setSecondsLeft((res.test.durationMinutes || 30) * 60);
                 startedAtRef.current = new Date().toISOString();
                 setStarted(true);
+                track("first_test_start"); // funnel: opened a test (audit C3)
             })
             .catch((err) => {
                 if (!active) return;
@@ -81,6 +89,7 @@ export default function TestTake() {
                 })),
             };
             const res = await submitTest(id, payload);
+            track("first_test_done"); // funnel: completed a test (audit C3)
             navigate(`/tests/result/${res.attemptId}`, { replace: true });
         } catch (err) {
             // Raced a second submit of a single-attempt test: go to the first result.
@@ -115,6 +124,42 @@ export default function TestTake() {
         if (started && secondsLeft === 0 && !isPractice) submitRef.current?.();
     }, [started, secondsLeft, isPractice]);
 
+    // Jump to a question from the palette: scroll it into view and flash a ring
+    // so the eye lands on it (real-exam navigator, audit H2).
+    const jumpTo = (i) => {
+        const el = questionRefs.current[i];
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        setCurrentQ(i);
+        setFlashQ(i);
+        setPaletteOpen(false);
+        window.setTimeout(() => setFlashQ((f) => (f === i ? null : f)), 1200);
+    };
+
+    const toggleMark = (qid) => setMarked((m) => ({ ...m, [qid]: !m[qid] }));
+
+    // Keep the palette's "current" cell in sync with what you're scrolled to, so
+    // it feels live. Graded tests only (practice has no palette).
+    useEffect(() => {
+        if (isPractice || !test) return undefined;
+        const els = questionRefs.current.filter(Boolean);
+        if (!els.length) return undefined;
+        const io = new IntersectionObserver(
+            (entries) => {
+                const visible = entries.filter((e) => e.isIntersecting);
+                if (!visible.length) return;
+                const top = visible.reduce((a, b) =>
+                    a.boundingClientRect.top < b.boundingClientRect.top ? a : b
+                );
+                const idx = els.indexOf(top.target);
+                if (idx >= 0) setCurrentQ(idx);
+            },
+            { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+        );
+        els.forEach((el) => io.observe(el));
+        return () => io.disconnect();
+    }, [isPractice, test]);
+
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
@@ -140,13 +185,13 @@ export default function TestTake() {
     const lowTime = secondsLeft <= 60;
 
     return (
-        <div className="mx-auto max-w-3xl pb-24">
+        <div className={cn("mx-auto pb-24", isPractice ? "max-w-3xl" : "max-w-5xl")}>
             {/* Sticky header */}
-            <div className="sticky top-[57px] z-20 -mx-4 mb-6 border-b border-slate-200 bg-slate-50/90 px-4 py-3 backdrop-blur sm:top-[61px]">
+            <div className="sticky top-[57px] z-20 -mx-4 mb-6 border-b border-slate-200 bg-slate-50/90 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90 sm:top-[61px]">
                 <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                        <h1 className="truncate text-base font-bold text-slate-900">{test.title}</h1>
-                        <p className="text-xs text-slate-500">
+                        <h1 className="truncate text-base font-bold text-slate-900 dark:text-slate-100">{test.title}</h1>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                             {isPractice
                                 ? "Practice — the answer reveals as you go"
                                 : `${answeredCount}/${test.questions.length} answered`}
@@ -160,7 +205,9 @@ export default function TestTake() {
                         <div
                             className={cn(
                                 "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-bold tabular-nums",
-                                lowTime ? "bg-red-50 text-red-600" : "bg-white text-slate-700 ring-1 ring-slate-200"
+                                lowTime
+                                    ? "bg-red-50 text-red-600 dark:bg-red-500/15"
+                                    : "bg-white text-slate-700 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700"
                             )}
                         >
                             <Clock size={15} /> {fmt(secondsLeft)}
@@ -168,10 +215,11 @@ export default function TestTake() {
                     )}
                     {isPractice ? (
                         <button
-                            onClick={() => navigate("/tests")}
-                            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                            onClick={() => (answeredCount > 0 ? handleSubmit() : navigate("/tests"))}
+                            disabled={submitting}
+                            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
                         >
-                            Finish
+                            {submitting ? "Saving…" : "Finish"}
                         </button>
                     ) : (
                         <button
@@ -185,7 +233,9 @@ export default function TestTake() {
                 </div>
             </div>
 
-            {/* Questions */}
+            {/* Questions + real-exam palette navigator (audit H2) */}
+            <div className="lg:flex lg:items-start lg:gap-6">
+            <div className="min-w-0 lg:flex-1">
             <ProtectedContent
                 enabled={Boolean(test.premium) && !isStaff(user)}
                 contentType="test"
@@ -193,18 +243,45 @@ export default function TestTake() {
             >
             <div className="space-y-4">
                 {test.questions.map((q, i) => (
-                    <div key={q._id} className="rounded-2xl border border-slate-200 bg-white p-5">
-                        <div className="flex gap-2">
-                            <span className="text-sm font-bold text-indigo-600">Q{i + 1}.</span>
-                            <p className="text-sm font-medium text-slate-800">{q.text}</p>
+                    <div
+                        key={q._id}
+                        ref={(el) => (questionRefs.current[i] = el)}
+                        className={cn(
+                            "scroll-mt-28 rounded-2xl border bg-white p-5 transition dark:bg-slate-900",
+                            flashQ === i
+                                ? "border-indigo-400 ring-2 ring-indigo-300 dark:border-indigo-500"
+                                : "border-slate-200 dark:border-slate-700"
+                        )}
+                    >
+                        <div className="flex items-start justify-between gap-2">
+                            <div className="flex gap-2">
+                                <span className="text-sm font-bold text-indigo-600">Q{i + 1}.</span>
+                                <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{q.text}</p>
+                            </div>
+                            {!isPractice && (
+                                <button
+                                    onClick={() => toggleMark(q._id)}
+                                    className={cn(
+                                        "flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold transition",
+                                        marked[q._id]
+                                            ? "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300"
+                                            : "text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    )}
+                                    aria-pressed={!!marked[q._id]}
+                                >
+                                    <Flag size={12} className={marked[q._id] ? "fill-violet-500" : ""} />
+                                    {marked[q._id] ? "Marked" : "Review"}
+                                </button>
+                            )}
                         </div>
                         <div className="mt-3 space-y-2">
                             {q.options.map((opt, idx) => {
                                 const selected = answers[q._id] === idx;
                                 const revealed = isPractice && answers[q._id] != null;
                                 const isCorrect = idx === q.correctIndex;
-                                let box = "border-slate-200 text-slate-600 hover:bg-slate-50";
-                                let badge = "border-slate-300 text-slate-400";
+                                let box =
+                                    "border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800";
+                                let badge = "border-slate-300 text-slate-400 dark:border-slate-600 dark:text-slate-500";
                                 if (revealed) {
                                     if (isCorrect) {
                                         box = "border-emerald-400 bg-emerald-50 text-emerald-800";
@@ -213,8 +290,8 @@ export default function TestTake() {
                                         box = "border-red-300 bg-red-50 text-red-700";
                                         badge = "border-red-400 bg-red-400 text-white";
                                     } else {
-                                        box = "border-slate-200 text-slate-400";
-                                        badge = "border-slate-200 text-slate-300";
+                                        box = "border-slate-200 text-slate-400 dark:border-slate-700 dark:text-slate-500";
+                                        badge = "border-slate-200 text-slate-300 dark:border-slate-700 dark:text-slate-600";
                                     }
                                 } else if (selected) {
                                     box = "border-indigo-500 bg-indigo-50 text-indigo-800";
@@ -246,7 +323,7 @@ export default function TestTake() {
                             })}
                         </div>
                         {isPractice && answers[q._id] != null && (
-                            <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                            <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                                 <span
                                     className={cn(
                                         "font-semibold",
@@ -264,24 +341,71 @@ export default function TestTake() {
                 ))}
             </div>
             </ProtectedContent>
+            </div>
+
+            {/* Desktop palette rail */}
+            {!isPractice && (
+                <aside className="hidden shrink-0 lg:block lg:w-60">
+                    <div className="sticky top-[104px]">
+                        <TestPalette
+                            questions={test.questions}
+                            answers={answers}
+                            marked={marked}
+                            current={currentQ}
+                            onJump={jumpTo}
+                        />
+                    </div>
+                </aside>
+            )}
+            </div>
+
+            {/* Mobile: floating palette button + bottom sheet */}
+            {!isPractice && (
+                <>
+                    <button
+                        onClick={() => setPaletteOpen(true)}
+                        className="fixed bottom-5 right-5 z-30 flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/30 lg:hidden"
+                    >
+                        <LayoutGrid size={16} /> {answeredCount}/{test.questions.length}
+                    </button>
+                    {paletteOpen && (
+                        <div className="fixed inset-0 z-[70] lg:hidden">
+                            <div
+                                className="absolute inset-0 bg-slate-900/40"
+                                onClick={() => setPaletteOpen(false)}
+                            />
+                            <div className="absolute inset-x-0 bottom-0 max-h-[75vh] overflow-y-auto rounded-t-2xl bg-white p-3 dark:bg-slate-900">
+                                <TestPalette
+                                    questions={test.questions}
+                                    answers={answers}
+                                    marked={marked}
+                                    current={currentQ}
+                                    onJump={jumpTo}
+                                    onClose={() => setPaletteOpen(false)}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
 
             {/* Confirm submit */}
             {showConfirm && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-slate-900/40" onClick={() => setShowConfirm(false)} />
-                    <div className="relative z-10 w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
-                        <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-amber-50 text-amber-500">
+                    <div className="relative z-10 w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-slate-900">
+                        <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-amber-50 text-amber-500 dark:bg-amber-500/15">
                             <AlertTriangle size={24} />
                         </div>
-                        <h3 className="text-lg font-bold text-slate-900">Submit test?</h3>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Submit test?</h3>
+                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                             You've answered {answeredCount} of {test.questions.length} questions. You can't
                             change answers after submitting.
                         </p>
                         <div className="mt-5 flex gap-3">
                             <button
                                 onClick={() => setShowConfirm(false)}
-                                className="flex-1 rounded-lg border border-slate-200 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+                                className="flex-1 rounded-lg border border-slate-200 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                             >
                                 Keep going
                             </button>

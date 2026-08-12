@@ -14,7 +14,10 @@ const HUES = [
     { cast: "#be185d", blob: "rgba(251,113,133,0.42)", ink: "#fecdd3", under: "from-rose-400 to-pink-400" },
 ];
 
-// Small string hash -> stable hue per label.
+// Small string hash -> stable hue per label. (This module also exports the
+// CourseSky/CourseBanner components; hueFor is a tiny pure helper that ships
+// with them — the fast-refresh "only export components" rule doesn't apply.)
+// eslint-disable-next-line react-refresh/only-export-components
 export function hueFor(label = "LEET") {
     let h = 0;
     for (let i = 0; i < label.length; i += 1) h = (h * 31 + label.charCodeAt(i)) >>> 0;

@@ -130,6 +130,7 @@ export default function Footer() {
                     <h3 className="mb-3.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">Navigate</h3>
                     <ul className="space-y-2.5 text-[13.5px]">
                         <li><Link to="/" className={linkCls}>Home</Link></li>
+                        <li><Link to="/community" className={linkCls}>Community</Link></li>
                         <li><Link to="/mentor" className={linkCls}>Mentors</Link></li>
                         <li><Link to="/privacy" className={linkCls}>Privacy Policy</Link></li>
                     </ul>
@@ -138,7 +139,6 @@ export default function Footer() {
                 <div>
                     <h3 className="mb-3.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">Resources</h3>
                     <ul className="space-y-2.5 text-[13.5px]">
-                        <li><Link to="/login" className={linkCls}>Join Community</Link></li>
                         <li><Link to="/contribute" className={linkCls}>Contribute a Paper</Link></li>
                         <li><Link to="/bug-report" className="inline-flex items-center gap-1.5 text-slate-500 transition-all hover:pl-1 hover:text-red-500"><Bug size={13} /> Report a Bug</Link></li>
                     </ul>

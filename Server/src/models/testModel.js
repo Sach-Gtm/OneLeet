@@ -73,6 +73,11 @@ const TestSchema = new mongoose.Schema(
         // and `leaderboardPublished` flips true.
         leaderboardPublished: { type: Boolean, default: false, index: true },
         leaderboardPublishedAt: { type: Date },
+        // Lifecycle-notification markers (audit M4), each set exactly once by an
+        // atomic claim so a "went live" / "2 hours left" alert never double-fires,
+        // even across scheduler ticks or instance restarts.
+        liveNotifiedAt: { type: Date },
+        closingSoonNotifiedAt: { type: Date },
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     },
     { timestamps: true }

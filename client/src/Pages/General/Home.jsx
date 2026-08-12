@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
     ArrowRight,
     FileText,
@@ -13,7 +13,9 @@ import { Link } from "react-router-dom";
 import HomeCourses from "@/Components/General/HomeCourses";
 import HomeFaq from "@/Components/General/HomeFaq";
 import { Cloud, Connector, RobotBuddy } from "@/Components/General/FeatureBuddy";
+import CollegeCtaBand from "@/Components/General/CollegeCtaBand";
 import { useSeo } from "@/lib/useSeo";
+import { track } from "@/lib/telemetry";
 
 // Heavy, non-critical pieces loaded off the critical path so the hero (the LCP)
 // paints fast: the WebGL shader background (ogl) and the below-the-fold sections
@@ -56,6 +58,10 @@ export default function Home() {
             "Crack LEET and get into 2nd year B.Tech after your diploma. Free past papers, exam-pattern mock tests, notes and AI practice for every state.",
         path: "/",
     });
+    // Funnel: top-of-funnel landing view (audit C3).
+    useEffect(() => {
+        track("land");
+    }, []);
     return (
         <>
             {/* Hero */}
@@ -240,24 +246,9 @@ export default function Home() {
                     </div>
                 </div>
 
-                {/* Closing CTA — a bold brand-gradient band (theme-independent, so it
-                    reads the same in light and dark). */}
-                <div className="relative mx-auto mt-14 max-w-6xl px-4 sm:px-6">
-                <div className="relative flex flex-col items-center gap-4 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-600 p-10 text-center shadow-xl shadow-indigo-600/25">
-                    <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
-                    <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-violet-300/20 blur-2xl" />
-                    <h3 className="relative text-xl font-bold text-white sm:text-2xl">
-                        Your top college is one decision away.
-                    </h3>
-                    <Link
-                        to="/register"
-                        className="group relative flex items-center gap-2 rounded-lg bg-white px-7 py-3 font-semibold text-indigo-700 shadow-lg transition-all hover:scale-[1.03] active:scale-[0.97] dark:!bg-white dark:!text-indigo-700"
-                    >
-                        Start preparing
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                </div>
-                </div>
+                {/* Closing CTA — campus-collage band: real college photos drift
+                    behind a brand scrim, so it reads the same in light and dark. */}
+                <CollegeCtaBand />
             </section>
 
             {/* Student reviews — a moving marquee, just before the footer.

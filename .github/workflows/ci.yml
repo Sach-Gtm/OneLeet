@@ -1,0 +1,74 @@
+name: CI
+
+# Runs the existing test/build/lint on every PR into main (and on main itself)
+# so a red change is caught before it merges + deploys, instead of by a student
+# hitting a broken login. Set this workflow as a required status check on the
+# main branch (Settings → Branches) to block merge on red — that's the point.
+#
+# No secrets are needed: the server suite runs entirely against an in-memory
+# MongoDB (mongodb-memory-server) and the client build is static.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# A newer push to the same branch/PR cancels the older, still-running CI.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  server:
+    name: Server tests
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      JWT_SECRET: ci-test-secret
+      JWT_EXPIRES_IN: 7d
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Server/package-lock.json
+      # Cache the mongod binary mongodb-memory-server downloads on first run, so
+      # later runs don't re-fetch ~100 MB every time.
+      - name: Cache mongodb-memory-server binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: mongems-${{ runner.os }}
+      - name: Install
+        working-directory: Server
+        run: npm ci
+      - name: Test
+        working-directory: Server
+        run: npm test
+
+  client:
+    name: Client lint + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - name: Install
+        working-directory: client
+        run: npm ci
+      # Advisory for now: `npm run lint` has pre-existing debt (dead imports +
+      # a few intentional patterns the strict react-hooks/react-refresh rules
+      # flag). It's surfaced here but does NOT block merge; once the backlog is
+      # cleaned, drop continue-on-error to make lint a hard gate too.
+      - name: Lint (advisory)
+        working-directory: client
+        run: npm run lint
+        continue-on-error: true
+      - name: Build
+        working-directory: client
+        run: npm run build

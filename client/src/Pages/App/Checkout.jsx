@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { createOrder, applyCoupon, verifyPayment } from "@/Api/PaymentsApi";
+import { track } from "@/lib/telemetry";
 import { SPLIT_SURCHARGE } from "@/data/pricing";
 import { whatsappLink, WHATSAPP_RESPONSE } from "@/config/support";
 
@@ -37,6 +38,11 @@ export default function Checkout() {
     }, [totals, coupon, plan]);
 
     const allTicked = ticks.terms && ticks.successPromise && ticks.noRefund;
+
+    // Funnel: reached checkout (audit C3).
+    useEffect(() => {
+        track("checkout_start");
+    }, []);
 
     async function onApplyCoupon() {
         if (!couponInput.trim()) return;
@@ -74,6 +80,7 @@ export default function Checkout() {
                             razorpay_payment_id: resp.razorpay_payment_id,
                             razorpay_signature: resp.razorpay_signature,
                         });
+                        track("payment_done"); // funnel: paid (audit C3)
                         clear();
                         toast.success("Payment successful — welcome to Premium!");
                         navigate("/dashboard");

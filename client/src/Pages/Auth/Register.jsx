@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,7 @@ import GoogleLogin from "@/Components/Auth/GoogleLogin";
 import { registerSchema } from "@/lib/validations/auth";
 import { registerUser } from "@/Api/AuthApis";
 import { useAuth } from "@/context/AuthContext";
+import { track } from "@/lib/telemetry";
 import Turnstile, { TURNSTILE_ENABLED } from "@/Components/Auth/Turnstile";
 import { GOOGLE_ENABLED } from "@/lib/googleAuth";
 
@@ -38,6 +39,11 @@ export default function Register() {
         },
     });
 
+    // Funnel: reached the register screen (audit C3).
+    useEffect(() => {
+        track("register_start");
+    }, []);
+
     const onSubmit = async (values) => {
         if (TURNSTILE_ENABLED && !captchaToken) {
             toast.error("Please complete the CAPTCHA");
@@ -47,6 +53,7 @@ export default function Register() {
             const { confirmPassword, ...payload } = values;
             void confirmPassword;
             const res = await registerUser({ ...payload, turnstileToken: captchaToken });
+            track("register_done"); // funnel: account created (audit C3)
             // When email OTP is enabled the account isn't active yet — send the
             // user to the verification step instead of logging them straight in.
             if (res?.needsVerification) {

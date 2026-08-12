@@ -1,10 +1,27 @@
 require("dotenv").config();
 const app = require("./app");
 const connectDB = require("./src/config/db");
+const { saveError } = require("./src/controllers/telemetry/telemetryController");
+
+// Crash safety-nets (audit C3): the process had none. Log + capture async faults
+// that escape a request's try/catch so they're visible in the admin error panel
+// instead of vanishing. Log-and-continue matches the app's availability posture
+// (a rejected background promise shouldn't take down every in-flight student);
+// if the process is ever truly unstable, Render's health checks recycle it.
+process.on("unhandledRejection", (reason) => {
+    const err = reason instanceof Error ? reason : new Error(String(reason));
+    console.error("Unhandled promise rejection:", err);
+    saveError({ source: "server", message: `unhandledRejection: ${err.message}`, stack: err.stack });
+});
+process.on("uncaughtException", (err) => {
+    console.error("Uncaught exception:", err);
+    saveError({ source: "server", message: `uncaughtException: ${err.message}`, stack: err.stack });
+});
 const bootstrapSuperadmin = require("./src/config/bootstrapSuperadmin");
 const { startEmailHealthChecks } = require("./src/utils/email");
 const { startKeepAwake } = require("./src/utils/keepAwake");
 const { startLeaderboardScheduler } = require("./src/jobs/leaderboardScheduler");
+const { startTestLifecycleScheduler } = require("./src/jobs/testLifecycleScheduler");
 const { ensureExamsSeeded } = require("./src/config/exams");
 const { ensureMentorsSeeded } = require("./src/config/seedMentors");
 const { ensureIpuSyllabusSeeded } = require("./src/config/seedIpuSyllabus");
@@ -66,6 +83,7 @@ connectDB().then(async () => {
     await ensurePaidCoursesSeeded();
     await ensureEnrollmentBackfill();
     startLeaderboardScheduler();
+    startTestLifecycleScheduler();
 });
 
 // Probe email deliverability so OTP only turns on when mail can actually be

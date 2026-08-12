@@ -2,6 +2,7 @@ const Test = require("../../models/testModel");
 const Attempt = require("../../models/attemptModel");
 const { visibilityQuery } = require("../../config/exams");
 const { STAFF, isPremiumUser } = require("../../config/roles");
+const { bumpStreak } = require("../../utils/streak");
 
 const isStaff = (u) => STAFF.includes(u?.role);
 // Registers the Question schema so populate("questions") / populate("answers.question")
@@ -23,18 +24,11 @@ async function applyAttemptToStats(user, { accuracy, durationTakenSeconds }) {
         Math.round(((user.stats.studyHours || 0) + durationTakenSeconds / 3600) * 100) / 100;
     user.stats.overallPrep = Math.min(100, (user.stats.overallPrep || 0) + 3);
 
-    // streak: consecutive calendar days with activity
+    // streak: consecutive active days (IST) — shared with the activity heartbeat
+    // so browsing and graded submits advance the same counter off the same day
+    // boundary. lastActiveAt stays "last seen" only (no longer the streak anchor).
     const now = new Date();
-    const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-    const last = user.stats.lastActiveAt ? new Date(user.stats.lastActiveAt) : null;
-    if (!last) {
-        user.stats.streak = 1;
-    } else {
-        const diffDays = Math.round((startOfDay(now) - startOfDay(last)) / 86400000);
-        if (diffDays === 0) user.stats.streak = user.stats.streak || 1;
-        else if (diffDays === 1) user.stats.streak = (user.stats.streak || 0) + 1;
-        else user.stats.streak = 1;
-    }
+    bumpStreak(user.stats, now);
     user.stats.lastActiveAt = now;
 
     user.markModified("stats");
@@ -292,24 +286,50 @@ async function submitTest(req, res, next) {
             Math.max(0, Math.round((submittedAt - startedAt) / 1000))
         );
 
-        const attempt = await Attempt.create({
-            user: req.user._id,
-            test: test._id,
-            testTitle: test.title,
-            examCode: exam, // the batch this attempt was taken under
-            answers,
-            score,
-            totalMarks,
-            correctCount,
-            incorrectCount,
-            unattemptedCount,
-            accuracy,
-            durationTakenSeconds,
-            startedAt,
-            submittedAt,
-        });
+        const graded = test.mode === "test";
 
-        await applyAttemptToStats(req.user, { accuracy, durationTakenSeconds });
+        let attempt;
+        try {
+            attempt = await Attempt.create({
+                user: req.user._id,
+                test: test._id,
+                testTitle: test.title,
+                examCode: exam, // the batch this attempt was taken under
+                answers,
+                score,
+                totalMarks,
+                correctCount,
+                incorrectCount,
+                unattemptedCount,
+                accuracy,
+                durationTakenSeconds,
+                graded, // drives the DB-level single-attempt guarantee for mock tests
+                startedAt,
+                submittedAt,
+            });
+        } catch (err) {
+            // The partial-unique index caught a graded re-submit that raced past the
+            // findOne check above (two tabs/devices). Return the existing attempt.
+            if (err?.code === 11000) {
+                const prev = await Attempt.findOne({ user: req.user._id, test: test._id, examCode: exam })
+                    .select("_id")
+                    .lean();
+                return res.status(409).json({
+                    success: false,
+                    code: "ALREADY_ATTEMPTED",
+                    attemptId: prev?._id,
+                    message: "You've already submitted this test.",
+                });
+            }
+            throw err;
+        }
+
+        // Only graded mock tests feed the dashboard stats (Tests Taken, accuracy,
+        // syllabus %). Practice is repeatable, so counting it would inflate those;
+        // the streak stays alive via the activity heartbeat instead.
+        if (graded) {
+            await applyAttemptToStats(req.user, { accuracy, durationTakenSeconds });
+        }
 
         return res.status(201).json({
             success: true,
@@ -347,11 +367,39 @@ async function getAttempt(req, res, next) {
                 path: "answers.question",
                 select: "text options correctIndex explanation subject topic difficulty marks",
             })
-            .populate("test", "title durationMinutes mode");
+            .populate("test", "title durationMinutes mode closeAt");
         if (!attempt) return res.status(404).json({ success: false, message: "Attempt not found" });
         if (String(attempt.user) !== String(req.user._id)) {
             return res.status(403).json({ success: false, message: "Not your attempt" });
         }
+
+        // Integrity: for a competitive (deadline) test that is STILL OPEN, an
+        // early submitter must not see the answer key + explanations — that would
+        // let them leak answers to others still taking it, the same fairness rule
+        // the leaderboard already enforces. Their own score/what-they-picked is
+        // fine to show; only the correct answers stay sealed until closeAt.
+        // Lifetime graded tests (no closeAt) and practice sets are never locked,
+        // so the normal "see all your answers right after" behaviour is unchanged.
+        const t = attempt.test;
+        const reviewLocked = Boolean(
+            t && t.mode === "test" && t.closeAt && Date.now() < new Date(t.closeAt).getTime()
+        );
+
+        if (reviewLocked) {
+            const obj = attempt.toObject();
+            obj.answers = (obj.answers || []).map((a) => {
+                const { correctIndex, explanation, correct, ...rest } = a;
+                if (rest.question) {
+                    const { correctIndex: _c, explanation: _e, ...q } = rest.question;
+                    rest.question = q;
+                }
+                return rest; // selectedIndex + question text/options remain; key removed
+            });
+            obj.reviewLocked = true;
+            obj.reviewUnlocksAt = t.closeAt;
+            return res.status(200).json({ success: true, attempt: obj });
+        }
+
         return res.status(200).json({ success: true, attempt });
     } catch (error) {
         next(error);
