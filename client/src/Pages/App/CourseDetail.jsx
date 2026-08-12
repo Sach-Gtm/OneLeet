@@ -245,7 +245,7 @@ export default function CourseDetail() {
                                 "Seat matrix & previous-year cut-offs",
                                 "Sample past papers (PYQs)",
                                 "A few free practice tests",
-                                "Dashboard & rank predictor",
+                                "Dashboard & college predictor",
                             ].map((t) => (
                                 <li key={t} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
                                     <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-emerald-500" /> {t}
