@@ -23,6 +23,24 @@ async function myReferral(req, res, next) {
     }
 }
 
+// POST /api/referrals/validate — check a referral code before checkout. Mirrors
+// the credit rules (services/paymentService.creditReferral): the code must exist
+// and can't be the buyer's own. Returns 200 with { valid, message } either way,
+// so the client can show an inline "applied" / error state without HTTP errors.
+async function validateReferral(req, res, next) {
+    try {
+        const code = String(req.body?.code || "").trim().toUpperCase();
+        if (!code) return res.status(400).json({ success: false, valid: false, message: "Enter a referral code." });
+        const ref = await Referral.findOne({ code });
+        if (!ref) return res.status(200).json({ success: true, valid: false, message: "That referral code doesn't exist." });
+        if (String(ref.user) === String(req.user._id))
+            return res.status(200).json({ success: true, valid: false, message: "You can't use your own referral code." });
+        return res.status(200).json({ success: true, valid: true, code, message: "Referral applied successfully" });
+    } catch (e) {
+        next(e);
+    }
+}
+
 // ── Admin (requireAdmin) ────────────────────────────────────────────────────
 async function adminListReferrals(req, res, next) {
     try {
@@ -61,4 +79,4 @@ async function adminMarkFulfilled(req, res, next) {
     }
 }
 
-module.exports = { myReferral, adminListReferrals, adminMarkFulfilled };
+module.exports = { myReferral, validateReferral, adminListReferrals, adminMarkFulfilled };

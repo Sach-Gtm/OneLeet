@@ -89,7 +89,7 @@ export const MEMBERSHIP_GROUPS = [
 export const FREE_FEATURES = [
     "Exam pattern, eligibility & syllabus", "Seat matrix & previous-year cut-offs",
     "Basic college info & important dates", "20 to 30 free PYQs", "2 free mock tests",
-    "2 to 3 sample videos", "Demo AI, dashboard & rank predictor",
+    "2 to 3 sample videos", "Demo AI, dashboard & college predictor",
 ];
 
 // The one-line promise the membership makes (shown at the top of the page).

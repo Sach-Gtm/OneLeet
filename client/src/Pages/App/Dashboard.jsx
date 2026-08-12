@@ -247,21 +247,22 @@ export default function Dashboard() {
             {needsPhoto && (
                 <Link
                     to="/profile"
-                    className="flex items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 transition hover:bg-amber-100"
+                    className="relative flex items-center gap-3 overflow-hidden rounded-2xl border border-amber-200 bg-amber-50 p-4 transition hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:hover:bg-amber-500/15"
                 >
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-amber-100 text-amber-600">
+                    <TopoLines color="rgb(245 158 11)" opacity={0.1} />
+                    <span className="relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300">
                         <Camera size={18} />
                     </span>
-                    <div className="text-sm">
-                        <p className="font-semibold text-amber-800">
+                    <div className="relative z-10 text-sm">
+                        <p className="font-semibold text-amber-800 dark:text-amber-200">
                             Action required: upload your passport photo
                         </p>
-                        <p className="text-amber-700">
+                        <p className="text-amber-700 dark:text-amber-300/90">
                             A clear passport-size photo (under 1&nbsp;MB) is needed to complete
                             your profile. Tap to upload.
                         </p>
                     </div>
-                    <ArrowRight size={16} className="ml-auto shrink-0 text-amber-500" />
+                    <ArrowRight size={16} className="relative z-10 ml-auto shrink-0 text-amber-500 dark:text-amber-400" />
                 </Link>
             )}
 

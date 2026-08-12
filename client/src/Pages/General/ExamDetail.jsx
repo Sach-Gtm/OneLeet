@@ -37,7 +37,7 @@ const SignInLink = ({ children }) => (
 // Public teaser for the college predictor: a visitor enters a rank, and we invite
 // them to create a free account to see the full predicted-college list (the
 // engine + cut-off data live behind login; premium unlocks the complete list).
-function RankPredictorTeaser({ examName }) {
+function CollegePredictorTeaser({ examName }) {
     const [rank, setRank] = useState("");
     const [submitted, setSubmitted] = useState(false);
     return (
@@ -216,7 +216,7 @@ function ExamDetailInner({ code }) {
         has.syllabus && ["syllabus", "Syllabus"],
         has.seatMatrix && ["seats", "Seat matrix"],
         has.cutoffs && ["cutoffs", "Cut-offs"],
-        has.cutoffs && ["predictor", "Rank predictor"],
+        has.cutoffs && ["predictor", "College predictor"],
         has.pyqs && ["pyqs", "Sample PYQs"],
         ["counselling", "Counselling"],
     ].filter(Boolean);
@@ -311,14 +311,14 @@ function ExamDetailInner({ code }) {
                     <Section id="cutoffs" icon={<TrendingUp size={16} />} title="Previous-year cut-offs"
                         action={<SignInLink>Round-wise ranks</SignInLink>}>
                         <p className="text-sm text-slate-500 dark:text-slate-400">
-                            {cutoffs.rounds?.length || 0} counselling round{(cutoffs.rounds?.length || 0) === 1 ? "" : "s"} of closing ranks published. Sign in for the full college × branch × category table, or try the rank predictor.
+                            {cutoffs.rounds?.length || 0} counselling round{(cutoffs.rounds?.length || 0) === 1 ? "" : "s"} of closing ranks published. Sign in for the full college × branch × category table, or try the college predictor.
                         </p>
                     </Section>
                 )}
 
                 {has.cutoffs && (
-                    <Section id="predictor" icon={<Target size={16} />} title="Rank predictor">
-                        <RankPredictorTeaser examName={exam.name} />
+                    <Section id="predictor" icon={<Target size={16} />} title="College predictor">
+                        <CollegePredictorTeaser examName={exam.name} />
                     </Section>
                 )}
 

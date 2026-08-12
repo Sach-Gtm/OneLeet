@@ -171,6 +171,16 @@ const DAY = 86400000;
     assert.strictEqual(after.body.referral.rewardUnlocked, true, "reward unlocks at 3 conversions");
     ok("referral: RAHU2027-style code, reward unlocks at 3 conversions");
 
+    // Referral validation at checkout: real code (any case) applies; junk + own code rejected.
+    const goodRef = await request.post("/api/referrals/validate").set(...auth(priyaT)).send({ code: "rahu2027" });
+    assert.strictEqual(goodRef.body.valid, true, "a real code (any case) validates for another user");
+    assert.match(goodRef.body.message, /applied successfully/i, "success message is returned");
+    const badRef = await request.post("/api/referrals/validate").set(...auth(priyaT)).send({ code: "NOPE9999" });
+    assert.strictEqual(badRef.body.valid, false, "a non-existent code is rejected");
+    const selfRef = await request.post("/api/referrals/validate").set(...auth(rahulT)).send({ code: "RAHU2027" });
+    assert.strictEqual(selfRef.body.valid, false, "you can't apply your own code");
+    ok("referral validate: real code applies, junk + self-referral rejected");
+
     // ── 9. Admin premium lock/unlock (superadmin only) ──
     assert.strictEqual((await request.patch(`/api/payments/admin/premium/${rahul._id}`).set(...auth(adminT)).send({ premiumLocked: true })).status, 403, "admin (non-super) can't toggle premium");
     const locked = await request.patch(`/api/payments/admin/premium/${rahul._id}`).set(...auth(superT)).send({ premiumLocked: true });
