@@ -30,6 +30,8 @@ import PrepCoachCard from "@/Components/App/PrepCoachCard";
 import CollegePredictorCard from "@/Components/App/CollegePredictorCard";
 import FloatingWhatsApp from "@/Components/App/FloatingWhatsApp";
 import { PremiumWelcome, PremiumPerks } from "@/Components/App/premium/PremiumFx";
+import GetStartedChecklist from "@/Components/App/GetStartedChecklist";
+import ProUpgradeTeaser from "@/Components/App/ProUpgradeTeaser";
 import { isStudent, isPremium } from "@/lib/roles";
 
 // Counts up from 0 to `value` on mount (ease-out), so the stats feel alive.
@@ -89,7 +91,7 @@ function PrepRing({ value = 0 }) {
                 </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-bold text-slate-900">
+                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                     <CountUp value={value} format={(v) => `${v}%`} duration={1200} />
                 </span>
             </div>
@@ -98,21 +100,21 @@ function PrepRing({ value = 0 }) {
 }
 
 const STAT_META = [
-    { key: "testsTaken", label: "Tests Taken", icon: ClipboardCheck, color: "text-indigo-600 bg-indigo-50", format: (v) => v },
-    { key: "accuracy", label: "Accuracy", icon: Target, color: "text-emerald-600 bg-emerald-50", format: (v) => `${v}%` },
-    { key: "pyqsSolved", label: "PYQs Solved", icon: CheckCircle2, color: "text-amber-600 bg-amber-50", format: (v) => v.toLocaleString() },
+    { key: "testsTaken", label: "Tests Taken", icon: ClipboardCheck, color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-500/15 dark:text-indigo-300", format: (v) => v },
+    { key: "accuracy", label: "Accuracy", icon: Target, color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/15 dark:text-emerald-300", format: (v) => `${v}%` },
+    { key: "pyqsSolved", label: "PYQs Solved", icon: CheckCircle2, color: "text-amber-600 bg-amber-50 dark:bg-amber-500/15 dark:text-amber-300", format: (v) => v.toLocaleString() },
     // Time studied comes from the same activity tracking as the Analytics page
     // (and the "This week" strip below), so the numbers always agree. The old
     // stats.studyHours counted only time inside tests, which read as "0h" for
     // anyone who mostly browses notes/PYQs/AI tools — confusingly out of step
     // with the time we actually show them everywhere else.
-    { key: "timeStudied", label: "Time Studied", icon: Clock, color: "text-violet-600 bg-violet-50", format: fmtDuration, timeBased: true },
+    { key: "timeStudied", label: "Time Studied", icon: Clock, color: "text-violet-600 bg-violet-50 dark:bg-violet-500/15 dark:text-violet-300", format: fmtDuration, timeBased: true },
 ];
 
 function EmptyState({ icon, title, subtitle }) {
     const Icon = icon;
     return (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 px-6 py-8 text-center">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 px-6 py-8 text-center dark:border-slate-700">
             <Icon className="mb-2 h-6 w-6 text-slate-300" />
             <p className="text-sm font-medium text-slate-500">{title}</p>
             {subtitle && <p className="mt-0.5 text-xs text-slate-400">{subtitle}</p>}
@@ -136,9 +138,9 @@ function WeekActivity({ minutesByDay }) {
     const max = Math.max(1, ...days.map((d) => d.minutes));
     const total = days.reduce((s, d) => s + d.minutes, 0);
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-900">
             <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-sm font-bold text-slate-800">This week</h2>
+                <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">This week</h2>
                 <div className="flex items-center gap-3">
                     <span className="text-xs font-medium text-slate-400">
                         {total >= 60 ? `${Math.floor(total / 60)}h ${total % 60}m` : `${total}m`} studied
@@ -296,31 +298,58 @@ export default function Dashboard() {
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
-                        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white lg:col-span-2"
+                        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 p-6 text-white lg:col-span-2"
                     >
-                        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-                        <h1 className="flex items-center gap-2 text-2xl font-bold">
-                            Welcome back, {firstName}!
-                            <Hand className="h-6 w-6 shrink-0 text-amber-300" />
-                        </h1>
-                        <p className="mt-1 max-w-md text-sm text-indigo-100">
-                            {streak > 0
-                                ? `You've maintained a ${streak}-day streak! Keep up the momentum to crack your dream college.`
-                                : "Let's build your prep streak — start with a mock test or a set of PYQs today."}
-                        </p>
-                        <div className="mt-5 flex flex-wrap gap-3">
-                            <Link
-                                to="/pyqs"
-                                className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-50"
-                            >
-                                <Play size={15} /> Start Practice
-                            </Link>
-                            <Link
-                                to="/ai-tools"
-                                className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
-                            >
-                                <CalendarDays size={15} /> Study Planner
-                            </Link>
+                        {/* Slow-floating orbs + a one-off shine sweep so the hero feels alive. */}
+                        <motion.div
+                            aria-hidden="true"
+                            animate={{ y: [0, -14, 0], x: [0, 8, 0] }}
+                            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+                            className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl"
+                        />
+                        <motion.div
+                            aria-hidden="true"
+                            animate={{ y: [0, 12, 0] }}
+                            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                            className="pointer-events-none absolute -bottom-12 left-16 h-36 w-36 rounded-full bg-violet-300/20 blur-2xl"
+                        />
+                        <motion.div
+                            aria-hidden="true"
+                            initial={{ x: "-140%" }}
+                            animate={{ x: "260%" }}
+                            transition={{ duration: 2.2, delay: 0.6, ease: "easeInOut" }}
+                            className="pointer-events-none absolute inset-y-0 left-0 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+                        />
+                        <div className="relative">
+                            <h1 className="flex items-center gap-2 text-2xl font-bold">
+                                Welcome back, {firstName}!
+                                <motion.span
+                                    animate={{ rotate: [0, 18, -8, 18, 0] }}
+                                    transition={{ duration: 1.4, delay: 0.4, repeat: Infinity, repeatDelay: 3 }}
+                                    style={{ transformOrigin: "70% 70%" }}
+                                >
+                                    <Hand className="h-6 w-6 shrink-0 text-amber-300" />
+                                </motion.span>
+                            </h1>
+                            <p className="mt-1 max-w-md text-sm text-indigo-100">
+                                {streak > 0
+                                    ? `You've maintained a ${streak}-day streak! Keep up the momentum to crack your dream college.`
+                                    : "Let's build your prep streak — start with a mock test or a set of PYQs today."}
+                            </p>
+                            <div className="mt-5 flex flex-wrap gap-3">
+                                <Link
+                                    to="/pyqs"
+                                    className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow-sm transition hover:scale-[1.03] hover:bg-indigo-50"
+                                >
+                                    <Play size={15} /> Start Practice
+                                </Link>
+                                <Link
+                                    to="/ai-tools"
+                                    className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                                >
+                                    <CalendarDays size={15} /> Study Planner
+                                </Link>
+                            </div>
                         </div>
                     </motion.div>
                 )}
@@ -328,15 +357,15 @@ export default function Dashboard() {
                 <Link
                     to="/syllabus"
                     className={cn(
-                        "flex items-center gap-4 rounded-2xl border bg-white p-6 transition hover:shadow-md",
+                        "flex items-center gap-4 rounded-2xl border bg-white p-6 transition hover:shadow-md dark:bg-slate-900",
                         premium
                             ? "border-purple-200/70 hover:border-purple-300 hover:shadow-purple-200/40 dark:border-purple-500/25"
-                            : "border-slate-200 hover:border-indigo-200"
+                            : "border-slate-200 hover:border-indigo-200 dark:border-slate-700"
                     )}
                 >
                     <PrepRing value={syllabus?.totalTopics ? syllabus.percent : stats.overallPrep || 0} />
                     <div>
-                        <p className="text-sm font-semibold text-slate-800">Syllabus Coverage</p>
+                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Syllabus Coverage</p>
                         <p className="text-xs text-slate-400">
                             {syllabus?.totalTopics
                                 ? `${syllabus.doneTopics}/${syllabus.totalTopics} topics done`
@@ -354,6 +383,10 @@ export default function Dashboard() {
             {/* Premium perks — the "what your membership gives you" strip. */}
             {premium && <PremiumPerks />}
 
+            {/* Free students: a guided setup checklist so a new dashboard reads as
+                "here's your next step", not a wall of zeros. Self-hides when done. */}
+            {!premium && isStudent(user) && <GetStartedChecklist user={user} stats={stats} />}
+
             {/* Stat cards */}
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 {STAT_META.map((meta, idx) => {
@@ -364,12 +397,13 @@ export default function Dashboard() {
                             key={meta.key}
                             initial={{ opacity: 0, y: 14 }}
                             animate={{ opacity: 1, y: 0 }}
+                            whileHover={{ y: -4 }}
                             transition={{ duration: 0.4, delay: idx * 0.08, ease: "easeOut" }}
                             className={cn(
-                                "rounded-2xl border bg-white p-5 transition-shadow hover:shadow-md",
+                                "rounded-2xl border bg-white p-5 transition-shadow hover:shadow-lg dark:bg-slate-900",
                                 premium
                                     ? "border-purple-200/70 hover:shadow-purple-200/40 dark:border-purple-500/25"
-                                    : "border-slate-200"
+                                    : "border-slate-200 hover:shadow-indigo-100/60 dark:border-slate-700"
                             )}
                         >
                             <span
@@ -380,7 +414,7 @@ export default function Dashboard() {
                             >
                                 <Icon size={18} />
                             </span>
-                            <p className="mt-3 text-2xl font-bold text-slate-900">
+                            <p className="mt-3 text-2xl font-bold text-slate-900 dark:text-slate-100">
                                 <CountUp value={value} format={meta.format} />
                             </p>
                             <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
@@ -393,6 +427,10 @@ export default function Dashboard() {
 
             {/* This week — real time-on-site */}
             <WeekActivity minutesByDay={week} />
+
+            {/* Free students: an attractive "what Pro unlocks" strip, so the free
+                dashboard clearly reads as the basic tier with a path up. */}
+            {!premium && isStudent(user) && <ProUpgradeTeaser />}
 
             {/* Prep roadmap: what to focus on now, linking to the full guide */}
             <PrepCoachCard />
@@ -427,9 +465,9 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-white p-6">
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-900">
                     <div className="mb-4 flex items-center justify-between">
-                        <h2 className="text-sm font-bold text-slate-800">Recent Activity</h2>
+                        <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">Recent Activity</h2>
                         <Activity size={16} className="text-slate-300" />
                     </div>
                     {recentActivity.length === 0 ? (
@@ -444,7 +482,7 @@ export default function Dashboard() {
                                 <li key={i} className="flex items-start gap-3 text-sm">
                                     <span className="mt-0.5 h-2 w-2 rounded-full bg-indigo-500" />
                                     <div>
-                                        <p className="font-medium text-slate-700">{item.title}</p>
+                                        <p className="font-medium text-slate-700 dark:text-slate-200">{item.title}</p>
                                         <p className="text-xs text-slate-400">{item.time}</p>
                                     </div>
                                 </li>
@@ -457,15 +495,15 @@ export default function Dashboard() {
             {/* Continue learning — only shown once there's something in progress, so a
                 brand-new dashboard doesn't end on a big empty card. */}
             {continueLearning.length > 0 && (
-                <div className="rounded-2xl border border-slate-200 bg-white p-6">
-                    <h2 className="mb-4 text-sm font-bold text-slate-800">Continue Learning</h2>
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-900">
+                    <h2 className="mb-4 text-sm font-bold text-slate-800 dark:text-slate-100">Continue Learning</h2>
                     <div className="grid gap-4 sm:grid-cols-2">
                         {continueLearning.map((item, i) => (
-                            <div key={i} className="rounded-xl border border-slate-100 p-4">
-                                <p className="text-sm font-semibold text-slate-800">
+                            <div key={i} className="rounded-xl border border-slate-100 p-4 dark:border-slate-800">
+                                <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
                                     {item.title}
                                 </p>
-                                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                                     <div
                                         className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-500"
                                         style={{ width: `${item.progress || 0}%` }}
