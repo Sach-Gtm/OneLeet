@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { Loader2, Gift, Copy, Check, Share2, Trophy, Users } from "lucide-react";
 import { getMyReferral } from "@/Api/PaymentsApi";
 import { whatsappLink } from "@/config/support";
+import TopoLines from "@/Components/General/TopoLines";
 
 export default function Refer() {
     const [ref, setRef] = useState(null);
@@ -27,7 +28,9 @@ export default function Refer() {
 
     return (
         <div className="mx-auto max-w-xl">
-            <div className="rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white">
+                <TopoLines color="rgb(255 255 255)" opacity={0.1} />
+                <div className="relative z-10">
                 <Gift className="h-8 w-8" />
                 <h1 className="mt-3 text-2xl font-bold">Refer friends, earn rewards</h1>
                 <p className="mt-1 max-w-md text-sm text-indigo-100">
@@ -44,6 +47,7 @@ export default function Refer() {
                 <a href={whatsappLink(shareText)} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-600">
                     <Share2 size={15} /> Share on WhatsApp
                 </a>
+                </div>
             </div>
 
             {/* Progress */}

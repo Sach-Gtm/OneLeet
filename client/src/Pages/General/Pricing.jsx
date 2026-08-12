@@ -10,6 +10,7 @@ import {
     MEMBERSHIP_PROMISE, CART_TIERS,
 } from "@/data/pricing";
 import { useCart } from "@/context/CartContext";
+import TopoLines from "@/Components/General/TopoLines";
 import { getCourses } from "@/Api/CoursesApi";
 import { useSeo } from "@/lib/useSeo";
 
@@ -158,11 +159,12 @@ export default function Pricing() {
             </div>
 
             {/* Multi-course discount tiers */}
-            <div className="mt-10 rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-600 to-indigo-800 p-5 text-white">
-                <p className="text-center text-sm font-semibold">
+            <div className="relative mt-10 overflow-hidden rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-600 to-indigo-800 p-5 text-white">
+                <TopoLines color="rgb(255 255 255)" opacity={0.1} />
+                <p className="relative z-10 text-center text-sm font-semibold">
                     Preparing for more than one exam? Add batches to your cart and the discount stacks automatically:
                 </p>
-                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <div className="relative z-10 mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {CART_TIERS.map((t, i) => (
                         <motion.div
                             key={t.count}
