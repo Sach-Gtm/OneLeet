@@ -105,6 +105,21 @@ const DAY = 86400000;
     assert.strictEqual(coerced.body.order.payable, 999, "full payable = base (no 30% surcharge)");
     ok("split payment retired: the API coerces split → full");
 
+    // C1: /verify must bind razorpay_order_id to THIS order's installment, so a
+    // valid signature from an unrelated (cheaper) payment can't confirm this one.
+    // The binding check runs before signature verification, so it holds even in
+    // test mode (no live keys).
+    const badBind = await request.post("/api/payments/verify").set(...auth(priyaT)).send({
+        orderId: coerced.body.order._id,
+        installmentN: 1,
+        razorpay_order_id: "order_UNRELATED",
+        razorpay_payment_id: "pay_x",
+        razorpay_signature: "sig_x",
+    });
+    assert.strictEqual(badBind.status, 400, "verify rejects a razorpay_order_id that isn't this order's gateway order");
+    assert.match(String(badBind.body.message || ""), /does not match/i, "…via the order-binding check, before any signature verification");
+    ok("payment verify binds the gateway order id to the order (no cross-order signature replay)");
+
     // ── 5b. Legacy split orders still complete: 30+3 window on first, full validity on second ──
     const splitOrder0 = await Order.create({
         user: priya._id,

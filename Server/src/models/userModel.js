@@ -71,6 +71,7 @@ const UserSchema = new mongoose.Schema(
         isVerified: { type: Boolean, default: true },
         otpHash: { type: String, select: false },
         otpExpire: { type: Date, select: false },
+        otpAttempts: { type: Number, default: 0, select: false }, // wrong-guess counter; burns the code at the cap
         otpLastSentAt: { type: Date, select: false },
         avatar: {
             type: String,

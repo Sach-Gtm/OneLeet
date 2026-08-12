@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { verifyToken } = require("../../middlewares/authMiddleware");
+const { requireStaff } = require("../../middlewares/roleMiddleware");
 const pdfUploadLocal = require("../../middlewares/pdfUploadLocal");
 const noteController = require("../../controllers/content/noteController");
 const multer = require("multer");
@@ -19,9 +20,10 @@ const handleMulterError = (req, res, next) => {
 //upload Pdf
 router.post(
     "/upload",
-    verifyToken, 
-    handleMulterError, 
-    noteController.uploadPdf 
+    verifyToken,
+    requireStaff,
+    handleMulterError,
+    noteController.uploadPdf
 );
 
 //getPdf - According to category

@@ -44,7 +44,7 @@ const login = async (identifier, password) => {
     // super-admin address. Registering it yields a plain student...
     await request.post("/api/auth/register").send({
         name: "Squatter", email: "sachin.gautam8292@gmail.com",
-        password: "squatpw", phone: "9111122223",
+        password: "squatpwd", phone: "9111122223",
     });
     assert.strictEqual(
         (await User.findOne({ email: "sachin.gautam8292@gmail.com" })).role,

@@ -15,7 +15,7 @@ const registerSchema = z.object({
     email: emailField,
     password: z
         .string({ required_error: "Password is required" })
-        .min(6, "Password must be at least 6 characters")
+        .min(8, "Password must be at least 8 characters")
         .max(72, "Password cannot be more than 72 characters"),
     // Registration is students only. Mentor / admin roles are granted
     // deliberately by an admin, never self-selected — any `role` sent here is
@@ -55,7 +55,7 @@ const forgotPasswordSchema = z.object({
 const resetPasswordSchema = z.object({
     password: z
         .string({ required_error: "Password is required" })
-        .min(6, "Password must be at least 6 characters")
+        .min(8, "Password must be at least 8 characters")
         .max(72, "Password cannot be more than 72 characters"),
 });
 
@@ -77,7 +77,7 @@ const changePasswordSchema = z.object({
     currentPassword: z.string().min(1, "Current password is required"),
     newPassword: z
         .string()
-        .min(6, "New password must be at least 6 characters")
+        .min(8, "New password must be at least 8 characters")
         .max(72, "Password too long"),
 });
 
