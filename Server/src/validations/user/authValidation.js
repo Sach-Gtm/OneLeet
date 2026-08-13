@@ -27,6 +27,8 @@ const registerSchema = z.object({
         .max(20, "Phone number too long")
         .regex(/^\+?[0-9][0-9\s-]{8,}$/, "Enter a valid phone number"),
     avatar: z.string().url("Avatar must be a valid URL").optional().or(z.literal("")),
+    // Optional referral code from a friend's link (?ref=). Attributed at signup.
+    referralCode: z.string().trim().max(40).optional().or(z.literal("")),
 });
 
 const verifyOtpSchema = z.object({

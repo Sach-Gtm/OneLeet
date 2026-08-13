@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
@@ -19,6 +19,8 @@ import { GOOGLE_ENABLED } from "@/lib/googleAuth";
 
 export default function Register() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const referralCode = searchParams.get("ref") || ""; // from a friend's referral link
     const { refresh } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [captchaToken, setCaptchaToken] = useState("");
@@ -52,7 +54,7 @@ export default function Register() {
         try {
             const { confirmPassword, ...payload } = values;
             void confirmPassword;
-            const res = await registerUser({ ...payload, turnstileToken: captchaToken });
+            const res = await registerUser({ ...payload, turnstileToken: captchaToken, referralCode });
             track("register_done"); // funnel: account created (audit C3)
             // When email OTP is enabled the account isn't active yet — send the
             // user to the verification step instead of logging them straight in.

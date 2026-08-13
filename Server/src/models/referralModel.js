@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
-// A student's referral code + the premium conversions credited to it. The code
-// is the founder's format: the first four letters of the name + "2027"
-// (e.g. RAHU2027), with a numeric suffix on collision so it stays unique. The
-// reward unlocks at 3 successful premium conversions (special merch + a 1:1 with
-// the founder).
+// A student's referral code + the signups credited to it. The code is the
+// founder's format: the first four letters of the name + "2027" (e.g. RAHU2027),
+// with a numeric suffix on collision so it stays unique. Attribution happens at
+// SIGNUP (a friend who joins through the referral link), and the reward — a 1:1
+// session with the founders — unlocks at 3 signups. (conversions[].order/amount
+// stay optional; they're only set on the legacy checkout-credit path.)
 const REWARD_THRESHOLD = 3;
 
 const ConversionSchema = new mongoose.Schema(

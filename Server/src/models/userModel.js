@@ -72,6 +72,9 @@ const UserSchema = new mongoose.Schema(
         otpHash: { type: String, select: false },
         otpExpire: { type: Date, select: false },
         otpAttempts: { type: Number, default: 0, select: false }, // wrong-guess counter; burns the code at the cap
+        // Referral attribution captured at signup (the referrer whose link this
+        // user joined through). Set once; drives the referrer's signup count.
+        referredBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null, index: true },
         otpLastSentAt: { type: Date, select: false },
         avatar: {
             type: String,

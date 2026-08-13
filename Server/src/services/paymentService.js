@@ -72,6 +72,10 @@ async function creditReferral(order) {
     order.referralCredited = true; // mark handled regardless, so we don't retry
     if (!ref) return;
     if (String(ref.user) === String(order.user)) return; // no self-referral
+    // Signup attribution is authoritative: if this buyer joined through someone's
+    // referral link, a checkout code can't re-attribute them to a second referrer.
+    const buyer = await User.findById(order.user).select("referredBy");
+    if (buyer && buyer.referredBy) return;
     if (ref.conversions.some((c) => String(c.referredUser) === String(order.user))) return; // one per buyer
     ref.conversions.push({ referredUser: order.user, order: order._id, amount: order.payable });
     if (ref.conversions.length >= Referral.REWARD_THRESHOLD && !ref.rewardUnlockedAt) {
