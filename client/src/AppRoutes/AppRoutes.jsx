@@ -23,6 +23,7 @@ const AppShell = lazy(() => import("@/Components/App/AppShell"));
 
 const NotFound = lazy(() => import("@/Components/General/NotFound"));
 const Mentors = lazy(() => import("@/Pages/Navbar-Pages/Mentors"));
+const MentorJourney = lazy(() => import("@/Pages/Navbar-Pages/MentorJourney"));
 const ExamsIndex = lazy(() => import("@/Pages/General/ExamsIndex"));
 const ExamDetail = lazy(() => import("@/Pages/General/ExamDetail"));
 const Colleges = lazy(() => import("@/Pages/General/Colleges"));
@@ -92,6 +93,7 @@ const AppRoutes = () => {
                             unlocks after sign-up, and 1:1 coaching on premium. */}
                         <Route path="/prep-guide" element={<PrepGuide />} />
                         <Route path="/mentor" element={<Mentors />} />
+                        <Route path="/mentor/:slug" element={<MentorJourney />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
                         <Route path="/bug-report" element={<BugReport />} />
                         <Route path="/contribute" element={<Contribute />} />
