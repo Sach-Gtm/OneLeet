@@ -14,8 +14,10 @@ delete process.env.EMAIL_PASS;
 const app = require("../app");
 const request = require("supertest")(app);
 const User = require("../src/models/userModel");
+const Mentor = require("../src/models/mentorModel");
 const generateToken = require("../src/utils/generateToken");
 const { ensureMentorsSeeded } = require("../src/config/seedMentors");
+const { ensureMentorJourneysSeeded } = require("../src/config/seedMentorJourneys");
 
 let passed = 0;
 const ok = (l) => {
@@ -90,6 +92,67 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(delForbid.status, 403, "student cannot delete");
     assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 3, "back to three");
     ok("an admin can delete a mentor; students cannot");
+
+    // ── Journeys: rich content, detail-by-slug, admin edit, drafts, migration ──
+
+    // Seeded founding mentors carry a full journey + a slug.
+    const sachinCard = (await request.get("/api/mentors")).body.mentors.find((m) => m.slug === "sachin-gautam");
+    assert.ok(sachinCard, "sachin has a slug on the card");
+    const sachin = (await request.get("/api/mentors/sachin-gautam")).body.mentor;
+    assert.ok(sachin.story && sachin.story.length > 100, "journey story present");
+    assert.ok(sachin.highlights.length >= 3 && sachin.stats.length >= 3, "highlights + stats present");
+    ok("founding mentors carry a full journey (slug, story, highlights, stats) readable by slug");
+
+    // Admin creates a rich mentor — slug auto-generated, arrays parsed, unsafe link dropped.
+    const rich = await request.post("/api/mentors").set(...auth(adminToken)).send({
+        name: "Neha Verma",
+        role: "Mentor",
+        tagline: "Rank 12 with a part-time job.",
+        highlights: JSON.stringify(["Rank 12 in IPU LEET", "Worked part-time throughout"]),
+        stats: JSON.stringify([{ value: "12", label: "IPU LEET Rank" }]),
+        links: JSON.stringify([
+            { label: "oneleet.in", url: "https://oneleet.in" },
+            { label: "bad", url: "javascript:alert(1)" },
+        ]),
+    });
+    assert.strictEqual(rich.status, 201, "admin creates a rich mentor");
+    assert.strictEqual(rich.body.mentor.slug, "neha-verma", "slug auto-generated from name");
+    assert.strictEqual(rich.body.mentor.highlights.length, 2, "highlights parsed");
+    assert.strictEqual(rich.body.mentor.stats[0].value, "12", "stats parsed");
+    assert.strictEqual(rich.body.mentor.links.length, 1, "only http(s) links kept (javascript: dropped)");
+    const richId = rich.body.mentor._id;
+    ok("an admin creates a mentor with role/tagline/highlights/stats/links (slug auto, unsafe link dropped)");
+
+    // Admin-only full list carries every field; students are refused.
+    assert.strictEqual((await request.get("/api/mentors/admin/all").set(...auth(studentToken))).status, 403, "student 403 on admin list");
+    const all = await request.get("/api/mentors/admin/all").set(...auth(adminToken));
+    const nehaInAll = all.body.mentors.find((m) => m.slug === "neha-verma");
+    assert.ok(nehaInAll && nehaInAll.tagline === "Rank 12 with a part-time job.", "admin list includes the new mentor with its fields");
+    assert.ok(all.body.mentors.some((m) => typeof m.story === "string" && m.story.length > 50), "admin list carries the full journey (detail shape)");
+    ok("the admin full list is admin-only and carries every field");
+
+    // Update (PATCH) — admin only.
+    assert.strictEqual((await request.patch(`/api/mentors/${richId}`).set(...auth(studentToken)).send({ tagline: "x" })).status, 403, "student cannot update");
+    const patched = await request.patch(`/api/mentors/${richId}`).set(...auth(adminToken)).send({ tagline: "Updated line", published: "false" });
+    assert.strictEqual(patched.status, 200, "admin updates");
+    assert.strictEqual(patched.body.mentor.tagline, "Updated line", "field updated");
+    ok("an admin can edit a mentor's fields; students cannot");
+
+    // An unpublished mentor drops out of the public page but stays in the admin list.
+    assert.ok(!(await request.get("/api/mentors")).body.mentors.some((m) => m.slug === "neha-verma"), "hidden mentor not in public list");
+    assert.strictEqual((await request.get("/api/mentors/neha-verma")).status, 404, "hidden mentor detail 404s publicly");
+    assert.ok((await request.get("/api/mentors/admin/all").set(...auth(adminToken))).body.mentors.some((m) => m.slug === "neha-verma"), "hidden mentor still in admin list");
+    ok("unpublishing hides a mentor from the public page but not from admin");
+    await request.delete(`/api/mentors/${richId}`).set(...auth(adminToken)); // cleanup
+
+    // The one-time migration upgrades a legacy bare record and creates missing founders.
+    await Mentor.deleteMany({});
+    await Mentor.create({ name: "Sachin Gautam" }); // pre-journey record: no slug/story
+    await ensureMentorJourneysSeeded();
+    const upgraded = (await request.get("/api/mentors/sachin-gautam")).body.mentor;
+    assert.ok(upgraded && upgraded.story && upgraded.story.length > 100, "bare record upgraded with a full journey");
+    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 3, "missing founders created by the migration");
+    ok("the one-time migration fills bare records' journeys and creates any missing founders");
 
     await mongoose.disconnect();
     await mongod.stop();

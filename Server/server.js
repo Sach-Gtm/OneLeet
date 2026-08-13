@@ -24,6 +24,7 @@ const { startLeaderboardScheduler } = require("./src/jobs/leaderboardScheduler")
 const { startTestLifecycleScheduler } = require("./src/jobs/testLifecycleScheduler");
 const { ensureExamsSeeded } = require("./src/config/exams");
 const { ensureMentorsSeeded } = require("./src/config/seedMentors");
+const { ensureMentorJourneysSeeded } = require("./src/config/seedMentorJourneys");
 const { ensureIpuSyllabusSeeded } = require("./src/config/seedIpuSyllabus");
 const { ensureIpuExamPatternSeeded } = require("./src/config/seedIpuExamPattern");
 const { ensureIpuSeatMatrixSeeded } = require("./src/config/seedIpuSeatMatrix");
@@ -57,7 +58,10 @@ connectDB().then(async () => {
     // single combined one (awaited in order so the merge sees a seeded catalog).
     await ensureExamsSeeded();
     await ensureDtuNsutMerged();
-    ensureMentorsSeeded();
+    // Awaited in order: the journeys migration must see the founding mentors the
+    // base seed inserts (otherwise a fresh DB could double-create them).
+    await ensureMentorsSeeded();
+    await ensureMentorJourneysSeeded();
     ensureIpuSyllabusSeeded();
     ensureDtuNsutSyllabusSeeded();
     ensureIpuExamPatternSeeded();

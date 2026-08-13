@@ -19,11 +19,18 @@ const handlePhoto = (req, res, next) => {
     });
 };
 
-// PUBLIC — the Mentors page reads this without auth.
+// PUBLIC — the Mentors page reads the list without auth.
 router.get("/", ctrl.listMentors);
 
-// Manage — ADMIN ONLY (add with an optional photo, or remove).
+// Manage — ADMIN ONLY. Full data for the editor (defined before /:slug so the
+// literal "admin/all" path is never read as a slug).
+router.get("/admin/all", verifyToken, requireAdmin, ctrl.adminListMentors);
 router.post("/", verifyToken, requireAdmin, handlePhoto, ctrl.createMentor);
+router.patch("/:id", verifyToken, requireAdmin, handlePhoto, ctrl.updateMentor);
 router.delete("/:id", verifyToken, requireAdmin, ctrl.deleteMentor);
+
+// PUBLIC — one mentor's full journey (kept last so it can't shadow the routes
+// above). ObjectId ids used by PATCH/DELETE never collide with word slugs.
+router.get("/:slug", ctrl.getMentor);
 
 module.exports = router;

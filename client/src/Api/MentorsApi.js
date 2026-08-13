@@ -7,7 +7,7 @@ const unwrap = (error) => {
     throw e;
 };
 
-// PUBLIC — the Mentors page reads this without auth.
+// PUBLIC — the Mentors page reads the list without auth.
 export const getMentors = async () => {
     try {
         const { data } = await api.get("/mentors");
@@ -17,17 +17,56 @@ export const getMentors = async () => {
     }
 };
 
-// --- Admin management ---
-// Multipart because a photo may be attached; the rest ride along as fields.
-export const createMentor = async ({ name, exam, description, handle, photo }) => {
+// PUBLIC — one mentor's full journey (detail page).
+export const getMentor = async (slug) => {
     try {
-        const form = new FormData();
-        form.append("name", name);
-        if (exam) form.append("exam", exam);
-        if (description) form.append("description", description);
-        if (handle) form.append("handle", handle);
-        if (photo) form.append("photo", photo);
-        const { data } = await api.post("/mentors", form);
+        const { data } = await api.get(`/mentors/${slug}`);
+        return data.mentor;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// --- Admin management ---
+
+// Full data for every mentor (incl. unpublished) so the editor can load all.
+export const getMentorsAdmin = async () => {
+    try {
+        const { data } = await api.get("/mentors/admin/all");
+        return data.mentors || [];
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Build multipart form from a mentor payload. Arrays ride as JSON strings (the
+// server parses them); a File `photo` is streamed to Cloudinary.
+const toForm = (m) => {
+    const form = new FormData();
+    const scalars = ["name", "slug", "role", "exam", "tagline", "description", "story", "handle", "order"];
+    scalars.forEach((k) => {
+        if (m[k] !== undefined && m[k] !== null) form.append(k, m[k]);
+    });
+    if (m.published !== undefined) form.append("published", m.published ? "true" : "false");
+    if (m.highlights !== undefined) form.append("highlights", JSON.stringify(m.highlights));
+    if (m.stats !== undefined) form.append("stats", JSON.stringify(m.stats));
+    if (m.links !== undefined) form.append("links", JSON.stringify(m.links));
+    if (m.photo instanceof File) form.append("photo", m.photo);
+    return form;
+};
+
+export const createMentor = async (mentor) => {
+    try {
+        const { data } = await api.post("/mentors", toForm(mentor));
+        return data.mentor;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+export const updateMentor = async (id, mentor) => {
+    try {
+        const { data } = await api.patch(`/mentors/${id}`, toForm(mentor));
         return data.mentor;
     } catch (error) {
         unwrap(error);
