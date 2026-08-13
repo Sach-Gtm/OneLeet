@@ -66,20 +66,23 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(addText.status, 201, "admin adds a text review");
     assert.strictEqual(addText.body.review.type, "text");
     assert.strictEqual(addText.body.review.video, null, "text review has no video");
+    assert.strictEqual(addText.body.review.image, null, "text review has no image");
     ok("an admin adds a text review");
 
-    // A text review needs text; a video review needs an uploaded clip.
+    // A text review needs text; image/video reviews need an uploaded file.
     const noText = await request.post("/api/reviews").set(...auth(adminToken)).send({ type: "text" });
     assert.strictEqual(noText.status, 400, "empty text review is rejected");
     const noFile = await request.post("/api/reviews").set(...auth(adminToken)).send({ type: "video", title: "x" });
     assert.strictEqual(noFile.status, 400, "video review without a file is rejected");
-    ok("validation: text needs a message, a video review needs an uploaded clip");
+    const noImage = await request.post("/api/reviews").set(...auth(adminToken)).send({ type: "image", title: "x" });
+    assert.strictEqual(noImage.status, 400, "image review without a file is rejected");
+    ok("validation: text needs a message; image and video reviews need an uploaded file");
 
     // Public list shows the text review, safe fields only (no createdBy).
     const pub = await request.get("/api/reviews");
     assert.strictEqual(pub.body.reviews.length, 1, "review is public");
     assert.ok(!("createdBy" in pub.body.reviews[0]), "internal fields not exposed");
-    assert.ok("video" in pub.body.reviews[0], "video field present in the shape");
+    assert.ok("video" in pub.body.reviews[0] && "image" in pub.body.reviews[0], "video + image fields present in the shape");
     ok("published reviews appear on the public endpoint with safe fields only");
 
     // Admin deletes it.

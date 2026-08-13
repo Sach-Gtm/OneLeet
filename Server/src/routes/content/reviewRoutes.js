@@ -4,15 +4,16 @@ const multer = require("multer");
 
 const { verifyToken } = require("../../middlewares/authMiddleware");
 const { requireAdmin } = require("../../middlewares/roleMiddleware");
-const videoUploadMemory = require("../../middlewares/videoUploadMemory");
+const reviewMediaUpload = require("../../middlewares/reviewMediaUpload");
 const ctrl = require("../../controllers/content/reviewController");
 
-// Wrap multer so file-size / type errors become clean 400s.
-const handleVideo = (req, res, next) => {
-    videoUploadMemory(req, res, (err) => {
+// Wrap multer so file-size / type errors become clean 400s. Accepts either a
+// "video" or an "image" field (image size is re-checked in the controller).
+const handleMedia = (req, res, next) => {
+    reviewMediaUpload(req, res, (err) => {
         if (err instanceof multer.MulterError || err) {
             const message =
-                err.code === "LIMIT_FILE_SIZE" ? "Video must be 50 MB or smaller." : err.message;
+                err.code === "LIMIT_FILE_SIZE" ? "That file is too large." : err.message;
             return res.status(400).json({ success: false, message });
         }
         next();
@@ -22,8 +23,8 @@ const handleVideo = (req, res, next) => {
 // PUBLIC — the landing page strip reads this with no auth (published only).
 router.get("/", ctrl.listReviews);
 
-// Manage — ADMIN ONLY (add a text review or upload a video review; remove one).
-router.post("/", verifyToken, requireAdmin, handleVideo, ctrl.createReview);
+// Manage — ADMIN ONLY (add a text / image / video review; remove one).
+router.post("/", verifyToken, requireAdmin, handleMedia, ctrl.createReview);
 router.delete("/:id", verifyToken, requireAdmin, ctrl.deleteReview);
 
 module.exports = router;

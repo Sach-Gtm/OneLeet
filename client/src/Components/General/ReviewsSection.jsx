@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Quote, Play, Volume2, X, Star, Sparkle } from "lucide-react";
+import { Quote, Play, Volume2, X, Star, Sparkle, Image as ImageIcon } from "lucide-react";
 import { getReviews } from "@/Api/ReviewsApi";
 
-// A full-size video player (with sound) for a review, opened from a card.
-function ReviewVideoModal({ review, onClose }) {
+// A full-size viewer for a review's media (video with sound, or an image),
+// opened from a card.
+function ReviewMediaModal({ review, onClose }) {
+    const isImage = review.type === "image";
     useEffect(() => {
         const k = (e) => e.key === "Escape" && onClose();
         window.addEventListener("keydown", k);
@@ -23,7 +25,11 @@ function ReviewVideoModal({ review, onClose }) {
                 >
                     <X size={16} />
                 </button>
-                <video src={review.video} controls autoPlay playsInline className="max-h-[80vh] w-full bg-black" />
+                {isImage ? (
+                    <img src={review.image} alt={review.title || "Student review"} className="max-h-[85vh] w-full bg-black object-contain" />
+                ) : (
+                    <video src={review.video} controls autoPlay playsInline className="max-h-[80vh] w-full bg-black" />
+                )}
                 {(review.title || review.author) && (
                     <div className="bg-slate-950 px-4 py-3 text-xs text-slate-300">
                         {[review.title, review.author].filter(Boolean).join(" · ")}
@@ -36,6 +42,7 @@ function ReviewVideoModal({ review, onClose }) {
 
 function ReviewCard({ review, onPlay }) {
     const isVideo = review.type === "video" && review.video;
+    const isImage = review.type === "image" && review.image;
     const videoRef = useRef(null);
 
     // React doesn't reliably set the `muted` DOM property, and unmuted autoplay is
@@ -79,6 +86,32 @@ function ReviewCard({ review, onPlay }) {
                     {review.author && <p className="mt-0.5 text-xs text-white/75">{review.author}</p>}
                 </div>
             </div>
+        );
+    }
+
+    // Image review — same card footprint as the rest. A blurred copy fills the
+    // frame so a tall screenshot doesn't leave empty bars, with the full image
+    // shown uncropped (object-contain) on top. Tap to read it full-size.
+    if (isImage) {
+        return (
+            <button
+                onClick={() => onPlay(review)}
+                className="group relative h-40 w-72 shrink-0 overflow-hidden rounded-2xl bg-slate-900 text-left shadow-md shadow-slate-300/40 dark:shadow-black/40"
+                aria-label="Open review"
+            >
+                <img src={review.image} aria-hidden="true" className="absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-xl" />
+                <img src={review.image} alt={review.title || "Student review"} className="relative h-full w-full object-contain" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/10" />
+                <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white backdrop-blur">
+                    <ImageIcon size={9} /> Photo
+                </span>
+                {(review.title || review.author) && (
+                    <div className="absolute inset-x-0 bottom-0 p-3 text-left">
+                        {review.title && <p className="line-clamp-1 text-sm font-semibold text-white">{review.title}</p>}
+                        {review.author && <p className="mt-0.5 text-xs text-white/75">{review.author}</p>}
+                    </div>
+                )}
+            </button>
         );
     }
 
@@ -153,7 +186,7 @@ export default function ReviewsSection() {
                 </div>
             </div>
 
-            {playing && <ReviewVideoModal review={playing} onClose={() => setPlaying(null)} />}
+            {playing && <ReviewMediaModal review={playing} onClose={() => setPlaying(null)} />}
         </section>
     );
 }
