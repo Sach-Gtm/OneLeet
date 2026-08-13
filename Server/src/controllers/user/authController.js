@@ -17,6 +17,31 @@ const {
     RESEND_COOLDOWN_MS,
 } = require("../../utils/otp");
 const { isEmailBlocked } = require("../../utils/blocklist");
+const Referral = require("../../models/referralModel");
+
+// Attribute a new signup to the referrer whose code they joined through (from
+// the referral link's ?ref=). Sets referredBy on the new user and credits the
+// referrer once; unlocks the reward at REWARD_THRESHOLD signups. Best-effort —
+// a referral hiccup must never block registration.
+async function creditSignupReferral(newUser, referralCode) {
+    try {
+        const code = String(referralCode || "").trim().toUpperCase();
+        if (!code) return;
+        const ref = await Referral.findOne({ code });
+        if (!ref || String(ref.user) === String(newUser._id)) return; // no self-referral
+        newUser.referredBy = ref.user; // one referrer per user, set at signup
+        await newUser.save({ validateBeforeSave: false });
+        if (!ref.conversions.some((c) => String(c.referredUser) === String(newUser._id))) {
+            ref.conversions.push({ referredUser: newUser._id });
+            if (ref.conversions.length >= Referral.REWARD_THRESHOLD && !ref.rewardUnlockedAt) {
+                ref.rewardUnlockedAt = new Date();
+            }
+            await ref.save();
+        }
+    } catch (e) {
+        console.error("[register] referral attribution failed:", e.message);
+    }
+}
 
 // Strip sensitive fields before returning a user in a response.
 const sanitize = (user) => {
@@ -62,7 +87,7 @@ async function sendOtpEmail(user, otp) {
 // POST /api/auth/register
 async function register(req, res, next) {
     try {
-        const { name, email, password, phone, avatar } = req.body;
+        const { name, email, password, phone, avatar, referralCode } = req.body;
 
         // Blocked (e.g. previously removed) emails can't create a new account.
         if (await isEmailBlocked(email)) {
@@ -98,6 +123,10 @@ async function register(req, res, next) {
             authProvider: "local",
             isVerified: !otpEnabled,
         });
+
+        // Attribution happens here, at signup, from the referral link's code —
+        // tied to the account, not a free-text code typed later at checkout.
+        await creditSignupReferral(user, referralCode);
 
         if (otpEnabled) {
             const otp = setOtp(user);

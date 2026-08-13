@@ -196,6 +196,24 @@ const DAY = 86400000;
     assert.strictEqual(selfRef.body.valid, false, "you can't apply your own code");
     ok("referral validate: real code applies, junk + self-referral rejected");
 
+    // Signup attribution: a friend who registers through a referrer's link is
+    // credited to that referrer AT SIGNUP (not via a checkout code), and their
+    // referredBy is set.
+    const refOwner = await request.post("/api/auth/register").send({
+        name: "Ref Owner", email: "refowner@test.com", password: "refowner8", phone: "9333344445",
+    });
+    const ownerT = refOwner.body.token;
+    const ownerCode = (await request.get("/api/referrals/me").set(...auth(ownerT))).body.referral.code;
+    await request.post("/api/auth/register").send({
+        name: "Ref Friend", email: "reffriend@test.com", password: "reffriend8", phone: "9333344446", referralCode: ownerCode,
+    });
+    const ownerRef = await request.get("/api/referrals/me").set(...auth(ownerT));
+    assert.strictEqual(ownerRef.body.referral.conversionCount, 1, "signup through a referral link credits the referrer at signup");
+    const friend = await User.findOne({ email: "reffriend@test.com" });
+    const owner = await User.findOne({ email: "refowner@test.com" });
+    assert.strictEqual(String(friend.referredBy), String(owner._id), "the friend's referredBy points to the referrer");
+    ok("referral attribution happens at signup (referredBy set + credited once)");
+
     // ── 9. Admin premium lock/unlock (superadmin only) ──
     assert.strictEqual((await request.patch(`/api/payments/admin/premium/${rahul._id}`).set(...auth(adminT)).send({ premiumLocked: true })).status, 403, "admin (non-super) can't toggle premium");
     const locked = await request.patch(`/api/payments/admin/premium/${rahul._id}`).set(...auth(superT)).send({ premiumLocked: true });
