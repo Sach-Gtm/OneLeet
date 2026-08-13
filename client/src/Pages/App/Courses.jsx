@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { getCourses } from "@/Api/CoursesApi";
 import CourseBanner, { CourseSky, hueFor } from "@/Components/General/CourseBanner";
+import SkyClouds from "@/Components/General/SkyClouds";
 import { useSeo } from "@/lib/useSeo";
 
 function CourseCard({ course, index }) {
@@ -109,7 +110,10 @@ export default function Courses() {
     });
 
     return (
-        <div className="mx-auto max-w-6xl space-y-6 px-4 pb-16 pt-28 sm:pt-32">
+        <div className="relative min-h-screen">
+            {/* Real sky behind the whole batches page — light-blue with clouds. */}
+            <SkyClouds className="absolute inset-0 -z-10" />
+            <div className="relative mx-auto max-w-6xl space-y-6 px-4 pb-16 pt-28 sm:pt-32">
             {/* Header */}
             <div className="relative overflow-hidden rounded-2xl p-6 text-white">
                 <CourseSky hue={hueFor("Batches")} />
@@ -155,6 +159,7 @@ export default function Courses() {
                     ))}
                 </div>
             )}
+            </div>
         </div>
     );
 }
