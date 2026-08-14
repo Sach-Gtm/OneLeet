@@ -23,7 +23,7 @@ import { track } from "@/lib/telemetry";
 // landing entry chunk entirely.
 const ShaderHero = lazy(() => import("@/Components/General/ShaderHero"));
 const JourneyReveal = lazy(() => import("@/Components/General/JourneyReveal"));
-const ReviewsSection = lazy(() => import("@/Components/General/ReviewsSection"));
+const SuccessWall = lazy(() => import("@/Components/General/SuccessWall"));
 
 const features = [
     { icon: FileText, title: "Real past papers", desc: "Actual LEET papers. Practise what the exam really asks.", tint: "bg-indigo-50 border-indigo-100", iconBg: "bg-indigo-500" },
@@ -255,10 +255,10 @@ export default function Home() {
                 <CollegeCtaBand />
             </section>
 
-            {/* Student reviews — a moving marquee, just before the footer.
-                (The site <Footer> is rendered once by MarketingLayout now.) */}
+            {/* The Success Wall — a compact 3D strip of student wins; opens the
+                full wall (photos / reviews / videos / stories) on click. */}
             <Suspense fallback={null}>
-                <ReviewsSection />
+                <SuccessWall />
             </Suspense>
 
             {/* SEO FAQ — the last section before the footer. */}

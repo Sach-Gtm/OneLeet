@@ -29,6 +29,8 @@ const ExamDetail = lazy(() => import("@/Pages/General/ExamDetail"));
 const Colleges = lazy(() => import("@/Pages/General/Colleges"));
 const Pricing = lazy(() => import("@/Pages/General/Pricing"));
 const SuccessPromise = lazy(() => import("@/Pages/General/SuccessPromise"));
+const SuccessStories = lazy(() => import("@/Pages/General/SuccessStories"));
+const CaseStory = lazy(() => import("@/Pages/General/CaseStory"));
 const PrivacyPolicy = lazy(() => import("@/Pages/Footer-Pages/PrivacyPolicy"));
 const BugReport = lazy(() => import("@/Pages/Footer-Pages/BugReport"));
 const Contribute = lazy(() => import("@/Pages/Footer-Pages/Contribute"));
@@ -85,6 +87,8 @@ const AppRoutes = () => {
                         <Route path="/colleges" element={<Colleges />} />
                         <Route path="/pricing" element={<Pricing />} />
                         <Route path="/success-promise" element={<SuccessPromise />} />
+                        <Route path="/success" element={<SuccessStories />} />
+                        <Route path="/success/:slug" element={<CaseStory />} />
                         <Route path="/terms" element={<SuccessPromise />} />
                         {/* Courses are public: browse + read the free syllabus before signing up. */}
                         <Route path="/courses" element={<Courses />} />

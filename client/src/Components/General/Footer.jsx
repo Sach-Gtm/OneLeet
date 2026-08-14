@@ -132,6 +132,7 @@ export default function Footer() {
                         <li><Link to="/" className={linkCls}>Home</Link></li>
                         <li><Link to="/community" className={linkCls}>Community</Link></li>
                         <li><Link to="/mentor" className={linkCls}>Mentors</Link></li>
+                        <li><Link to="/success" className={linkCls}>Success Stories</Link></li>
                         <li><Link to="/privacy" className={linkCls}>Privacy Policy</Link></li>
                     </ul>
                 </div>

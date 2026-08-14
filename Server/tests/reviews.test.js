@@ -91,6 +91,56 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual((await request.get("/api/reviews")).body.reviews.length, 0, "none left after delete");
     ok("an admin can delete a review");
 
+    // ── Student details, cases (SEO stories), edit, drafts ──
+
+    // A review carries optional student details.
+    const withDetails = await request.post("/api/reviews").set(...auth(adminToken)).send({
+        type: "text", text: "Cracked it!", author: "Aman", exam: "IPU LEET 2024", rank: "AIR 54", college: "GGSIPU", branch: "CSE",
+    });
+    assert.strictEqual(withDetails.status, 201);
+    assert.strictEqual(withDetails.body.review.rank, "AIR 54", "rank saved");
+    assert.strictEqual(withDetails.body.review.college, "GGSIPU", "college saved");
+    assert.strictEqual((await request.get("/api/reviews")).body.reviews[0].branch, "CSE", "student details are public");
+    ok("a review carries optional student details (exam/rank/college/branch)");
+
+    // A case needs a story; then it gets a slug + its own page.
+    const noStory = await request.post("/api/reviews").set(...auth(adminToken)).send({ type: "text", text: "hi", isCase: "true", caseTitle: "X" });
+    assert.strictEqual(noStory.status, 400, "a case needs a story");
+    const caseRes = await request.post("/api/reviews").set(...auth(adminToken)).send({
+        type: "text", text: "short quote", author: "Neha", isCase: "true",
+        caseTitle: "How Neha reached AIR 12", caseStory: "Neha started late.\n\nWith the right plan she cleared LEET at AIR 12.",
+    });
+    assert.strictEqual(caseRes.status, 201, "admin creates a case");
+    assert.ok(caseRes.body.review.slug, "a case gets a slug");
+    const caseSlug = caseRes.body.review.slug;
+    ok("a case needs a story and gets its own slug");
+
+    // Cases list + case-by-slug (full story); unknown slug 404s.
+    assert.ok((await request.get("/api/reviews/cases")).body.cases.some((c) => c.slug === caseSlug), "case appears in /cases");
+    const one = await request.get(`/api/reviews/cases/${caseSlug}`);
+    assert.strictEqual(one.status, 200);
+    assert.ok(one.body.case.caseStory.length > 20, "case-by-slug returns the full story");
+    assert.strictEqual((await request.get("/api/reviews/cases/nope")).status, 404, "unknown case 404s");
+    ok("cases are listed and each has its own /success/:slug story");
+
+    // Admin-only full list carries the story; students refused.
+    assert.strictEqual((await request.get("/api/reviews/admin/all").set(...auth(studentToken))).status, 403, "student 403 on admin list");
+    assert.ok((await request.get("/api/reviews/admin/all").set(...auth(adminToken))).body.reviews.some((r) => typeof r.caseStory === "string" && r.caseStory.length > 20), "admin list carries the case story");
+    ok("the admin full list is admin-only and carries the case story");
+
+    // Edit — admin only; promote a plain review to a case.
+    assert.strictEqual((await request.patch(`/api/reviews/${withDetails.body.review._id}`).set(...auth(studentToken)).send({ author: "x" })).status, 403, "student cannot edit");
+    const promote = await request.patch(`/api/reviews/${withDetails.body.review._id}`).set(...auth(adminToken)).send({ isCase: "true", caseTitle: "Aman's story", caseStory: "Aman went from a diploma to GGSIPU with a focused plan." });
+    assert.strictEqual(promote.status, 200);
+    assert.ok(promote.body.review.slug, "promoting to a case assigns a slug");
+    ok("an admin edits a review and can promote it to a case; students cannot");
+
+    // Unpublishing a case hides it from /cases and its page.
+    await request.patch(`/api/reviews/${caseRes.body.review._id}`).set(...auth(adminToken)).send({ published: "false" });
+    assert.ok(!(await request.get("/api/reviews/cases")).body.cases.some((c) => c.slug === caseSlug), "hidden case not in /cases");
+    assert.strictEqual((await request.get(`/api/reviews/cases/${caseSlug}`)).status, 404, "hidden case page 404s");
+    ok("unpublishing a case hides it from the wall and its page");
+
     await mongoose.disconnect();
     await mongod.stop();
     console.log(`\n✅ All ${passed} review checks passed`);

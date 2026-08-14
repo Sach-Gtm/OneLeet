@@ -7,7 +7,7 @@ const unwrap = (error) => {
     throw e;
 };
 
-// PUBLIC — the landing-page strip fetches this (no auth needed).
+// PUBLIC — the Success Wall reads these (no auth).
 export const getReviews = async () => {
     try {
         const { data } = await api.get("/reviews");
@@ -16,26 +16,64 @@ export const getReviews = async () => {
         unwrap(error);
     }
 };
-
-// --- Admin management ---
-// Multipart: a video review carries an uploaded clip and an image review an
-// uploaded photo/screenshot; text reviews just fields.
-export const createReview = async ({ type, text, title, author, video, image }) => {
+export const getCases = async () => {
     try {
-        const form = new FormData();
-        form.append("type", type);
-        if (text) form.append("text", text);
-        if (title) form.append("title", title);
-        if (author) form.append("author", author);
-        if (video) form.append("video", video);
-        if (image) form.append("image", image);
-        const { data } = await api.post("/reviews", form);
-        return data.review;
+        const { data } = await api.get("/reviews/cases");
+        return data.cases || [];
+    } catch (error) {
+        unwrap(error);
+    }
+};
+export const getCase = async (slug) => {
+    try {
+        const { data } = await api.get(`/reviews/cases/${slug}`);
+        return data.case;
     } catch (error) {
         unwrap(error);
     }
 };
 
+// --- Admin management ---
+export const getReviewsAdmin = async () => {
+    try {
+        const { data } = await api.get("/reviews/admin/all");
+        return data.reviews || [];
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Multipart: an image/video review carries an uploaded file; the rest ride as
+// fields (arrays/objects aren't used here, so plain appends are fine).
+const toForm = (r) => {
+    const form = new FormData();
+    const scalars = ["type", "text", "title", "author", "exam", "rank", "college", "branch", "caseTitle", "caseStory", "order"];
+    scalars.forEach((k) => {
+        if (r[k] !== undefined && r[k] !== null && r[k] !== "") form.append(k, r[k]);
+    });
+    if (r.isCase !== undefined) form.append("isCase", r.isCase ? "true" : "false");
+    if (r.published !== undefined) form.append("published", r.published ? "true" : "false");
+    if (r.image instanceof File) form.append("image", r.image);
+    if (r.video instanceof File) form.append("video", r.video);
+    return form;
+};
+
+export const createReview = async (review) => {
+    try {
+        const { data } = await api.post("/reviews", toForm(review));
+        return data.review;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+export const updateReview = async (id, review) => {
+    try {
+        const { data } = await api.patch(`/reviews/${id}`, toForm(review));
+        return data.review;
+    } catch (error) {
+        unwrap(error);
+    }
+};
 export const deleteReview = async (id) => {
     try {
         const { data } = await api.delete(`/reviews/${id}`);
