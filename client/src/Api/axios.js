@@ -37,6 +37,7 @@ export const clearToken = () => {
     memToken = null;
     try {
         localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY); // a cleared token means no session — drop the cached user too
     } catch {
         /* ignore */
     }
@@ -45,6 +46,30 @@ export const getToken = () => {
     if (memToken) return memToken;
     try {
         return localStorage.getItem(TOKEN_KEY);
+    } catch {
+        return null;
+    }
+};
+
+// --- Persisted user (optimistic session) --------------------------------
+// Cache the last-known user alongside the token so a reload / PWA relaunch shows
+// the app immediately from the stored session, instead of blanking to a spinner
+// and — if the first /auth/me is slow or fails (e.g. a Render cold start) —
+// bouncing a perfectly valid login back to /login. It's only a hint: /auth/me
+// still validates in the background and a real 401 clears it (via clearToken).
+const USER_KEY = "oneleet_user";
+export const setStoredUser = (u) => {
+    try {
+        if (u) localStorage.setItem(USER_KEY, JSON.stringify(u));
+        else localStorage.removeItem(USER_KEY);
+    } catch {
+        /* storage blocked — the in-memory context state still holds the user */
+    }
+};
+export const getStoredUser = () => {
+    try {
+        const s = localStorage.getItem(USER_KEY);
+        return s ? JSON.parse(s) : null;
     } catch {
         return null;
     }
