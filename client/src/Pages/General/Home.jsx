@@ -91,11 +91,9 @@ export default function Home() {
                         </mark>{" "}
                         got you here.
                         <br className="hidden sm:block" />{" "}
-                        We&apos;ll get you to the{" "}
-                        <mark className="mx-0.5 inline-block rounded-lg bg-amber-300 px-3 py-1 italic leading-none text-slate-900 shadow-sm shadow-amber-600/25">
-                            top
-                        </mark>
-                        .
+                        <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+                            We&apos;ll get you to the top.
+                        </span>
                     </h1>
 
                     <p className="mx-auto max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
