@@ -17,7 +17,8 @@ export function PortraitImage({ src, alt = "", className = "", rounded = "rounde
 }
 
 // The optional student details as compact chips — only the ones present show.
-export function StudentMeta({ r, className = "" }) {
+// `dark` styles them for a photo/video overlay (translucent white on the image).
+export function StudentMeta({ r, className = "", dark = false }) {
     const items = [
         r.exam && { icon: GraduationCap, text: r.exam },
         r.rank && { icon: Trophy, text: r.rank },
@@ -25,19 +26,25 @@ export function StudentMeta({ r, className = "" }) {
         r.branch && { icon: BookOpen, text: r.branch },
     ].filter(Boolean);
     if (!items.length) return null;
+    const chip = dark
+        ? "bg-white/15 text-white ring-1 ring-white/15 backdrop-blur-sm"
+        : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300";
     return (
         <div className={`flex flex-wrap gap-1.5 ${className}`}>
             {items.map((it, i) => {
                 const Icon = it.icon;
                 return (
-                    <span key={i} className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                        <Icon size={11} className="text-indigo-500" /> {it.text}
+                    <span key={i} className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium ${chip}`}>
+                        <Icon size={11} className={dark ? "text-amber-300" : "text-indigo-500"} /> {it.text}
                     </span>
                 );
             })}
         </div>
     );
 }
+
+// True when a review carries any student detail worth revealing on hover.
+export const hasMeta = (r) => !!(r && (r.author || r.exam || r.rank || r.college || r.branch));
 
 export function Stars({ size = 11 }) {
     return (

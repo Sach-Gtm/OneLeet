@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { X, Image as ImageIcon, Quote, Play, Volume2, Sparkles, ArrowRight } from "lucide-react";
-import { PortraitImage, StudentMeta, Stars, initials } from "@/Components/General/successShared";
+import { PortraitImage, StudentMeta, Stars, initials, hasMeta } from "@/Components/General/successShared";
 
 // A full-size viewer for a photo or a video, opened from the grids.
 function MediaLightbox({ item, onClose }) {
@@ -23,8 +23,11 @@ function MediaLightbox({ item, onClose }) {
                 ) : (
                     <video src={item.video} controls autoPlay playsInline className="max-h-[85vh] w-full bg-black" />
                 )}
-                {(item.title || item.author) && (
-                    <div className="bg-slate-950 px-4 py-3 text-xs text-slate-300">{[item.title, item.author].filter(Boolean).join(" · ")}</div>
+                {(item.title || item.author || hasMeta(item)) && (
+                    <div className="bg-slate-950 px-4 py-3">
+                        {(item.author || item.title) && <p className="text-xs font-semibold text-slate-200">{[item.author, item.title].filter(Boolean).join(" · ")}</p>}
+                        <StudentMeta r={item} dark className="mt-2" />
+                    </div>
                 )}
             </div>
         </div>
@@ -107,7 +110,16 @@ export default function SuccessWallModal({ reviews = [], initialTab = "photos", 
                             {photos.length === 0 && <Empty>No photo reviews yet.</Empty>}
                             {photos.map((r) => (
                                 <button key={r._id} onClick={() => setLight(r)} className="group text-left">
-                                    <PortraitImage src={r.image} alt={r.title || "Student review"} className="aspect-[3/4] w-full ring-1 ring-slate-900/10 transition group-hover:ring-indigo-400 dark:ring-white/10" />
+                                    <div className="relative overflow-hidden rounded-xl ring-1 ring-slate-900/10 transition group-hover:ring-indigo-400 dark:ring-white/10">
+                                        <PortraitImage src={r.image} alt={r.title || "Student review"} className="aspect-[3/4] w-full" />
+                                        {/* Hover: name + all their details, right on the photo. */}
+                                        {hasMeta(r) && (
+                                            <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-slate-950/92 via-slate-950/35 to-transparent p-2.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                                                {r.author && <p className="text-sm font-bold leading-tight text-white">{r.author}</p>}
+                                                <StudentMeta r={r} dark className="mt-1.5" />
+                                            </div>
+                                        )}
+                                    </div>
                                     {(r.author || r.title) && (
                                         <p className="mt-1.5 truncate text-xs font-medium text-slate-600 dark:text-slate-300">{r.author || r.title}</p>
                                     )}
@@ -148,8 +160,11 @@ export default function SuccessWallModal({ reviews = [], initialTab = "photos", 
                                     <span className="absolute left-1/2 top-1/2 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/25 text-white backdrop-blur transition group-hover:scale-110">
                                         <Play size={18} className="fill-white" />
                                     </span>
-                                    {(r.author || r.title) && (
-                                        <p className="absolute inset-x-0 bottom-0 truncate p-2 text-xs font-semibold text-white">{r.author || r.title}</p>
+                                    {(r.author || r.title || hasMeta(r)) && (
+                                        <div className="absolute inset-x-0 bottom-0 p-2.5">
+                                            {(r.author || r.title) && <p className="truncate text-xs font-bold text-white">{r.author || r.title}</p>}
+                                            <StudentMeta r={r} dark className="mt-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                                        </div>
                                     )}
                                 </button>
                             ))}
