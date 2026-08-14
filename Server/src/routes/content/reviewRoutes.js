@@ -20,11 +20,15 @@ const handleMedia = (req, res, next) => {
     });
 };
 
-// PUBLIC — the landing page strip reads this with no auth (published only).
+// PUBLIC — the Success Wall reads these with no auth (published only).
 router.get("/", ctrl.listReviews);
+router.get("/cases", ctrl.listCases);
+router.get("/cases/:slug", ctrl.getCase);
 
-// Manage — ADMIN ONLY (add a text / image / video review; remove one).
+// Manage — ADMIN ONLY. Full editor data, add/edit/remove.
+router.get("/admin/all", verifyToken, requireAdmin, ctrl.adminListReviews);
 router.post("/", verifyToken, requireAdmin, handleMedia, ctrl.createReview);
+router.patch("/:id", verifyToken, requireAdmin, handleMedia, ctrl.updateReview);
 router.delete("/:id", verifyToken, requireAdmin, ctrl.deleteReview);
 
 module.exports = router;
