@@ -84,8 +84,12 @@ export default function Home() {
                         <GraduationCap className="h-3.5 w-3.5" /> Built for LEET aspirants
                     </span>
 
-                    <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
-                        Your diploma got you here.
+                    <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl md:text-6xl dark:text-white">
+                        Your{" "}
+                        <mark className="mx-0.5 inline-block rounded-lg bg-amber-300 px-3 py-1 italic leading-none text-slate-900 shadow-sm shadow-amber-600/25">
+                            Diploma
+                        </mark>{" "}
+                        got you here.
                         <br className="hidden sm:block" />{" "}
                         <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
                             We&apos;ll get you to the top.
