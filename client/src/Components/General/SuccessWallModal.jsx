@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { X, Image as ImageIcon, Quote, Play, Volume2, Sparkles, ArrowRight } from "lucide-react";
+import { X, Image as ImageIcon, Quote, Play, Sparkles, ArrowRight } from "lucide-react";
 import { PortraitImage, StudentMeta, Stars, initials, hasMeta } from "@/Components/General/successShared";
 
 // A full-size viewer for a photo or a video, opened from the grids.
@@ -34,12 +34,30 @@ function MediaLightbox({ item, onClose }) {
     );
 }
 
-function Empty({ children }) {
-    return <p className="col-span-full py-14 text-center text-sm text-slate-400">{children}</p>;
+// One quadrant of the 2×2 wall — its own header + independently scrolling body.
+function Quadrant({ icon, title, count, accent, empty, children }) {
+    const Icon = icon;
+    return (
+        <section className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white/70 shadow-sm dark:border-slate-800 dark:bg-slate-900/50">
+            <div className="flex items-center gap-2 border-b border-slate-100 px-3.5 py-2.5 dark:border-slate-800">
+                <span className={`grid h-6 w-6 place-items-center rounded-lg ${accent}`}>
+                    <Icon size={14} />
+                </span>
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">{title}</h3>
+                <span className="ml-auto rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">{count}</span>
+            </div>
+            <div className="min-h-0 max-h-[46vh] flex-1 overflow-y-auto p-3 md:max-h-none">
+                {count === 0 ? (
+                    <div className="grid h-full min-h-[7rem] place-items-center px-3 text-center text-xs text-slate-400 dark:text-slate-500">{empty}</div>
+                ) : (
+                    children
+                )}
+            </div>
+        </section>
+    );
 }
 
-export default function SuccessWallModal({ reviews = [], initialTab = "photos", onClose }) {
-    const [tab, setTab] = useState(initialTab);
+export default function SuccessWallModal({ reviews = [], onClose }) {
     const [light, setLight] = useState(null);
 
     // Lock body scroll + Esc to close.
@@ -59,147 +77,111 @@ export default function SuccessWallModal({ reviews = [], initialTab = "photos", 
     const videos = reviews.filter((r) => r.type === "video" && r.video);
     const cases = reviews.filter((r) => r.isCase && r.slug);
 
-    const TABS = [
-        { key: "photos", label: "Photos", icon: ImageIcon, n: photos.length },
-        { key: "reviews", label: "Reviews", icon: Quote, n: texts.length },
-        { key: "videos", label: "Videos", icon: Play, n: videos.length },
-        { key: "stories", label: "Success Stories", icon: Sparkles, n: cases.length },
-    ];
-
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6">
             <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative z-10 flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-[#FAF9F6] shadow-2xl dark:border-slate-700 dark:bg-slate-950">
+            <div className="relative z-10 flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-[#FAF9F6] shadow-2xl dark:border-slate-700 dark:bg-slate-950">
                 {/* Header */}
-                <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white/70 px-5 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70">
-                    <div>
+                <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white/70 px-5 py-3.5 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70">
+                    <div className="min-w-0">
                         <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-slate-100">
-                            <Sparkles className="h-5 w-5 text-amber-500" /> The Success Wall
+                            <Sparkles className="h-5 w-5 shrink-0 text-amber-500" /> The Success Wall
                         </h2>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Real wins from OneLeet students.</p>
+                        <p className="mt-0.5 hidden text-xs text-slate-500 dark:text-slate-400 sm:block">
+                            Photos, reviews, videos and full stories from OneLeet students — all in one place.
+                        </p>
                     </div>
                     <button onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700" aria-label="Close">
                         <X size={18} />
                     </button>
                 </div>
 
-                {/* Tabs */}
-                <div className="flex gap-1 overflow-x-auto border-b border-slate-200 px-3 py-2 dark:border-slate-800">
-                    {TABS.map((t) => {
-                        const Icon = t.icon;
-                        const active = tab === t.key;
-                        return (
-                            <button
-                                key={t.key}
-                                onClick={() => setTab(t.key)}
-                                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition ${
-                                    active ? "bg-indigo-600 text-white" : "text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-                                }`}
-                            >
-                                <Icon size={14} /> {t.label}
-                                <span className={`rounded-full px-1.5 text-[11px] ${active ? "bg-white/25" : "bg-slate-200 dark:bg-slate-700"}`}>{t.n}</span>
-                            </button>
-                        );
-                    })}
-                </div>
-
-                {/* Body */}
-                <div className="min-h-0 flex-1 overflow-y-auto p-5">
-                    {tab === "photos" && (
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                            {photos.length === 0 && <Empty>No photo reviews yet.</Empty>}
+                {/* All four sections at once — a 2×2 square on desktop, stacked on mobile. */}
+                <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-y-auto p-3 sm:p-4 md:grid-cols-2 md:grid-rows-2 md:overflow-hidden">
+                    {/* Photos */}
+                    <Quadrant icon={ImageIcon} title="Photos" count={photos.length} accent="bg-sky-100 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300" empty="No photo reviews yet.">
+                        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                             {photos.map((r) => (
                                 <button key={r._id} onClick={() => setLight(r)} className="group text-left">
-                                    <div className="relative overflow-hidden rounded-xl ring-1 ring-slate-900/10 transition group-hover:ring-indigo-400 dark:ring-white/10">
-                                        <PortraitImage src={r.image} alt={r.title || "Student review"} className="aspect-[3/4] w-full" />
-                                        {/* Hover: name + all their details, right on the photo. */}
+                                    <div className="relative overflow-hidden rounded-lg ring-1 ring-slate-900/10 transition group-hover:ring-indigo-400 dark:ring-white/10">
+                                        <PortraitImage src={r.image} alt={r.title || "Student review"} className="aspect-[3/4] w-full" rounded="rounded-lg" />
                                         {hasMeta(r) && (
-                                            <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-slate-950/92 via-slate-950/35 to-transparent p-2.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                                                {r.author && <p className="text-sm font-bold leading-tight text-white">{r.author}</p>}
-                                                <StudentMeta r={r} dark className="mt-1.5" />
+                                            <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-slate-950/92 via-slate-950/35 to-transparent p-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                                                {r.author && <p className="text-xs font-bold leading-tight text-white">{r.author}</p>}
+                                                <StudentMeta r={r} dark className="mt-1" />
                                             </div>
                                         )}
                                     </div>
-                                    {(r.author || r.title) && (
-                                        <p className="mt-1.5 truncate text-xs font-medium text-slate-600 dark:text-slate-300">{r.author || r.title}</p>
-                                    )}
+                                    {(r.author || r.title) && <p className="mt-1 truncate text-[11px] font-medium text-slate-600 dark:text-slate-300">{r.author || r.title}</p>}
                                 </button>
                             ))}
                         </div>
-                    )}
+                    </Quadrant>
 
-                    {tab === "reviews" && (
-                        <div className="grid gap-3 sm:grid-cols-2">
-                            {texts.length === 0 && <Empty>No written reviews yet.</Empty>}
+                    {/* Text reviews */}
+                    <Quadrant icon={Quote} title="Reviews" count={texts.length} accent="bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300" empty="No written reviews yet.">
+                        <div className="grid gap-2.5">
                             {texts.map((r) => (
-                                <div key={r._id} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                                    <Quote className="h-5 w-5 -scale-x-100 text-indigo-300" />
-                                    <p className="mt-1.5 flex-1 text-sm leading-relaxed text-slate-700 dark:text-slate-300">{r.text}</p>
-                                    <div className="mt-3 flex items-center gap-2.5">
-                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">
-                                            {initials(r.author || "O")}
-                                        </span>
-                                        <div className="min-w-0">
-                                            <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{r.author || "OneLeet student"}</p>
-                                            <Stars size={10} />
+                                <div key={r._id} className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+                                    <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                                        <Quote className="mb-1 mr-1 inline h-4 w-4 -scale-x-100 text-indigo-300" />
+                                        {r.text}
+                                    </p>
+                                    <div className="mt-2.5 flex items-center gap-2">
+                                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-indigo-100 text-[11px] font-bold text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">{initials(r.author || "O")}</span>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-xs font-semibold text-slate-800 dark:text-slate-100">{r.author || "OneLeet student"}</p>
+                                            <Stars size={9} />
                                         </div>
                                     </div>
-                                    <StudentMeta r={r} className="mt-3" />
+                                    <StudentMeta r={r} className="mt-2" />
                                 </div>
                             ))}
                         </div>
-                    )}
+                    </Quadrant>
 
-                    {tab === "videos" && (
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                            {videos.length === 0 && <Empty>No video reviews yet.</Empty>}
+                    {/* Video reviews */}
+                    <Quadrant icon={Play} title="Videos" count={videos.length} accent="bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300" empty="No video reviews yet.">
+                        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                             {videos.map((r) => (
-                                <button key={r._id} onClick={() => setLight(r)} className="group relative aspect-[3/4] overflow-hidden rounded-xl bg-slate-900 text-left ring-1 ring-slate-900/10 dark:ring-white/10">
+                                <button key={r._id} onClick={() => setLight(r)} className="group relative aspect-[3/4] overflow-hidden rounded-lg bg-slate-900 text-left ring-1 ring-slate-900/10 dark:ring-white/10">
                                     <video src={r.video} muted playsInline preload="metadata" className="h-full w-full object-cover opacity-90" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                                    <span className="absolute left-1/2 top-1/2 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/25 text-white backdrop-blur transition group-hover:scale-110">
-                                        <Play size={18} className="fill-white" />
+                                    <span className="absolute left-1/2 top-1/2 grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/25 text-white backdrop-blur transition group-hover:scale-110">
+                                        <Play size={16} className="fill-white" />
                                     </span>
-                                    {(r.author || r.title || hasMeta(r)) && (
-                                        <div className="absolute inset-x-0 bottom-0 p-2.5">
-                                            {(r.author || r.title) && <p className="truncate text-xs font-bold text-white">{r.author || r.title}</p>}
-                                            <StudentMeta r={r} dark className="mt-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                                    {(r.author || r.title) && (
+                                        <div className="absolute inset-x-0 bottom-0 p-2">
+                                            <p className="truncate text-[11px] font-bold text-white">{r.author || r.title}</p>
                                         </div>
                                     )}
                                 </button>
                             ))}
                         </div>
-                    )}
+                    </Quadrant>
 
-                    {tab === "stories" && (
-                        <div className="grid gap-3 sm:grid-cols-2">
-                            {cases.length === 0 && <Empty>No success stories published yet.</Empty>}
+                    {/* Full success stories */}
+                    <Quadrant icon={Sparkles} title="Success Stories" count={cases.length} accent="bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300" empty="No success stories published yet.">
+                        <div className="grid gap-2.5">
                             {cases.map((r) => (
-                                <Link
-                                    key={r._id}
-                                    to={`/success/${r.slug}`}
-                                    onClick={onClose}
-                                    className="group flex gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
-                                >
+                                <Link key={r._id} to={`/success/${r.slug}`} onClick={onClose} className="group flex gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900">
                                     {r.image ? (
-                                        <PortraitImage src={r.image} alt={r.author || "Student"} className="h-24 w-[72px] shrink-0" rounded="rounded-lg" />
+                                        <PortraitImage src={r.image} alt={r.author || "Student"} className="h-20 w-[60px] shrink-0" rounded="rounded-lg" />
                                     ) : (
-                                        <span className="grid h-24 w-[72px] shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-extrabold text-white">
-                                            {initials(r.author)}
-                                        </span>
+                                        <span className="grid h-20 w-[60px] shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-lg font-extrabold text-white">{initials(r.author)}</span>
                                     )}
                                     <div className="min-w-0 flex-1">
                                         <p className="line-clamp-2 text-sm font-bold text-slate-900 dark:text-slate-100">{r.caseTitle || `How ${r.author || "a student"} cracked LEET`}</p>
-                                        {r.author && <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{r.author}</p>}
-                                        <StudentMeta r={r} className="mt-2" />
-                                        <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                                            Read the story <ArrowRight size={13} className="transition group-hover:translate-x-0.5" />
+                                        {r.author && <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">{r.author}</p>}
+                                        <StudentMeta r={r} className="mt-1.5" />
+                                        <span className="mt-1.5 inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                                            Read the story <ArrowRight size={12} className="transition group-hover:translate-x-0.5" />
                                         </span>
                                     </div>
                                 </Link>
                             ))}
                         </div>
-                    )}
+                    </Quadrant>
                 </div>
             </div>
 
