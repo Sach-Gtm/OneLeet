@@ -49,6 +49,11 @@ export default function CaseStory() {
         );
     }
 
+    return <CaseStoryView c={c} />;
+}
+
+// Presentational story (exported so it can be previewed with static data).
+export function CaseStoryView({ c }) {
     const paragraphs = (c.caseStory || "").split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
 
     return (
