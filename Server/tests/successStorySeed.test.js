@@ -54,6 +54,22 @@ const ok = (l) => { console.log("  ✓ " + l); passed++; };
     assert.ok(/mait|maharaja agrasen/i.test(full.caseStory), "story mentions the college (SEO)");
     ok("attaches the story to the existing photo record and keeps the photo");
 
+    // The other founder stories seed too (create path — no photos uploaded for them).
+    const NEW_SLUGS = [
+        "roshan-leet-counselling-mait-cse",
+        "kaif-ipu-leet-mait-cse",
+        "rohit-leet-counselling-mait",
+        "aditya-shahi-ipu-leet-mait",
+    ];
+    for (const slug of NEW_SLUGS) {
+        const full2 = (await request.get(`/api/reviews/cases/${slug}`)).body.case;
+        assert.ok(full2 && full2.isCase === true, `${slug} is published as a case`);
+        assert.ok(full2.caseStory && full2.caseStory.length > 300, `${slug} has a full story`);
+        assert.ok(/mait|maharaja agrasen/i.test(full2.caseStory), `${slug} story mentions the college (SEO)`);
+    }
+    assert.strictEqual((await request.get("/api/reviews/cases")).body.cases.length, 5, "all five stories published");
+    ok("seeds the four additional founder stories");
+
     // Idempotent — running again doesn't duplicate or overwrite.
     await ensureSuccessStoriesSeeded();
     assert.strictEqual(await Review.countDocuments({ slug: SLUG }), 1, "no duplicate");
