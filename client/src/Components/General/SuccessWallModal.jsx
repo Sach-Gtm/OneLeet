@@ -168,7 +168,7 @@ export default function SuccessWallModal({ reviews = [], onClose }) {
                                     {r.image ? (
                                         <PortraitImage src={r.image} alt={r.author || "Student"} className="h-20 w-[60px] shrink-0" rounded="rounded-lg" />
                                     ) : (
-                                        <span className="grid h-20 w-[60px] shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-lg font-extrabold text-white">{initials(r.author)}</span>
+                                        <span className="grid h-20 w-[60px] shrink-0 place-items-center rounded-lg text-lg font-extrabold text-white" style={{ backgroundImage: "linear-gradient(135deg, #4f46e5, #7c3aed)" }}>{initials(r.author)}</span>
                                     )}
                                     <div className="min-w-0 flex-1">
                                         <p className="line-clamp-2 text-sm font-bold text-slate-900 dark:text-slate-100">{r.caseTitle || `How ${r.author || "a student"} cracked LEET`}</p>

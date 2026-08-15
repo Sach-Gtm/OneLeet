@@ -52,7 +52,7 @@ export default function SuccessStories() {
                             {c.image ? (
                                 <PortraitImage src={c.image} alt={c.author || "Student"} className="aspect-[3/4] w-24 shrink-0" rounded="rounded-lg" />
                             ) : (
-                                <span className="grid aspect-[3/4] w-24 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-2xl font-extrabold text-white">
+                                <span className="grid aspect-[3/4] w-24 shrink-0 place-items-center rounded-lg text-2xl font-extrabold text-white" style={{ backgroundImage: "linear-gradient(135deg, #4f46e5, #7c3aed)" }}>
                                     {initials(c.author)}
                                 </span>
                             )}
