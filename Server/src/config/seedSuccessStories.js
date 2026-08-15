@@ -34,11 +34,12 @@ const roshanStory = [
 ].join("\n\n");
 
 const kaifStory = [
-    "Kaif secured Rank 280 in IPU LEET 2025 and still had no seat after three rounds of counselling — here's how he ended up with CSE at MAIT anyway.",
-    "Kaif came to OneLeet with about two months left before the exam and used every day of it — full study guidance, real past papers and ranked mocks — and it showed in his Rank 280.",
-    "But a good rank isn't a seat. Through three rounds of IPU counselling nothing came through, and his family was starting to lean toward settling for whatever was easy rather than holding out for what was right.",
-    "The OneLeet team stepped in on both fronts. We mapped out the colleges genuinely within his reach — strong names like MAIT and MSIT — and we sat down with his family to walk them through why aiming a little higher was worth the wait.",
-    "It paid off: Kaif secured a Computer Science (CSE) seat at Maharaja Agrasen Institute of Technology (MAIT). Sometimes the hardest part of lateral entry isn't the exam — it's holding your nerve through counselling and choosing the seat your rank has actually earned.",
+    "Kaif scored Rank 280 in IPU LEET 2025 — but the seat counselling first handed him was at USAR, far from home and nowhere near his first choice of MAIT.",
+    "Kaif had come to OneLeet with about two months left before the exam and used every day of it — full study guidance, real past papers and ranked mocks — and it showed in his Rank 280.",
+    "When the allotment came, though, his seat was at USAR — well down his own list of preferences and a long, tiring commute from home. It wasn't where he wanted to spend the next three years, and he knew it the moment he saw it.",
+    "His family saw it differently. To them an admission was an admission — 'you've got a seat, just stay with it' — and they were wary of him shuffling between colleges chasing something better. The pressure to simply settle was real, even though Kaif wasn't happy.",
+    "That's where the OneLeet team stepped in — not just for Kaif, but for his whole family. We sat everyone down, explained honestly which upgrade was genuinely within reach, and walked his parents through why moving up was worth one more step rather than settling for a seat he'd regret.",
+    "With everyone finally on the same page, Kaif moved up to a Computer Science (CSE) seat at Maharaja Agrasen Institute of Technology (MAIT) — his first choice all along. Sometimes the hardest part of lateral entry isn't your rank; it's the pressure to settle, and having someone guide your family through the decision alongside you.",
 ].join("\n\n");
 
 const rohitStory = [
@@ -94,19 +95,21 @@ const STORIES = [
         },
     },
     {
-        flag: "success-story-kaif-mait-v2",
+        // -v3: story corrected (a far USAR seat + family pressure to settle,
+        // not "no seat"); OneLeet guided him and his family up to MAIT CSE.
+        flag: "success-story-kaif-mait-v3",
         match: /kaif/i,
         fields: {
             author: "Kaif",
             text:
-                "Three full rounds of IPU counselling went by and I still didn't have a seat — my family had started to lose hope and were ready to settle for whatever came easiest. The OneLeet team stepped in on both fronts: they showed us the strong colleges that were genuinely within my reach, and they patiently convinced my parents that holding out for the right one was worth the wait. I ended up with CSE at MAIT, and I'm so glad we didn't give up. The two months of guidance I took from them before the exam are what made it all possible.",
+                "When counselling gave me a seat at USAR — far from home and nowhere near my first choice — my family just wanted me to stay put and stop changing colleges. I wasn't happy, but the pressure to settle was hard to argue with. The OneLeet team sat down with all of us, heard everyone out, and patiently guided my family through why moving up was worth it. That's how I ended up with CSE at MAIT, the college I actually wanted. I'm so glad we didn't just settle.",
             exam: "IPU LEET",
             rank: "Rank 280",
             college: "MAIT",
             branch: "CSE",
             isCase: true,
             slug: "kaif-ipu-leet-mait-cse",
-            caseTitle: "Rank 280 and still no seat — how Kaif landed CSE at MAIT with the right counselling",
+            caseTitle: "Rank 280 and a seat he didn't want — how Kaif moved from USAR to CSE at MAIT",
             caseStory: kaifStory,
             published: true,
         },
