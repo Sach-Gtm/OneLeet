@@ -66,6 +66,7 @@ const ok = (l) => { console.log("  ✓ " + l); passed++; };
         assert.ok(full2 && full2.isCase === true, `${slug} is published as a case`);
         assert.ok(full2.caseStory && full2.caseStory.length > 300, `${slug} has a full story`);
         assert.ok(/mait|maharaja agrasen/i.test(full2.caseStory), `${slug} story mentions the college (SEO)`);
+        assert.ok(full2.text && full2.text.length > 150 && full2.text.length <= 600, `${slug} has a written review quote within the length cap`);
     }
     assert.strictEqual((await request.get("/api/reviews/cases")).body.cases.length, 5, "all five stories published");
     ok("seeds the four additional founder stories");
