@@ -76,10 +76,13 @@ const STORIES = [
         fallbackText: "OneLeet and Sachin bhaiya stood by me when I had almost given up. Forever grateful. 🙏",
     },
     {
-        flag: "success-story-roshan-mait",
+        // Bumped to -v2 to refresh the short quote on already-seeded records.
+        flag: "success-story-roshan-mait-v2",
         match: /roshan/i,
         fields: {
             author: "Roshan",
+            text:
+                "I had done the hardest part — the months of studying, the exam itself — and I still nearly ended up with nothing, all because the counselling process tripped me up at the worst possible moment. What saved my whole year was that OneLeet stayed right beside me through every round, every form and every confusing step until it was finally sorted out. When the on-campus spot round came, I walked away with CSE at MAIT. If you're preparing, take the counselling every bit as seriously as the paper — and don't try to figure it out alone.",
             exam: "IPU LEET",
             college: "MAIT",
             branch: "CSE",
@@ -89,13 +92,14 @@ const STORIES = [
             caseStory: roshanStory,
             published: true,
         },
-        fallbackText: "The exam was only half the battle — OneLeet walked me through the counselling every single day until I had my MAIT seat.",
     },
     {
-        flag: "success-story-kaif-mait",
+        flag: "success-story-kaif-mait-v2",
         match: /kaif/i,
         fields: {
             author: "Kaif",
+            text:
+                "Three full rounds of IPU counselling went by and I still didn't have a seat — my family had started to lose hope and were ready to settle for whatever came easiest. The OneLeet team stepped in on both fronts: they showed us the strong colleges that were genuinely within my reach, and they patiently convinced my parents that holding out for the right one was worth the wait. I ended up with CSE at MAIT, and I'm so glad we didn't give up. The two months of guidance I took from them before the exam are what made it all possible.",
             exam: "IPU LEET",
             rank: "Rank 280",
             college: "MAIT",
@@ -106,13 +110,14 @@ const STORIES = [
             caseStory: kaifStory,
             published: true,
         },
-        fallbackText: "Three rounds and no seat, and OneLeet still didn't give up on me — they got my family on board and I ended up with CSE at MAIT.",
     },
     {
-        flag: "success-story-rohit-mait",
+        flag: "success-story-rohit-mait-v2",
         match: /rohit/i,
         fields: {
             author: "Rohit",
+            text:
+                "Honestly, my LEET rank was nothing to brag about — somewhere around 1000 — and I had quietly made peace with ending up in an average college. The OneLeet team refused to let me settle for less than I could actually get. They knew exactly which rounds to hold out for and which choices to lock in, and that guidance alone is what put me into MAIT. A few months in, I can say it plainly: your rank gets you into the room, but the right counselling decides where you actually walk out. I couldn't be happier here.",
             exam: "IPU LEET",
             rank: "Rank ~1000",
             college: "MAIT",
@@ -122,13 +127,14 @@ const STORIES = [
             caseStory: rohitStory,
             published: true,
         },
-        fallbackText: "My rank wasn't huge, but the right counselling put me in MAIT. Couldn't be happier here.",
     },
     {
-        flag: "success-story-aditya-shahi-mait",
+        flag: "success-story-aditya-shahi-mait-v2",
         match: /aditya\s*shahi/i,
         fields: {
             author: "Aditya Shahi",
+            text:
+                "I had already paid my full fees at GTBIT when the MAIT seat opened up, and I honestly thought it was impossible — my refund would take a month to come and MAIT wanted the entire fee upfront. The OneLeet team went and spoke to the college on my behalf so I could pay in parts and not lose the seat, and they stood behind me the whole way through. I cleared the rest myself within twenty days. They didn't just guide my studies — they genuinely fought for my admission when it mattered most.",
             exam: "IPU LEET",
             rank: "AIR 250",
             college: "MAIT",
@@ -138,7 +144,6 @@ const STORIES = [
             caseStory: adityaStory,
             published: true,
         },
-        fallbackText: "I'd already paid GTBIT and thought MAIT was impossible. OneLeet made the switch happen and stood by me on the fees.",
     },
 ];
 
