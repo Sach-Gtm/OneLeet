@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-    Menu, X, LogIn, LogOut, AlertTriangle, CheckCircle, ChevronDown, ArrowRight, LayoutDashboard,
+    Menu, X, LogOut, AlertTriangle, CheckCircle, ChevronDown, ArrowRight, LayoutDashboard,
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
@@ -129,15 +129,20 @@ export default function Navbar() {
                                     <LogOut size={16} /> <span>Logout</span>
                                 </button>
                             ) : (
-                                <Link to="/login">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="cursor-pointer px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-bold flex items-center gap-2 shadow-lg shadow-indigo-600/25 hover:bg-indigo-700 transition-colors"
-                                    >
-                                        <LogIn size={16} /> <span>Login</span>
-                                    </motion.button>
-                                </Link>
+                                <>
+                                    <Link to="/login" className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-indigo-600 dark:text-slate-300">
+                                        Log in
+                                    </Link>
+                                    <Link to="/register">
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            className="cursor-pointer rounded-lg bg-indigo-600 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-indigo-600/25 transition-colors hover:bg-indigo-700"
+                                        >
+                                            Sign up free
+                                        </motion.button>
+                                    </Link>
+                                </>
                             )}
                         </div>
 
@@ -255,11 +260,16 @@ export default function Navbar() {
                                             <LogOut size={18} /> Logout
                                         </button>
                                     ) : (
-                                        <Link to="/login">
-                                            <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 p-3 font-bold text-white hover:bg-indigo-700">
-                                                <LogIn size={18} /> Login
-                                            </button>
-                                        </Link>
+                                        <div className="space-y-2">
+                                            <Link to="/register">
+                                                <button className="w-full rounded-xl bg-indigo-600 p-3 font-bold text-white hover:bg-indigo-700">
+                                                    Sign up free
+                                                </button>
+                                            </Link>
+                                            <Link to="/login" className="block rounded-xl border border-slate-200 p-3 text-center font-semibold text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200">
+                                                Log in
+                                            </Link>
+                                        </div>
                                     )}
                                 </div>
                             </motion.div>
