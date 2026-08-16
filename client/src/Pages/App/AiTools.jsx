@@ -208,7 +208,7 @@ function QuestionGen({ onRan }) {
                         </span>
                     </div>
 
-                    {result.questions.map((q, i) => {
+                    {(result.questions || []).map((q, i) => {
                         const sel = answers[i]; // undefined until answered
                         const answered = sel !== undefined;
                         return (
@@ -415,7 +415,7 @@ function Planner({ onRan }) {
                 <div className="space-y-3">
                     {result.summary && <p className="text-sm text-slate-600">{result.summary}</p>}
                     <div className="grid gap-3 sm:grid-cols-2">
-                        {result.plan.map((d) => (
+                        {(result.plan || []).map((d) => (
                             <div key={d.day} className="rounded-xl border border-slate-200 bg-white p-4">
                                 <div className="flex items-center justify-between">
                                     <p className="text-sm font-bold text-slate-800">Day {d.day} · {d.focus}</p>
@@ -470,7 +470,7 @@ export default function AiTools() {
                         )}
                     >
                         <Brain size={13} />
-                        {provider === "gemini" ? "Powered by Gemini" : "Sample mode · add GEMINI_API_KEY"}
+                        {provider === "gemini" ? "Powered by Gemini" : "Sample mode — example results"}
                     </span>
                 )}
             </div>

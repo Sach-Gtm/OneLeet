@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { X, Image as ImageIcon, Quote, Play, Sparkles, ArrowRight } from "lucide-react";
-import { PortraitImage, StudentMeta, Stars, initials, hasMeta } from "@/Components/General/successShared";
+import { PortraitImage, StudentMeta, initials, hasMeta } from "@/Components/General/successShared";
 
 // A full-size viewer for a photo or a video, opened from the grids.
 function MediaLightbox({ item, onClose }) {
@@ -131,7 +131,6 @@ export default function SuccessWallModal({ reviews = [], onClose }) {
                                         <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-indigo-100 text-[11px] font-bold text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">{initials(r.author || "O")}</span>
                                         <div className="min-w-0 flex-1">
                                             <p className="truncate text-xs font-semibold text-slate-800 dark:text-slate-100">{r.author || "OneLeet student"}</p>
-                                            <Stars size={9} />
                                         </div>
                                     </div>
                                     <StudentMeta r={r} className="mt-2" />

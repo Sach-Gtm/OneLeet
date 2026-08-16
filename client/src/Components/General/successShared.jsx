@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components -- small shared helpers + presentational bits for the Success Wall */
-import { Star, GraduationCap, Trophy, Building2, BookOpen } from "lucide-react";
+import { GraduationCap, Trophy, Building2, BookOpen } from "lucide-react";
 
 export const initials = (name) =>
     (name || "?").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
@@ -45,13 +45,3 @@ export function StudentMeta({ r, className = "", dark = false }) {
 
 // True when a review carries any student detail worth revealing on hover.
 export const hasMeta = (r) => !!(r && (r.author || r.exam || r.rank || r.college || r.branch));
-
-export function Stars({ size = 11 }) {
-    return (
-        <div className="flex gap-0.5">
-            {[0, 1, 2, 3, 4].map((i) => (
-                <Star key={i} size={size} className="fill-amber-400 text-amber-400" />
-            ))}
-        </div>
-    );
-}

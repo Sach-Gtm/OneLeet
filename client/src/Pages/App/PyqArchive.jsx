@@ -3,7 +3,6 @@ import {
     Search,
     ChevronDown,
     Eye,
-    Play,
     Download,
     Brain,
     FileQuestion,
@@ -123,36 +122,28 @@ function PyqCard({ pyq }) {
                 </span>
             </div>
 
-            <div className="mt-4 space-y-2">
-                <div className="flex gap-2">
-                    <button
-                        onClick={openView}
-                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
-                    >
-                        <Eye size={15} /> View
-                    </button>
-                    {pyq.fileUrl ? (
-                        <a
-                            href={pyqDownloadUrl(pyq.fileUrl)}
-                            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-indigo-600 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
-                        >
-                            <Download size={15} /> Download
-                        </a>
-                    ) : (
-                        <button
-                            onClick={() => toast("This paper's PDF hasn't been uploaded yet.")}
-                            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-200 py-2 text-sm font-semibold text-slate-500"
-                        >
-                            <Download size={15} /> Download
-                        </button>
-                    )}
-                </div>
+            <div className="mt-4 flex gap-2">
                 <button
-                    onClick={() => toast("Interactive practice is coming with structured questions.")}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-emerald-500 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600"
+                    onClick={openView}
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
                 >
-                    <Play size={15} /> Practice
+                    <Eye size={15} /> View
                 </button>
+                {pyq.fileUrl ? (
+                    <a
+                        href={pyqDownloadUrl(pyq.fileUrl)}
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-indigo-600 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                    >
+                        <Download size={15} /> Download
+                    </a>
+                ) : (
+                    <button
+                        onClick={() => toast("This paper's PDF hasn't been uploaded yet.")}
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-200 py-2 text-sm font-semibold text-slate-500"
+                    >
+                        <Download size={15} /> Download
+                    </button>
+                )}
             </div>
         </div>
     );
