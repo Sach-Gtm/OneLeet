@@ -96,6 +96,24 @@ function CallbackModal({ onClose }) {
     );
 }
 
+// The StaplerLabs stapler mark (OneLeet's parent brand), drawn inline so it
+// stays crisp and self-contained. The footer is an always-light island, so the
+// body uses a fixed dark fill (matching the brand's near-black).
+function StaplerLabsMark({ className = "" }) {
+    return (
+        <svg viewBox="4 6 44 33" className={className} fill="none" aria-hidden="true">
+            {/* top arm — a wedge, tall on the right */}
+            <path d="M8 22 L8 18 Q8 16.8 9.4 16.4 L40 8.4 Q44 7.3 44 11.4 L44 20 Q44 22 42 22 Z" className="fill-slate-800" />
+            {/* bottom jaw */}
+            <path d="M10 26 L42 26 Q45 26 45 28.5 Q45 31 42 31 L10 31 Q7 31 7 28.5 Q7 26 10 26 Z" className="fill-slate-800" />
+            {/* staple */}
+            <rect x="34" y="22.6" width="9" height="2.6" rx="1.3" className="fill-[#F5B70D]" />
+            {/* base line */}
+            <rect x="8" y="33.5" width="37" height="3.2" rx="1.6" className="fill-[#F5B70D]" />
+        </svg>
+    );
+}
+
 export default function Footer() {
     const [callbackOpen, setCallbackOpen] = useState(false);
 
@@ -159,7 +177,20 @@ export default function Footer() {
             </div>
 
             <div className="flex flex-col gap-1.5 border-t border-slate-200 py-5 text-[11.5px] leading-relaxed text-slate-400 sm:flex-row sm:items-start sm:justify-between">
-                <p className="shrink-0">&copy; {new Date().getFullYear()} OneLeet · A unit of StaplerLabs Private Limited. All rights reserved.</p>
+                <p className="shrink-0">
+                    &copy; {new Date().getFullYear()} OneLeet · A unit of{" "}
+                    <a
+                        href="https://staplerlabs.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 align-middle font-semibold text-slate-600 transition-colors hover:text-slate-900"
+                        title="StaplerLabs — visit staplerlabs.com"
+                    >
+                        <StaplerLabsMark className="h-4 w-auto" />
+                        <span>Stapler<span className="text-[#F5B70D]">Labs</span></span>
+                    </a>{" "}
+                    Private Limited. All rights reserved.
+                </p>
                 <p className="sm:max-w-md sm:text-right">All study materials are provided solely for educational purposes; we don&apos;t claim ownership of external materials unless stated otherwise.</p>
             </div>
             </div>
