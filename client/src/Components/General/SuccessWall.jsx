@@ -17,14 +17,31 @@ function Frame({ r }) {
 }
 
 export default function SuccessWall({ reviews: injected }) {
-    const [fetched, setFetched] = useState([]);
+    const [fetched, setFetched] = useState(null); // null = still loading
     const [open, setOpen] = useState(false);
-    const reviews = injected || fetched;
+    const reviews = injected || fetched || [];
 
     useEffect(() => {
         if (injected) return; // caller supplied data (e.g. a preview)
         getReviews().then((r) => setFetched(r || [])).catch(() => setFetched([]));
     }, [injected]);
+
+    // Skeleton strip while loading so the wall holds its space on a cold start.
+    if (!injected && fetched === null) {
+        return (
+            <section className="py-14">
+                <div className="mx-auto mb-8 flex max-w-2xl flex-col items-center gap-2 px-4">
+                    <div className="h-7 w-56 animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800" />
+                    <div className="h-4 w-72 max-w-full animate-pulse rounded bg-slate-200/70 dark:bg-slate-800/70" />
+                </div>
+                <div className="flex justify-center gap-4 px-4">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                        <div key={i} className={`aspect-[3/4] w-28 shrink-0 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800 ${i > 2 ? "hidden sm:block" : ""}`} />
+                    ))}
+                </div>
+            </section>
+        );
+    }
 
     if (!reviews.length) return null;
 

@@ -4,6 +4,7 @@ const multer = require("multer");
 
 const authController = require("../../controllers/user/authController");
 const { verifyToken } = require("../../middlewares/authMiddleware");
+const { requireAdmin } = require("../../middlewares/roleMiddleware");
 const { verifyTurnstile } = require("../../middlewares/turnstileMiddleware");
 const { rateLimit } = require("../../middlewares/rateLimiter");
 const imageUploadLocal = require("../../middlewares/imageUploadLocal");
@@ -47,8 +48,10 @@ router.post("/register", rateLimit("register", 20, 60 * 60), verifyTurnstile, va
 router.post("/login", rateLimit("login", 25, 15 * 60), verifyTurnstile, validate(loginSchema), authController.login);
 router.post("/verify-otp", rateLimit("verify-otp", 20, 15 * 60), validate(verifyOtpSchema), authController.verifyOtp);
 router.post("/resend-otp", rateLimit("resend-otp", 10, 15 * 60), validate(resendOtpSchema), authController.resendOtp);
-router.get("/email-health", authController.emailHealth);
-router.get("/media-health", authController.mediaHealth);
+// Infra-health probes expose config state (SMTP reachable, Cloudinary cloud) —
+// admin-only, since only the admin System Health panel legitimately reads them.
+router.get("/email-health", verifyToken, requireAdmin, authController.emailHealth);
+router.get("/media-health", verifyToken, requireAdmin, authController.mediaHealth);
 router.post("/logout", authController.logout);
 router.get("/me", verifyToken, authController.getMe);
 router.patch("/me", verifyToken, validate(updateProfileSchema), authController.updateProfile);

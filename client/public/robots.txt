@@ -13,6 +13,11 @@ Disallow: /ai-tools
 Disallow: /verify-otp
 Disallow: /reset-password
 Disallow: /forgot-password
+Disallow: /login
+Disallow: /register
+Disallow: /checkout
+Disallow: /orders
+Disallow: /refer
 
 # AI answer engines: explicitly allowed
 User-agent: GPTBot

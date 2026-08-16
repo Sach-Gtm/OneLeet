@@ -150,7 +150,7 @@ export default function Checkout() {
                 <h1 className="mt-4 text-2xl font-bold text-slate-900 dark:text-slate-100">Order placed!</h1>
                 <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500 dark:text-slate-400">
                     Your order for <strong>{placed.items.map((i) => i.courseName).join(", ")}</strong> is reserved.
-                    To activate premium, complete the payment of <strong>{rupee(placed.installments[0].amount)}</strong> —
+                    To activate premium, complete the payment of <strong>{rupee(placed.installments?.[0]?.amount ?? placed.total ?? 0)}</strong> —
                     our team will share the payment details and confirm on WhatsApp {WHATSAPP_RESPONSE}.
                 </p>
                 <a

@@ -22,14 +22,21 @@ export default function Refer() {
     const shareText = `Prepping for LEET? Join me on OneLeet — AI mentor, real PYQs, ranked mocks and a Success Promise. Sign up with my link: ${link} 🚀`;
 
     const copy = () => {
-        navigator.clipboard?.writeText(link).then(() => {
-            setCopied(true);
-            toast.success("Referral link copied!");
-            setTimeout(() => setCopied(false), 1800);
-        });
+        if (!navigator.clipboard?.writeText) {
+            toast("Long-press the link above to copy it.");
+            return;
+        }
+        navigator.clipboard
+            .writeText(link)
+            .then(() => {
+                setCopied(true);
+                toast.success("Referral link copied!");
+                setTimeout(() => setCopied(false), 1800);
+            })
+            .catch(() => toast.error("Couldn't copy — long-press the link to copy it."));
     };
 
-    const pct = Math.min(100, Math.round((ref.conversionCount / ref.threshold) * 100));
+    const pct = ref.threshold > 0 ? Math.min(100, Math.round((ref.conversionCount / ref.threshold) * 100)) : 0;
     const bookMsg = `Hi OneLeet! I've referred ${ref.threshold} friends and unlocked my reward — I'd like to book my 1:1 session with the founders.`;
 
     return (

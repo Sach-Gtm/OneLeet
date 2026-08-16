@@ -731,6 +731,7 @@ async function buildSitemap() {
         { path: "/", priority: 1.0, changefreq: "weekly" },
         { path: "/exams", priority: 0.7, changefreq: "monthly" },
         { path: "/courses", priority: 0.7, changefreq: "weekly" },
+        { path: "/success", priority: 0.7, changefreq: "weekly" },
         { path: "/pricing", priority: 0.7, changefreq: "monthly" },
         { path: "/prep-guide", priority: 0.6, changefreq: "monthly" },
         { path: "/colleges", priority: 0.6, changefreq: "monthly" },
@@ -768,6 +769,11 @@ Disallow: /ai-tools
 Disallow: /verify-otp
 Disallow: /reset-password
 Disallow: /forgot-password
+Disallow: /login
+Disallow: /register
+Disallow: /checkout
+Disallow: /orders
+Disallow: /refer
 
 # AI answer engines: explicitly allowed
 User-agent: GPTBot

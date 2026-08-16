@@ -194,7 +194,7 @@ export default function TestTake() {
                         <p className="text-xs text-slate-500 dark:text-slate-400">
                             {isPractice
                                 ? "Practice — the answer reveals as you go"
-                                : `${answeredCount}/${test.questions.length} answered`}
+                                : `${answeredCount}/${test.questions?.length || 0} answered`}
                         </p>
                     </div>
                     {isPractice ? (
@@ -242,7 +242,7 @@ export default function TestTake() {
                 contentRef={test.title || test._id || ""}
             >
             <div className="space-y-4">
-                {test.questions.map((q, i) => (
+                {(test.questions || []).map((q, i) => (
                     <div
                         key={q._id}
                         ref={(el) => (questionRefs.current[i] = el)}

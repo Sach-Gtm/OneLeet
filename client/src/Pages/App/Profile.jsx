@@ -395,10 +395,10 @@ export default function Profile() {
                     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white">
                         <Award className="mb-2 h-6 w-6" />
                         <p className="text-xs font-semibold uppercase tracking-wide text-indigo-200">Achievement</p>
-                        <p className="mt-1 text-lg font-bold">{isTopScorer ? "Top 10% Scorer" : "Rising Star"}</p>
+                        <p className="mt-1 text-lg font-bold">{isTopScorer ? "High Scorer" : "Rising Star"}</p>
                         <p className="mt-1 text-sm text-indigo-100">
                             {isTopScorer
-                                ? "You're consistently scoring above 80% in mock tests."
+                                ? "You're scoring above 80% in your mock tests — keep it going!"
                                 : "Take mock tests and keep your accuracy high to earn badges."}
                         </p>
                     </div>

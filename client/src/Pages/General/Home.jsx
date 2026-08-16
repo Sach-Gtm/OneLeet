@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import {
     ArrowRight,
+    Check,
     FileText,
     ClipboardCheck,
     Brain,
@@ -65,7 +66,7 @@ export default function Home() {
     return (
         <>
             {/* Hero */}
-            <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 pb-16 pt-28 text-center sm:px-6 sm:pt-32">
+            <section className="relative flex min-h-[86vh] w-full flex-col items-center justify-center overflow-hidden px-4 pb-12 pt-24 text-center sm:px-6 sm:pt-28">
                 {/* Instant pastel backdrop — paints immediately with no JS, so the
                     hero (the LCP) never waits on WebGL. The GPU shader fades in
                     over it once its chunk has loaded. */}
@@ -91,42 +92,49 @@ export default function Home() {
                         </mark>{" "}
                         got you here.
                         <br className="hidden sm:block" />{" "}
-                        <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                            We&apos;ll get you to the top.
+                        <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(90deg, #4f46e5, #7c3aed)" }}>
+                            Crack LEET, start B.Tech in year 2.
                         </span>
                     </h1>
 
-                    <p className="mx-auto max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
-                        Everything for your Lateral Entry Entrance Test, in one place:
-                        real papers, exam-pattern mocks, and an AI coach that adapts to
-                        you.
+                    <p className="mx-auto max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">
+                        Real past papers, exam-pattern mock tests and an AI coach that
+                        plans your prep — everything for your state&apos;s LEET in one
+                        place. Free to start, no coaching fees.
                     </p>
 
-                    <div className="flex flex-col justify-center gap-3 pt-2 sm:flex-row">
+                    <div className="flex flex-col items-center gap-2 pt-2">
                         <Link
                             to="/register"
-                            className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-7 py-3 font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.03] active:scale-[0.97]"
+                            onClick={() => track("cta_click", { where: "hero" })}
+                            className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.03] active:scale-[0.97]"
                         >
-                            Get started
+                            Start preparing free
                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Link>
-                        <Link
-                            to="/login"
-                            className="rounded-lg border border-slate-200 bg-white px-7 py-3 text-center font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50"
-                        >
-                            I already have an account
-                        </Link>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                            Already have an account?{" "}
+                            <Link to="/login" className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400">Log in</Link>
+                        </p>
                     </div>
 
-                    <p className="pt-3 text-sm font-medium text-slate-500">
+                    {/* Honest trust strip — every item is verifiable (no invented numbers). */}
+                    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 pt-1 text-xs font-medium text-slate-500 dark:text-slate-400">
+                        <span className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-500" /> Free to start</span>
+                        <span className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-500" /> No coaching fees</span>
+                        <span className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-500" /> Real LEET past papers</span>
+                        <span className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-500" /> IPU · DTU/NSUT · UP · Bihar · Haryana</span>
+                    </div>
+
+                    <p className="pt-2 text-sm font-medium text-slate-500 dark:text-slate-400">
                         Built by a LEET rank-holder who sat exactly where you&apos;re sitting now.
                     </p>
                 </div>
             </section>
 
             {/* Real talk — the questions in a student's head, answered */}
-            <section className="mx-auto max-w-2xl px-4 pb-20 sm:px-6">
-                <h2 className="mb-8 text-center text-2xl font-bold text-slate-900 sm:text-3xl">
+            <section className="mx-auto max-w-2xl px-4 pb-14 sm:px-6">
+                <h2 className="mb-6 text-center text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
                     The questions in your head, answered.
                 </h2>
                 <div className="space-y-5">
@@ -153,9 +161,9 @@ export default function Home() {
 
             {/* The journey — 10th → Diploma → B.Tech → gates opening to the
                 companies it can lead to. Aspiration, not a placement claim. */}
-            <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+            <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6">
                 <div className="mb-6 text-center">
-                    <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
                         From 10th to your dream company.
                     </h2>
                     <p className="mx-auto mt-2 max-w-xl text-sm text-slate-600 sm:text-base">
@@ -176,7 +184,7 @@ export default function Home() {
             {/* Features — the OneLeet buddy: a friendly robot with the six
                 tools connected around it, under a soft sky with drifting
                 clouds. Pure SVG + CSS motion (no images, no framer here). */}
-            <section className="relative overflow-hidden pb-24">
+            <section className="relative overflow-hidden pb-16">
                 {/* sky wash + clouds (full-bleed, decorative) */}
                 <div
                     aria-hidden="true"
@@ -186,7 +194,7 @@ export default function Home() {
                 <Cloud className="right-[8%] top-24 w-56" dur="46s" delay="-12s" />
                 <Cloud className="left-[40%] top-2 hidden w-32 sm:block" dur="40s" delay="-25s" />
 
-                <div className="relative mx-auto max-w-6xl px-4 pt-16 sm:px-6">
+                <div className="relative mx-auto max-w-6xl px-4 pt-10 sm:px-6">
                     <div className="text-center">
                         <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-white/70 px-3 py-1 text-xs font-semibold text-sky-700 backdrop-blur dark:border-sky-500/30 dark:bg-slate-900/60 dark:text-sky-300">
                             Meet your prep buddy
@@ -200,10 +208,10 @@ export default function Home() {
                         </p>
                     </div>
 
-                    <div className="mt-12 gap-6 lg:grid lg:grid-cols-[1fr_15rem_1fr] lg:items-center">
+                    <div className="mt-8 gap-6 lg:grid lg:grid-cols-[1fr_15rem_1fr] lg:items-center">
                         {/* the buddy: first on mobile, centre column on desktop */}
                         <div className="lg:col-start-2 lg:row-start-1">
-                            <RobotBuddy className="mx-auto mb-10 w-36 sm:w-40 lg:mb-0 lg:w-48" />
+                            <RobotBuddy className="mx-auto mb-8 w-36 sm:w-40 lg:mb-0 lg:w-48" />
                         </div>
 
                         <div className="grid gap-4 sm:grid-cols-2 lg:col-start-1 lg:row-start-1 lg:grid-cols-1 lg:gap-6">

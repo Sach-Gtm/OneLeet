@@ -15,7 +15,26 @@ export default function HomeCourses() {
         getCourses().then((list) => setCourses(list || [])).catch(() => setCourses([]));
     }, []);
 
-    if (!courses || courses.length === 0) return null;
+    // While loading (courses === null) show a skeleton so the section holds its
+    // space instead of vanishing on a cold start; hide only once we know it's empty.
+    if (courses === null) {
+        return (
+            <section className="py-16 sm:py-20">
+                <div className="mx-auto max-w-6xl px-4 sm:px-6">
+                    <div className="mb-6 flex flex-col items-center gap-2">
+                        <div className="h-7 w-64 animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800" />
+                        <div className="h-4 w-80 max-w-full animate-pulse rounded bg-slate-200/70 dark:bg-slate-800/70" />
+                    </div>
+                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                        {[0, 1, 2].map((i) => (
+                            <div key={i} className="h-52 animate-pulse rounded-2xl bg-slate-200/70 dark:bg-slate-800/70" />
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    }
+    if (courses.length === 0) return null;
 
     return (
         <section className="relative isolate overflow-hidden py-16 sm:py-20">

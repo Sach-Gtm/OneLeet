@@ -17,7 +17,7 @@ export default function PremiumGateModal({ open, onClose, itemTitle }) {
             onClick={onClose}
         >
             <div
-                className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-xl"
+                className="relative w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 <button
