@@ -1,4 +1,17 @@
 require("dotenv").config();
+
+// Safety net: several protections (secure/SameSite cookies, HSTS, hidden 500
+// error details, and NOT returning password-reset tokens in the API response)
+// only engage when NODE_ENV === "production". Render does not set it for you —
+// warn loudly if a hosted deploy is missing it so it can't ship silently downgraded.
+if (process.env.NODE_ENV !== "production" && (process.env.RENDER || process.env.RENDER_EXTERNAL_URL)) {
+    console.warn(
+        "\n⚠️  NODE_ENV is not 'production' on a hosted deploy — set NODE_ENV=production in the " +
+        "Render dashboard. Otherwise password-reset tokens are returned in API responses, secure " +
+        "cookies + HSTS are disabled, and raw error details leak on 500s.\n"
+    );
+}
+
 const app = require("./app");
 const connectDB = require("./src/config/db");
 const { saveError } = require("./src/controllers/telemetry/telemetryController");
