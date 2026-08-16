@@ -127,9 +127,9 @@ export default function Footer() {
 
     const social = "grid h-8 w-8 place-items-center rounded-full border border-slate-200 bg-white text-slate-400 transition-colors";
     return (
-        <footer className="mt-20 w-full bg-[#FAF9F6] text-slate-600">
+        <footer className="mt-12 w-full bg-[#FAF9F6] text-slate-600">
             <div className="mx-auto max-w-5xl px-6">
-            <div className="grid grid-cols-2 gap-x-8 gap-y-10 border-t border-slate-200 py-11 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-10 border-t border-slate-200 py-9 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr]">
                 {/* Brand + socials */}
                 <div className="col-span-2 lg:col-span-1">
                     <Logo size={28} textClass="text-lg" />
@@ -152,6 +152,18 @@ export default function Footer() {
                         <li><Link to="/mentor" className={linkCls}>Mentors</Link></li>
                         <li><Link to="/success" className={linkCls}>Success Stories</Link></li>
                         <li><Link to="/privacy" className={linkCls}>Privacy Policy</Link></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 className="mb-3.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">LEET Prep</h3>
+                    <ul className="space-y-2.5 text-[13.5px]">
+                        <li><a href="/leet/" className={linkCls}>LEET Exam Guide</a></li>
+                        <li><a href="/leet/previous-year-papers/" className={linkCls}>Previous Year Papers</a></li>
+                        <li><a href="/leet/mock-tests/" className={linkCls}>Mock Tests</a></li>
+                        <li><a href="/leet/syllabus/" className={linkCls}>Syllabus</a></li>
+                        <li><a href="/leet/eligibility/" className={linkCls}>Eligibility</a></li>
+                        <li><a href="/guides/" className={linkCls}>Prep Guides</a></li>
                     </ul>
                 </div>
 
