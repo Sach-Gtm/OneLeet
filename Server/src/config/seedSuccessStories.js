@@ -20,7 +20,7 @@ const keshavStory = [
     "Keshav had finished his diploma with real ability, but at home, life came first. Money was tight, responsibilities piled up, and studying quietly slipped down the list. With barely a month left before the Lateral Entry Entrance Test, most people would have told him to simply try again next year.",
     "That's when he reached out to OneLeet. Sachin didn't hand him a syllabus and disappear — he stood by Keshav like an elder brother. He listened first, steadied his nerves, and then built a brutally focused 30-day plan around the little time Keshav actually had.",
     "There were no 14-hour days. There were the right hours — high-yield topics first, real past papers, ranked mocks to fix his timing, and a daily check-in so Keshav never felt alone in it. On the hardest days, the message was simple: keep going, I've got you.",
-    "Thirty days later, Keshav walked out of the IPU LEET exam and secured All-India Rank 65 — more than enough for the seat he'd quietly dreamt of: Computer Science at Maharaja Agrasen Institute of Technology (MAIT).",
+    "Thirty days later, Keshav walked out of the IPU LEET exam and secured All-India Rank 63 — more than enough for the seat he'd quietly dreamt of: Computer Science at Maharaja Agrasen Institute of Technology (MAIT).",
     "Today Keshav is a B.Tech CSE student at MAIT — his dream college and his dream branch. His story is proof of something we believe deeply at OneLeet: a diploma student with the right guidance and an honest plan can beat circumstances that look impossible, even with just 30 days on the clock.",
     "If you're a diploma student staring at a short runway to LEET, let Keshav's journey be your reminder — it isn't too late. The right path, and someone in your corner, can still take you all the way to the top.",
 ].join("\n\n");
@@ -59,18 +59,18 @@ const adityaStory = [
 
 const STORIES = [
     {
-        // Reuses the original v1 flag, so Keshav is never re-touched or resurrected.
-        flag: "success-stories-v1",
+        // -v2: rank corrected to AIR 63 (was 65 — that was actually Krish's).
+        flag: "success-story-keshav-mait-v2",
         match: /keshav/i,
         fields: {
             author: "Keshav Kumar Jha",
             exam: "IPU LEET",
-            rank: "AIR 65",
+            rank: "AIR 63",
             college: "MAIT",
             branch: "CSE",
             isCase: true,
             slug: "keshav-kumar-jha-ipu-leet-mait",
-            caseTitle: "How Keshav cracked IPU LEET at AIR 65 in 30 days — from family setbacks to MAIT CSE",
+            caseTitle: "How Keshav cracked IPU LEET at AIR 63 in 30 days — from family setbacks to MAIT CSE",
             caseStory: keshavStory,
             published: true,
         },
