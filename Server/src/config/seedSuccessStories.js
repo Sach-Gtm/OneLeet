@@ -43,10 +43,10 @@ const kaifStory = [
 ].join("\n\n");
 
 const rohitStory = [
-    "Rohit's LEET rank was somewhere around 1000 — not a number most students expect to turn into a top-college seat. The right counselling changed that.",
-    "On paper, a rank near 1000 sends most diploma students to whatever college is left over. But a rank only decides your options — how you play the counselling decides your outcome.",
-    "With OneLeet guiding the direction — which rounds to hold for, which choices to lock, when to move — Rohit used his rank far better than the number alone suggested, and landed a seat at Maharaja Agrasen Institute of Technology (MAIT).",
-    "He's enjoying his B.Tech life at MAIT today. His story is proof that the right counselling can stretch a modest rank a long way — often further than students dare to hope.",
+    "Rohit scored Rank 283 in IPU LEET — a genuinely strong result, but a good rank still has to be turned into the right seat, and that comes down to counselling.",
+    "A solid score opens doors, yet plenty of capable students still end up in the wrong college simply because they misplay the choice-filling — holding the wrong rounds, locking the wrong options, or hesitating when a better seat is one step away.",
+    "That's where OneLeet came in. We guided Rohit's counselling end to end — which rounds to hold for, which choices to lock and when to move — so his Rank 283 landed him exactly where it should: a seat at Maharaja Agrasen Institute of Technology (MAIT).",
+    "He's enjoying his B.Tech life at MAIT today. His story is a reminder that a strong rank is only half the job — the right counselling is what turns it into the college you actually want.",
 ].join("\n\n");
 
 const adityaStory = [
@@ -115,18 +115,19 @@ const STORIES = [
         },
     },
     {
-        flag: "success-story-rohit-mait-v2",
+        // -v3: rank corrected to 283 (was ~1000) with the story reframed to match.
+        flag: "success-story-rohit-mait-v3",
         match: /rohit/i,
         fields: {
             author: "Rohit",
             text:
-                "Honestly, my LEET rank was nothing to brag about — somewhere around 1000 — and I had quietly made peace with ending up in an average college. The OneLeet team refused to let me settle for less than I could actually get. They knew exactly which rounds to hold out for and which choices to lock in, and that guidance alone is what put me into MAIT. A few months in, I can say it plainly: your rank gets you into the room, but the right counselling decides where you actually walk out. I couldn't be happier here.",
+                "My Rank 283 in LEET was a good score, but I still could have ended up in the wrong college if I'd misplayed the counselling. The OneLeet team guided every choice — which rounds to hold, which options to lock — and that's what turned my rank into a seat at MAIT. I'm really happy here. A rank gets you close; the right counselling gets you in.",
             exam: "IPU LEET",
-            rank: "Rank ~1000",
+            rank: "Rank 283",
             college: "MAIT",
             isCase: true,
             slug: "rohit-leet-counselling-mait",
-            caseTitle: "How the right counselling took Rohit from a rank near 1000 to a seat at MAIT",
+            caseTitle: "How the right counselling turned Rohit's Rank 283 into a seat at MAIT",
             caseStory: rohitStory,
             published: true,
         },
