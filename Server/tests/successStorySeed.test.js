@@ -45,12 +45,12 @@ const ok = (l) => { console.log("  ✓ " + l); passed++; };
     const k = cases.find((c) => c.slug === SLUG);
     assert.ok(k, "Keshav's case is published");
     assert.strictEqual(k.author, "Keshav Kumar Jha", "name normalised");
-    assert.strictEqual(k.rank, "AIR 65", "rank set");
+    assert.strictEqual(k.rank, "AIR 63", "rank set");
     assert.strictEqual(k.college, "MAIT", "college set");
     assert.strictEqual(k.branch, "CSE", "branch set");
     assert.strictEqual(k.image, "https://cdn.example/keshav.jpg", "his real photo is kept");
     const full = (await request.get(`/api/reviews/cases/${SLUG}`)).body.case;
-    assert.ok(/rank 65/i.test(full.caseStory) && full.caseStory.length > 400, "full story is attached");
+    assert.ok(/rank 63/i.test(full.caseStory) && full.caseStory.length > 400, "full story is attached");
     assert.ok(/mait|maharaja agrasen/i.test(full.caseStory), "story mentions the college (SEO)");
     ok("attaches the story to the existing photo record and keeps the photo");
 

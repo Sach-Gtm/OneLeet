@@ -46,9 +46,9 @@ function Quadrant({ icon, title, count, accent, empty, children }) {
                 <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">{title}</h3>
                 <span className="ml-auto rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">{count}</span>
             </div>
-            <div className="min-h-0 max-h-[46vh] flex-1 overflow-y-auto p-3 md:max-h-none">
+            <div className="p-3 md:min-h-0 md:flex-1 md:overflow-y-auto">
                 {count === 0 ? (
-                    <div className="grid h-full min-h-[7rem] place-items-center px-3 text-center text-xs text-slate-400 dark:text-slate-500">{empty}</div>
+                    <div className="grid min-h-[5rem] place-items-center px-3 text-center text-xs text-slate-400 dark:text-slate-500 md:h-full md:min-h-[7rem]">{empty}</div>
                 ) : (
                     children
                 )}
@@ -100,7 +100,7 @@ export default function SuccessWallModal({ reviews = [], onClose }) {
                 <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-y-auto p-3 sm:p-4 md:grid-cols-2 md:grid-rows-2 md:overflow-hidden">
                     {/* Photos */}
                     <Quadrant icon={ImageIcon} title="Photos" count={photos.length} accent="bg-sky-100 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300" empty="No photo reviews yet.">
-                        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                        <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
                             {photos.map((r) => (
                                 <button key={r._id} onClick={() => setLight(r)} className="group text-left">
                                     <div className="relative overflow-hidden rounded-lg ring-1 ring-slate-900/10 transition group-hover:ring-indigo-400 dark:ring-white/10">
@@ -123,7 +123,7 @@ export default function SuccessWallModal({ reviews = [], onClose }) {
                         <div className="grid gap-2.5">
                             {texts.map((r) => (
                                 <div key={r._id} className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                                    <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                                    <p className="line-clamp-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
                                         <Quote className="mb-1 mr-1 inline h-4 w-4 -scale-x-100 text-indigo-300" />
                                         {r.text}
                                     </p>
@@ -142,7 +142,7 @@ export default function SuccessWallModal({ reviews = [], onClose }) {
 
                     {/* Video reviews */}
                     <Quadrant icon={Play} title="Videos" count={videos.length} accent="bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300" empty="No video reviews yet.">
-                        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                        <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
                             {videos.map((r) => (
                                 <button key={r._id} onClick={() => setLight(r)} className="group relative aspect-[3/4] overflow-hidden rounded-lg bg-slate-900 text-left ring-1 ring-slate-900/10 dark:ring-white/10">
                                     <video src={r.video} muted playsInline preload="metadata" className="h-full w-full object-cover opacity-90" />
