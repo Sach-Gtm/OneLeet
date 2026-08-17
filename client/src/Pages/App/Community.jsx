@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import LoadError from "@/Components/General/LoadError";
 import { Link } from "react-router-dom";
 import {
     MessageSquare,
@@ -87,6 +88,7 @@ export default function Community() {
     const [page, setPage] = useState(1);
     const [modalOpen, setModalOpen] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
+    const [loadErr, setLoadErr] = useState(false);
 
     useEffect(() => {
         const t = setTimeout(() => setDebounced(search), 400);
@@ -104,8 +106,8 @@ export default function Community() {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: show the loader before each fetch
         setLoading(true);
         listPosts(params)
-            .then((res) => active && setData(res))
-            .catch(() => active && setData(null))
+            .then((res) => { if (active) { setData(res); setLoadErr(false); } })
+            .catch(() => { if (active) { setData(null); setLoadErr(true); } })
             .finally(() => active && setLoading(false));
         return () => {
             active = false;
@@ -160,6 +162,8 @@ export default function Community() {
                 <div className="flex h-64 items-center justify-center">
                     <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
                 </div>
+            ) : loadErr ? (
+                <LoadError onRetry={() => setReloadKey((k) => k + 1)} label="Couldn't load discussions." />
             ) : posts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
                     <Users className="mb-2 h-8 w-8 text-slate-300" />

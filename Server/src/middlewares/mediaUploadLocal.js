@@ -1,4 +1,5 @@
 const multer = require("multer");
+const path = require("path");
 const fs = require("fs");
 
 // Temp storage for a file the AI will READ (a page photo, a diagram, a PDF) and
@@ -19,7 +20,10 @@ const ALLOWED = new Set([
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, DEST),
-    filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+    filename: (req, file, cb) => {
+        const safe = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, "_");
+        cb(null, `${Date.now()}-${safe}`);
+    },
 });
 
 const mediaUploadLocal = multer({
