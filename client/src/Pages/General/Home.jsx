@@ -93,7 +93,7 @@ export default function Home() {
                         got you here.
                         <br className="hidden sm:block" />{" "}
                         <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(90deg, #4f46e5, #7c3aed)" }}>
-                            Crack LEET, start B.Tech in year 2.
+                            We&apos;ll get you to the top.
                         </span>
                     </h1>
 
