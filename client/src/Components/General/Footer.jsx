@@ -137,8 +137,8 @@ export default function Footer() {
                         Everything for the Lateral Entry Entrance Test: past papers, notes, smart practice and AI tools, in one place.
                     </p>
                     <div className="mt-4 flex items-center gap-2.5">
-                        <button type="button" onClick={comingSoon} className={social + " hover:border-green-300 hover:text-green-500"} aria-label="WhatsApp"><MessageCircle size={15} /></button>
-                        <button type="button" onClick={comingSoon} className={social + " hover:border-pink-300 hover:text-pink-500"} aria-label="Instagram"><Instagram size={15} /></button>
+                        <a href="https://wa.me/919818549572" target="_blank" rel="noopener noreferrer" className={social + " hover:border-green-300 hover:text-green-500"} aria-label="WhatsApp"><MessageCircle size={15} /></a>
+                        <a href="https://www.instagram.com/oneleet.in/" target="_blank" rel="noopener noreferrer" className={social + " hover:border-pink-300 hover:text-pink-500"} aria-label="Instagram"><Instagram size={15} /></a>
                         <button type="button" onClick={comingSoon} className={social + " hover:border-indigo-300 hover:text-indigo-600"} aria-label="LinkedIn"><Linkedin size={15} /></button>
                         <button type="button" onClick={comingSoon} className={social + " hover:border-sky-300 hover:text-sky-500"} aria-label="Twitter"><Twitter size={15} /></button>
                     </div>
