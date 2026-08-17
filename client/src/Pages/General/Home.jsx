@@ -1,7 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import {
     ArrowRight,
-    Check,
     FileText,
     ClipboardCheck,
     Brain,
@@ -92,38 +91,32 @@ export default function Home() {
                         </mark>{" "}
                         got you here.
                         <br className="hidden sm:block" />{" "}
-                        <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(90deg, #4f46e5, #7c3aed)" }}>
+                        <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
                             We&apos;ll get you to the top.
                         </span>
                     </h1>
 
                     <p className="mx-auto max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">
-                        Real past papers, exam-pattern mock tests and an AI coach that
-                        plans your prep — everything for your state&apos;s LEET in one
-                        place. Free to start, no coaching fees.
+                        Everything for your Lateral Entry Entrance Test, in one place:
+                        real papers, exam-pattern mocks, and an AI coach that adapts to
+                        you.
                     </p>
 
-                    <div className="flex flex-col items-center gap-2 pt-2">
+                    <div className="flex flex-col justify-center gap-3 pt-2 sm:flex-row">
                         <Link
                             to="/register"
                             onClick={() => track("cta_click", { where: "hero" })}
-                            className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.03] active:scale-[0.97]"
+                            className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-7 py-3 font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.03] active:scale-[0.97]"
                         >
-                            Start preparing free
+                            Get started
                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Link>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Already have an account?{" "}
-                            <Link to="/login" className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400">Log in</Link>
-                        </p>
-                    </div>
-
-                    {/* Honest trust strip — every item is verifiable (no invented numbers). */}
-                    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 pt-1 text-xs font-medium text-slate-500 dark:text-slate-400">
-                        <span className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-500" /> Free to start</span>
-                        <span className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-500" /> No coaching fees</span>
-                        <span className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-500" /> Real LEET past papers</span>
-                        <span className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-500" /> IPU · DTU/NSUT · UP · Bihar · Haryana</span>
+                        <Link
+                            to="/login"
+                            className="rounded-lg border border-slate-200 bg-white px-7 py-3 text-center font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                        >
+                            I already have an account
+                        </Link>
                     </div>
 
                     <p className="pt-2 text-sm font-medium text-slate-500 dark:text-slate-400">
