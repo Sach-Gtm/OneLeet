@@ -38,6 +38,7 @@ const { startTestLifecycleScheduler } = require("./src/jobs/testLifecycleSchedul
 const { ensureExamsSeeded } = require("./src/config/exams");
 const { ensureMentorsSeeded } = require("./src/config/seedMentors");
 const { ensureMentorJourneysSeeded } = require("./src/config/seedMentorJourneys");
+const { ensureTeamCofounderSeeded } = require("./src/config/seedTeamCofounder");
 const { ensureSuccessStoriesSeeded } = require("./src/config/seedSuccessStories");
 const { ensureIpuSyllabusSeeded } = require("./src/config/seedIpuSyllabus");
 const { ensureIpuExamPatternSeeded } = require("./src/config/seedIpuExamPattern");
@@ -76,6 +77,7 @@ connectDB().then(async () => {
     // base seed inserts (otherwise a fresh DB could double-create them).
     await ensureMentorsSeeded();
     await ensureMentorJourneysSeeded();
+    await ensureTeamCofounderSeeded();
     ensureSuccessStoriesSeeded();
     ensureIpuSyllabusSeeded();
     ensureDtuNsutSyllabusSeeded();
