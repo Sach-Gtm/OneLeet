@@ -11,7 +11,10 @@ fs.mkdirSync(DEST, { recursive: true });
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, DEST),
-    filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+    filename: (req, file, cb) => {
+        const safe = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, "_");
+        cb(null, `${Date.now()}-${safe}`);
+    },
 });
 
 const pdfUploadStaff = multer({

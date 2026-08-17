@@ -10,7 +10,9 @@ const storage = multer.diskStorage({
         cb(null, DEST);
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
+        // Strip directory components + unsafe chars from the client-supplied name.
+        const safe = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, "_");
+        cb(null, `${Date.now()}-${safe}`);
     },
 });
 
