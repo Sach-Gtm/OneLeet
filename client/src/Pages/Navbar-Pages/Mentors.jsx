@@ -9,8 +9,9 @@ import { getMentors } from "@/Api/MentorsApi";
 // never empty. These mirror the server's founding-mentor seed.
 const FALLBACK = [
     { _id: "f1", slug: "sachin-gautam", name: "Sachin Gautam", role: "Founder & Head Mentor", handle: "@sachingautam", exam: "IPU LEET — AIR 54", tagline: "AIR 54 with zero coaching — now building the path he wishes he'd had.", highlights: ["AIR 54 in IPU LEET — no coaching", "Guided 100+ students free", "3× hackathon winner"] },
-    { _id: "f2", slug: "parth-singh-shekhawat", name: "Parth Singh Shekhawat", role: "Mentor", exam: "IPU LEET 2024 — AIR 6", tagline: "AIR 6 — mentored before OneLeet even had a website.", highlights: ["AIR 6 in IPU LEET 2024", "Final-year student at MSIT"] },
-    { _id: "f3", slug: "ayush", name: "Ayush", role: "Mentor & Co-founder", exam: "IPU LEET — Rank 63", tagline: "Rank 63 with no coaching — only the right guidance.", highlights: ["Rank 63 — no coaching", "Co-founder of 2 ventures"] },
+    { _id: "f2", slug: "robin", name: "Robin", role: "Co-founder", exam: "MBA — IIM Rohtak", tagline: "An IIM Rohtak MBA who's mentored 100+ students — and cleared interview after interview himself.", highlights: ["MBA from IIM Rohtak", "100+ students mentored", "Interviews & exams cleared"] },
+    { _id: "f3", slug: "parth-singh-shekhawat", name: "Parth Singh Shekhawat", role: "Mentor", exam: "IPU LEET 2024 — AIR 6", tagline: "AIR 6 — mentored before OneLeet even had a website.", highlights: ["AIR 6 in IPU LEET 2024", "Final-year student at MSIT"] },
+    { _id: "f4", slug: "ayush", name: "Ayush", role: "Mentor & Co-founder", exam: "IPU LEET — Rank 63", tagline: "Rank 63 with no coaching — only the right guidance.", highlights: ["Rank 63 — no coaching", "Co-founder of 2 ventures"] },
 ];
 
 const GRADIENTS = [
@@ -109,9 +110,9 @@ function MentorCard({ mentor, index }) {
 
 export default function Mentors() {
     useSeo({
-        title: "LEET Mentors: Learn from students who cracked it | OneLeet",
+        title: "Meet the Team | OneLeet",
         description:
-            "Meet OneLeet's mentors, LEET qualifiers who've sat exactly where you are and know what it takes to get into 2nd year B.Tech through lateral entry.",
+            "The people working to make LEET preparation simpler, smarter, and more accessible — the founders and mentors behind OneLeet.",
         path: "/mentor",
     });
 
@@ -156,7 +157,7 @@ export default function Mentors() {
                     transition={{ duration: 0.5 }}
                     className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-white px-3 py-1 text-xs font-semibold text-indigo-700 shadow-sm dark:bg-slate-900"
                 >
-                    <Sparkle className="h-3.5 w-3.5" /> Learn from those who cracked it
+                    <Sparkle className="h-3.5 w-3.5" /> The people behind OneLeet
                 </motion.span>
                 <motion.h1
                     initial={{ opacity: 0, y: 24 }}
@@ -164,9 +165,9 @@ export default function Mentors() {
                     transition={{ duration: 0.6, delay: 0.05 }}
                     className="mt-4 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl"
                 >
-                    Meet Your{" "}
+                    Meet the{" "}
                     <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                        Mentors
+                        Team
                     </span>
                 </motion.h1>
                 <motion.p
@@ -175,8 +176,8 @@ export default function Mentors() {
                     transition={{ duration: 0.6, delay: 0.12 }}
                     className="mx-auto mt-3 max-w-xl text-slate-500"
                 >
-                    LEET qualifiers who&apos;ve sat exactly where you are, and know precisely what it
-                    takes to get in. Scroll to meet them.
+                    The people working to make LEET preparation simpler, smarter, and more
+                    accessible.
                 </motion.p>
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -204,7 +205,7 @@ export default function Mentors() {
             {/* Closing line */}
             <div className="mx-auto max-w-2xl px-4 pb-24 text-center">
                 <p className="text-sm text-slate-400">
-                    More mentors join every season. Each one cracked LEET and now helps you do the same.
+                    The team keeps growing — each one here to help you get into 2nd year B.Tech through lateral entry.
                 </p>
             </div>
         </div>

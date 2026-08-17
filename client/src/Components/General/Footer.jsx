@@ -149,7 +149,7 @@ export default function Footer() {
                     <ul className="space-y-2.5 text-[13.5px]">
                         <li><Link to="/" className={linkCls}>Home</Link></li>
                         <li><Link to="/community" className={linkCls}>Community</Link></li>
-                        <li><Link to="/mentor" className={linkCls}>Mentors</Link></li>
+                        <li><Link to="/mentor" className={linkCls}>Team</Link></li>
                         <li><Link to="/success" className={linkCls}>Success Stories</Link></li>
                         <li><Link to="/privacy" className={linkCls}>Privacy Policy</Link></li>
                     </ul>

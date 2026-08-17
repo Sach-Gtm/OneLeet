@@ -248,7 +248,7 @@ function footer() {
 <a href="${BASE}/">Home</a>
 <a href="${BASE}/register">Create free account</a>
 <a href="${BASE}/login">Log in</a>
-<a href="${BASE}/mentor">Mentors</a>
+<a href="${BASE}/mentor">Team</a>
 <a href="mailto:help@oneleet.in">help@oneleet.in</a></div>
 </div>
 <p class="fine">&copy; ${new Date().getFullYear()} OneLeet · A unit of StaplerLabs Private Limited. Study materials are provided for educational purposes. LEET / lateral-entry exam names, dates, eligibility and cut-offs vary by state and change every year. Always confirm the current details in the official notification of your state's admission authority before applying.</p>

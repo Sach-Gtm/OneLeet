@@ -58,9 +58,9 @@ export default function MentorJourney() {
     if (mentor === null) {
         return (
             <div className="mx-auto max-w-lg px-4 py-32 text-center">
-                <p className="text-lg font-semibold text-slate-800 dark:text-slate-100">We couldn&apos;t find that mentor.</p>
+                <p className="text-lg font-semibold text-slate-800 dark:text-slate-100">We couldn&apos;t find that team member.</p>
                 <Link to="/mentor" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:underline">
-                    <ArrowLeft className="h-4 w-4" /> Back to all mentors
+                    <ArrowLeft className="h-4 w-4" /> Back to the team
                 </Link>
             </div>
         );
@@ -89,7 +89,7 @@ export function MentorJourneyView({ mentor }) {
                 <div className="mx-auto max-w-4xl px-4 pb-14 pt-28 sm:px-6 sm:pt-32">
                     <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
                         <Link to="/mentor" className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/80 transition hover:text-white">
-                            <ArrowLeft className="h-4 w-4" /> All mentors
+                            <ArrowLeft className="h-4 w-4" /> The team
                         </Link>
                     </motion.div>
 

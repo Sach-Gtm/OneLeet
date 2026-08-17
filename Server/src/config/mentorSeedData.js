@@ -39,11 +39,41 @@ const FOUNDING_MENTORS = [
         links: [{ label: "oneleet.in", url: "https://oneleet.in" }],
     },
     {
+        slug: "robin",
+        name: "Robin",
+        role: "Co-founder",
+        // Not a LEET/diploma route — Robin's the business-and-mentorship side of
+        // the team. This credential line shows where a LEET rank would for others.
+        exam: "MBA — IIM Rohtak",
+        order: 1,
+        tagline:
+            "An IIM Rohtak MBA who's mentored 100+ students — and cleared interview after interview himself.",
+        description:
+            "Robin is a co-founder of OneLeet and the experienced hand behind its mentorship. An MBA from IIM Rohtak, he has spent years in the working world, mentored 100+ students to date, and personally cleared a wide range of competitive interviews and objective exams.",
+        highlights: [
+            "MBA from IIM Rohtak",
+            "100+ students mentored to date",
+            "Cleared a wide range of interviews and objective exams",
+            "Years of real-world professional experience",
+        ],
+        stats: [
+            { value: "IIM Rohtak", label: "MBA" },
+            { value: "100+", label: "Students mentored" },
+            { value: "Multiple", label: "Interviews & exams cleared" },
+        ],
+        story: [
+            "Robin is a co-founder of OneLeet and the experienced hand behind its mentorship. He earned his MBA from IIM Rohtak and has spent years in the working world — long enough to know exactly what students are really preparing for.",
+            "Along the way he has mentored 100+ students, guiding them through the choices, the preparation and the interviews that decide where they land. He's sat on the other side of the table too, personally clearing a wide range of competitive interviews and objective exams.",
+            "At OneLeet, Robin turns that hard-won experience into a clear, practical path — so every student has a guide who has already walked the road ahead.",
+        ].join("\n\n"),
+        links: [],
+    },
+    {
         slug: "parth-singh-shekhawat",
         name: "Parth Singh Shekhawat",
         role: "Mentor",
         exam: "IPU LEET 2024 — AIR 6",
-        order: 1,
+        order: 2,
         tagline: "AIR 6 — mentored before OneLeet even had a website.",
         description:
             "Cracked IPU LEET at AIR 6 — guided by OneLeet before it was ever a company, back when it lived only on paper. Left a job for his regular B.Tech; now in his final year at MSIT.",
@@ -70,7 +100,7 @@ const FOUNDING_MENTORS = [
         name: "Ayush",
         role: "Mentor & Co-founder",
         exam: "IPU LEET — Rank 63",
-        order: 2,
+        order: 3,
         tagline: "Rank 63 with no coaching — only the right guidance.",
         description:
             "Cleared IPU LEET at rank 63 without a single coaching class — just Sachin's guidance. Left a job after 3 months for a full-time B.Tech at Maharaja Agrasen, and co-founded two ventures.",

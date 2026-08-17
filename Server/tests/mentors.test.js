@@ -18,6 +18,7 @@ const Mentor = require("../src/models/mentorModel");
 const generateToken = require("../src/utils/generateToken");
 const { ensureMentorsSeeded } = require("../src/config/seedMentors");
 const { ensureMentorJourneysSeeded } = require("../src/config/seedMentorJourneys");
+const { ensureTeamCofounderSeeded } = require("../src/config/seedTeamCofounder");
 
 let passed = 0;
 const ok = (l) => {
@@ -30,16 +31,17 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     const mongod = await MongoMemoryServer.create();
     await mongoose.connect(mongod.getUri());
 
-    // Seeding populates the three founding mentors when the collection is empty.
+    // Seeding populates the founding team when the collection is empty.
     await ensureMentorsSeeded();
     const seeded = (await request.get("/api/mentors")).body.mentors;
-    assert.strictEqual(seeded.length, 3, "three founding mentors seeded");
+    assert.strictEqual(seeded.length, 4, "four founding team members seeded");
     assert.ok(seeded.some((m) => m.name === "Parth Singh Shekhawat"), "Parth is seeded");
-    ok("the founding mentors are seeded and publicly readable (no auth)");
+    assert.ok(seeded.some((m) => m.name === "Robin" && m.role === "Co-founder"), "Robin (co-founder) is seeded");
+    ok("the founding team is seeded and publicly readable (no auth)");
 
     // Seeding again is a no-op (doesn't duplicate).
     await ensureMentorsSeeded();
-    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 3, "no duplicate seeding");
+    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 4, "no duplicate seeding");
     ok("re-seeding is a no-op");
 
     const admin = await User.create({
@@ -82,7 +84,7 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     assert.strictEqual(noName.status, 400, "name is required");
     ok("a mentor without a name is rejected");
 
-    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 4, "now four mentors");
+    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 5, "now five mentors");
 
     // Admin deletes the added mentor.
     const del = await request.delete(`/api/mentors/${newId}`).set(...auth(adminToken));
@@ -90,7 +92,7 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     // A student can't delete.
     const delForbid = await request.delete(`/api/mentors/${seeded[0]._id}`).set(...auth(studentToken));
     assert.strictEqual(delForbid.status, 403, "student cannot delete");
-    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 3, "back to three");
+    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 4, "back to four");
     ok("an admin can delete a mentor; students cannot");
 
     // ── Journeys: rich content, detail-by-slug, admin edit, drafts, migration ──
@@ -151,8 +153,25 @@ const auth = (t) => ["Authorization", `Bearer ${t}`];
     await ensureMentorJourneysSeeded();
     const upgraded = (await request.get("/api/mentors/sachin-gautam")).body.mentor;
     assert.ok(upgraded && upgraded.story && upgraded.story.length > 100, "bare record upgraded with a full journey");
-    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 3, "missing founders created by the migration");
+    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 4, "missing founders created by the migration");
     ok("the one-time migration fills bare records' journeys and creates any missing founders");
+
+    // The co-founder migration adds Robin to a team seeded before he existed, and
+    // slots him second (right after the founder). Idempotent on re-run.
+    await Mentor.deleteMany({});
+    await Mentor.insertMany([
+        { name: "Sachin Gautam", slug: "sachin-gautam", role: "Founder & Head Mentor", order: 0 },
+        { name: "Parth Singh Shekhawat", slug: "parth-singh-shekhawat", role: "Mentor", order: 1 },
+        { name: "Ayush", slug: "ayush", role: "Mentor & Co-founder", order: 2 },
+    ]);
+    await ensureTeamCofounderSeeded();
+    const team = (await request.get("/api/mentors")).body.mentors;
+    assert.strictEqual(team.length, 4, "Robin added to the existing team");
+    assert.strictEqual(team[1].name, "Robin", "Robin is slotted second, after the founder");
+    assert.strictEqual(team[1].role, "Co-founder", "Robin's role is Co-founder");
+    await ensureTeamCofounderSeeded();
+    assert.strictEqual((await request.get("/api/mentors")).body.mentors.length, 4, "co-founder migration is a no-op on re-run");
+    ok("the co-founder migration adds Robin (second) once and is idempotent");
 
     await mongoose.disconnect();
     await mongod.stop();

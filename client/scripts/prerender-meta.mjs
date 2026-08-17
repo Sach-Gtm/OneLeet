@@ -45,7 +45,7 @@ const STATIC = [
     { path: "/success", title: "LEET Success Stories: diploma to B.Tech, real students | OneLeet", desc: "Real OneLeet success stories — diploma students who cracked the Lateral Entry Entrance Test and got into 2nd-year B.Tech. See how they did it." },
     { path: "/exams", title: "LEET Exams by State: Pattern, Eligibility & Syllabus | OneLeet", desc: "Explore every LEET (Lateral Entry Entrance Test): IPU, DTU/NSUT, UP (AKTU), Bihar, Haryana and more. Compare exam pattern, eligibility, syllabus, seats and cut-offs, free." },
     { path: "/prep-guide", title: "How to Prepare for LEET: Free Study Plan & Roadmap | OneLeet", desc: "A stage-by-stage LEET preparation roadmap for diploma students, from your first month to exam day. Free overview; unlock the full day-by-day plan." },
-    { path: "/mentor", title: "LEET Mentors: Learn from students who cracked it | OneLeet", desc: "Meet OneLeet's mentors, LEET qualifiers who've sat exactly where you are and know what it takes to get into 2nd year B.Tech through lateral entry." },
+    { path: "/mentor", title: "Meet the Team | OneLeet", desc: "The people working to make LEET preparation simpler, smarter, and more accessible — the founders and mentors behind OneLeet." },
 ];
 
 // Swap the homepage's head tags for this route's. Regexes are dotall + lazy so
