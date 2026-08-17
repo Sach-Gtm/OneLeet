@@ -53,7 +53,7 @@ export default function SuccessWall({ reviews: injected }) {
     const dur = Math.max(30, base.length * 4);
 
     return (
-        <section className="relative overflow-hidden py-14">
+        <section className="relative overflow-hidden border-y border-amber-200/60 bg-gradient-to-b from-amber-50/70 via-[#FAF9F6] to-indigo-50/50 py-16 dark:border-white/10 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
             <div className="mx-auto mb-8 max-w-2xl px-4 text-center">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-300">
                     <Sparkles className="h-3.5 w-3.5" /> The Success Wall
