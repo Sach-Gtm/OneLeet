@@ -8,6 +8,7 @@
     "seo": "node scripts/generate-seo.mjs",
     "prebuild": "node scripts/generate-seo.mjs",
     "build": "vite build",
+    "postbuild": "node scripts/prerender-meta.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
