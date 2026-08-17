@@ -16,6 +16,7 @@ import {
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { getPyqs, getPyqFilters, pyqDownloadUrl } from "@/Api/PyqApi";
+import LoadError from "@/Components/General/LoadError";
 
 const DIFFICULTY_STYLE = {
     easy: "bg-emerald-50 text-emerald-700",
@@ -160,6 +161,8 @@ export default function PyqArchive() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [openKey, setOpenKey] = useState(null); // which filter dropdown is open
+    const [loadErr, setLoadErr] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
 
     // Load filter facets once
     useEffect(() => {
@@ -199,10 +202,10 @@ export default function PyqArchive() {
         setLoading(true);
         getPyqs(queryParams)
             .then((res) => {
-                if (active) setData(res);
+                if (active) { setData(res); setLoadErr(false); }
             })
             .catch(() => {
-                if (active) setData(null);
+                if (active) { setData(null); setLoadErr(true); }
             })
             .finally(() => {
                 if (active) setLoading(false);
@@ -210,7 +213,7 @@ export default function PyqArchive() {
         return () => {
             active = false;
         };
-    }, [queryParams]);
+    }, [queryParams, reloadKey]);
 
     const toggleFilter = (key, value) => {
         setPage(1);
@@ -319,6 +322,8 @@ export default function PyqArchive() {
                         <div className="flex h-64 items-center justify-center">
                             <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
                         </div>
+                    ) : loadErr ? (
+                        <LoadError onRetry={() => setReloadKey((k) => k + 1)} label="Couldn't load the papers." />
                     ) : pyqs.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
                             <FileQuestion className="mb-2 h-8 w-8 text-slate-300" />

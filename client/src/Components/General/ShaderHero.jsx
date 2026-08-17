@@ -95,6 +95,12 @@ export default function ShaderHero({ className = "" }) {
         const container = ref.current;
         if (!container) return;
 
+        // Skip the live WebGL layer on phones / Data-Saver: the instant CSS
+        // gradient behind it is enough, and this frees the mobile GPU during the
+        // most sensitive paint window (and saves battery/data).
+        const conn = navigator.connection || navigator.webkitConnection;
+        if (window.matchMedia("(max-width: 640px)").matches || (conn && conn.saveData)) return;
+
         let renderer, program, mesh, gl, raf;
         try {
             renderer = new Renderer({
