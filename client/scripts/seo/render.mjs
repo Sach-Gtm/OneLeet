@@ -99,7 +99,7 @@ export function orgJsonld() {
         name: BRAND,
         alternateName: "OneLeet: LEET Preparation",
         url: `${BASE}/`,
-        logo: `${BASE}/favicon.svg`,
+        logo: `${BASE}/pwa-512x512.png`,
         image: OG_IMAGE,
         description:
             "OneLeet is an AI-powered preparation platform for the LEET / Lateral Entry Entrance Test, helping diploma holders get into the 2nd year of B.Tech with real past papers, exam-pattern mock tests, notes and AI practice.",
@@ -273,7 +273,10 @@ export function layout({ path, title, description, ogType = "article", h1, eyebr
 <link rel="canonical" href="${canonical}">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta name="theme-color" content="#3FB0D6">
-<link rel="icon" type="image/svg+xml" href="${BASE}/favicon.svg">
+<link rel="icon" href="${BASE}/favicon.ico?v=2" sizes="any">
+<link rel="icon" type="image/svg+xml" href="${BASE}/favicon.svg?v=2">
+<link rel="icon" type="image/png" sizes="96x96" href="${BASE}/favicon-96x96.png?v=2">
+<link rel="apple-touch-icon" href="${BASE}/apple-touch-icon.png?v=2">
 <meta property="og:site_name" content="${BRAND}">
 <meta property="og:type" content="${ogType}">
 <meta property="og:title" content="${esc(title)}">
