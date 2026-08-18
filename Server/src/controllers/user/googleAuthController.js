@@ -2,6 +2,7 @@ const User = require("../../models/userModel");
 const { startSession } = require("../../utils/authSession");
 const { SUPERADMIN_EMAIL } = require("../../config/roles");
 const { isEmailBlocked } = require("../../utils/blocklist");
+const { sendWelcomeEmail } = require("../../utils/onboardingEmails");
 
 const sanitize = (user) => {
     const obj = user.toObject ? user.toObject() : { ...user };
@@ -89,6 +90,8 @@ async function googleAuth(req, res, next) {
         });
 
         const token = await startSession(res, req, newUser);
+        // Brand-new Google account — welcome them.
+        sendWelcomeEmail(newUser);
 
         return res.status(201).json({
             success: true,

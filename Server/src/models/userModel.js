@@ -76,6 +76,8 @@ const UserSchema = new mongoose.Schema(
         // user joined through). Set once; drives the referrer's signup count.
         referredBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null, index: true },
         otpLastSentAt: { type: Date, select: false },
+        // One-shot guard so the welcome email is sent exactly once per account.
+        welcomeEmailSentAt: { type: Date, select: false },
         avatar: {
             type: String,
         },
