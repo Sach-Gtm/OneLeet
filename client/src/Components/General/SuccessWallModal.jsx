@@ -235,9 +235,9 @@ export default function SuccessWallModal({ reviews = [], onClose }) {
 
     const sections = [
         { key: "photos", icon: ImageIcon, title: "Photos", count: photos.length, accent: "bg-sky-100 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300", empty: "No photo reviews yet.", body: photosBody },
+        { key: "stories", icon: Sparkles, title: "Success Stories", count: cases.length, accent: "bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300", empty: "No success stories published yet.", body: casesBody },
         { key: "reviews", icon: Quote, title: "Reviews", count: texts.length, accent: "bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300", empty: "No written reviews yet.", body: reviewsBody },
         { key: "videos", icon: Play, title: "Videos", count: videos.length, accent: "bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300", empty: "No video reviews yet.", body: videosBody },
-        { key: "stories", icon: Sparkles, title: "Success Stories", count: cases.length, accent: "bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300", empty: "No success stories published yet.", body: casesBody },
     ];
 
     return (
