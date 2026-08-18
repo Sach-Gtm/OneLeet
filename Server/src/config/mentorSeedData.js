@@ -57,7 +57,7 @@ const FOUNDING_MENTORS = [
             "Years of real-world professional experience",
         ],
         stats: [
-            { value: "IIM Rohtak", label: "MBA" },
+            { value: "MBA", label: "IIM Rohtak" },
             { value: "100+", label: "Students mentored" },
             { value: "Multiple", label: "Interviews & exams cleared" },
         ],

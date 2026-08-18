@@ -86,7 +86,7 @@ export function MentorJourneyView({ mentor }) {
                 <div className="pointer-events-none absolute -left-16 -top-16 -z-10 h-72 w-72 rounded-full bg-white/20 blur-3xl" />
                 <div className="pointer-events-none absolute -right-10 top-24 -z-10 h-64 w-64 rounded-full bg-black/10 blur-3xl" />
 
-                <div className="mx-auto max-w-4xl px-4 pb-14 pt-28 sm:px-6 sm:pt-32">
+                <div className="mx-auto max-w-4xl px-4 pb-24 pt-28 sm:px-6 sm:pt-32">
                     <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
                         <Link to="/mentor" className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/80 transition hover:text-white">
                             <ArrowLeft className="h-4 w-4" /> The team
@@ -150,7 +150,7 @@ export function MentorJourneyView({ mentor }) {
 
             {/* ── Stats ────────────────────────────────────────────────────── */}
             {mentor.stats?.length > 0 && (
-                <div className="mx-auto -mt-8 max-w-4xl px-4 sm:px-6">
+                <div className="relative z-10 mx-auto -mt-8 max-w-4xl px-4 sm:px-6">
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                         {mentor.stats.map((s, i) => (
                             <motion.div
