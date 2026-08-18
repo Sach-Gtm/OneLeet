@@ -1,6 +1,7 @@
 const Enrollment = require("../../models/enrollmentModel");
 const Course = require("../../models/courseModel");
 const User = require("../../models/userModel");
+const { sendEnrollmentEmail } = require("../../utils/onboardingEmails");
 
 // Rebuild the student's `exams` cache (a client-convenience mirror of the exam
 // codes they can see content for) from their ACTIVE enrollments. Enrollments are
@@ -21,12 +22,15 @@ async function enroll(req, res, next) {
         const course = await Course.findOne({ ...query, published: true }).lean();
         if (!course) return res.status(404).json({ success: false, message: "Course not found" });
 
-        await Enrollment.findOneAndUpdate(
+        // findOneAndUpdate returns the pre-update doc — null means this is a
+        // brand-new enrollment (not a re-join), which is when we email them.
+        const prior = await Enrollment.findOneAndUpdate(
             { student: req.user._id, course: course._id },
             { $set: { examCode: course.examCode, status: "active" } },
             { upsert: true, setDefaultsOnInsert: true }
         );
         const exams = await syncUserExams(req.user._id);
+        if (!prior) sendEnrollmentEmail(req.user, course);
         return res.status(200).json({ success: true, message: `Enrolled in ${course.name}`, examCode: course.examCode, exams });
     } catch (e) {
         next(e);

@@ -17,6 +17,7 @@ const {
     RESEND_COOLDOWN_MS,
 } = require("../../utils/otp");
 const { isEmailBlocked } = require("../../utils/blocklist");
+const { sendWelcomeEmail } = require("../../utils/onboardingEmails");
 const Referral = require("../../models/referralModel");
 
 // Attribute a new signup to the referrer whose code they joined through (from
@@ -145,6 +146,8 @@ async function register(req, res, next) {
         }
 
         const token = await startSession(res, req, user);
+        // OTP is off, so the account is active right away — welcome them.
+        sendWelcomeEmail(user);
 
         return res.status(201).json({
             success: true,
@@ -312,6 +315,8 @@ async function verifyOtp(req, res, next) {
         await user.save({ validateBeforeSave: false });
 
         const token = await startSession(res, req, user);
+        // Email just confirmed — the account is fully active for the first time.
+        sendWelcomeEmail(user);
         return res.status(200).json({
             success: true,
             message: "Email verified — welcome to OneLeet!",
