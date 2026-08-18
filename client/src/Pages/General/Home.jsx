@@ -16,6 +16,7 @@ import { Cloud, Connector, RobotBuddy } from "@/Components/General/FeatureBuddy"
 import CollegeCtaBand from "@/Components/General/CollegeCtaBand";
 import { useSeo } from "@/lib/useSeo";
 import { track } from "@/lib/telemetry";
+import ScholarshipSplash from "@/Components/General/ScholarshipSplash";
 
 // Heavy, non-critical pieces loaded off the critical path so the hero (the LCP)
 // paints fast: the WebGL shader background (ogl) and the below-the-fold sections
@@ -64,6 +65,8 @@ export default function Home() {
     }, []);
     return (
         <>
+            <ScholarshipSplash />
+
             {/* Hero */}
             <section className="relative flex min-h-[86vh] w-full flex-col items-center justify-center overflow-hidden px-4 pb-12 pt-24 text-center sm:px-6 sm:pt-28">
                 {/* Instant pastel backdrop — paints immediately with no JS, so the
