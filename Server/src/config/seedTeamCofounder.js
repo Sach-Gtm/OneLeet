@@ -8,7 +8,11 @@ const { FOUNDING_MENTORS } = require("./mentorSeedData");
 // guarded by a SeedFlag so it runs exactly once and never overwrites later admin
 // edits. A staff-uploaded photo and the published flag on any existing record are
 // preserved. (Fresh databases already get Robin from the base seed, in order.)
-const KEY = "team-cofounder-robin-v1";
+//
+// v2: re-sync Robin's seeded fields so an already-live record picks up the
+// corrected stat tile ("MBA" as the value, "IIM Rohtak" as the label — it was too
+// wide the other way round). Still preserves any staff photo / published flag.
+const KEY = "team-cofounder-robin-v2";
 
 async function ensureTeamCofounderSeeded() {
     try {

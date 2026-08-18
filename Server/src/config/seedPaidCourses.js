@@ -8,7 +8,11 @@ const { getExams } = require("./exams");
 // seed (CLAUDE.md — no direct Atlas write): per-slug upsert, guarded by a flag.
 // The two original Foundation batches are UPDATED in place (their launch prices
 // changed); the rest are created. Counselling-only packs are seeded separately.
-const SEED_KEY = "paid-courses-v1";
+//
+// v2: lower the struck-through `mrp` (the "original" price) to more believable
+// launch numbers. The paid `price` students actually pay is unchanged; the re-run
+// re-applies price/promise (no change) and the new mrp to each existing batch.
+const SEED_KEY = "paid-courses-v2";
 
 const WHATS_INSIDE = [
     "Complete master course — notes, short notes, formula sheets & mind maps",
@@ -28,25 +32,25 @@ const TNC =
 
 // slug, examCode, launch price / original, and the short Success-Promise summary.
 const COURSES = [
-    { slug: "ipu-leet-2027-foundation", examCode: "ipu-leet", name: "IPU LEET 2027 Foundation Batch", price: 999, mrp: 8999, order: 0,
+    { slug: "ipu-leet-2027-foundation", examCode: "ipu-leet", name: "IPU LEET 2027 Foundation Batch", price: 999, mrp: 1899, order: 0,
       tagline: "Everything for GGSIPU lateral entry — real papers, weekly ranked mocks, seat & cut-off data, and live doubts.",
       promise: "Admission in a top-6 IPU college for a CSE-family branch (CSE / CST / IT / AI-DS / DS / AIML / ITE), or a top-3 college for any other branch — else 100% of the fee back." },
-    { slug: "dtu-nsut-leet-2027-foundation", examCode: "dtu-nsut-leet", name: "DTU / NSUT LEET 2027 Foundation Batch", price: 799, mrp: 7999, order: 1,
+    { slug: "dtu-nsut-leet-2027-foundation", examCode: "dtu-nsut-leet", name: "DTU / NSUT LEET 2027 Foundation Batch", price: 799, mrp: 1799, order: 1,
       tagline: "Crack the DTU / NSUT lateral entry — real papers, weekly ranked mocks, and a plan tied to your exam date.",
       promise: "Secure a top-10 rank → 100% of the fee back. Admission on any seat → 60% back." },
-    { slug: "bihar-leet-2027", examCode: "bihar-leet", name: "Bihar LEET 2027 Foundation Batch", price: 699, mrp: 4999, order: 2,
+    { slug: "bihar-leet-2027", examCode: "bihar-leet", name: "Bihar LEET 2027 Foundation Batch", price: 699, mrp: 1499, order: 2,
       tagline: "BCECE-LE, done right — real papers, ranked mocks, and college-wise guidance.",
       promise: "Admission in a top-2 college (MIT Muzaffarpur / BCE Bhagalpur) → 50% of the fee back." },
-    { slug: "haryana-leet-2027", examCode: "haryana-leet", name: "Haryana LEET 2027 Foundation Batch", price: 999, mrp: 8999, order: 3,
+    { slug: "haryana-leet-2027", examCode: "haryana-leet", name: "Haryana LEET 2027 Foundation Batch", price: 999, mrp: 1899, order: 3,
       tagline: "HSTES lateral entry — targeted prep for the Haryana colleges that matter.",
       promise: "Admission in YMCA (J.C. Bose) → 50% back. Top-50 rank without YMCA → 30% back." },
-    { slug: "up-leet-2027", examCode: "up-leet", name: "CUET / UP LEET 2027 Foundation Batch", price: 1499, mrp: 12999, order: 4,
+    { slug: "up-leet-2027", examCode: "up-leet", name: "CUET / UP LEET 2027 Foundation Batch", price: 1499, mrp: 2499, order: 4,
       tagline: "AKTU lateral entry across 700+ colleges — mocks, PYQs and a rank-focused plan.",
       promise: "Secure a top-10 rank → 100% back. Admission in a top-3 college → 40% back." },
-    { slug: "gujarat-d2d-2027", examCode: "gujarat-d2d", name: "Gujarat LEET 2027 Foundation Batch", price: 599, mrp: 9999, order: 5,
+    { slug: "gujarat-d2d-2027", examCode: "gujarat-d2d", name: "Gujarat LEET 2027 Foundation Batch", price: 599, mrp: 1999, order: 5,
       tagline: "ACPDC Diploma-to-Degree — ultra-affordable govt colleges, mapped out for you.",
       promise: "Performance-based Success Reward — see the full per-exam terms at checkout." },
-    { slug: "sliet-leet-2027", examCode: "sliet-leet", name: "SLIET LEET 2027 Foundation Batch", price: 999, mrp: 8999, order: 6,
+    { slug: "sliet-leet-2027", examCode: "sliet-leet", name: "SLIET LEET 2027 Foundation Batch", price: 999, mrp: 1899, order: 6,
       tagline: "SLIET Longowal lateral entry — the central-government route, prepped end to end.",
       promise: "Performance-based Success Reward — see the full per-exam terms at checkout." },
 ];
