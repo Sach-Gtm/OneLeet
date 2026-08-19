@@ -1,8 +1,9 @@
 import { useEffect, useId, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Trophy, CalendarDays, Monitor, BadgeCheck, ArrowRight, Sparkles } from "lucide-react";
+import { X, Trophy, CalendarDays, Monitor, BadgeCheck, ArrowRight, Sparkles, Flame } from "lucide-react";
 import { track } from "@/lib/telemetry";
+import { useScholarshipCount } from "@/lib/useScholarshipCount";
 import { SCHOLARSHIP_TEST_DATE, SCHOLARSHIP_HIDE_AFTER } from "@/config/launch";
 
 // Promo splash for the All-India Scholarship Test. Rendered inside Home, so it
@@ -79,6 +80,7 @@ function SplashMedallion() {
 export default function ScholarshipSplash() {
     const [open, setOpen] = useState(false);
     const rid = useId().replace(/:/g, "");
+    const { count } = useScholarshipCount();
 
     // Show shortly after the home screen paints (grabs attention without a jarring
     // flash before first paint). Fresh state on every mount → re-shows on return.
@@ -192,6 +194,17 @@ export default function ScholarshipSplash() {
                                     );
                                 })}
                             </div>
+
+                            {count > 0 && (
+                                <p className="mt-3 flex items-center justify-center gap-1.5 text-[13px] font-semibold text-amber-600 dark:text-amber-400">
+                                    <span className="relative flex h-2 w-2 shrink-0">
+                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                                    </span>
+                                    <Flame className="h-3.5 w-3.5 text-orange-500" />
+                                    <span className="tabular-nums"><b>{count.toLocaleString("en-IN")}</b> already registered — your turn!</span>
+                                </p>
+                            )}
 
                             <Link
                                 to="/scholarship"

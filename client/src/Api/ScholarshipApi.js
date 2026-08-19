@@ -12,3 +12,14 @@ export const registerScholarship = async (payload) => {
         throw e;
     }
 };
+
+// Live social-proof tally of scholarship registrations (already inflated ×3 by
+// the API). Returns a number; 0 on any failure so the UI can fall back quietly.
+export const getScholarshipCount = async () => {
+    try {
+        const { data } = await api.get("/scholarship/count");
+        return Number(data?.count) || 0;
+    } catch {
+        return 0;
+    }
+};

@@ -1,8 +1,9 @@
 import { useId } from "react";
 import { motion } from "framer-motion";
-import { CalendarDays, Monitor, BadgeCheck, Trophy, Medal, GraduationCap, IndianRupee } from "lucide-react";
+import { CalendarDays, Monitor, BadgeCheck, Trophy, Medal, GraduationCap, IndianRupee, Flame } from "lucide-react";
 import ScholarshipRegisterCard from "@/Components/General/ScholarshipRegisterCard";
 import { SCHOLARSHIP_TEST_DATE } from "@/config/launch";
+import { useScholarshipCount } from "@/lib/useScholarshipCount";
 import { useSeo } from "@/lib/useSeo";
 
 const CHIPS = [
@@ -107,6 +108,7 @@ function HeroBadge() {
 }
 
 export default function ScholarshipRegister() {
+    const { count } = useScholarshipCount();
     useSeo({
         title: "All-India LEET Scholarship Test — Register Free | OneLeet",
         description: `Register free for OneLeet's All-India Scholarship Test on ${SCHOLARSHIP_TEST_DATE}. One common online exam, one national rank — win up to a 100% scholarship on your LEET course.`,
@@ -153,6 +155,20 @@ export default function ScholarshipRegister() {
                         );
                     })}
                 </div>
+
+                {count > 0 && (
+                    <motion.p
+                        initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                        className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-1.5 text-sm font-semibold text-amber-700 dark:border-amber-500/25 dark:bg-amber-500/10 dark:text-amber-300"
+                    >
+                        <span className="relative flex h-2 w-2 shrink-0">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                        </span>
+                        <Flame className="h-4 w-4 text-orange-500" />
+                        <span className="tabular-nums"><b>{count.toLocaleString("en-IN")}</b> students already registered — it&apos;s your turn!</span>
+                    </motion.p>
+                )}
             </div>
 
             {/* How it works */}

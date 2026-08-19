@@ -1,10 +1,39 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, Sparkles, Loader2, CheckCircle2, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { Trophy, Sparkles, Loader2, CheckCircle2, ArrowRight, Flame } from "lucide-react";
 import toast from "react-hot-toast";
 import { SCHOLARSHIP_TEST_DATE } from "@/config/launch";
 import { registerScholarship } from "@/Api/ScholarshipApi";
+import { useScholarshipCount } from "@/lib/useScholarshipCount";
 import { track } from "@/lib/telemetry";
+
+// Live social-proof strip — a pulsing "live" dot + the rising registration
+// tally, with urgency copy. Hidden until the first number lands.
+function LiveCount({ count }) {
+    if (count == null) return null;
+    return (
+        <div className="flex items-center justify-center gap-2 border-b border-amber-100 bg-amber-50 px-4 py-2.5 text-center dark:border-amber-500/20 dark:bg-amber-500/10">
+            <span className="relative flex h-2 w-2 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            {count > 0 ? (
+                <p className="text-[13px] font-semibold text-amber-800 dark:text-amber-200">
+                    <Flame className="mr-0.5 inline h-3.5 w-3.5 -translate-y-px text-orange-500" />
+                    <motion.b key={count} initial={{ scale: 1.25, color: "#ea580c" }} animate={{ scale: 1 }} className="inline-block tabular-nums">
+                        {count.toLocaleString("en-IN")}
+                    </motion.b>{" "}
+                    students already registered — it&apos;s your turn, register now!
+                </p>
+            ) : (
+                <p className="text-[13px] font-semibold text-amber-800 dark:text-amber-200">
+                    Be among the first to grab your seat — register now!
+                </p>
+            )}
+        </div>
+    );
+}
 
 // The states most of our diploma students write from (+ an "Other" catch-all).
 const STATES = [
@@ -29,6 +58,7 @@ export default function ScholarshipRegisterCard({ source = "web" }) {
     const [form, setForm] = useState({ name: "", email: "", phone: "", diplomaBranch: "", state: "", preparingFor: "" });
     const [busy, setBusy] = useState(false);
     const [done, setDone] = useState(false);
+    const { count, bump } = useScholarshipCount();
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
     const submit = async (e) => {
@@ -39,6 +69,7 @@ export default function ScholarshipRegisterCard({ source = "web" }) {
         try {
             const res = await registerScholarship({ ...form, source });
             track("scholarship_register");
+            bump(); // their own sign-up counts ×3 — reflect it instantly
             setDone(true);
             toast.success(res?.message || "You're registered!");
         } catch (err) {
@@ -64,6 +95,8 @@ export default function ScholarshipRegisterCard({ source = "web" }) {
                     One common exam on <b>{SCHOLARSHIP_TEST_DATE}</b>. Rank high and get a ₹25,000 LEET course for just ₹499 — or completely FREE.
                 </p>
             </div>
+
+            <LiveCount count={count} />
 
             {done ? (
                 <div className="px-6 py-12 text-center">

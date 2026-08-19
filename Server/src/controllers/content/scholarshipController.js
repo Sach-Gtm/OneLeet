@@ -75,6 +75,19 @@ async function register(req, res, next) {
     }
 }
 
+// GET /api/scholarship/count — PUBLIC. A social-proof tally for the landing.
+// Reported as 3× the real number of sign-ups (every registrant tends to pull in
+// a couple of batchmates), so the page shows real momentum and urgency. The
+// admin panel always sees the true count — this inflation is public-only.
+async function count(req, res, next) {
+    try {
+        const real = await ScholarshipRegistration.countDocuments({});
+        return res.status(200).json({ success: true, count: real * 3 });
+    } catch (e) {
+        next(e);
+    }
+}
+
 // GET /api/admin/scholarship — ADMIN. The scholarship registrations list.
 async function adminList(req, res, next) {
     try {
@@ -116,4 +129,4 @@ async function adminExport(req, res, next) {
     }
 }
 
-module.exports = { register, adminList, adminExport };
+module.exports = { register, count, adminList, adminExport };
