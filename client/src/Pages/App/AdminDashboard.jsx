@@ -50,6 +50,7 @@ import PaymentsAdmin from "@/Components/App/PaymentsAdmin";
 import CoursesAdmin from "@/Components/App/CoursesAdmin";
 import ReviewAdmin from "@/Components/App/ReviewAdmin";
 import MentorAdmin from "@/Components/App/MentorAdmin";
+import ScholarshipAdmin from "@/Components/App/ScholarshipAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
@@ -641,6 +642,9 @@ export default function AdminDashboard() {
                     </form>
                 )}
             </div>
+
+            {/* All-India Scholarship Test leads + CSV export (admins + super admin) */}
+            {canManageStudents && <ScholarshipAdmin />}
 
             {/* Batches — course prices, discounts, details + delete (admins + super admin) */}
             {canManageStudents && <CoursesAdmin />}

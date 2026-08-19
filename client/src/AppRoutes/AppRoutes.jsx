@@ -28,6 +28,7 @@ const ExamsIndex = lazy(() => import("@/Pages/General/ExamsIndex"));
 const ExamDetail = lazy(() => import("@/Pages/General/ExamDetail"));
 const Colleges = lazy(() => import("@/Pages/General/Colleges"));
 const Pricing = lazy(() => import("@/Pages/General/Pricing"));
+const ScholarshipRegister = lazy(() => import("@/Pages/General/ScholarshipRegister"));
 const SuccessPromise = lazy(() => import("@/Pages/General/SuccessPromise"));
 const SuccessStories = lazy(() => import("@/Pages/General/SuccessStories"));
 const CaseStory = lazy(() => import("@/Pages/General/CaseStory"));
@@ -86,6 +87,7 @@ const AppRoutes = () => {
                         <Route path="/exams/:code" element={<ExamDetail />} />
                         <Route path="/colleges" element={<Colleges />} />
                         <Route path="/pricing" element={<Pricing />} />
+                        <Route path="/scholarship" element={<ScholarshipRegister />} />
                         <Route path="/success-promise" element={<SuccessPromise />} />
                         <Route path="/success" element={<SuccessStories />} />
                         <Route path="/success/:slug" element={<CaseStory />} />

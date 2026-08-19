@@ -206,6 +206,33 @@ export const getFunnel = async (days = 7) => {
     }
 };
 
+// All-India Scholarship Test registrations (separate from normal candidates).
+export const getScholarship = async () => {
+    try {
+        const { data } = await api.get("/admin/scholarship");
+        return data; // { success, count, registrations }
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Download the scholarship registrations CSV (triggers a browser download).
+export const exportScholarship = async () => {
+    try {
+        const res = await api.get("/admin/scholarship/export", { responseType: "blob" });
+        const url = URL.createObjectURL(new Blob([res.data], { type: "text/csv" }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "oneleet-scholarship-registrations.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // Download the achievements CSV (triggers a browser download).
 export const exportAchievements = async () => {
     try {

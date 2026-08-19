@@ -13,6 +13,8 @@ import { useCart } from "@/context/CartContext";
 import TopoLines from "@/Components/General/TopoLines";
 import { getCourses } from "@/Api/CoursesApi";
 import { useSeo } from "@/lib/useSeo";
+import { hasLaunched } from "@/config/launch";
+import CountdownLaunch from "@/Components/General/CountdownLaunch";
 
 const GROUP_ICON = {
     sparkles: Sparkles, book: BookOpen, clipboard: ClipboardList, files: FileText,
@@ -91,6 +93,13 @@ function CourseCard({ c, featured }) {
 }
 
 export default function Pricing() {
+    // Pre-launch, /pricing hides prices behind an animated countdown to the
+    // early-bird drop, with the free scholarship-test registration underneath.
+    // It flips to real pricing the instant the countdown ends (or on reload
+    // after the launch instant). All hooks below still run unconditionally so
+    // hook order stays stable; the gate is applied just before the return.
+    const [launched, setLaunched] = useState(hasLaunched());
+
     // Fully dynamic: the exam batches come from the DB (published, admin-editable
     // in Admin → Batches), sorted by `order`. The static config is only a fallback
     // until the fetch lands, or if nothing is seeded yet.
@@ -120,6 +129,10 @@ export default function Pricing() {
         description: "OneLeet membership: exam-wise LEET batches, ranked mock tests, past papers, notes, AI practice and counselling support. See plans, discounts and the Success Promise.",
         path: "/pricing",
     });
+
+    // Gate: before the launch instant, show the countdown + scholarship
+    // registration instead of prices.
+    if (!launched) return <CountdownLaunch onLaunched={() => setLaunched(true)} />;
 
     return (
         <div className="mx-auto max-w-6xl px-4 pb-28 pt-28 sm:pt-32">
