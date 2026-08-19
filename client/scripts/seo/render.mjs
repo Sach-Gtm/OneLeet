@@ -36,7 +36,7 @@ const CSS = `
 body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;line-height:1.65;font-size:17px}
 a{color:var(--indigo);text-decoration:none}a:hover{text-decoration:underline}
 img{max-width:100%;height:auto;display:block}
-.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
 header.site{position:sticky;top:0;z-index:20;background:rgba(250,249,246,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 header.site .wrap{display:flex;align-items:center;gap:16px;height:60px}
 .brand{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:19px;letter-spacing:-.02em}
@@ -45,7 +45,9 @@ header.site nav{margin-left:auto;display:flex;gap:18px;flex-wrap:wrap}
 header.site nav a{color:var(--muted);font-weight:600;font-size:15px}
 .cta-top{background:var(--indigo);color:#fff!important;padding:8px 16px;border-radius:9px;font-weight:700}
 .cta-top:hover{background:var(--indigo-d);text-decoration:none}
-main{padding:14px 0 8px}
+main{padding:14px 0 8px;position:relative;overflow:hidden}
+main::before{content:"";position:absolute;top:-70px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle at 32% 30%,rgba(124,58,237,.16),rgba(219,39,119,.10) 45%,transparent 72%);z-index:0;pointer-events:none;animation:floatA 22s ease-in-out infinite}
+main::after{content:"";position:absolute;top:340px;left:-120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(63,176,214,.14),transparent 70%);z-index:0;pointer-events:none;animation:floatB 26s ease-in-out infinite}
 .crumbs{font-size:13px;color:var(--soft);padding:16px 0 4px}
 .crumbs a{color:var(--soft)}.crumbs span[aria-current]{color:var(--muted);font-weight:600}
 .eyebrow{display:inline-block;background:#eef2ff;color:var(--indigo);font-weight:700;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:999px;margin:10px 0 6px}
@@ -64,11 +66,17 @@ a.card:hover{border-color:#c7d2fe;box-shadow:0 6px 20px -12px rgba(79,70,229,.4)
 .pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:14px;color:var(--muted);font-weight:600}
 a.pill:hover{border-color:#c7d2fe;color:var(--indigo);text-decoration:none}
 .note{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:13px 16px;font-size:15px;color:#92400e;margin:16px 0}
-.callout{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:18px;padding:26px 24px;margin:28px 0;text-align:center}
+.callout{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 52%,#db2777 100%);color:#fff;border-radius:20px;padding:34px 26px;margin:30px 0;text-align:center;box-shadow:0 22px 48px -24px rgba(79,70,229,.7)}
+.callout h2,.callout p,.callout .btn{position:relative;z-index:2}
+.callout::before,.callout::after{content:"";position:absolute;border-radius:50%;filter:blur(36px);opacity:.55;z-index:0;pointer-events:none}
+.callout::before{width:210px;height:210px;background:#a855f7;top:-84px;left:-52px;animation:floatA 13s ease-in-out infinite}
+.callout::after{width:184px;height:184px;background:#f472b6;bottom:-84px;right:-42px;animation:floatB 16s ease-in-out infinite}
+.callout .rays{position:absolute;top:50%;left:50%;width:560px;height:560px;z-index:0;opacity:.15;pointer-events:none;transform:translate(-50%,-50%);animation:spin 48s linear infinite}
+.callout .dots{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.16;pointer-events:none}
 .callout h2{color:#fff;margin:.1em 0 .3em}
-.callout p{color:#e0e7ff;margin:.2em auto 16px;max-width:40em}
-.btn{display:inline-block;background:#fff;color:var(--indigo)!important;font-weight:800;padding:12px 26px;border-radius:11px}
-.btn:hover{text-decoration:none;transform:translateY(-1px)}
+.callout p{color:#eef2ff;margin:.2em auto 18px;max-width:40em}
+.btn{position:relative;display:inline-block;background:#fff;color:var(--indigo)!important;font-weight:800;padding:13px 28px;border-radius:12px;box-shadow:0 10px 24px -10px rgba(0,0,0,.35);transition:transform .18s ease,box-shadow .18s ease}
+.btn:hover{text-decoration:none;transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(0,0,0,.42)}
 .faq{margin:10px 0}
 .faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:2px 18px;margin:10px 0}
 .faq summary{cursor:pointer;font-weight:700;padding:14px 0;list-style:none;font-size:17px}
@@ -89,6 +97,19 @@ footer.site h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;colo
 footer.site a{color:var(--muted);font-size:14.5px;display:block;padding:3px 0}
 footer.site .fine{color:var(--soft);font-size:13px;margin-top:22px;border-top:1px solid var(--line);padding-top:18px;line-height:1.6}
 @media(max-width:640px){body{font-size:16px}header.site nav a:not(.cta-top){display:none}}
+@keyframes floatA{0%,100%{transform:translate(0,0)}50%{transform:translate(34px,26px)}}
+@keyframes floatB{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-22px)}}
+@keyframes spin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes riseY{from{transform:translateY(16px)}to{transform:none}}
+/* Gentle load-in for the hero. Never hides real content: h1 slides only (no
+   fade), and everything ends fully visible via fill:both. */
+.eyebrow{animation:rise .5s .02s both}
+main>.wrap>h1{animation:riseY .6s .05s both}
+.lead{animation:rise .55s .14s both}
+.callout{animation:rise .7s .05s both}
+/* Respect reduced-motion: kill all motion; base styles are always visible. */
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 `;
 
 export function orgJsonld() {
@@ -309,9 +330,22 @@ ${footer()}
 </html>`;
 }
 
+// Decorative, zero-JS depth layers for the CTA banner: a slowly-rotating ray
+// burst + a fine dot texture over the gradient, so it reads as a lit 3D panel
+// instead of a flat colour block. Both are aria-hidden and pointer-events:none.
+const CTA_RAYS =
+    `<svg class="rays" viewBox="0 0 400 400" aria-hidden="true" focusable="false">` +
+    `<defs><radialGradient id="cr" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff" stop-opacity=".85"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>` +
+    Array.from({ length: 12 }, (_, i) => `<path d="M200 200 L191 0 L209 0 Z" fill="url(#cr)" transform="rotate(${i * 30} 200 200)"/>`).join("") +
+    `</svg>`;
+const CTA_DOTS =
+    `<svg class="dots" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice">` +
+    `<defs><pattern id="cd" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.5" fill="#fff"/></pattern></defs>` +
+    `<rect width="100%" height="100%" fill="url(#cd)"/></svg>`;
+
 // Standard OneLeet CTA block reused across pages.
 export function ctaBlock(heading = "Start preparing for LEET, free", sub = "Real past papers, exam-pattern mock tests and unlimited AI practice. Built for diploma students. No coaching fees.") {
-    return `<div class="callout"><h2>${esc(heading)}</h2><p>${esc(sub)}</p><a class="btn" href="${BASE}/register">Create your free account →</a></div>`;
+    return `<div class="callout">${CTA_RAYS}${CTA_DOTS}<h2>${esc(heading)}</h2><p>${esc(sub)}</p><a class="btn" href="${BASE}/register">Create your free account →</a></div>`;
 }
 
 // "Why OneLeet" feature strip (truthful — these are real product features).
