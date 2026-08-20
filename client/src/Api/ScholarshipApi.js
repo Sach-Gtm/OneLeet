@@ -23,3 +23,14 @@ export const getScholarshipCount = async () => {
         return 0;
     }
 };
+
+// Has the logged-in user already registered for the scholarship test? Returns a
+// boolean; false on any failure (e.g. not logged in) so the UI stays safe.
+export const getScholarshipStatus = async () => {
+    try {
+        const { data } = await api.get("/scholarship/status");
+        return !!data?.registered;
+    } catch {
+        return false;
+    }
+};

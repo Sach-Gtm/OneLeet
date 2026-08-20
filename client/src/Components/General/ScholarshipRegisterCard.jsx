@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { SCHOLARSHIP_TEST_DATE } from "@/config/launch";
 import { registerScholarship } from "@/Api/ScholarshipApi";
 import { useScholarshipCount } from "@/lib/useScholarshipCount";
+import { useScholarshipRegistered, markScholarshipRegistered } from "@/lib/useScholarshipRegistered";
 import { track } from "@/lib/telemetry";
 
 // Live social-proof strip — a pulsing "live" dot + the rising registration
@@ -59,6 +60,7 @@ export default function ScholarshipRegisterCard({ source = "web" }) {
     const [busy, setBusy] = useState(false);
     const [done, setDone] = useState(false);
     const { count, bump } = useScholarshipCount();
+    const alreadyIn = useScholarshipRegistered(); // already registered → skip the form
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
     const submit = async (e) => {
@@ -70,6 +72,7 @@ export default function ScholarshipRegisterCard({ source = "web" }) {
             const res = await registerScholarship({ ...form, source });
             track("scholarship_register");
             bump(); // their own sign-up counts ×3 — reflect it instantly
+            markScholarshipRegistered(); // never nag this browser again
             setDone(true);
             toast.success(res?.message || "You're registered!");
         } catch (err) {
@@ -98,12 +101,16 @@ export default function ScholarshipRegisterCard({ source = "web" }) {
 
             <LiveCount count={count} />
 
-            {done ? (
+            {(done || alreadyIn) ? (
                 <div className="px-6 py-12 text-center">
                     <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-500" />
-                    <h3 className="mt-4 text-xl font-bold text-slate-900 dark:text-white">You&apos;re registered! 🎉</h3>
+                    <h3 className="mt-4 text-xl font-bold text-slate-900 dark:text-white">
+                        {done ? "You're registered! 🎉" : "You're already registered ✓"}
+                    </h3>
                     <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500 dark:text-slate-400">
-                        Your seat for the All-India Scholarship Test on {SCHOLARSHIP_TEST_DATE} is booked. We&apos;ll email your joining link and hall-ticket. A free OneLeet account has been created with this email.
+                        {done
+                            ? <>Your seat for the All-India Scholarship Test on {SCHOLARSHIP_TEST_DATE} is booked. We&apos;ll email your joining link and hall-ticket. A free OneLeet account has been created with this email.</>
+                            : <>You&apos;re already in for the All-India Scholarship Test on {SCHOLARSHIP_TEST_DATE}. We&apos;ll email your joining link and hall-ticket before the test day.</>}
                     </p>
                     <Link to="/exams" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700">
                         Explore LEET exams &amp; cut-offs <ArrowRight size={16} />

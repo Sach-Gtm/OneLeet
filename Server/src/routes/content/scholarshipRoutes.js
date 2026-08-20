@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { rateLimit } = require("../../middlewares/rateLimiter");
+const { verifyToken } = require("../../middlewares/authMiddleware");
 const scholarship = require("../../controllers/content/scholarshipController");
 
 // Public: anyone can register for the scholarship test. Rate-limited per IP to
@@ -14,5 +15,9 @@ router.post("/register", registerLimit, scholarship.register);
 // one college/office NAT IP, so this needs plenty of headroom.
 const countLimit = rateLimit("scholarship-count", 600, 60 * 60);
 router.get("/count", countLimit, scholarship.count);
+
+// Auth: has this logged-in user already registered? Lets the client suppress the
+// splash / registration form for someone who is already in.
+router.get("/status", verifyToken, scholarship.status);
 
 module.exports = router;

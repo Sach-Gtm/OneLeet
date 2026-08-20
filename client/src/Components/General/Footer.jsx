@@ -189,20 +189,29 @@ export default function Footer() {
             </div>
 
             <div className="flex flex-col gap-1.5 border-t border-slate-200 py-5 text-[11.5px] leading-relaxed text-slate-400 sm:flex-row sm:items-start sm:justify-between">
-                <p className="shrink-0">
-                    &copy; {new Date().getFullYear()} OneLeet · A unit of{" "}
+                <div className="shrink-0 space-y-1.5">
+                    <p>&copy; {new Date().getFullYear()} OneLeet. All rights reserved.</p>
                     <a
                         href="https://staplerlabs.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 align-middle font-semibold text-slate-600 transition-colors hover:text-slate-900"
-                        title="StaplerLabs — visit staplerlabs.com"
+                        className="inline-block font-semibold text-slate-500 transition-colors hover:text-slate-800"
+                        title="Visit StaplerLabs"
+                    >
+                        Unit of StaplerLabs Private Limited
+                    </a>
+                    <a
+                        href="https://staplerlabs.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex w-fit items-center gap-1.5 text-slate-600 transition-opacity hover:opacity-80"
+                        title="Visit StaplerLabs"
+                        aria-label="StaplerLabs"
                     >
                         <StaplerLabsMark className="h-4 w-auto" />
-                        <span>Stapler<span className="text-[#F5B70D]">Labs</span></span>
-                    </a>{" "}
-                    Private Limited. All rights reserved.
-                </p>
+                        <span className="text-[13px] font-bold leading-none">Stapler<span className="text-[#F5B70D]">Labs</span></span>
+                    </a>
+                </div>
                 <p className="sm:max-w-md sm:text-right">All study materials are provided solely for educational purposes; we don&apos;t claim ownership of external materials unless stated otherwise.</p>
             </div>
             </div>
