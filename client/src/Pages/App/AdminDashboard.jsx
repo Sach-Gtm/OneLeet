@@ -51,6 +51,7 @@ import CoursesAdmin from "@/Components/App/CoursesAdmin";
 import ReviewAdmin from "@/Components/App/ReviewAdmin";
 import MentorAdmin from "@/Components/App/MentorAdmin";
 import ScholarshipAdmin from "@/Components/App/ScholarshipAdmin";
+import ReferralAdmin from "@/Components/App/ReferralAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
 import { createQuestion, getQuestions } from "@/Api/QuestionApi";
@@ -651,6 +652,9 @@ export default function AdminDashboard() {
 
             {/* Payments — orders, coupons, premium lock (admins + super admin) */}
             {canManageStudents && <PaymentsAdmin isSuper={isSuper} />}
+
+            {/* Referral cash payouts — who to pay 7%, how much, when (admins + super admin) */}
+            {canManageStudents && <ReferralAdmin />}
 
             {/* Competitive leaderboards + achievement data (admins + super admin) */}
             {canManageStudents && <CompetitionAdmin isSuper={isSuper} />}

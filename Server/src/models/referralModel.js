@@ -1,19 +1,29 @@
 const mongoose = require("mongoose");
 
-// A student's referral code + the signups credited to it. The code is the
+// A student's referral code + the purchases credited to it. The code is the
 // founder's format: the first four letters of the name + "2027" (e.g. RAHU2027),
-// with a numeric suffix on collision so it stays unique. Attribution happens at
-// SIGNUP (a friend who joins through the referral link), and the reward — a 1:1
-// session with the founders — unlocks at 3 signups. (conversions[].order/amount
-// stay optional; they're only set on the legacy checkout-credit path.)
-const REWARD_THRESHOLD = 3;
+// with a numeric suffix on collision so it stays unique.
+//
+// Cash reward: when a referred friend pays for a course with this code applied at
+// checkout, the referrer earns REWARD_PCT (7%) of the course value. Each payout
+// matures PAYOUT_DELAY_DAYS (~1.25 months) after the friend's payment, and the
+// OneLeet team pays it out then (tracked per-conversion below).
+const REWARD_THRESHOLD = 3;         // legacy: signups needed for the old 1:1 reward
+const REWARD_PCT = 7;               // referrer earns 7% of the course value
+const PAYOUT_DELAY_DAYS = 38;       // ~1.25 months after the referred student pays
 
 const ConversionSchema = new mongoose.Schema(
     {
         referredUser: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
         order: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
-        amount: { type: Number, default: 0 }, // order total that converted
-        at: { type: Date, default: Date.now },
+        amount: { type: Number, default: 0 },        // course value the friend paid (order total)
+        at: { type: Date, default: Date.now },       // when the friend paid (payout clock starts here)
+        // ── cash payout tracking ──
+        rewardAmount: { type: Number, default: 0 },  // 7% of `amount`, in rupees
+        payoutDueAt: { type: Date },                 // `at` + ~1.25 months: when OneLeet should pay
+        payoutStatus: { type: String, enum: ["pending", "paid"], default: "pending" },
+        paidAt: { type: Date, default: null },       // when the team actually paid the referrer
+        payoutNote: { type: String, default: "" },   // e.g. UPI / bank transfer reference
     },
     { _id: false }
 );
@@ -57,6 +67,10 @@ ReferralSchema.statics.ensureFor = async function (userId, name) {
 };
 
 ReferralSchema.statics.REWARD_THRESHOLD = REWARD_THRESHOLD;
+ReferralSchema.statics.REWARD_PCT = REWARD_PCT;
+ReferralSchema.statics.PAYOUT_DELAY_DAYS = PAYOUT_DELAY_DAYS;
 
 module.exports = mongoose.model("Referral", ReferralSchema);
 module.exports.REWARD_THRESHOLD = REWARD_THRESHOLD;
+module.exports.REWARD_PCT = REWARD_PCT;
+module.exports.PAYOUT_DELAY_DAYS = PAYOUT_DELAY_DAYS;

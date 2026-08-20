@@ -12,7 +12,11 @@ router.get("/me", verifyToken, ctrl.myReferral);
 // enumeration of which codes exist.
 router.post("/validate", rateLimit("referral-validate", 30, 15 * 60), verifyToken, ctrl.validateReferral);
 
-// Admin — see who's earned the reward, mark it fulfilled.
+// Admin — cash payout ledger: who to pay, how much (7%), when it's due, mark paid.
+router.get("/admin/payouts", verifyToken, requireAdmin, ctrl.adminListPayouts);
+router.post("/admin/payouts/pay", verifyToken, requireAdmin, ctrl.adminMarkPaid);
+
+// Admin — legacy signup-reward view (kept for backward compatibility).
 router.get("/admin", verifyToken, requireAdmin, ctrl.adminListReferrals);
 router.post("/admin/:id/fulfilled", verifyToken, requireAdmin, ctrl.adminMarkFulfilled);
 

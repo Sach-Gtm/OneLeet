@@ -73,12 +73,18 @@ async function creditReferral(order) {
     order.referralCredited = true; // mark handled regardless, so we don't retry
     if (!ref) return;
     if (String(ref.user) === String(order.user)) return; // no self-referral
-    // Signup attribution is authoritative: if this buyer joined through someone's
-    // referral link, a checkout code can't re-attribute them to a second referrer.
-    const buyer = await User.findById(order.user).select("referredBy");
-    if (buyer && buyer.referredBy) return;
-    if (ref.conversions.some((c) => String(c.referredUser) === String(order.user))) return; // one per buyer
-    ref.conversions.push({ referredUser: order.user, order: order._id, amount: order.payable });
+    // One cash payout per referred student — their first purchase that applies
+    // this code. (The reward follows the code applied at checkout; a friend who
+    // signed up through a link still earns it by applying the code when they pay.)
+    if (ref.conversions.some((c) => String(c.referredUser) === String(order.user))) return;
+    const at = order.firstPaidAt || new Date();
+    const value = order.payable || 0;                                      // course value the friend paid
+    const rewardAmount = Math.round((value * Referral.REWARD_PCT) / 100);  // 7%
+    const payoutDueAt = new Date(at.getTime() + Referral.PAYOUT_DELAY_DAYS * DAY); // ~1.25 months later
+    ref.conversions.push({
+        referredUser: order.user, order: order._id, amount: value, at,
+        rewardAmount, payoutDueAt, payoutStatus: "pending",
+    });
     if (ref.conversions.length >= Referral.REWARD_THRESHOLD && !ref.rewardUnlockedAt) {
         ref.rewardUnlockedAt = new Date();
     }
