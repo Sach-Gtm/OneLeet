@@ -75,6 +75,22 @@ async function register(req, res, next) {
     }
 }
 
+// GET /api/scholarship/status — AUTH. Has the logged-in user already registered
+// for the scholarship test? Lets the client stop showing the splash / form to
+// someone who is already in (matched on their email or linked account).
+async function status(req, res, next) {
+    try {
+        const or = [];
+        const email = String(req.user?.email || "").toLowerCase();
+        if (email) or.push({ email });
+        if (req.user?._id) or.push({ user: req.user._id });
+        const registered = or.length ? await ScholarshipRegistration.exists({ $or: or }) : null;
+        return res.status(200).json({ success: true, registered: !!registered });
+    } catch (e) {
+        next(e);
+    }
+}
+
 // GET /api/scholarship/count — PUBLIC. A social-proof tally for the landing.
 // Reported as 3× the real number of sign-ups (every registrant tends to pull in
 // a couple of batchmates), so the page shows real momentum and urgency. The
@@ -129,4 +145,4 @@ async function adminExport(req, res, next) {
     }
 }
 
-module.exports = { register, count, adminList, adminExport };
+module.exports = { register, status, count, adminList, adminExport };

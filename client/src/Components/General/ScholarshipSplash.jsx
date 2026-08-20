@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Trophy, CalendarDays, Monitor, BadgeCheck, ArrowRight, Sparkles, Flame } from "lucide-react";
 import { track } from "@/lib/telemetry";
 import { useScholarshipCount } from "@/lib/useScholarshipCount";
+import { useScholarshipRegistered } from "@/lib/useScholarshipRegistered";
 import { SCHOLARSHIP_TEST_DATE, SCHOLARSHIP_HIDE_AFTER } from "@/config/launch";
 
 // Promo splash for the All-India Scholarship Test. Rendered inside Home, so it
@@ -82,17 +83,19 @@ export default function ScholarshipSplash() {
     const [open, setOpen] = useState(false);
     const rid = useId().replace(/:/g, "");
     const { count } = useScholarshipCount();
+    const registered = useScholarshipRegistered(); // don't nag someone who's already in
 
     // Show shortly after the home screen paints (grabs attention without a jarring
     // flash before first paint). Fresh state on every mount → re-shows on return.
+    // Skipped entirely for anyone who has already registered.
     useEffect(() => {
-        if (Date.now() > SCHOLARSHIP_HIDE_AFTER) return;
+        if (registered || Date.now() > SCHOLARSHIP_HIDE_AFTER) return;
         const t = setTimeout(() => {
             setOpen(true);
             track("scholarship_splash_view");
         }, 500);
         return () => clearTimeout(t);
-    }, []);
+    }, [registered]);
 
     useEffect(() => {
         if (!open) return;
@@ -112,7 +115,7 @@ export default function ScholarshipSplash() {
     // navbar (a sibling of <main>) paints over the modal and its close button.
     return createPortal(
         <AnimatePresence>
-            {open && (
+            {open && !registered && (
                 <motion.div
                     className="fixed inset-0 z-[200] flex items-center justify-center p-4"
                     initial={{ opacity: 0 }}
