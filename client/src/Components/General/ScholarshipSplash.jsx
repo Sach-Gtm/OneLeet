@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Trophy, CalendarDays, Monitor, BadgeCheck, ArrowRight, Sparkles, Flame } from "lucide-react";
@@ -106,11 +107,14 @@ export default function ScholarshipSplash() {
         { icon: BadgeCheck, text: "Free registration" },
     ];
 
-    return (
+    // Portal to <body> so the modal escapes the marketing layout's
+    // `<main class="relative z-10">` stacking context — otherwise the sticky
+    // navbar (a sibling of <main>) paints over the modal and its close button.
+    return createPortal(
         <AnimatePresence>
             {open && (
                 <motion.div
-                    className="fixed inset-0 z-[95] flex items-center justify-center p-4"
+                    className="fixed inset-0 z-[200] flex items-center justify-center p-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -233,6 +237,7 @@ export default function ScholarshipSplash() {
                     </motion.div>
                 </motion.div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }

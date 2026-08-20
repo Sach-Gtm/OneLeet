@@ -94,9 +94,17 @@ export default function Home() {
                         </mark>{" "}
                         got you here.
                         <br className="hidden sm:block" />{" "}
-                        <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                            We&apos;ll get you to the top.
+                        {/* Brand two-tone (blue phrase + orange accent word). In this
+                            theme `indigo` is brand blue and `violet` is brand orange, so
+                            the old `from-indigo-600 to-violet-600` was a blue→orange
+                            gradient — and those are near-complementary, so it interpolated
+                            through a muddy grey that read badly (especially in dark mode).
+                            Two clean brand colours echo the logo and stay vivid on light
+                            and dark; brighter tints in dark so they glow on the navy. */}
+                        <span className="text-indigo-600 dark:text-indigo-300">
+                            We&apos;ll get you to the{" "}
                         </span>
+                        <span className="text-violet-600 dark:text-violet-400">top.</span>
                     </h1>
 
                     <p className="mx-auto max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">

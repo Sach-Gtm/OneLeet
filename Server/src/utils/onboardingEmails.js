@@ -152,4 +152,84 @@ Questions? Reply here or write to ${HELP}.
     }
 }
 
-module.exports = { sendWelcomeEmail, sendEnrollmentEmail };
+const rupee = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
+const prettyDate = (d) => {
+    try { return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }); }
+    catch { return ""; }
+};
+
+// Sent on the FIRST successful payment for an order — a warm receipt that
+// confirms the purchase, welcomes them to Premium and points them at the work.
+// Fire-and-forget; no-ops cleanly when email isn't configured.
+async function sendPurchaseEmail(user, order) {
+    try {
+        if (!user || !user.email || !order) return;
+        const fn = esc(firstName(user.name));
+        const names = (order.items || []).map((i) => i.courseName).filter(Boolean);
+        const list = names.length
+            ? names.map((n) => `<li style="margin:2px 0;"><b>${esc(n)}</b></li>`).join("")
+            : `<li><b>your OneLeet batch</b></li>`;
+        const paid = rupee(order.amountPaid);
+        const until = prettyDate(order.grantsPremiumUntil);
+        const isSplit = order.paymentPlan === "split" && order.status === "partially_paid";
+        const second = (order.installments || []).find((i) => i.n === 2);
+        const splitNote = isSplit && second
+            ? `<p style="margin:14px 0 0;color:#475569;font-size:14.5px;line-height:1.6;">You chose the 2-part plan, so full access is on now. Your second installment of <b>${rupee(second.amount)}</b> is due by <b>${prettyDate(second.dueAt)}</b> — we'll remind you before then.</p>`
+            : "";
+
+        const bodyRows = `
+        <tr><td style="padding:10px 32px 0;">
+          <h1 style="margin:0 0 6px;font-size:24px;line-height:1.25;color:#0f172a;">Payment received — you're Premium now, ${fn} 🎉</h1>
+          <p style="margin:14px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">Your purchase is confirmed and <b>OneLeet Premium is unlocked</b>. This is the moment your prep stops being "someday" and becomes a plan.</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 2px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
+            <tr><td style="padding:16px 18px;">
+              <p style="margin:0 0 6px;color:#0f172a;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;">You unlocked</p>
+              <ul style="margin:6px 0 12px;padding-left:18px;color:#334155;font-size:15px;line-height:1.6;">${list}</ul>
+              <p style="margin:0;color:#475569;font-size:14.5px;">Paid: <b style="color:#0f172a;">${paid}</b>${until ? ` &nbsp;·&nbsp; Premium access until <b style="color:#0f172a;">${until}</b>` : ""}</p>
+            </td></tr>
+          </table>
+          ${splitNote}
+          <p style="margin:16px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">Everything is open now — the full test series, the complete master course, your AI mentor and the Success Promise. Here's the fastest way to feel it working:</p>
+          <ol style="margin:10px 0 0;padding-left:20px;color:#475569;font-size:15px;line-height:1.7;">
+            <li>Take one <b>exam-pattern mock</b> today for an honest baseline.</li>
+            <li>Let the <b>AI coach</b> build a plan around your exam date.</li>
+            <li>Come back tomorrow. Consistency &gt; intensity.</li>
+          </ol>
+          <p style="margin:18px 0 0;color:#0f172a;font-size:16px;line-height:1.6;font-weight:700;">You didn't just buy a course — you backed yourself. Now let's get you that rank.</p>
+        </td></tr>
+        <tr><td style="padding:22px 32px 4px;">${button("Start now →", `${SITE}/dashboard`)}</td></tr>
+        <tr><td style="padding:16px 32px 4px;">
+          <p style="margin:0;color:#94a3b8;font-size:13px;line-height:1.6;">Need your invoice or have a question about your order? Just reply — a human reads every email.</p>
+        </td></tr>`;
+
+        await sendMail({
+            to: user.email,
+            subject: "Payment received 🎉 Welcome to OneLeet Premium",
+            html: shell({ preheader: `Your purchase is confirmed and Premium is unlocked${until ? ` until ${until}` : ""}. Here's how to start.`, bodyRows }),
+            text:
+`Payment received — you're Premium now, ${firstName(user.name)}!
+
+Your purchase is confirmed and OneLeet Premium is unlocked.
+
+You unlocked:
+${names.length ? names.map((n) => `- ${n}`).join("\n") : "- your OneLeet batch"}
+Paid: ${paid}${until ? ` · Premium access until ${until}` : ""}
+${isSplit && second ? `\nYou chose the 2-part plan, so full access is on now. Second installment of ${rupee(second.amount)} is due by ${prettyDate(second.dueAt)}.\n` : ""}
+Fastest way to feel it working:
+1. Take one exam-pattern mock today for an honest baseline.
+2. Let the AI coach build a plan around your exam date.
+3. Come back tomorrow. Consistency > intensity.
+
+You didn't just buy a course — you backed yourself. Now let's get you that rank.
+
+Start now: ${SITE}/dashboard
+
+Questions or need an invoice? Just reply to this email.
+— Team OneLeet`,
+        });
+    } catch (e) {
+        console.error("[purchase-email] skipped:", e.message);
+    }
+}
+
+module.exports = { sendWelcomeEmail, sendEnrollmentEmail, sendPurchaseEmail };
