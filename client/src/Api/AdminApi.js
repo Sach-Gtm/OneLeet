@@ -233,6 +233,26 @@ export const exportScholarship = async () => {
     }
 };
 
+// Referral cash-payout ledger: who to pay, how much (7%), when it's due.
+export const getReferralPayouts = async () => {
+    try {
+        const { data } = await api.get("/referrals/admin/payouts");
+        return data; // { success, summary, payouts }
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Mark one referral payout paid (or undo). { referralId, orderId, note?, undo? }
+export const markReferralPaid = async (payload) => {
+    try {
+        const { data } = await api.post("/referrals/admin/payouts/pay", payload);
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // Download the achievements CSV (triggers a browser download).
 export const exportAchievements = async () => {
     try {
