@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const Enrollment = require("../models/enrollmentModel");
 const Referral = require("../models/referralModel");
 const Coupon = require("../models/couponModel");
+const { sendPurchaseEmail } = require("../utils/onboardingEmails");
 
 // Money + lifecycle logic for orders, kept out of the controller so it's unit
 // testable. All amounts are rupees. Mirrors the client's data/pricing math so
@@ -127,6 +128,12 @@ async function markInstallmentPaid(order, installmentN, { paymentId = "", gatewa
     );
     if (isFirst) await enrollAndSync(order.user, order.items);
     if (isFirst && order.referralCode && !order.referralCredited) await creditReferral(order);
+    // Purchase-confirmation email (fire-and-forget; never block/fail a payment on it).
+    if (isFirst) {
+        User.findById(order.user).select("name email").lean()
+            .then((u) => u && sendPurchaseEmail(u, order))
+            .catch((e) => console.error("[purchase-email] lookup skipped:", e.message));
+    }
     // Burn one coupon use on the first successful payment (not at cart time, so
     // abandoned carts don't consume the allowance). Atomic + limit-gated so the
     // counter can never exceed usageLimit even if several orders reach payment at
