@@ -11,11 +11,31 @@ const seen = new Set();
 let sent = 0;
 const MAX_PER_SESSION = 20;
 
+// Non-actionable browser noise we deliberately keep OUT of the admin health
+// panel. These are environmental, not app bugs:
+//   • Service-worker registration rejections (registerSW.js) — a browser,
+//     extension, private-mode or a stale precache in a deploy window can reject
+//     navigator.serviceWorker.register(); the app still works fully over the
+//     network, only offline caching is skipped for that load.
+//   • ResizeObserver "loop" warnings — a well-known benign browser message.
+const NOISE = [
+    /registerSW\.js/i,
+    /serviceWorker\.register/i,
+    /ServiceWorkerContainer/i,
+    /ResizeObserver loop/i,
+];
+const isNoise = (message, stack) => {
+    const hay = `${message}\n${stack || ""}`;
+    return NOISE.some((re) => re.test(hay));
+};
+
 export function reportError(error, meta) {
     try {
         if (sent >= MAX_PER_SESSION) return;
         const message = (error && (error.message || String(error))) || "Unknown error";
         const stack = error && error.stack ? String(error.stack) : undefined;
+        // Drop known-benign browser noise so it never clutters the health panel.
+        if (isNoise(message, stack)) return;
         // Collapse repeats of the same error (message + top of stack).
         const key = `${message}|${(stack || "").slice(0, 200)}`.slice(0, 300);
         if (seen.has(key)) return;
@@ -70,7 +90,16 @@ export function installGlobalErrorReporting() {
 
     window.addEventListener("unhandledrejection", (e) => {
         const r = e && e.reason;
-        const err = r instanceof Error ? r : new Error(typeof r === "string" ? r : "Unhandled promise rejection");
+        let err;
+        if (r instanceof Error) {
+            err = r;
+        } else {
+            // Preserve the original message/stack for non-Error reasons (e.g. a
+            // DOMException from serviceWorker.register), so the noise filter and
+            // the panel see where it really came from.
+            err = new Error(r && r.message ? String(r.message) : (typeof r === "string" ? r : "Unhandled promise rejection"));
+            if (r && r.stack) err.stack = String(r.stack);
+        }
         reportError(err, { kind: "unhandledrejection" });
     });
 }
