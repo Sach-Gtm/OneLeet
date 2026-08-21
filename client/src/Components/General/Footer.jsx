@@ -96,20 +96,20 @@ function CallbackModal({ onClose }) {
     );
 }
 
-// The StaplerLabs stapler mark (OneLeet's parent brand), drawn inline so it
-// stays crisp and self-contained. The footer is an always-light island, so the
-// body uses a fixed dark fill (matching the brand's near-black).
+// The StaplerLabs stapler logo (OneLeet's parent brand), drawn inline so it
+// stays crisp at any size. The footer is an always-light island, so the body
+// keeps the brand's near-black fill with the golden-yellow accents.
 function StaplerLabsMark({ className = "" }) {
     return (
-        <svg viewBox="4 6 44 33" className={className} fill="none" aria-hidden="true">
-            {/* top arm — a wedge, tall on the right */}
-            <path d="M8 22 L8 18 Q8 16.8 9.4 16.4 L40 8.4 Q44 7.3 44 11.4 L44 20 Q44 22 42 22 Z" className="fill-slate-800" />
-            {/* bottom jaw */}
-            <path d="M10 26 L42 26 Q45 26 45 28.5 Q45 31 42 31 L10 31 Q7 31 7 28.5 Q7 26 10 26 Z" className="fill-slate-800" />
-            {/* staple */}
-            <rect x="34" y="22.6" width="9" height="2.6" rx="1.3" className="fill-[#F5B70D]" />
+        <svg viewBox="42 47 168 94" className={className} fill="none" aria-hidden="true">
+            {/* stapler body — a thin wedge, thick and rounded at the back-right */}
+            <path d="M50 99 L185 55 Q200 50 200 64 L200 77 Q200 89 187 90 L66 100 Q54 102 50 99 Z" fill="#1b1b1b" />
+            {/* base / anvil arm */}
+            <rect x="44" y="104" width="163" height="14" rx="7" fill="#1b1b1b" />
+            {/* staple in the mouth */}
+            <rect x="150" y="94" width="22" height="6" rx="3" fill="#F5C400" />
             {/* base line */}
-            <rect x="8" y="33.5" width="37" height="3.2" rx="1.6" className="fill-[#F5B70D]" />
+            <rect x="52" y="128" width="150" height="10" rx="5" fill="#F5C400" />
         </svg>
     );
 }
@@ -204,12 +204,11 @@ export default function Footer() {
                         href="https://staplerlabs.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex w-fit items-center gap-1.5 text-slate-600 transition-opacity hover:opacity-80"
+                        className="block w-fit transition-opacity hover:opacity-70"
                         title="Visit StaplerLabs"
                         aria-label="StaplerLabs"
                     >
-                        <StaplerLabsMark className="h-4 w-auto" />
-                        <span className="text-[13px] font-bold leading-none">Stapler<span className="text-[#F5B70D]">Labs</span></span>
+                        <StaplerLabsMark className="h-8 w-auto" />
                     </a>
                 </div>
                 <p className="sm:max-w-md sm:text-right">All study materials are provided solely for educational purposes; we don&apos;t claim ownership of external materials unless stated otherwise.</p>
