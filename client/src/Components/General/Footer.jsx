@@ -96,24 +96,6 @@ function CallbackModal({ onClose }) {
     );
 }
 
-// The StaplerLabs stapler logo (OneLeet's parent brand), drawn inline so it
-// stays crisp at any size. The footer is an always-light island, so the body
-// keeps the brand's near-black fill with the golden-yellow accents.
-function StaplerLabsMark({ className = "" }) {
-    return (
-        <svg viewBox="33 19 138 85" className={className} fill="none" aria-hidden="true">
-            {/* top jaw — thin wedge, thick rounded back-right, with the mouth notch */}
-            <path d="M36 56 L150 26 Q167 22 168 34 L168 60 Q168 68 159 68 L150 68 L150 58 L54 62 Q38 63 36 56 Z" fill="#161616" />
-            {/* bottom jaw / anvil arm */}
-            <path d="M46 70 L156 70 Q166 70 166 76 Q166 82 156 82 L46 82 Q37 82 37 76 Q37 70 46 70 Z" fill="#161616" />
-            {/* staple accent in the mouth */}
-            <rect x="146" y="61" width="18" height="5.5" rx="2.75" fill="#F5C400" />
-            {/* base line */}
-            <rect x="44" y="92" width="122" height="9" rx="4.5" fill="#F5C400" />
-        </svg>
-    );
-}
-
 export default function Footer() {
     const [callbackOpen, setCallbackOpen] = useState(false);
 
@@ -208,7 +190,14 @@ export default function Footer() {
                         title="Visit StaplerLabs"
                         aria-label="StaplerLabs"
                     >
-                        <StaplerLabsMark className="h-6 w-auto" />
+                        <img
+                            src="/staplerlabs-logo.png"
+                            alt=""
+                            width={1020}
+                            height={584}
+                            loading="lazy"
+                            className="h-6 w-auto"
+                        />
                     </a>
                 </div>
                 <p className="sm:max-w-md sm:text-right">All study materials are provided solely for educational purposes; we don&apos;t claim ownership of external materials unless stated otherwise.</p>
