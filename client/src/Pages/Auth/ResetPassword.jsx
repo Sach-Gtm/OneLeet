@@ -29,7 +29,7 @@ export default function ResetPassword() {
     const onSubmit = async (values) => {
         try {
             await resetPassword(token, { password: values.password });
-            toast.success("Password reset — please log in.");
+            toast.success("Password reset, please log in.");
             navigate("/login", { replace: true });
         } catch (err) {
             toast.error(err.message || "Reset link is invalid or has expired");

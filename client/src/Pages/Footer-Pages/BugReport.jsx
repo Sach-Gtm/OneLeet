@@ -49,7 +49,7 @@ export default function BugReport() {
                 <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-emerald-100 text-emerald-600">
                     <CheckCircle2 className="h-8 w-8" />
                 </span>
-                <h1 className="mt-5 text-2xl font-bold text-slate-900">Report received — thank you!</h1>
+                <h1 className="mt-5 text-2xl font-bold text-slate-900">Report received, thank you!</h1>
                 <p className="mx-auto mt-2 max-w-md text-slate-500">
                     We&apos;ve logged it and will look into it. If it&apos;s urgent, email us at{" "}
                     <a href="mailto:help@oneleet.in" className="font-medium text-indigo-600">help@oneleet.in</a>.

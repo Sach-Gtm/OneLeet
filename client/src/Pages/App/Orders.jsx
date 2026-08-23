@@ -33,14 +33,14 @@ export default function Orders() {
                     order_id: gateway.orderId,
                     handler: async (resp) => {
                         await verifyPayment({ orderId: order._id, installmentN: 2, razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature });
-                        toast.success("Second installment paid — full access unlocked!");
+                        toast.success("Second installment paid, full access unlocked!");
                         reload();
                     },
                     theme: { color: "#4f46e5" },
                 });
                 rzp.open();
             } else {
-                toast.success("Payment initiated — our team will confirm on WhatsApp shortly.");
+                toast.success("Payment initiated, our team will confirm on WhatsApp shortly.");
             }
         } catch (e) {
             toast.error(e.message || "Could not start the payment");

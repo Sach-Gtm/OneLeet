@@ -17,7 +17,7 @@ export default function SuccessStories() {
     useSeo({
         title: "LEET Success Stories: diploma to B.Tech, real students | OneLeet",
         description:
-            "Real OneLeet success stories — diploma students who cracked the Lateral Entry Entrance Test and got into 2nd-year B.Tech. See how they did it.",
+            "Real OneLeet success stories, diploma students who cracked the Lateral Entry Entrance Test and got into 2nd-year B.Tech. See how they did it.",
         path: "/success",
     });
 
@@ -28,7 +28,7 @@ export default function SuccessStories() {
                     <Sparkles className="h-3.5 w-3.5" /> Success stories
                 </span>
                 <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-                    From diploma to B.Tech — real journeys
+                    From diploma to B.Tech, real journeys
                 </h1>
                 <p className="mx-auto mt-3 max-w-xl text-slate-500 dark:text-slate-400">
                     How OneLeet students cracked the Lateral Entry Entrance Test and got into the colleges they wanted.
@@ -39,7 +39,7 @@ export default function SuccessStories() {
                 <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-indigo-600" /></div>
             ) : cases.length === 0 ? (
                 <p className="mt-12 rounded-2xl border border-dashed border-slate-200 py-16 text-center text-sm text-slate-400 dark:border-slate-700">
-                    Success stories are on the way — check back soon.
+                    Success stories are on the way, check back soon.
                 </p>
             ) : (
                 <div className="mt-10 grid gap-4 sm:grid-cols-2">

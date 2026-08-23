@@ -123,11 +123,11 @@ async function emailAdmins(admins, doc, { who, action, where }) {
     const subject = "⚠️ OneLeet: premium content protection alert";
     const rows = [
         ["Student", who],
-        ["Email", doc.email || "—"],
-        ["Phone", doc.phone || "—"],
+        ["Email", doc.email || "-"],
+        ["Phone", doc.phone || "-"],
         ["Action", `${action}${where}`],
-        ["Content", doc.contentRef || doc.contentType || "—"],
-        ["Page", doc.path || "—"],
+        ["Content", doc.contentRef || doc.contentType || "-"],
+        ["Page", doc.path || "-"],
         ["When", when],
     ];
     const html = `

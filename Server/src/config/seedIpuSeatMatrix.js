@@ -30,7 +30,7 @@ async function ensureIpuSeatMatrixSeeded() {
         await SeatMatrix.create({ ...data, published: true, updatedBy: owner._id });
         await SeedFlag.create({ key: SEED_KEY });
         console.log(
-            `[ipu-seat-matrix] seeded IPU LEET seat matrix — ${data.totalColleges} colleges, ${data.totalBranches} branches, ${data.totalSeats} seats`
+            `[ipu-seat-matrix] seeded IPU LEET seat matrix, ${data.totalColleges} colleges, ${data.totalBranches} branches, ${data.totalSeats} seats`
         );
     } catch (e) {
         console.warn("[ipu-seat-matrix] seed skipped:", e.message);

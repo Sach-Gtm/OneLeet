@@ -64,7 +64,7 @@ export default function Register() {
                 return;
             }
             await refresh();
-            toast.success("Account created — welcome to OneLeet!");
+            toast.success("Account created, welcome to OneLeet!");
             navigate("/dashboard", { replace: true });
         } catch (err) {
             toast.error(err.message || "Registration failed");
@@ -80,7 +80,7 @@ export default function Register() {
         <AuthLayout
             variant="network"
             heading="Your top-college journey starts here."
-            subheading="Join thousands of ambitious students turning focused effort into top ranks — and a brighter future."
+            subheading="Join thousands of ambitious students turning focused effort into top ranks, and a brighter future."
             stats={[
                 { value: "10k+", label: "Students" },
                 { value: "100+", label: "Top Colleges" },

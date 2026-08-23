@@ -36,7 +36,7 @@ export default function ExamPatternPage() {
     const isAll = Array.isArray(user?.exams) && user.exams.includes("all");
 
     useEffect(() => {
-        if (!hasExams) return; // "no exams" is derived below — no fetch, no setState churn
+        if (!hasExams) return; // "no exams" is derived below, no fetch, no setState churn
         let alive = true;
         getMyExamPatterns()
             .then((rows) => alive && setFetched(rows))

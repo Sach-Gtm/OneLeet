@@ -150,7 +150,7 @@ export default function Profile() {
     const studentUser = !staffUser;
     const photoUrl = user?.passportPhoto?.url || user?.avatar || "";
     const completion = profileCompletion(user);
-    const req = null; // nothing is mandatory — the completion meter nudges instead
+    const req = null; // nothing is mandatory, the completion meter nudges instead
 
     const stats = user?.stats || {};
     const overview = [
@@ -176,7 +176,7 @@ export default function Profile() {
                             </p>
                             <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                                 {completion.missing.length ? (
-                                    <>Optional — add {completion.missing.map((m) => m.label.toLowerCase()).join(", ")} to personalise your prep.</>
+                                    <>Optional, add {completion.missing.map((m) => m.label.toLowerCase()).join(", ")} to personalise your prep.</>
                                 ) : (
                                     "You're all set."
                                 )}
@@ -353,7 +353,7 @@ export default function Profile() {
                                     )}
                                 </div>
                                 <div className="text-xs text-slate-500">
-                                    <p>Optional. We use your Google photo by default — upload your own any time.</p>
+                                    <p>Optional. We use your Google photo by default, upload your own any time.</p>
                                     <p className="mt-1">
                                         JPG or PNG, <span className="font-semibold">max 1 MB</span>.
                                     </p>
@@ -398,7 +398,7 @@ export default function Profile() {
                         <p className="mt-1 text-lg font-bold">{isTopScorer ? "High Scorer" : "Rising Star"}</p>
                         <p className="mt-1 text-sm text-indigo-100">
                             {isTopScorer
-                                ? "You're scoring above 80% in your mock tests — keep it going!"
+                                ? "You're scoring above 80% in your mock tests, keep it going!"
                                 : "Take mock tests and keep your accuracy high to earn badges."}
                         </p>
                     </div>

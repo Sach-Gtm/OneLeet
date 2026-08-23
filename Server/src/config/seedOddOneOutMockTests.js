@@ -115,8 +115,8 @@ const ODDONEOUT_SURVIVOR = [
 ];
 
 const TESTS = [
-    { slug: "challenge", topic: "Challenge Mode", format: "challenge", questions: ODDONEOUT_CHALLENGE, blurb: "40 'odd one out' questions — numbers, letters, pairs and words — graded like the real exam. One attempt; the leaderboard is live the moment you finish." },
-    { slug: "survivor", topic: "Survivor Mode", format: "survivor", questions: ODDONEOUT_SURVIVOR, blurb: "50 mixed 'odd one out' puzzles back to back. One attempt — see where you rank on the live leaderboard right after." },
+    { slug: "challenge", topic: "Challenge Mode", format: "challenge", questions: ODDONEOUT_CHALLENGE, blurb: "40 'odd one out' questions, numbers, letters, pairs and words, graded like the real exam. One attempt; the leaderboard is live the moment you finish." },
+    { slug: "survivor", topic: "Survivor Mode", format: "survivor", questions: ODDONEOUT_SURVIVOR, blurb: "50 mixed 'odd one out' puzzles back to back. One attempt, see where you rank on the live leaderboard right after." },
 ];
 
 // Publish both graded Odd One Out mocks once (per-test SeedFlag).
@@ -136,7 +136,7 @@ async function ensureOddOneOutMockTestsSeeded() {
 
             const need = TEST_FORMATS[t.format].count;
             if (t.questions.length !== need) {
-                console.warn(`[oddoneout-mock] ${t.topic} has ${t.questions.length} questions, expected ${need} — skipped`);
+                console.warn(`[oddoneout-mock] ${t.topic} has ${t.questions.length} questions, expected ${need}, skipped`);
                 continue;
             }
 
@@ -144,7 +144,7 @@ async function ensureOddOneOutMockTestsSeeded() {
                 t.questions.map((qq) => ({ ...qq, subject: "Reasoning", topic: "Odd One Out", difficulty: "moderate", marks: 1, createdBy: owner._id }))
             );
             await Test.create({
-                title: `Reasoning: Odd One Out — ${t.topic}`,
+                title: `Reasoning: Odd One Out, ${t.topic}`,
                 description: t.blurb,
                 subject: "Reasoning",
                 category: "topic-wise",

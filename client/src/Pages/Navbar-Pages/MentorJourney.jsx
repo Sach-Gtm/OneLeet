@@ -42,7 +42,7 @@ export default function MentorJourney() {
     const mentor = result.forSlug === slug ? result.mentor : undefined; // undefined = loading, null = not found
 
     useSeo({
-        title: mentor ? `${mentor.name} — ${mentor.role || "Mentor"} at OneLeet` : "Mentor Journey | OneLeet",
+        title: mentor ? `${mentor.name}, ${mentor.role || "Mentor"} at OneLeet` : "Mentor Journey | OneLeet",
         description: mentor?.tagline || mentor?.description || "A OneLeet mentor's journey from diploma to B.Tech.",
         path: `/mentor/${slug}`,
     });
@@ -240,7 +240,7 @@ export function MentorJourneyView({ mentor }) {
                     <div className="relative">
                         <h3 className="text-2xl font-bold">Ready to write your own journey?</h3>
                         <p className="mx-auto mt-2 max-w-md text-sm text-indigo-100">
-                            Join your college-wise batch free and follow the same path — real papers, ranked mocks and a plan tied to your exam date.
+                            Join your college-wise batch free and follow the same path, real papers, ranked mocks and a plan tied to your exam date.
                         </p>
                         <Link
                             to="/courses"

@@ -120,8 +120,8 @@ const ANALOGY_SURVIVOR = spread([
 ]);
 
 const TESTS = [
-    { slug: "challenge", topic: "Challenge Mode", format: "challenge", questions: ANALOGY_CHALLENGE, blurb: "40 analogy questions, graded like the real exam. One attempt — the leaderboard is live the moment you finish." },
-    { slug: "survivor", topic: "Survivor Mode", format: "survivor", questions: ANALOGY_SURVIVOR, blurb: "50 analogy questions back to back. One attempt — see where you rank on the live leaderboard right after." },
+    { slug: "challenge", topic: "Challenge Mode", format: "challenge", questions: ANALOGY_CHALLENGE, blurb: "40 analogy questions, graded like the real exam. One attempt, the leaderboard is live the moment you finish." },
+    { slug: "survivor", topic: "Survivor Mode", format: "survivor", questions: ANALOGY_SURVIVOR, blurb: "50 analogy questions back to back. One attempt, see where you rank on the live leaderboard right after." },
 ];
 
 // Publish both graded analogy mocks once (per-test SeedFlag). Mode "test" with no
@@ -142,7 +142,7 @@ async function ensureAnalogyMockTestsSeeded() {
 
             const need = TEST_FORMATS[t.format].count;
             if (t.questions.length !== need) {
-                console.warn(`[analogy-mock] ${t.topic} has ${t.questions.length} questions, expected ${need} — skipped`);
+                console.warn(`[analogy-mock] ${t.topic} has ${t.questions.length} questions, expected ${need}, skipped`);
                 continue;
             }
 
@@ -150,7 +150,7 @@ async function ensureAnalogyMockTestsSeeded() {
                 t.questions.map((q) => ({ ...q, subject: "Reasoning", topic: "Analogy", difficulty: "moderate", marks: 1, createdBy: owner._id }))
             );
             await Test.create({
-                title: `Reasoning: Analogy — ${t.topic}`,
+                title: `Reasoning: Analogy, ${t.topic}`,
                 description: t.blurb,
                 subject: "Reasoning",
                 category: "topic-wise",

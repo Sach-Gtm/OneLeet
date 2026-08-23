@@ -31,7 +31,7 @@ export default defineConfig({
         skipWaiting: true,
       },
       manifest: {
-        name: "OneLeet — LEET Preparation",
+        name: "OneLeet, LEET Preparation",
         short_name: "OneLeet",
         description:
           "Crack LEET (Lateral Entry Entrance Test) and get into 2nd-year B.Tech after your diploma: past papers, exam-pattern mock tests, notes and AI practice.",

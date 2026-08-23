@@ -42,10 +42,10 @@ const clip = (s, n) => {
 const STATIC = [
     { path: "/pricing", title: "LEET Courses & Mock Test Series: Pricing | OneLeet Premium", desc: "OneLeet membership: exam-wise LEET batches, ranked mock tests, past papers, notes, AI practice and counselling support. See plans, discounts and the Success Promise." },
     { path: "/colleges", title: "Engineering Colleges via Lateral Entry (LEET) | OneLeet", desc: "The B.Tech colleges you can reach through lateral entry as a diploma holder: DTU, NSUT, VJTI, IPU and more. See where LEET can take you." },
-    { path: "/success", title: "LEET Success Stories: diploma to B.Tech, real students | OneLeet", desc: "Real OneLeet success stories — diploma students who cracked the Lateral Entry Entrance Test and got into 2nd-year B.Tech. See how they did it." },
+    { path: "/success", title: "LEET Success Stories: diploma to B.Tech, real students | OneLeet", desc: "Real OneLeet success stories, diploma students who cracked the Lateral Entry Entrance Test and got into 2nd-year B.Tech. See how they did it." },
     { path: "/exams", title: "LEET Exams by State: Pattern, Eligibility & Syllabus | OneLeet", desc: "Explore every LEET (Lateral Entry Entrance Test): IPU, DTU/NSUT, UP (AKTU), Bihar, Haryana and more. Compare exam pattern, eligibility, syllabus, seats and cut-offs, free." },
     { path: "/prep-guide", title: "How to Prepare for LEET: Free Study Plan & Roadmap | OneLeet", desc: "A stage-by-stage LEET preparation roadmap for diploma students, from your first month to exam day. Free overview; unlock the full day-by-day plan." },
-    { path: "/mentor", title: "Meet the Team | OneLeet", desc: "The people working to make LEET preparation simpler, smarter, and more accessible — the founders and mentors behind OneLeet." },
+    { path: "/mentor", title: "Meet the Team | OneLeet", desc: "The people working to make LEET preparation simpler, smarter, and more accessible, the founders and mentors behind OneLeet." },
 ];
 
 // Swap the homepage's head tags for this route's. Regexes are dotall + lazy so
@@ -84,7 +84,7 @@ async function fetchCases() {
         const json = await res.json();
         return Array.isArray(json.cases) ? json.cases : [];
     } catch (e) {
-        console.warn(`[prerender] success stories skipped (${e.message}) — they'll use the default card.`);
+        console.warn(`[prerender] success stories skipped (${e.message}), they'll use the default card.`);
         return [];
     }
 }
@@ -93,7 +93,7 @@ async function fetchCases() {
     try {
         const shellPath = resolve(DIST, "index.html");
         if (!existsSync(shellPath)) {
-            console.warn("[prerender] no dist/index.html found — skipped.");
+            console.warn("[prerender] no dist/index.html found, skipped.");
             return;
         }
         const shell = await readFile(shellPath, "utf8");
@@ -106,7 +106,7 @@ async function fetchCases() {
             const title = `${c.caseTitle || `How ${c.author || "a student"} cracked LEET`} | OneLeet Success Story`;
             const desc = c.text
                 ? c.text
-                : `How ${c.author || "a OneLeet student"} cracked ${c.exam || "LEET"}${c.rank ? ` — ${c.rank}` : ""}${c.college ? `, now studying at ${c.college}` : ""}. A real OneLeet success story.`;
+                : `How ${c.author || "a OneLeet student"} cracked ${c.exam || "LEET"}${c.rank ? `, ${c.rank}` : ""}${c.college ? `, now studying at ${c.college}` : ""}. A real OneLeet success story.`;
             await emit(shell, { path: `/success/${c.slug}`, title, desc });
         }
         console.log(`[prerender] wrote ${STATIC.length} static + ${cases.length} success-story meta shells.`);

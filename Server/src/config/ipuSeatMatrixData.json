@@ -2,9 +2,9 @@
   "examCode": "ipu-leet",
   "examName": "IPU LEET (GGSIPU)",
   "session": "2026-27",
-  "audience": "Diploma holders — Lateral Entry to B.Tech (IPU CET Code 128)",
+  "audience": "Diploma holders, Lateral Entry to B.Tech (IPU CET Code 128)",
   "source": "GGSIPU Notification No. 14/2026, dated 24-04-2026",
-  "note": "Seats shown are what a diploma-holder (lateral-entry) candidate can aim for; the notice's B.Sc-graduate quota is folded in as it is filled by diploma holders in practice. This official intake notice does not publish a caste-wise (SC/ST/OBC/EWS) split or a separate donation figure — those are applied within the counseling process.",
+  "note": "Seats shown are what a diploma-holder (lateral-entry) candidate can aim for; the notice's B.Sc-graduate quota is folded in as it is filled by diploma holders in practice. This official intake notice does not publish a caste-wise (SC/ST/OBC/EWS) split or a separate donation figure, those are applied within the counseling process.",
   "colleges": [
     {
       "name": "Bhagwan Parshuram Institute of Technology",
@@ -912,28 +912,28 @@
       "branches": [
         {
           "branch": "AI-ML",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — AI & ML",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), AI & ML",
           "general": 12,
           "mq": 0,
           "total": 12
         },
         {
           "branch": "AI-DS",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — AI & DS",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), AI & DS",
           "general": 12,
           "mq": 0,
           "total": 12
         },
         {
           "branch": "AR",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — Automation & Robotics",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), Automation & Robotics",
           "general": 12,
           "mq": 0,
           "total": 12
         },
         {
           "branch": "IIOT",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — Industrial IoT",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), Industrial IoT",
           "general": 12,
           "mq": 0,
           "total": 12
@@ -946,7 +946,7 @@
       "branches": [
         {
           "branch": "Chemical Engg (Dual Degree)",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — Chemical Engineering",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), Chemical Engineering",
           "general": 12,
           "mq": 0,
           "total": 12
@@ -966,35 +966,35 @@
       "branches": [
         {
           "branch": "CSE",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — Computer Science & Engineering",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), Computer Science & Engineering",
           "general": 18,
           "mq": 0,
           "total": 18
         },
         {
           "branch": "IT",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — Information Technology",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), Information Technology",
           "general": 12,
           "mq": 0,
           "total": 12
         },
         {
           "branch": "ECE",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — Electronics & Communication Engineering",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), Electronics & Communication Engineering",
           "general": 12,
           "mq": 0,
           "total": 12
         },
         {
           "branch": "CSE-AI",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — CSE (Artificial Intelligence)",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), CSE (Artificial Intelligence)",
           "general": 6,
           "mq": 0,
           "total": 6
         },
         {
           "branch": "CSE-DS",
-          "branchLong": "B.Tech/M.Tech (Dual Degree) — CSE (Data Science)",
+          "branchLong": "B.Tech/M.Tech (Dual Degree), CSE (Data Science)",
           "general": 6,
           "mq": 0,
           "total": 6

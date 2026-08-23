@@ -50,7 +50,7 @@ export default function Checkout() {
         try {
             const res = await applyCoupon(couponInput.trim(), totals.total);
             setCoupon({ code: res.code, discount: res.discount });
-            toast.success(`Coupon ${res.code} applied — ${rupee(res.discount)} off`);
+            toast.success(`Coupon ${res.code} applied, ${rupee(res.discount)} off`);
         } catch (e) {
             setCoupon(null);
             toast.error(e.message || "Invalid coupon");
@@ -103,7 +103,7 @@ export default function Checkout() {
                         track("payment_done"); // funnel: paid (audit C3)
                         clear();
                         celebrate("premium"); // went-Premium doodle (persists across the navigate)
-                        toast.success("Payment successful — welcome to Premium!");
+                        toast.success("Payment successful, welcome to Premium!");
                         navigate("/dashboard");
                     } catch (e) {
                         toast.error(e.message || "Payment verification failed");
@@ -150,7 +150,7 @@ export default function Checkout() {
                 <h1 className="mt-4 text-2xl font-bold text-slate-900 dark:text-slate-100">Order placed!</h1>
                 <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500 dark:text-slate-400">
                     Your order for <strong>{placed.items.map((i) => i.courseName).join(", ")}</strong> is reserved.
-                    To activate premium, complete the payment of <strong>{rupee(placed.installments?.[0]?.amount ?? placed.total ?? 0)}</strong> —
+                    To activate premium, complete the payment of <strong>{rupee(placed.installments?.[0]?.amount ?? placed.total ?? 0)}</strong>-
                     our team will share the payment details and confirm on WhatsApp {WHATSAPP_RESPONSE}.
                 </p>
                 <a
@@ -223,7 +223,7 @@ export default function Checkout() {
                             </button>
                         )}
                     </div>
-                    {coupon && <p className="mt-1 text-[11px] font-medium text-emerald-600">✓ {coupon.code} — {rupee(coupon.discount)} off</p>}
+                    {coupon && <p className="mt-1 text-[11px] font-medium text-emerald-600">✓ {coupon.code}, {rupee(coupon.discount)} off</p>}
                 </div>
                 <div>
                     <label className="text-xs font-semibold text-slate-500 dark:text-slate-400">Referral code <span className="font-normal text-slate-400">(optional)</span></label>

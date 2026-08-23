@@ -33,7 +33,7 @@ async function ensureIpuCutoffsSeeded() {
             updatedBy: owner._id,
         });
         await SeedFlag.create({ key: SEED_KEY });
-        console.log(`[ipu-cutoffs] seeded IPU LEET cut-offs — ${(data.rounds || []).length} rounds`);
+        console.log(`[ipu-cutoffs] seeded IPU LEET cut-offs, ${(data.rounds || []).length} rounds`);
     } catch (e) {
         console.warn("[ipu-cutoffs] seed skipped:", e.message);
     }

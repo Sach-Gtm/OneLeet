@@ -25,11 +25,11 @@ function LiveCount({ count }) {
                     <motion.b key={count} initial={{ scale: 1.25, color: "#ea580c" }} animate={{ scale: 1 }} className="inline-block tabular-nums">
                         {count.toLocaleString("en-IN")}
                     </motion.b>{" "}
-                    students already registered — it&apos;s your turn, register now!
+                    students already registered, it&apos;s your turn, register now!
                 </p>
             ) : (
                 <p className="text-[13px] font-semibold text-amber-800 dark:text-amber-200">
-                    Be among the first to grab your seat — register now!
+                    Be among the first to grab your seat, register now!
                 </p>
             )}
         </div>
@@ -71,7 +71,7 @@ export default function ScholarshipRegisterCard({ source = "web" }) {
         try {
             const res = await registerScholarship({ ...form, source });
             track("scholarship_register");
-            bump(); // their own sign-up counts ×3 — reflect it instantly
+            bump(); // their own sign-up counts ×3, reflect it instantly
             markScholarshipRegistered(); // never nag this browser again
             setDone(true);
             toast.success(res?.message || "You're registered!");
@@ -95,7 +95,7 @@ export default function ScholarshipRegisterCard({ source = "web" }) {
                     Register free · win up to <span className="rounded bg-amber-300 px-1.5 text-slate-900">100%</span> scholarship
                 </h2>
                 <p className="relative mx-auto mt-2 max-w-md text-sm text-white/90">
-                    One common exam on <b>{SCHOLARSHIP_TEST_DATE}</b>. Rank high and get a ₹25,000 LEET course for just ₹499 — or completely FREE.
+                    One common exam on <b>{SCHOLARSHIP_TEST_DATE}</b>. Rank high and get a ₹25,000 LEET course for just ₹499, or completely FREE.
                 </p>
             </div>
 

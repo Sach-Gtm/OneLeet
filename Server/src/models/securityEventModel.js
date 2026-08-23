@@ -17,7 +17,7 @@ const mongoose = require("mongoose");
 const RETENTION_DAYS = 120;
 
 const EVENT_TYPES = [
-    "screenshot",   // PrintScreen key (Windows) — the only screenshot combo a browser can observe
+    "screenshot",   // PrintScreen key (Windows), the only screenshot combo a browser can observe
     "copy",         // copy / cut attempt
     "print",        // Ctrl/Cmd+P or the print dialog (incl. "Save as PDF")
     "save",         // Ctrl/Cmd+S

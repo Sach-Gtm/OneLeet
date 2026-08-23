@@ -24,7 +24,7 @@ import {
     regionLabel,
 } from "@/lib/collegePredictor";
 
-const nf = (n) => (n == null ? "—" : Number(n).toLocaleString("en-IN"));
+const nf = (n) => (n == null ? "-" : Number(n).toLocaleString("en-IN"));
 
 const ORDER = ["OPNOHS", "OPNOOS", "BCNOHS", "EWNOHS", "SCNOHS", "SCNOOS", "STNOHS", "OPDFHS", "OPPHHS", "NOSMAI"];
 const rankOf = (code) => {
@@ -261,7 +261,7 @@ export default function CutoffModal({ examCode, examName, onClose }) {
                         </span>
                         <div className="min-w-0 flex-1">
                             <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">
-                                Cut-offs &amp; College Predictor — {cutoff?.examName || examName}
+                                Cut-offs &amp; College Predictor, {cutoff?.examName || examName}
                             </p>
                             <p className="truncate text-xs text-slate-400">
                                 {cutoff
@@ -328,7 +328,7 @@ export default function CutoffModal({ examCode, examName, onClose }) {
                             <div className="rounded-xl border border-indigo-200 bg-indigo-50/50 p-3 dark:border-indigo-500/25 dark:bg-indigo-500/10">
                                 <div className="mb-2 flex items-center gap-1.5 text-sm font-bold text-slate-800 dark:text-slate-100">
                                     <Target size={15} className="text-indigo-600" /> College Predictor
-                                    <span className="font-normal text-slate-400">— enter your rank to see what you&apos;d get</span>
+                                    <span className="font-normal text-slate-400">-enter your rank to see what you&apos;d get</span>
                                 </div>
                                 <div className="flex flex-wrap items-center gap-2">
                                     <input
@@ -388,7 +388,7 @@ export default function CutoffModal({ examCode, examName, onClose }) {
                                                 <span className="text-slate-400"> · {summary.safe} comfortably safe</span>
                                             )}
                                             .
-                                            <span className="ml-1 text-xs text-slate-400">Indicative — cut-offs shift year to year.</span>
+                                            <span className="ml-1 text-xs text-slate-400">Indicative, cut-offs shift year to year.</span>
                                         </p>
                                     </div>
                                 )}
@@ -406,7 +406,7 @@ export default function CutoffModal({ examCode, examName, onClose }) {
                             {list.length === 0 ? (
                                 <p className="py-10 text-center text-sm text-slate-400">
                                     {active && onlyMatches
-                                        ? "No colleges match your rank in this round — try another round or turn off the filter."
+                                        ? "No colleges match your rank in this round, try another round or turn off the filter."
                                         : `No colleges or branches match “${query}”.`}
                                 </p>
                             ) : (

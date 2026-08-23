@@ -754,7 +754,7 @@ export default function AdminDashboard() {
                         className="text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200"
                     />
                     <span className="text-xs text-slate-400">
-                        PDF up to 100&nbsp;MB — students can view &amp; download it.
+                        PDF up to 100&nbsp;MB, students can view &amp; download it.
                     </span>
                     <button
                         type="submit"
@@ -821,7 +821,7 @@ export default function AdminDashboard() {
                 <textarea
                     value={qForm.explanation}
                     onChange={setQField("explanation")}
-                    placeholder="Explanation (optional — shown after answering)"
+                    placeholder="Explanation (optional, shown after answering)"
                     rows={2}
                     className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
@@ -918,7 +918,7 @@ export default function AdminDashboard() {
                                             <div className="text-xs text-slate-400">{s.phone}</div>
                                         </td>
                                         <td className="px-4 py-3 text-slate-600">
-                                            {s.college || "—"}
+                                            {s.college || "-"}
                                             {s.branch ? (
                                                 <div className="text-xs text-slate-400">{s.branch}</div>
                                             ) : null}

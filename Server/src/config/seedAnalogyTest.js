@@ -50,14 +50,14 @@ async function ensureAnalogyTestSeeded() {
         );
 
         await Test.create({
-            title: "Reasoning: Analogy — Quick Shot",
+            title: "Reasoning: Analogy, Quick Shot",
             description: "A 10-question warm-up on verbal & non-verbal analogies. Answers reveal as you go.",
             subject: "Reasoning",
             category: "topic-wise",
             format: "quick-shot",
             mode: "practice", // warm-up: reveal the answer as they go
             durationMinutes: 10,
-            targets: [], // reasoning is common to every LEET — show to all
+            targets: [], // reasoning is common to every LEET, show to all
             questions: docs.map((d) => d._id),
             totalMarks: docs.length,
             status: "published",

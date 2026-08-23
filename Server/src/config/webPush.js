@@ -15,7 +15,7 @@ if (PUBLIC && PRIVATE) {
         webpush.setVapidDetails(SUBJECT, PUBLIC, PRIVATE);
         configured = true;
     } catch (e) {
-        console.warn("[web-push] invalid VAPID keys — background push disabled:", e.message);
+        console.warn("[web-push] invalid VAPID keys, background push disabled:", e.message);
     }
 }
 

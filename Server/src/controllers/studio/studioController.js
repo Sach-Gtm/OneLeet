@@ -225,7 +225,7 @@ async function publishTest(req, res, next) {
         if (need != null && test.questions.length !== need) {
             return res.status(400).json({
                 success: false,
-                message: `${TEST_FORMATS[test.format].label} must have exactly ${need} questions — this has ${test.questions.length}.`,
+                message: `${TEST_FORMATS[test.format].label} must have exactly ${need} questions, this has ${test.questions.length}.`,
             });
         }
         test.status = "published";

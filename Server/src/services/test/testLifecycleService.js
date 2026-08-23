@@ -53,7 +53,7 @@ async function processJustWentLive(now = Date.now()) {
             { $set: { liveNotifiedAt: new Date() } },
             { returnDocument: "after" }
         );
-        if (!claimed) continue; // lost the race — already notified
+        if (!claimed) continue; // lost the race, already notified
 
         try {
             const users = await recipientsForTest(test);
@@ -129,7 +129,7 @@ async function processClosingSoon(now = Date.now()) {
                         sendMail({
                             to: u.email,
                             subject: `2 hours left: ${test.title}`,
-                            html: `<p>Hi ${u.name || "there"},</p><p>Only about <b>2 hours</b> are left to attempt <b>${test.title}</b> on OneLeet.</p><p><a href="${url}">Attempt the test now</a> to make it onto the leaderboard.</p><p>— OneLeet</p>`,
+                            html: `<p>Hi ${u.name || "there"},</p><p>Only about <b>2 hours</b> are left to attempt <b>${test.title}</b> on OneLeet.</p><p><a href="${url}">Attempt the test now</a> to make it onto the leaderboard.</p><p>-OneLeet</p>`,
                             text: `Only about 2 hours left to attempt "${test.title}" on OneLeet. Attempt it now: ${url}`,
                         }).catch(() => {})
                     )

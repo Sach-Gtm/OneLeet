@@ -54,7 +54,7 @@ function NewPostModal({ open, onClose, onCreated }) {
                     />
                     <input
                         className="h-11 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                        placeholder="Subject (optional) — e.g. Physics"
+                        placeholder="Subject (optional), e.g. Physics"
                         value={form.subject}
                         onChange={(e) => setForm({ ...form, subject: e.target.value })}
                     />

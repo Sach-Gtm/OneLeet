@@ -16,7 +16,7 @@ export default function ChooseCourseGate({ label = "this content" }) {
             </h1>
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                 Enroll in a college-wise batch to see its tests, notes, syllabus and papers.
-                Joining is <strong className="font-semibold text-slate-700 dark:text-slate-200">free</strong> —
+                Joining is <strong className="font-semibold text-slate-700 dark:text-slate-200">free</strong>-
                 premium unlocks ranked mocks, the full archive and live doubt classes.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -24,7 +24,7 @@ export default function ChooseCourseGate({ label = "this content" }) {
                     to="/courses"
                     className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-700"
                 >
-                    <Sparkles size={16} /> Browse courses — free
+                    <Sparkles size={16} /> Browse courses, free
                 </Link>
                 <Link
                     to="/pricing"

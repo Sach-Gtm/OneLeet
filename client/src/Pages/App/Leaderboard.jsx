@@ -299,7 +299,7 @@ export default function Leaderboard() {
                 <p className="text-sm text-slate-500">
                     {tab === "week"
                         ? "Top performers across India this week."
-                        : "All-time champions — ranked by Rank #1 finishes."}
+                        : "All-time champions, ranked by Rank #1 finishes."}
                 </p>
             </div>
 

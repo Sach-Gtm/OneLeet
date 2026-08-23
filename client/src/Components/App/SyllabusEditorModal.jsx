@@ -61,8 +61,8 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
         setTab("manual");
         toast.success(
             draft.provider === "stub"
-                ? "Sample draft shown — enable AI (Gemini) for real results. Review & save."
-                : "Draft ready — review, tweak hours, then save."
+                ? "Sample draft shown, enable AI (Gemini) for real results. Review & save."
+                : "Draft ready, review, tweak hours, then save."
         );
     };
 
@@ -171,7 +171,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                     {tab === "ai" && (
                         <div className="space-y-3">
                             <p className="text-xs text-slate-500">
-                                Paste your whole syllabus (any format) — the AI will organise it into chapters and topics with
+                                Paste your whole syllabus (any format), the AI will organise it into chapters and topics with
                                 suggested study hours. You can edit everything before saving.
                             </p>
                             <textarea
@@ -216,7 +216,7 @@ export default function SyllabusEditorModal({ open, onClose, onSaved, editing, i
                                     value={scanPrompt}
                                     onChange={(e) => setScanPrompt(e.target.value)}
                                     placeholder={
-                                        "Tell the AI how to structure it, or correct anything — e.g.\n" +
+                                        "Tell the AI how to structure it, or correct anything, e.g.\n" +
                                         "“Subject is Thermodynamics.”  “Group by unit, skip the marking scheme.”  “Merge duplicate topics and cap hours at 8.”"
                                     }
                                 />

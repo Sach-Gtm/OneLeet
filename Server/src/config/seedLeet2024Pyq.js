@@ -400,7 +400,7 @@ const LEET_2024 = [
         "Quantitative Aptitude", "LCM & HCF"),
     q("Statement: Out of 20 students in a class, 15 passed in English and 18 passed in Mathematics.\nInferences:\nI. There are a few students who passed in both subjects.\nII. No student failed in both subjects.",
         ["Both inferences I and II follow", "Only inference I follows", "Only inference II follows", "Neither inference I nor inference II follows"], 1,
-        "15 + 18 − 20 = 13, so at least 13 passed both — inference I follows; II is not guaranteed.",
+        "15 + 18 − 20 = 13, so at least 13 passed both, inference I follows; II is not guaranteed.",
         "Reasoning", "Logical Inference"),
     q("In a row of boys, A is 13th from the left and D is 17th from the right. If A is 11th from the right in this row, then what is the position of D from the left?",
         ["6th", "7th", "10th", "12th"], 1,
@@ -444,7 +444,7 @@ const LEET_2024 = [
         "Reasoning", "Odd One Out"),
     q("In the following question, select the related word pair from the given alternatives. Bear : Hibernation :: ? : ?",
         ["Man : Immigration", "Bird : Migration", "Food : Adulteration", "Frog : Aestivation"], 3,
-        "Hibernation is a bear's winter dormancy; aestivation is a frog's summer dormancy — the same type of relationship.",
+        "Hibernation is a bear's winter dormancy; aestivation is a frog's summer dormancy, the same type of relationship.",
         "Reasoning", "Analogy"),
 ];
 
@@ -463,7 +463,7 @@ async function ensureLeet2024PyqSeeded() {
 
         const need = TEST_FORMATS["real-exam"].count; // 100
         if (LEET_2024.length !== need) {
-            console.warn(`[leet-2024-pyq] has ${LEET_2024.length} questions, expected ${need} — skipped`);
+            console.warn(`[leet-2024-pyq] has ${LEET_2024.length} questions, expected ${need}, skipped`);
             return;
         }
 
@@ -482,9 +482,9 @@ async function ensureLeet2024PyqSeeded() {
         );
 
         await Test.create({
-            title: "PYQ: LEET 2024 — B.Tech Lateral Entry (Diploma Holders)",
+            title: "PYQ: LEET 2024, B.Tech Lateral Entry (Diploma Holders)",
             description:
-                "The full 100-question 2024 B.Tech Lateral Entry (LEET) paper for diploma holders — Engineering Mechanics, Strength of Materials, Mathematics, Physics, Chemistry, Computer awareness and Reasoning. Practice mode: tick an option and the correct answer is revealed instantly, with a short explanation. (In the real exam each question is +4 marks, −1 for a wrong answer, over 150 minutes for 400 marks.)",
+                "The full 100-question 2024 B.Tech Lateral Entry (LEET) paper for diploma holders, Engineering Mechanics, Strength of Materials, Mathematics, Physics, Chemistry, Computer awareness and Reasoning. Practice mode: tick an option and the correct answer is revealed instantly, with a short explanation. (In the real exam each question is +4 marks, −1 for a wrong answer, over 150 minutes for 400 marks.)",
             subject: "PYQ",
             topic: "LEET 2024",
             category: "full-mock",

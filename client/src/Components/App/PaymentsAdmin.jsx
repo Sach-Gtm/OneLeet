@@ -43,7 +43,7 @@ export default function PaymentsAdmin({ isSuper = false }) {
         setBusy(o._id);
         try {
             await adminConfirmOrder(o._id);
-            toast.success("Payment confirmed — premium granted");
+            toast.success("Payment confirmed, premium granted");
             loadOrders();
         } catch (e) { toast.error(e.message); } finally { setBusy(""); }
     }
@@ -51,7 +51,7 @@ export default function PaymentsAdmin({ isSuper = false }) {
         setBusy(o._id);
         try {
             await adminReopenOrder(o._id);
-            toast.success("Order reopened — student can pay the 2nd installment");
+            toast.success("Order reopened, student can pay the 2nd installment");
             loadOrders();
         } catch (e) { toast.error(e.message); } finally { setBusy(""); }
     }
@@ -89,8 +89,8 @@ export default function PaymentsAdmin({ isSuper = false }) {
     return (
         <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
             <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
-                <IndianRupee className="h-4 w-4 text-emerald-600" /> Payments — orders &amp; coupons
-                <span className="font-normal text-slate-400">— confirm payments, reopen split orders, manage coupons</span>
+                <IndianRupee className="h-4 w-4 text-emerald-600" /> Payments, orders &amp; coupons
+                <span className="font-normal text-slate-400">-confirm payments, reopen split orders, manage coupons</span>
                 {open ? <ChevronUp size={16} className="ml-auto" /> : <ChevronDown size={16} className="ml-auto" />}
             </button>
 
@@ -117,7 +117,7 @@ export default function PaymentsAdmin({ isSuper = false }) {
                                 {orders.map((o) => (
                                     <div key={o._id} className="rounded-lg border border-slate-200 p-3 text-xs dark:border-slate-700">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <span className="font-semibold text-slate-800 dark:text-slate-100">{o.user?.name || "—"}</span>
+                                            <span className="font-semibold text-slate-800 dark:text-slate-100">{o.user?.name || "-"}</span>
                                             <span className="text-slate-400">{o.user?.email}</span>
                                             <span className={"rounded-full px-2 py-0.5 text-[10px] font-bold " + (STATUS[o.status] || "bg-slate-100")}>{o.status}</span>
                                             <span className="ml-auto font-bold text-slate-800 dark:text-slate-100">{rupee(o.amountPaid)} / {rupee(o.payable)}</span>

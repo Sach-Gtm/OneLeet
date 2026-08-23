@@ -112,7 +112,7 @@ function NoteCard({ note, staff, onSummary, onFlashcards, onRead, onViewFile, on
                             ? "border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100"
                             : "border-slate-200 text-slate-500 hover:bg-slate-50")
                     }
-                    title={note.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                    title={note.premium ? "Premium, click to make Free" : "Free, click to make Premium"}
                 >
                     <Crown size={12} /> {note.premium ? "Premium" : "Make Premium"}
                 </button>

@@ -21,7 +21,7 @@ export default function ExamPatternSection() {
     const hasExams = (user?.exams?.length || 0) > 0;
 
     useEffect(() => {
-        if (!hasExams) return; // "no exams" is derived below — no fetch, no setState churn
+        if (!hasExams) return; // "no exams" is derived below, no fetch, no setState churn
         let alive = true;
         getMyExamPatterns()
             .then((rows) => alive && setFetched(rows))

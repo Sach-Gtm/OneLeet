@@ -194,7 +194,7 @@ function QuestionGen({ onRan }) {
                     {/* Live score bar */}
                     <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-2.5">
                         <p className="text-sm font-semibold text-indigo-800">
-                            Tap an option to answer — instant marking.
+                            Tap an option to answer, instant marking.
                         </p>
                         <span className={cn(
                             "rounded-full px-3 py-1 text-xs font-bold",
@@ -260,7 +260,7 @@ function QuestionGen({ onRan }) {
                                             : "bg-red-50 text-red-700"
                                     )}>
                                         {sel === q.answerIndex
-                                            ? "✓ Correct — well done!"
+                                            ? "✓ Correct, well done!"
                                             : `✗ Not quite. The correct answer is ${String.fromCharCode(65 + q.answerIndex)}. ${q.options?.[q.answerIndex] ?? ""}`}
                                     </p>
                                 )}
@@ -470,7 +470,7 @@ export default function AiTools() {
                         )}
                     >
                         <Brain size={13} />
-                        {provider === "gemini" ? "Powered by Gemini" : "Sample mode — example results"}
+                        {provider === "gemini" ? "Powered by Gemini" : "Sample mode, example results"}
                     </span>
                 )}
             </div>

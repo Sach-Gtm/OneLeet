@@ -97,7 +97,7 @@ export default function Home() {
                         {/* Brand two-tone (blue phrase + orange accent word). In this
                             theme `indigo` is brand blue and `violet` is brand orange, so
                             the old `from-indigo-600 to-violet-600` was a blue→orange
-                            gradient — and those are near-complementary, so it interpolated
+                            gradient, and those are near-complementary, so it interpolated
                             through a muddy grey that read badly (especially in dark mode).
                             Two clean brand colours echo the logo and stay vivid on light
                             and dark; brighter tints in dark so they glow on the navy. */}

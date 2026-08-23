@@ -77,7 +77,7 @@ async function sendMail({ to, subject, html, text }) {
     const p = provider();
     if (!p) {
         console.log(
-            `[email] not configured — skipped "${subject}" to ${to}. ` +
+            `[email] not configured, skipped "${subject}" to ${to}. ` +
                 `Set BREVO_API_KEY (recommended) or EMAIL_USER + EMAIL_PASS.`
         );
         return { skipped: true };
@@ -110,7 +110,7 @@ async function refreshDeliverability() {
                     `OTP is disabled until this is fixed; signups stay open.`
             );
         } else {
-            console.log(`[email] ${r.provider} transport ready — OTP enabled.`);
+            console.log(`[email] ${r.provider} transport ready, OTP enabled.`);
         }
     } catch (e) {
         deliverable = false;

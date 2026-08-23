@@ -319,7 +319,7 @@ async function verifyOtp(req, res, next) {
         sendWelcomeEmail(user);
         return res.status(200).json({
             success: true,
-            message: "Email verified — welcome to OneLeet!",
+            message: "Email verified, welcome to OneLeet!",
             user: sanitize(user),
             token,
         });

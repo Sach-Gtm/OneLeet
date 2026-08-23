@@ -151,7 +151,7 @@ async function setUserRole(req, res, next) {
         if (!target) {
             return res.status(404).json({
                 success: false,
-                message: "No account found with that email — ask them to register first",
+                message: "No account found with that email, ask them to register first",
             });
         }
         // Guard against accidentally locking yourself out.

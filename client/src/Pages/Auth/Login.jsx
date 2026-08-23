@@ -89,7 +89,7 @@ export default function Login() {
                         <p>
                             You were signed out because your account was used on
                             another device. Your OneLeet account works on one
-                            device at a time — sign in again to continue here.
+                            device at a time, sign in again to continue here.
                         </p>
                     </div>
                 )}

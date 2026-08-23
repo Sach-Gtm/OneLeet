@@ -117,9 +117,9 @@ function PlayerModal({ video, onClose, onProgress, guarded = false }) {
                             report();
                         } catch { /* ignore */ }
                     }, 8000);
-                } catch { /* YT init failed — the iframe still plays */ }
+                } catch { /* YT init failed, the iframe still plays */ }
             })
-            .catch(() => { /* API blocked — no auto-tracking */ });
+            .catch(() => { /* API blocked, no auto-tracking */ });
         return () => {
             disposed = true;
             if (interval) clearInterval(interval);
@@ -235,7 +235,7 @@ function VideoCard({ video, staff, onPlay, onEdit, onDelete, onTogglePremium, on
                             onClick={() => onTogglePremium(video)}
                             className={"grid h-6 w-6 place-items-center rounded-md shadow-sm transition " + (video.premium ? "bg-amber-500 text-white hover:bg-amber-600" : "bg-white text-slate-600 hover:bg-white hover:text-amber-600")}
                             aria-label={video.premium ? "Make free" : "Make premium"}
-                            title={video.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                            title={video.premium ? "Premium, click to make Free" : "Free, click to make Premium"}
                         >
                             <Crown size={12} />
                         </button>

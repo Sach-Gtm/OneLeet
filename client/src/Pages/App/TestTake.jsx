@@ -63,7 +63,7 @@ export default function TestTake() {
                 }
                 // Already taken this single-attempt mock test: show the existing result.
                 if (data.code === "ALREADY_ATTEMPTED") {
-                    toast("You've already taken this test — here's your result.");
+                    toast("You've already taken this test, here's your result.");
                     navigate(data.attemptId ? `/tests/result/${data.attemptId}` : "/tests", { replace: true });
                     return;
                 }
@@ -193,7 +193,7 @@ export default function TestTake() {
                         <h1 className="truncate text-base font-bold text-slate-900 dark:text-slate-100">{test.title}</h1>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
                             {isPractice
-                                ? "Practice — the answer reveals as you go"
+                                ? "Practice, the answer reveals as you go"
                                 : `${answeredCount}/${test.questions?.length || 0} answered`}
                         </p>
                     </div>

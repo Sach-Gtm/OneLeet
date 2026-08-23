@@ -95,7 +95,7 @@ export default function CountdownLaunch({ onLaunched }) {
                 </motion.h1>
                 <p className="mx-auto mt-3 max-w-lg text-sm text-slate-500 dark:text-slate-400">
                     Our full membership + early-bird offer goes live <b className="text-slate-700 dark:text-slate-200">25 Aug, 10:00 PM</b>.
-                    Meanwhile, courses and free batches are open — and so is the scholarship test below.
+                    Meanwhile, courses and free batches are open, and so is the scholarship test below.
                 </p>
             </div>
 

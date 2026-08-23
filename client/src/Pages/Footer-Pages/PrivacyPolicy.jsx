@@ -56,12 +56,12 @@ export default function PrivacyPolicy() {
 
                 <Section title="3. Our Content &amp; Intellectual Property">
                     <p>
-                        All study material on OneLeet — question banks, notes, mock tests, AI-generated content,
-                        design, and branding — is provided <strong>solely for your personal exam preparation</strong>.
+                        All study material on OneLeet, question banks, notes, mock tests, AI-generated content,
+                        design, and branding, is provided <strong>solely for your personal exam preparation</strong>.
                     </p>
                     <p>
                         You may study, practise, and download materials for your own use. You may <strong>not</strong>{" "}
-                        copy, scrape, republish, redistribute, resell, or share our content — in whole or in part —
+                        copy, scrape, republish, redistribute, resell, or share our content, in whole or in part-
                         on any other website, app, coaching service, or channel, whether free or paid, without our
                         prior written permission. All rights in the platform and its original content belong to
                         StaplerLabs Private Limited.

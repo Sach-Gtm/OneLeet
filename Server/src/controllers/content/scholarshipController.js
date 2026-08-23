@@ -39,7 +39,7 @@ async function register(req, res, next) {
                 phone: phone || undefined,
                 role: "student",
                 authProvider: "local",
-                isVerified: true, // a real candidate — no OTP wall
+                isVerified: true, // a real candidate, no OTP wall
                 branch: diplomaBranch || undefined,
                 targetExam: preparingFor || undefined,
                 // Random, unusable password so bcrypt has something to hash; the
@@ -69,7 +69,7 @@ async function register(req, res, next) {
     } catch (e) {
         // Unique-email race → they're already registered; treat as success.
         if (e && e.code === 11000) {
-            return res.status(200).json({ success: true, message: "You're already registered — see you at the test!" });
+            return res.status(200).json({ success: true, message: "You're already registered, see you at the test!" });
         }
         next(e);
     }

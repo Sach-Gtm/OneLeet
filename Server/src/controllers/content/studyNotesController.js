@@ -208,7 +208,7 @@ async function generateNoteDraft(req, res, next) {
         if ((!prompt || !String(prompt).trim()) && !hasFile) {
             return res.status(400).json({
                 success: false,
-                message: "Tell the AI what to write — or attach an image/PDF for it to read.",
+                message: "Tell the AI what to write, or attach an image/PDF for it to read.",
             });
         }
 

@@ -99,9 +99,9 @@ export default function NotesUploadModal({ open, onClose, onUploaded, editing = 
             }));
             setDrafted(true);
             if (d.provider === "stub") {
-                toast("Sample draft shown — add a Gemini key for real AI notes.", { icon: "✨" });
+                toast("Sample draft shown, add a Gemini key for real AI notes.", { icon: "✨" });
             } else {
-                toast.success("Draft ready — review and edit before publishing.");
+                toast.success("Draft ready, review and edit before publishing.");
             }
         } catch (err) {
             toast.error(err?.response?.data?.message || err.message || "Couldn't generate a draft.");
@@ -218,7 +218,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded, editing = 
                     {tab === "ai" && !drafted ? (
                         <>
                             <p className="text-xs text-slate-500">
-                                Tell the AI what you want — like ChatGPT. Short notes, detailed notes, MCQs, a summary,
+                                Tell the AI what you want, like ChatGPT. Short notes, detailed notes, MCQs, a summary,
                                 a comparison table… You can also attach an image or PDF for it to read.
                             </p>
                             <div className="flex flex-wrap gap-1.5">
@@ -283,7 +283,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded, editing = 
                             {tab === "ai" && drafted && (
                                 <div className="flex items-center justify-between rounded-lg bg-indigo-50 px-3 py-2 text-xs text-indigo-700">
                                     <span className="flex items-center gap-1.5">
-                                        <Brain size={13} /> AI draft — review &amp; edit, then publish.
+                                        <Brain size={13} /> AI draft, review &amp; edit, then publish.
                                     </span>
                                     <button
                                         onClick={() => setDrafted(false)}
@@ -389,7 +389,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded, editing = 
                             {isEdit && editing.fileUrl && (
                                 <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
                                     A PDF is attached to this note. To replace the file, delete this note and upload a new
-                                    one — you can still edit its details here.
+                                    one, you can still edit its details here.
                                 </p>
                             )}
 
@@ -421,7 +421,7 @@ export default function NotesUploadModal({ open, onClose, onUploaded, editing = 
                                     className={cn(inputCls, "h-auto py-2 font-mono text-[13px] leading-relaxed")}
                                     value={form.content}
                                     onChange={(e) => set("content", e.target.value)}
-                                    placeholder={"Markdown supported — use ## for headings and - for bullet points."}
+                                    placeholder={"Markdown supported, use ## for headings and - for bullet points."}
                                 />
                             </div>
                         </>

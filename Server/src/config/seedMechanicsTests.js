@@ -29,7 +29,7 @@ const MECH_MIXED = [
 
 // ── Friction (20) — long chapter ──
 const MECH_FRICTION = [
-    q("The force of friction between two surfaces is directly proportional to the:", ["Area of contact", "Normal reaction", "Weight, only when horizontal", "Velocity of the body"], 1, "F = μ·N — friction is proportional to the normal reaction, not to the contact area."),
+    q("The force of friction between two surfaces is directly proportional to the:", ["Area of contact", "Normal reaction", "Weight, only when horizontal", "Velocity of the body"], 1, "F = μ·N, friction is proportional to the normal reaction, not to the contact area."),
     q("The ratio of the limiting friction to the normal reaction is called the:", ["Angle of friction", "Coefficient of friction", "Angle of repose", "Cone of friction"], 1, "μ = F_limiting / N is the coefficient of friction."),
     q("The coefficient of friction is equal to the ___ of the angle of friction.", ["Sine", "Cosine", "Tangent", "Cotangent"], 2, "μ = tan φ, where φ is the angle of friction."),
     q("The angle of repose is ___ the angle of friction.", ["Greater than", "Less than", "Equal to", "Twice"], 2, "The angle of repose equals the angle of friction (tan of each = μ)."),
@@ -41,7 +41,7 @@ const MECH_FRICTION = [
     q("A body of mass 10 kg rests on a rough horizontal surface with coefficient of friction 0.25. The horizontal force needed to just move it is (g = 10 m/s²):", ["2.5 N", "25 N", "50 N", "100 N"], 1, "F = μ·m·g = 0.25 × 10 × 10 = 25 N."),
     q("The angle of an inclined plane at which a body just begins to slide down under its own weight is called the angle of:", ["Friction", "Repose", "Inclination", "Projection"], 1, "That angle is the angle of repose (numerically equal to the angle of friction)."),
     q("The normal reaction on a body is 500 N and the coefficient of friction is 0.2. The limiting force of friction is:", ["50 N", "100 N", "200 N", "250 N"], 1, "F = μ·N = 0.2 × 500 = 100 N."),
-    q("Rolling friction is ___ sliding friction.", ["Greater than", "Less than", "Equal to", "Unrelated to"], 1, "Rolling friction is much smaller than sliding friction — that's why wheels are used."),
+    q("Rolling friction is ___ sliding friction.", ["Greater than", "Less than", "Equal to", "Unrelated to"], 1, "Rolling friction is much smaller than sliding friction, that's why wheels are used."),
     q("The right circular cone with the normal reaction as axis and semi-vertical angle equal to the angle of friction is called the:", ["Cone of friction", "Angle of repose", "Friction circle", "Cone of repose"], 0, "The cone of friction has a semi-vertical angle equal to the angle of friction."),
     q("In a ladder-friction problem, friction is usually considered at the:", ["Floor only", "Wall only", "Both the floor and the wall", "Neither surface"], 2, "Friction acts at both the floor and the wall contacts of the ladder."),
     q("The force of friction always acts in a direction ___ the direction of (impending) motion.", ["Same as", "Opposite to", "Perpendicular to", "At 45° to"], 1, "Friction opposes relative motion, so it acts opposite to the motion."),
@@ -119,7 +119,7 @@ const MECH_MACHINES = [
     q("In a machine, an effort of 20 N lifts a load of 100 N. The mechanical advantage is:", ["2", "5", "20", "500"], 1, "MA = load / effort = 100 / 20 = 5."),
     q("A machine has a velocity ratio of 8 and a mechanical advantage of 6. Its efficiency is:", ["48%", "75%", "133%", "14%"], 1, "Efficiency = MA / VR = 6 / 8 = 0.75 = 75%."),
     q("In a simple wheel and axle, the velocity ratio equals the ratio of the:", ["Axle radius to wheel radius", "Wheel radius to axle radius", "Load to effort", "Effort to load"], 1, "VR = radius (or diameter) of the wheel / radius of the axle."),
-    q("For a screw jack with pitch p and effort-arm length l, the velocity ratio is:", ["p / (2πl)", "2πl / p", "πl / p", "2πp / l"], 1, "VR = 2πl / p — the effort moves 2πl while the load rises by the pitch p."),
+    q("For a screw jack with pitch p and effort-arm length l, the velocity ratio is:", ["p / (2πl)", "2πl / p", "πl / p", "2πp / l"], 1, "VR = 2πl / p, the effort moves 2πl while the load rises by the pitch p."),
 ];
 
 // ── Trusses (10) — short ──
@@ -137,13 +137,13 @@ const MECH_TRUSSES = [
 ];
 
 const TESTS = [
-    { slug: "mixed", topic: "Engineering Mechanics", title: "Mechanics: Engineering Mechanics — Quick Shot", format: "quick-shot", questions: MECH_MIXED, blurb: "10 mixed Engineering Mechanics questions across friction, forces, energy and moment of inertia. Practice mode — the answer reveals as you go." },
-    { slug: "friction", topic: "Friction", title: "Mechanics: Friction — Practice", format: null, questions: MECH_FRICTION, blurb: "20 practice questions on friction — laws of friction, angle of friction & repose, inclined planes and numericals. Answers reveal as you go." },
-    { slug: "equilibrium", topic: "Equilibrium of Forces", title: "Mechanics: Equilibrium of Forces — Practice", format: null, questions: MECH_EQUILIBRIUM, blurb: "15 practice questions on force systems and equilibrium — Lami's theorem, moments, couples and resultants." },
-    { slug: "moment-of-inertia", topic: "Moment of Inertia", title: "Mechanics: Centroid & Moment of Inertia — Practice", format: null, questions: MECH_MOI, blurb: "15 practice questions on centroids and area moment of inertia — standard formulae, the axis theorems and numericals." },
-    { slug: "kinematics", topic: "Kinematics", title: "Mechanics: Kinematics of Motion — Practice", format: null, questions: MECH_KINEMATICS, blurb: "15 practice questions on kinematics — equations of motion, projectiles and worked numericals." },
-    { slug: "simple-machines", topic: "Simple Machines", title: "Mechanics: Simple Machines — Quick Shot", format: "quick-shot", questions: MECH_MACHINES, blurb: "10 practice questions on simple machines — mechanical advantage, velocity ratio, efficiency and self-locking." },
-    { slug: "trusses", topic: "Trusses", title: "Mechanics: Trusses — Quick Shot", format: "quick-shot", questions: MECH_TRUSSES, blurb: "10 practice questions on plane trusses — perfect trusses, method of joints/sections, tension and compression." },
+    { slug: "mixed", topic: "Engineering Mechanics", title: "Mechanics: Engineering Mechanics, Quick Shot", format: "quick-shot", questions: MECH_MIXED, blurb: "10 mixed Engineering Mechanics questions across friction, forces, energy and moment of inertia. Practice mode, the answer reveals as you go." },
+    { slug: "friction", topic: "Friction", title: "Mechanics: Friction, Practice", format: null, questions: MECH_FRICTION, blurb: "20 practice questions on friction, laws of friction, angle of friction & repose, inclined planes and numericals. Answers reveal as you go." },
+    { slug: "equilibrium", topic: "Equilibrium of Forces", title: "Mechanics: Equilibrium of Forces, Practice", format: null, questions: MECH_EQUILIBRIUM, blurb: "15 practice questions on force systems and equilibrium, Lami's theorem, moments, couples and resultants." },
+    { slug: "moment-of-inertia", topic: "Moment of Inertia", title: "Mechanics: Centroid & Moment of Inertia, Practice", format: null, questions: MECH_MOI, blurb: "15 practice questions on centroids and area moment of inertia, standard formulae, the axis theorems and numericals." },
+    { slug: "kinematics", topic: "Kinematics", title: "Mechanics: Kinematics of Motion, Practice", format: null, questions: MECH_KINEMATICS, blurb: "15 practice questions on kinematics, equations of motion, projectiles and worked numericals." },
+    { slug: "simple-machines", topic: "Simple Machines", title: "Mechanics: Simple Machines, Quick Shot", format: "quick-shot", questions: MECH_MACHINES, blurb: "10 practice questions on simple machines, mechanical advantage, velocity ratio, efficiency and self-locking." },
+    { slug: "trusses", topic: "Trusses", title: "Mechanics: Trusses, Quick Shot", format: "quick-shot", questions: MECH_TRUSSES, blurb: "10 practice questions on plane trusses, perfect trusses, method of joints/sections, tension and compression." },
 ];
 
 // Publish each Mechanics chapter set once (per-test SeedFlag), as repeatable
@@ -164,7 +164,7 @@ async function ensureMechanicsTestsSeeded() {
 
             // Fixed-format sets must match their locked count; custom sets (null) don't.
             if (t.format && TEST_FORMATS[t.format] && t.questions.length !== TEST_FORMATS[t.format].count) {
-                console.warn(`[mechanics] ${t.topic} has ${t.questions.length}, expected ${TEST_FORMATS[t.format].count} — skipped`);
+                console.warn(`[mechanics] ${t.topic} has ${t.questions.length}, expected ${TEST_FORMATS[t.format].count}, skipped`);
                 continue;
             }
 
