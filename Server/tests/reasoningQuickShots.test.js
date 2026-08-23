@@ -65,7 +65,7 @@ const COUNT = TEST_FORMATS["quick-shot"].count; // 10
     assert.ok(seeded.length >= 9, `at least 9 reasoning Quick Shots seeded (got ${seeded.length})`);
 
     for (const bank of BANKS) {
-        const t = seeded.find((x) => x.title === `Reasoning: ${bank.topic} — Quick Shot`);
+        const t = seeded.find((x) => x.title === `Reasoning: ${bank.topic}, Quick Shot`);
         assert.ok(t, `${bank.topic} test exists`);
         assert.strictEqual(t.mode, "practice", `${bank.topic} is practice mode`);
         assert.strictEqual(t.isPublished, true, `${bank.topic} is published`);
@@ -82,7 +82,7 @@ const COUNT = TEST_FORMATS["quick-shot"].count; // 10
 
     // Students actually receive them (published + untargeted → visible to everyone).
     const list = (await request.get("/api/tests").set(...auth(studentToken))).body.tests;
-    const codingAndDecoding = list.find((t) => /Coding & Decoding — Quick Shot/.test(t.title));
+    const codingAndDecoding = list.find((t) => /Coding & Decoding, Quick Shot/.test(t.title));
     assert.ok(codingAndDecoding, "a seeded Quick Shot reaches the student list");
     assert.strictEqual(codingAndDecoding.format, "quick-shot", "carries the quick-shot format");
     assert.strictEqual(codingAndDecoding.mode, "practice", "carries practice mode");

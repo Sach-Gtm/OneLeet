@@ -13,9 +13,9 @@ const CHIPS = [
 ];
 
 const STEPS = [
-    { icon: GraduationCap, title: "Register free", body: "Fill the form below — it takes 30 seconds and creates your free OneLeet account." },
+    { icon: GraduationCap, title: "Register free", body: "Fill the form below, it takes 30 seconds and creates your free OneLeet account." },
     { icon: Medal, title: "Take one common exam", body: `Sit the All-India test on ${SCHOLARSHIP_TEST_DATE}, online, from home. One paper, one national rank.` },
-    { icon: IndianRupee, title: "Win up to 100% off", body: "The higher your rank, the bigger your scholarship — a ₹25,000 LEET course for ₹499, or fully free." },
+    { icon: IndianRupee, title: "Win up to 100% off", body: "The higher your rank, the bigger your scholarship, a ₹25,000 LEET course for ₹499, or fully free." },
 ];
 
 // A layered, faux-3D SVG medallion: concentric gradient rings (the outer one
@@ -110,8 +110,8 @@ function HeroBadge() {
 export default function ScholarshipRegister() {
     const { count } = useScholarshipCount();
     useSeo({
-        title: "All-India LEET Scholarship Test — Register Free | OneLeet",
-        description: `Register free for OneLeet's All-India Scholarship Test on ${SCHOLARSHIP_TEST_DATE}. One common online exam, one national rank — win up to a 100% scholarship on your LEET course.`,
+        title: "All-India LEET Scholarship Test, Register Free | OneLeet",
+        description: `Register free for OneLeet's All-India Scholarship Test on ${SCHOLARSHIP_TEST_DATE}. One common online exam, one national rank, win up to a 100% scholarship on your LEET course.`,
         path: "/scholarship",
     });
 
@@ -142,7 +142,7 @@ export default function ScholarshipRegister() {
                 </motion.h1>
                 <p className="mx-auto mt-3 max-w-lg text-sm text-slate-500 dark:text-slate-400">
                     One common online exam. One all-India rank. The higher you rank, the bigger your
-                    scholarship — a ₹25,000 LEET course for just ₹499, or completely free.
+                    scholarship, a ₹25,000 LEET course for just ₹499, or completely free.
                 </p>
 
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
@@ -166,7 +166,7 @@ export default function ScholarshipRegister() {
                             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                         </span>
                         <Flame className="h-4 w-4 text-orange-500" />
-                        <span className="tabular-nums"><b>{count.toLocaleString("en-IN")}</b> students already registered — it&apos;s your turn!</span>
+                        <span className="tabular-nums"><b>{count.toLocaleString("en-IN")}</b> students already registered, it&apos;s your turn!</span>
                     </motion.p>
                 )}
             </div>

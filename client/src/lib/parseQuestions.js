@@ -46,7 +46,7 @@ function fromJson(raw) {
     try {
         arr = JSON.parse(raw);
     } catch {
-        throw new Error("That looks like JSON but couldn't be parsed — check the brackets and commas.");
+        throw new Error("That looks like JSON but couldn't be parsed, check the brackets and commas.");
     }
     if (!Array.isArray(arr)) arr = [arr];
     return arr.map((q, i) => {

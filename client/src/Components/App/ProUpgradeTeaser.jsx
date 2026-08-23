@@ -59,7 +59,7 @@ export default function ProUpgradeTeaser() {
                             Unlock everything with Pro
                         </h2>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                            You&apos;re on the Free plan — here&apos;s what Pro adds to your prep.
+                            You&apos;re on the Free plan, here&apos;s what Pro adds to your prep.
                         </p>
                     </div>
                 </div>

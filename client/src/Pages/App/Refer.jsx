@@ -6,7 +6,7 @@ import { whatsappLink } from "@/config/support";
 import TopoLines from "@/Components/General/TopoLines";
 
 const rupee = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
-const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—");
+const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "-");
 
 export default function Refer() {
     const [ref, setRef] = useState(null);
@@ -22,13 +22,13 @@ export default function Refer() {
     // your code at checkout to earn you the cash reward.
     const origin = typeof window !== "undefined" ? window.location.origin : "https://oneleet.in";
     const link = `${origin}/register?ref=${ref.code}`;
-    const shareText = `Prepping for LEET? Join me on OneLeet — AI mentor, real PYQs, ranked mocks and a Success Promise. Use my referral code ${ref.code} at checkout: ${link} 🚀`;
+    const shareText = `Prepping for LEET? Join me on OneLeet, AI mentor, real PYQs, ranked mocks and a Success Promise. Use my referral code ${ref.code} at checkout: ${link} 🚀`;
 
     const copy = () => {
         if (!navigator.clipboard?.writeText) return toast("Long-press the link above to copy it.");
         navigator.clipboard.writeText(link)
             .then(() => { setCopied(true); toast.success("Referral link copied!"); setTimeout(() => setCopied(false), 1800); })
-            .catch(() => toast.error("Couldn't copy — long-press the link to copy it."));
+            .catch(() => toast.error("Couldn't copy, long-press the link to copy it."));
     };
 
     const stats = [
@@ -47,7 +47,7 @@ export default function Refer() {
                     <h1 className="mt-3 text-2xl font-bold">Refer friends, earn {pct}% cash</h1>
                     <p className="mt-1 max-w-md text-sm text-indigo-100">
                         When a friend enrolls in any paid course and applies your code at checkout, you earn{" "}
-                        <strong>{pct}% of what they pay</strong> — credited to you about <strong>1.25 months</strong> after their payment.
+                        <strong>{pct}% of what they pay</strong>, credited to you about <strong>1.25 months</strong> after their payment.
                     </p>
 
                     <div className="mt-5 rounded-xl bg-white/10 p-2 backdrop-blur-sm">

@@ -26,7 +26,7 @@ function shell({ preheader, bodyRows }) {
         </td></tr>
         ${bodyRows}
         <tr><td style="padding:20px 32px 28px;border-top:1px solid #eef2f7;">
-          <p style="margin:0;color:#94a3b8;font-size:12.5px;line-height:1.6;">Questions? Just reply to this email or write to <a href="mailto:${HELP}" style="color:#6366f1;text-decoration:none;">${HELP}</a>.<br>— Team OneLeet · your diploma-to-B.Tech shortcut</p>
+          <p style="margin:0;color:#94a3b8;font-size:12.5px;line-height:1.6;">Questions? Just reply to this email or write to <a href="mailto:${HELP}" style="color:#6366f1;text-decoration:none;">${HELP}</a>.<br>-Team OneLeet · your diploma-to-B.Tech shortcut</p>
         </td></tr>
       </table>
     </td></tr>
@@ -52,16 +52,16 @@ async function sendWelcomeEmail(user) {
         const bodyRows = `
         <tr><td style="padding:10px 32px 0;">
           <h1 style="margin:0 0 6px;font-size:24px;line-height:1.25;color:#0f172a;">Welcome aboard, ${fn} 👋</h1>
-          <p style="margin:14px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">You just did what most diploma students never do — you decided your diploma is a launchpad, not a ceiling. LEET is your route straight into <b>2nd-year B.Tech</b>, and we're here to help you crack it.</p>
+          <p style="margin:14px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">You just did what most diploma students never do, you decided your diploma is a launchpad, not a ceiling. LEET is your route straight into <b>2nd-year B.Tech</b>, and we're here to help you crack it.</p>
           <p style="margin:16px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">Everything you need is now in one place:</p>
           <ul style="margin:10px 0 0;padding-left:20px;color:#475569;font-size:15px;line-height:1.7;">
-            <li><b>Real past papers</b> — practise exactly what the exam asks</li>
+            <li><b>Real past papers</b>, practise exactly what the exam asks</li>
             <li><b>Exam-pattern mock tests</b> with an all-India rank</li>
             <li><b>An AI coach</b> that builds a plan around your exam date</li>
             <li><b>Notes, flashcards &amp; mentors</b> who cracked LEET themselves</li>
           </ul>
-          <p style="margin:16px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">OneLeet was built by a LEET rank-holder who cleared <b>AIR 54 with zero coaching</b> and has since guided 100+ students into colleges they'd only dreamed of. You don't need expensive coaching to crack LEET — you need the right papers, the right practice, and a plan.</p>
-          <p style="margin:18px 0 0;color:#0f172a;font-size:16px;line-height:1.6;font-weight:700;">The students who make it aren't the ones who study everything — they're the ones who start today.</p>
+          <p style="margin:16px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">OneLeet was built by a LEET rank-holder who cleared <b>AIR 54 with zero coaching</b> and has since guided 100+ students into colleges they'd only dreamed of. You don't need expensive coaching to crack LEET, you need the right papers, the right practice, and a plan.</p>
+          <p style="margin:18px 0 0;color:#0f172a;font-size:16px;line-height:1.6;font-weight:700;">The students who make it aren't the ones who study everything, they're the ones who start today.</p>
         </td></tr>
         <tr><td style="padding:22px 32px 4px;">${button("Start preparing free →", `${SITE}/courses`)}</td></tr>
         <tr><td style="padding:16px 32px 4px;">
@@ -72,28 +72,28 @@ async function sendWelcomeEmail(user) {
             to: user.email,
             subject: "Welcome to OneLeet 🎉 Your diploma-to-B.Tech journey starts now",
             html: shell({
-                preheader: "Real past papers, exam-pattern mocks and an AI coach — everything to crack LEET, free to start.",
+                preheader: "Real past papers, exam-pattern mocks and an AI coach, everything to crack LEET, free to start.",
                 bodyRows,
             }),
             text:
 `Welcome aboard, ${firstName(user.name)}!
 
-You just decided your diploma is a launchpad, not a ceiling. LEET is your route into 2nd-year B.Tech — and everything you need is now in one place:
+You just decided your diploma is a launchpad, not a ceiling. LEET is your route into 2nd-year B.Tech, and everything you need is now in one place:
 
 - Real past papers
 - Exam-pattern mock tests with an all-India rank
 - An AI coach that plans your prep around your exam date
 - Notes, flashcards and mentors who cracked LEET themselves
 
-OneLeet was built by a LEET rank-holder (AIR 54, zero coaching) who has guided 100+ students into colleges they'd only dreamed of. You don't need expensive coaching to crack LEET — you need the right papers, the right practice, and a plan.
+OneLeet was built by a LEET rank-holder (AIR 54, zero coaching) who has guided 100+ students into colleges they'd only dreamed of. You don't need expensive coaching to crack LEET, you need the right papers, the right practice, and a plan.
 
-The students who make it aren't the ones who study everything — they're the ones who start today.
+The students who make it aren't the ones who study everything, they're the ones who start today.
 
 Start preparing free: ${SITE}/courses
 Go all-in with OneLeet Premium: ${SITE}/pricing
 
 Questions? Reply here or write to ${HELP}.
-— Team OneLeet`,
+-Team OneLeet`,
         });
     } catch (e) {
         console.error("[welcome-email] skipped:", e.message);
@@ -110,7 +110,7 @@ async function sendEnrollmentEmail(user, course) {
         const bodyRows = `
         <tr><td style="padding:10px 32px 0;">
           <h1 style="margin:0 0 6px;font-size:24px;line-height:1.25;color:#0f172a;">You're in, ${fn} 🎉</h1>
-          <p style="margin:14px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">Your seat in the <b>${cn}</b> is confirmed. This is where diploma students turn into B.Tech rank-holders — and your prep starts today.</p>
+          <p style="margin:14px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">Your seat in the <b>${cn}</b> is confirmed. This is where diploma students turn into B.Tech rank-holders, and your prep starts today.</p>
           <p style="margin:16px 0 6px;color:#0f172a;font-size:15.5px;font-weight:700;">Start strong in 3 steps:</p>
           <ol style="margin:0;padding-left:20px;color:#475569;font-size:15px;line-height:1.7;">
             <li>Open a <b>real past paper</b> and see exactly what ${exam} asks.</li>
@@ -121,7 +121,7 @@ async function sendEnrollmentEmail(user, course) {
         </td></tr>
         <tr><td style="padding:22px 32px 4px;">${button("Open my batch →", `${SITE}/dashboard`)}</td></tr>
         <tr><td style="padding:16px 32px 4px;">
-          <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">Want the full arsenal? <b>OneLeet Premium</b> unlocks unlimited mocks, the complete master course and your AI mentor — plus a Success Promise backed by clear, per-exam terms. <a href="${SITE}/pricing" style="color:#6366f1;font-weight:600;text-decoration:none;">Go Premium →</a></p>
+          <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">Want the full arsenal? <b>OneLeet Premium</b> unlocks unlimited mocks, the complete master course and your AI mentor, plus a Success Promise backed by clear, per-exam terms. <a href="${SITE}/pricing" style="color:#6366f1;font-weight:600;text-decoration:none;">Go Premium →</a></p>
         </td></tr>`;
 
         await sendMail({
@@ -145,7 +145,7 @@ Open your batch: ${SITE}/dashboard
 Go Premium (full mocks, master course, AI mentor + Success Promise): ${SITE}/pricing
 
 Questions? Reply here or write to ${HELP}.
-— Team OneLeet`,
+-Team OneLeet`,
         });
     } catch (e) {
         console.error("[enroll-email] skipped:", e.message);
@@ -174,12 +174,12 @@ async function sendPurchaseEmail(user, order) {
         const isSplit = order.paymentPlan === "split" && order.status === "partially_paid";
         const second = (order.installments || []).find((i) => i.n === 2);
         const splitNote = isSplit && second
-            ? `<p style="margin:14px 0 0;color:#475569;font-size:14.5px;line-height:1.6;">You chose the 2-part plan, so full access is on now. Your second installment of <b>${rupee(second.amount)}</b> is due by <b>${prettyDate(second.dueAt)}</b> — we'll remind you before then.</p>`
+            ? `<p style="margin:14px 0 0;color:#475569;font-size:14.5px;line-height:1.6;">You chose the 2-part plan, so full access is on now. Your second installment of <b>${rupee(second.amount)}</b> is due by <b>${prettyDate(second.dueAt)}</b>, we'll remind you before then.</p>`
             : "";
 
         const bodyRows = `
         <tr><td style="padding:10px 32px 0;">
-          <h1 style="margin:0 0 6px;font-size:24px;line-height:1.25;color:#0f172a;">Payment received — you're Premium now, ${fn} 🎉</h1>
+          <h1 style="margin:0 0 6px;font-size:24px;line-height:1.25;color:#0f172a;">Payment received, you're Premium now, ${fn} 🎉</h1>
           <p style="margin:14px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">Your purchase is confirmed and <b>OneLeet Premium is unlocked</b>. This is the moment your prep stops being "someday" and becomes a plan.</p>
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 2px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
             <tr><td style="padding:16px 18px;">
@@ -189,17 +189,17 @@ async function sendPurchaseEmail(user, order) {
             </td></tr>
           </table>
           ${splitNote}
-          <p style="margin:16px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">Everything is open now — the full test series, the complete master course, your AI mentor and the Success Promise. Here's the fastest way to feel it working:</p>
+          <p style="margin:16px 0 0;color:#475569;font-size:15.5px;line-height:1.65;">Everything is open now, the full test series, the complete master course, your AI mentor and the Success Promise. Here's the fastest way to feel it working:</p>
           <ol style="margin:10px 0 0;padding-left:20px;color:#475569;font-size:15px;line-height:1.7;">
             <li>Take one <b>exam-pattern mock</b> today for an honest baseline.</li>
             <li>Let the <b>AI coach</b> build a plan around your exam date.</li>
             <li>Come back tomorrow. Consistency &gt; intensity.</li>
           </ol>
-          <p style="margin:18px 0 0;color:#0f172a;font-size:16px;line-height:1.6;font-weight:700;">You didn't just buy a course — you backed yourself. Now let's get you that rank.</p>
+          <p style="margin:18px 0 0;color:#0f172a;font-size:16px;line-height:1.6;font-weight:700;">You didn't just buy a course, you backed yourself. Now let's get you that rank.</p>
         </td></tr>
         <tr><td style="padding:22px 32px 4px;">${button("Start now →", `${SITE}/dashboard`)}</td></tr>
         <tr><td style="padding:16px 32px 4px;">
-          <p style="margin:0;color:#94a3b8;font-size:13px;line-height:1.6;">Need your invoice or have a question about your order? Just reply — a human reads every email.</p>
+          <p style="margin:0;color:#94a3b8;font-size:13px;line-height:1.6;">Need your invoice or have a question about your order? Just reply, a human reads every email.</p>
         </td></tr>`;
 
         await sendMail({
@@ -207,7 +207,7 @@ async function sendPurchaseEmail(user, order) {
             subject: "Payment received 🎉 Welcome to OneLeet Premium",
             html: shell({ preheader: `Your purchase is confirmed and Premium is unlocked${until ? ` until ${until}` : ""}. Here's how to start.`, bodyRows }),
             text:
-`Payment received — you're Premium now, ${firstName(user.name)}!
+`Payment received, you're Premium now, ${firstName(user.name)}!
 
 Your purchase is confirmed and OneLeet Premium is unlocked.
 
@@ -220,12 +220,12 @@ Fastest way to feel it working:
 2. Let the AI coach build a plan around your exam date.
 3. Come back tomorrow. Consistency > intensity.
 
-You didn't just buy a course — you backed yourself. Now let's get you that rank.
+You didn't just buy a course, you backed yourself. Now let's get you that rank.
 
 Start now: ${SITE}/dashboard
 
 Questions or need an invoice? Just reply to this email.
-— Team OneLeet`,
+-Team OneLeet`,
         });
     } catch (e) {
         console.error("[purchase-email] skipped:", e.message);

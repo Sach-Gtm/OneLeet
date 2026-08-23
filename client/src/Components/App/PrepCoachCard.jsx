@@ -24,7 +24,7 @@ export default function PrepCoachCard() {
                     </span>
                     <div>
                         <h2 className="text-sm font-bold text-slate-800">Your Prep Roadmap</h2>
-                        <p className="text-xs text-slate-400">What to focus on right now — and next.</p>
+                        <p className="text-xs text-slate-400">What to focus on right now, and next.</p>
                     </div>
                 </div>
                 <Link

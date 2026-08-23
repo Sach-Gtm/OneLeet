@@ -42,7 +42,7 @@ export default function VerifyOtp() {
         try {
             await verifyOtp({ email, otp });
             await refresh();
-            toast.success("Email verified — welcome to OneLeet!");
+            toast.success("Email verified, welcome to OneLeet!");
             navigate("/dashboard", { replace: true });
         } catch (err) {
             toast.error(err.message || "Verification failed");

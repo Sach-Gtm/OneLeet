@@ -18,7 +18,7 @@ const q = (text, options, correctIndex, explanation) => ({ text, options, correc
 const FUND_PRACTICE = [
     q("The part of a computer often called its 'brain' is the:", ["Monitor", "CPU", "RAM", "Keyboard"], 1, "The CPU (Central Processing Unit) executes instructions and is called the brain of the computer."),
     q("CPU stands for:", ["Central Processing Unit", "Computer Personal Unit", "Central Program Unit", "Control Processing Unit"], 0, "CPU = Central Processing Unit."),
-    q("RAM is a type of memory that is:", ["non-volatile", "volatile", "permanent", "read-only"], 1, "RAM is volatile — its contents are lost when the power is switched off."),
+    q("RAM is a type of memory that is:", ["non-volatile", "volatile", "permanent", "read-only"], 1, "RAM is volatile, its contents are lost when the power is switched off."),
     q("Which of the following is an input device?", ["Monitor", "Printer", "Keyboard", "Speaker"], 2, "A keyboard feeds data into the computer, so it is an input device."),
     q("Which of the following is an output device?", ["Mouse", "Keyboard", "Scanner", "Monitor"], 3, "A monitor displays output, so it is an output device."),
     q("One byte is equal to:", ["4 bits", "16 bits", "8 bits", "2 bits"], 2, "1 byte = 8 bits."),
@@ -37,7 +37,7 @@ const FUND_TEST = [
     q("Which of the following is NOT an input device?", ["Keyboard", "Mouse", "Scanner", "Monitor"], 3, "A monitor is an output device, not an input device."),
     q("The set of programs that tells a computer what to do is called:", ["Software", "Hardware", "Firmware only", "Malware"], 0, "Programs and instructions are collectively called software."),
     q("A printer is an example of a(n):", ["Input device", "Output device", "Storage device", "Processing device"], 1, "A printer produces output on paper, so it is an output device."),
-    q("Which memory is non-volatile (retains its contents without power)?", ["RAM", "Cache", "ROM", "Register"], 2, "ROM is non-volatile — it keeps its contents even when the power is off."),
+    q("Which memory is non-volatile (retains its contents without power)?", ["RAM", "Cache", "ROM", "Register"], 2, "ROM is non-volatile, it keeps its contents even when the power is off."),
 ];
 
 /* ─────────────── NUMBER SYSTEMS ─────────────── */
@@ -74,7 +74,7 @@ const SOFT_PRACTICE = [
     q("An operating system is a type of:", ["system software", "application software", "utility hardware", "malware"], 0, "The OS is system software that manages the computer."),
     q("Windows is an example of a(n):", ["word processor", "spreadsheet", "browser", "operating system"], 3, "Windows is an operating system."),
     q("A compiler converts a program from:", ["machine code to high-level", "binary to decimal", "text to image", "high-level language to machine language"], 3, "A compiler translates high-level source code into machine language."),
-    q("Machine language is written using:", ["binary (0s and 1s)", "English words", "hexadecimal only", "decimal numbers"], 0, "Machine language is expressed in binary — 0s and 1s."),
+    q("Machine language is written using:", ["binary (0s and 1s)", "English words", "hexadecimal only", "decimal numbers"], 0, "Machine language is expressed in binary, 0s and 1s."),
     q("Which of the following is an operating system?", ["MS Word", "Linux", "MS Excel", "Google Chrome"], 1, "Linux is an operating system; the others are applications."),
     q("The language that a computer understands directly is:", ["high-level language", "assembly language", "machine language", "English"], 2, "A computer directly understands only machine language."),
     q("MS Excel is used mainly for:", ["presentations", "word processing", "browsing", "spreadsheets"], 3, "MS Excel is a spreadsheet application."),
@@ -119,14 +119,14 @@ const NET_TEST = [
 ];
 
 const TESTS = [
-    { slug: "fundamentals-practice", topic: "Computer Fundamentals", mode: "practice", difficulty: "easy", title: "Computer Application: Computer Fundamentals — Practice", questions: FUND_PRACTICE, blurb: "10 practice questions on computer fundamentals — CPU, memory, input/output devices, generations and units. Repeatable; the answer reveals as you go. 25-minute window." },
-    { slug: "fundamentals-test", topic: "Computer Fundamentals", mode: "test", difficulty: "moderate", title: "Computer Application: Computer Fundamentals — Graded Test", questions: FUND_TEST, blurb: "A single-attempt, graded 10-question test on computer fundamentals, ranked on a live leaderboard. 25 minutes." },
-    { slug: "number-systems-practice", topic: "Number Systems", mode: "practice", difficulty: "easy", title: "Computer Application: Number Systems — Practice", questions: NUM_PRACTICE, blurb: "10 practice questions on number systems — binary, decimal, octal and hexadecimal, bases, conversions and units. 25-minute window." },
-    { slug: "number-systems-test", topic: "Number Systems", mode: "test", difficulty: "moderate", title: "Computer Application: Number Systems — Graded Test", questions: NUM_TEST, blurb: "A single-attempt, graded 10-question test on number systems, ranked on a live leaderboard. 25 minutes." },
-    { slug: "software-practice", topic: "Software & Operating Systems", mode: "practice", difficulty: "easy", title: "Computer Application: Software & Operating Systems — Practice", questions: SOFT_PRACTICE, blurb: "10 practice questions on software — system vs application software, operating systems, compilers/interpreters and languages. 25-minute window." },
-    { slug: "software-test", topic: "Software & Operating Systems", mode: "test", difficulty: "moderate", title: "Computer Application: Software & Operating Systems — Graded Test", questions: SOFT_TEST, blurb: "A single-attempt, graded 10-question test on software & operating systems, ranked on a live leaderboard. 25 minutes." },
-    { slug: "networking-practice", topic: "Networking & Internet", mode: "practice", difficulty: "easy", title: "Computer Application: Networking & Internet — Practice", questions: NET_PRACTICE, blurb: "10 practice questions on networking & the internet — LAN/WAN, WWW, HTTP, browsers, IP/URL and common abbreviations. 25-minute window." },
-    { slug: "networking-test", topic: "Networking & Internet", mode: "test", difficulty: "moderate", title: "Computer Application: Networking & Internet — Graded Test", questions: NET_TEST, blurb: "A single-attempt, graded 10-question test on networking & the internet, ranked on a live leaderboard. 25 minutes." },
+    { slug: "fundamentals-practice", topic: "Computer Fundamentals", mode: "practice", difficulty: "easy", title: "Computer Application: Computer Fundamentals, Practice", questions: FUND_PRACTICE, blurb: "10 practice questions on computer fundamentals, CPU, memory, input/output devices, generations and units. Repeatable; the answer reveals as you go. 25-minute window." },
+    { slug: "fundamentals-test", topic: "Computer Fundamentals", mode: "test", difficulty: "moderate", title: "Computer Application: Computer Fundamentals, Graded Test", questions: FUND_TEST, blurb: "A single-attempt, graded 10-question test on computer fundamentals, ranked on a live leaderboard. 25 minutes." },
+    { slug: "number-systems-practice", topic: "Number Systems", mode: "practice", difficulty: "easy", title: "Computer Application: Number Systems, Practice", questions: NUM_PRACTICE, blurb: "10 practice questions on number systems, binary, decimal, octal and hexadecimal, bases, conversions and units. 25-minute window." },
+    { slug: "number-systems-test", topic: "Number Systems", mode: "test", difficulty: "moderate", title: "Computer Application: Number Systems, Graded Test", questions: NUM_TEST, blurb: "A single-attempt, graded 10-question test on number systems, ranked on a live leaderboard. 25 minutes." },
+    { slug: "software-practice", topic: "Software & Operating Systems", mode: "practice", difficulty: "easy", title: "Computer Application: Software & Operating Systems, Practice", questions: SOFT_PRACTICE, blurb: "10 practice questions on software, system vs application software, operating systems, compilers/interpreters and languages. 25-minute window." },
+    { slug: "software-test", topic: "Software & Operating Systems", mode: "test", difficulty: "moderate", title: "Computer Application: Software & Operating Systems, Graded Test", questions: SOFT_TEST, blurb: "A single-attempt, graded 10-question test on software & operating systems, ranked on a live leaderboard. 25 minutes." },
+    { slug: "networking-practice", topic: "Networking & Internet", mode: "practice", difficulty: "easy", title: "Computer Application: Networking & Internet, Practice", questions: NET_PRACTICE, blurb: "10 practice questions on networking & the internet, LAN/WAN, WWW, HTTP, browsers, IP/URL and common abbreviations. 25-minute window." },
+    { slug: "networking-test", topic: "Networking & Internet", mode: "test", difficulty: "moderate", title: "Computer Application: Networking & Internet, Graded Test", questions: NET_TEST, blurb: "A single-attempt, graded 10-question test on networking & the internet, ranked on a live leaderboard. 25 minutes." },
 ];
 
 // Publish each set once (per-test SeedFlag). Practice sets are repeatable; the
@@ -147,7 +147,7 @@ async function ensureComputerAppTestsSeeded() {
             if (await SeedFlag.exists({ key })) continue;
 
             if (t.questions.length !== TEST_FORMATS["quick-shot"].count) {
-                console.warn(`[computer-app] ${t.slug} has ${t.questions.length}, expected 10 — skipped`);
+                console.warn(`[computer-app] ${t.slug} has ${t.questions.length}, expected 10, skipped`);
                 continue;
             }
 

@@ -18,7 +18,7 @@ const q = (text, options, correctIndex, explanation) => ({ text, options, correc
 
 /* ─────────────── SETS ─────────────── */
 const SETS_PRACTICE = [
-    q("The set of all vowels in the English alphabet has how many elements?", ["3", "4", "5", "6"], 2, "The vowels are a, e, i, o, u — five elements."),
+    q("The set of all vowels in the English alphabet has how many elements?", ["3", "4", "5", "6"], 2, "The vowels are a, e, i, o, u, five elements."),
     q("The number of elements in the empty set ∅ is:", ["Infinite", "1", "2", "0"], 3, "The empty set has no elements, so n(∅) = 0."),
     q("If A = {1, 2, 3}, the number of subsets of A is:", ["6", "8", "9", "3"], 1, "A set with n elements has 2ⁿ subsets; here 2³ = 8."),
     q("If A = {1, 2} and B = {2, 3}, then A ∪ B is:", ["{1, 2}", "{2}", "{1, 2, 3}", "{1, 2, 2, 3}"], 2, "The union collects all distinct elements: {1, 2, 3}."),
@@ -122,17 +122,17 @@ const CALCULUS_TEST = [
 
 const TESTS = [
     // Sets
-    { slug: "sets-practice", topic: "Sets", mode: "practice", difficulty: "easy", title: "Applied Maths: Sets — Practice", questions: SETS_PRACTICE, blurb: "10 practice questions on sets — union, intersection, subsets and set-size formulae. Repeatable; the answer reveals as you go. 25-minute window." },
-    { slug: "sets-test", topic: "Sets", mode: "test", difficulty: "moderate", title: "Applied Maths: Sets — Graded Test", questions: SETS_TEST, blurb: "A single-attempt, graded 10-question test on sets, ranked on a live leaderboard. 25 minutes. (Different questions from the practice set.)" },
+    { slug: "sets-practice", topic: "Sets", mode: "practice", difficulty: "easy", title: "Applied Maths: Sets, Practice", questions: SETS_PRACTICE, blurb: "10 practice questions on sets, union, intersection, subsets and set-size formulae. Repeatable; the answer reveals as you go. 25-minute window." },
+    { slug: "sets-test", topic: "Sets", mode: "test", difficulty: "moderate", title: "Applied Maths: Sets, Graded Test", questions: SETS_TEST, blurb: "A single-attempt, graded 10-question test on sets, ranked on a live leaderboard. 25 minutes. (Different questions from the practice set.)" },
     // Matrices & Determinants
-    { slug: "matrices-practice", topic: "Matrices & Determinants", mode: "practice", difficulty: "easy", title: "Applied Maths: Matrices & Determinants — Practice", questions: MATRICES_PRACTICE, blurb: "10 practice questions on matrices and 2×2 determinants — order, types, transpose, product order and evaluating determinants. 25-minute window." },
-    { slug: "matrices-test", topic: "Matrices & Determinants", mode: "test", difficulty: "moderate", title: "Applied Maths: Matrices & Determinants — Graded Test", questions: MATRICES_TEST, blurb: "A single-attempt, graded 10-question test on matrices & determinants, ranked on a live leaderboard. 25 minutes." },
+    { slug: "matrices-practice", topic: "Matrices & Determinants", mode: "practice", difficulty: "easy", title: "Applied Maths: Matrices & Determinants, Practice", questions: MATRICES_PRACTICE, blurb: "10 practice questions on matrices and 2×2 determinants, order, types, transpose, product order and evaluating determinants. 25-minute window." },
+    { slug: "matrices-test", topic: "Matrices & Determinants", mode: "test", difficulty: "moderate", title: "Applied Maths: Matrices & Determinants, Graded Test", questions: MATRICES_TEST, blurb: "A single-attempt, graded 10-question test on matrices & determinants, ranked on a live leaderboard. 25 minutes." },
     // Sequences & Series
-    { slug: "series-practice", topic: "Sequences & Series", mode: "practice", difficulty: "easy", title: "Applied Maths: Sequences & Series — Practice", questions: SERIES_PRACTICE, blurb: "10 practice questions on APs and GPs — nth term, common difference/ratio, sums and means, with worked numericals. 25-minute window." },
-    { slug: "series-test", topic: "Sequences & Series", mode: "test", difficulty: "moderate", title: "Applied Maths: Sequences & Series — Graded Test", questions: SERIES_TEST, blurb: "A single-attempt, graded 10-question test on sequences & series, ranked on a live leaderboard. 25 minutes." },
+    { slug: "series-practice", topic: "Sequences & Series", mode: "practice", difficulty: "easy", title: "Applied Maths: Sequences & Series, Practice", questions: SERIES_PRACTICE, blurb: "10 practice questions on APs and GPs, nth term, common difference/ratio, sums and means, with worked numericals. 25-minute window." },
+    { slug: "series-test", topic: "Sequences & Series", mode: "test", difficulty: "moderate", title: "Applied Maths: Sequences & Series, Graded Test", questions: SERIES_TEST, blurb: "A single-attempt, graded 10-question test on sequences & series, ranked on a live leaderboard. 25 minutes." },
     // Basic Calculus
-    { slug: "calculus-practice", topic: "Basic Calculus", mode: "practice", difficulty: "easy", title: "Applied Maths: Basic Calculus — Practice", questions: CALCULUS_PRACTICE, blurb: "10 practice questions on basic calculus — the power rule, standard derivatives and simple integrals. 25-minute window." },
-    { slug: "calculus-test", topic: "Basic Calculus", mode: "test", difficulty: "moderate", title: "Applied Maths: Basic Calculus — Graded Test", questions: CALCULUS_TEST, blurb: "A single-attempt, graded 10-question test on basic calculus, ranked on a live leaderboard. 25 minutes." },
+    { slug: "calculus-practice", topic: "Basic Calculus", mode: "practice", difficulty: "easy", title: "Applied Maths: Basic Calculus, Practice", questions: CALCULUS_PRACTICE, blurb: "10 practice questions on basic calculus, the power rule, standard derivatives and simple integrals. 25-minute window." },
+    { slug: "calculus-test", topic: "Basic Calculus", mode: "test", difficulty: "moderate", title: "Applied Maths: Basic Calculus, Graded Test", questions: CALCULUS_TEST, blurb: "A single-attempt, graded 10-question test on basic calculus, ranked on a live leaderboard. 25 minutes." },
 ];
 
 // Publish each set once (per-test SeedFlag). Practice sets are repeatable;
@@ -153,7 +153,7 @@ async function ensureAppliedMathAdvancedTestsSeeded() {
             if (await SeedFlag.exists({ key })) continue;
 
             if (t.questions.length !== TEST_FORMATS["quick-shot"].count) {
-                console.warn(`[applied-math-adv] ${t.slug} has ${t.questions.length}, expected 10 — skipped`);
+                console.warn(`[applied-math-adv] ${t.slug} has ${t.questions.length}, expected 10, skipped`);
                 continue;
             }
 

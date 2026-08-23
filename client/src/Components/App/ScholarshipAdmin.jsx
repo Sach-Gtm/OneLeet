@@ -38,7 +38,7 @@ export default function ScholarshipAdmin() {
         }
     };
 
-    const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—");
+    const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "-");
 
     return (
         <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -100,20 +100,20 @@ export default function ScholarshipAdmin() {
                         <tbody className="divide-y divide-slate-100">
                             {rows.map((r) => (
                                 <tr key={r._id} className="hover:bg-slate-50">
-                                    <td className="px-3 py-2.5 font-semibold text-slate-800">{r.name || "—"}</td>
+                                    <td className="px-3 py-2.5 font-semibold text-slate-800">{r.name || "-"}</td>
                                     <td className="px-3 py-2.5 text-slate-600">
                                         <div>
                                             {r.email ? (
                                                 <a href={`mailto:${r.email}`} className="hover:text-indigo-600">{r.email}</a>
-                                            ) : "—"}
+                                            ) : "-"}
                                         </div>
                                         {r.phone && (
                                             <a href={`tel:${r.phone}`} className="text-xs text-slate-400 hover:text-indigo-600">{r.phone}</a>
                                         )}
                                     </td>
-                                    <td className="px-3 py-2.5 text-slate-600">{r.diplomaBranch || "—"}</td>
-                                    <td className="px-3 py-2.5 text-slate-600">{r.state || "—"}</td>
-                                    <td className="px-3 py-2.5 text-slate-600">{r.preparingFor || "—"}</td>
+                                    <td className="px-3 py-2.5 text-slate-600">{r.diplomaBranch || "-"}</td>
+                                    <td className="px-3 py-2.5 text-slate-600">{r.state || "-"}</td>
+                                    <td className="px-3 py-2.5 text-slate-600">{r.preparingFor || "-"}</td>
                                     <td className="px-3 py-2.5 whitespace-nowrap text-slate-500">{fmtDate(r.createdAt)}</td>
                                 </tr>
                             ))}

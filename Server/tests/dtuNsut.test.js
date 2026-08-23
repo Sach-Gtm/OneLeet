@@ -84,7 +84,7 @@ const ok = (l) => { console.log("  ✓ " + l); passed++; };
     assert.strictEqual(bySubject["Reasoning"].chapters.length, 12, "Reasoning has 12 units");
     assert.strictEqual(bySubject["Quantitative Aptitude"].chapters.length, 4, "Quant has 4 units (13–16)");
     subjects.forEach((s) => s.chapters.forEach((c) => {
-        assert.ok(/^Unit \d+ —/.test(c.title), `chapter titled by unit: ${c.title}`);
+        assert.ok(/^Unit \d+,/.test(c.title), `chapter titled by unit: ${c.title}`);
         assert.ok(c.topics.length > 0, `${c.title} has topics`);
     }));
     ok("DTU/NSUT syllabus seeds unit/chapter-wise, targeted to the combined exam");

@@ -280,7 +280,7 @@ export default function Dashboard() {
                             Enroll in your batch to unlock your prep
                         </p>
                         <p className="text-indigo-700 dark:text-indigo-300/90">
-                            Pick the college-wise batch for your target exam — it&apos;s free — and
+                            Pick the college-wise batch for your target exam, it&apos;s free, and
                             we&apos;ll show only the tests, syllabus and notes that matter to you. Tap
                             to browse batches.
                         </p>
@@ -345,7 +345,7 @@ export default function Dashboard() {
                             <p className="mt-1 max-w-md text-sm text-indigo-100">
                                 {streak > 0
                                     ? `You've maintained a ${streak}-day streak! Keep up the momentum to crack your dream college.`
-                                    : "Let's build your prep streak — start with a mock test or a set of PYQs today."}
+                                    : "Let's build your prep streak, start with a mock test or a set of PYQs today."}
                             </p>
                             <div className="mt-5 flex flex-wrap gap-3">
                                 <Link

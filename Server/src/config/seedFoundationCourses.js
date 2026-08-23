@@ -29,14 +29,14 @@ const COURSES = [
         name: "IPU LEET 2027 Foundation Batch",
         slug: "ipu-leet-2027-foundation",
         examCode: "ipu-leet",
-        tagline: "Everything for GGSIPU lateral entry — real papers, weekly ranked mocks, seat & cut-off data, and live doubts.",
+        tagline: "Everything for GGSIPU lateral entry, real papers, weekly ranked mocks, seat & cut-off data, and live doubts.",
         order: 0,
     },
     {
         name: "DTU / NSUT LEET 2027 Foundation Batch",
         slug: "dtu-nsut-leet-2027-foundation",
         examCode: "dtu-nsut-leet",
-        tagline: "Crack the DTU / NSUT lateral entry — real papers, weekly ranked mocks, and a plan tied to your exam date.",
+        tagline: "Crack the DTU / NSUT lateral entry, real papers, weekly ranked mocks, and a plan tied to your exam date.",
         order: 1,
     },
 ];
@@ -45,7 +45,7 @@ const description = (name) =>
     `${name} is a structured, exam-only prep batch built by someone who cleared LEET. ` +
     "A large share of every year's paper repeats, so you drill real past papers with " +
     "verified official keys, sit weekly full-length mocks with an All-India rank, and " +
-    "follow a plan tied to your exam date — not scattered videos.";
+    "follow a plan tied to your exam date, not scattered videos.";
 
 async function ensureFoundationCoursesSeeded() {
     try {

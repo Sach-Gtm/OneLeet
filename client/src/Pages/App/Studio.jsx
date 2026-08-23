@@ -77,7 +77,7 @@ const toLocalInput = (d) => {
 const fromLocalInput = (v) => (v ? new Date(v).toISOString() : null);
 
 const MODES = [
-    { key: "test", label: "Test", icon: GraduationCap, hint: "Timed & graded — answers hidden until it closes, then ranking" },
+    { key: "test", label: "Test", icon: GraduationCap, hint: "Timed & graded, answers hidden until it closes, then ranking" },
     { key: "practice", label: "Practice", icon: Dumbbell, hint: "Answer is revealed the moment the student picks an option" },
 ];
 
@@ -241,9 +241,9 @@ export default function Studio() {
                 explanation: q.explanation || "",
             }));
             setQuestions(qs.length ? qs : [blankQuestion()]);
-            toast.success(`Drafted ${qs.length} question${qs.length === 1 ? "" : "s"} — review & edit below`);
+            toast.success(`Drafted ${qs.length} question${qs.length === 1 ? "" : "s"}, review & edit below`);
         } catch (err) {
-            toast.error(err.message || "Couldn't draft — try again");
+            toast.error(err.message || "Couldn't draft, try again");
         } finally {
             setDrafting(false);
         }
@@ -288,7 +288,7 @@ export default function Studio() {
         });
         setBulkText("");
         setBulkOpen(false);
-        toast.success(`Loaded ${parsed.length} question${parsed.length === 1 ? "" : "s"} — review & publish below`);
+        toast.success(`Loaded ${parsed.length} question${parsed.length === 1 ? "" : "s"}, review & publish below`);
     };
 
     // Pick a locked format (or "custom"). Point the AI drafter at the same count
@@ -338,7 +338,7 @@ export default function Studio() {
         // Locked format → must publish with EXACTLY its question count.
         if (publish && needCount && questions.length !== needCount) {
             return toast.error(
-                `${TEST_FORMATS[format].label} must have exactly ${needCount} questions — you have ${questions.length}.`
+                `${TEST_FORMATS[format].label} must have exactly ${needCount} questions, you have ${questions.length}.`
             );
         }
         setSaving(true);
@@ -348,7 +348,7 @@ export default function Studio() {
                 ? await updateStudioTest(editingId, payload)
                 : await createStudioTest(payload);
             if (publish) await publishStudioTest(saved._id);
-            toast.success(publish ? "Published — live for students" : "Draft saved");
+            toast.success(publish ? "Published, live for students" : "Draft saved");
             resetEditor();
             loadList();
         } catch (e) {
@@ -495,7 +495,7 @@ export default function Studio() {
                                     </div>
                                     <button
                                         onClick={() => toggleNotePremium(n)}
-                                        title={n.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                                        title={n.premium ? "Premium, click to make Free" : "Free, click to make Premium"}
                                         className={
                                             "grid h-8 w-8 place-items-center rounded-md border " +
                                             (n.premium
@@ -544,7 +544,7 @@ export default function Studio() {
                                         </div>
                                         <button
                                             onClick={() => toggleSyllabusPremium(s)}
-                                            title={s.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                                            title={s.premium ? "Premium, click to make Free" : "Free, click to make Premium"}
                                             className={
                                                 "grid h-8 w-8 place-items-center rounded-md border " +
                                                 (s.premium
@@ -665,7 +665,7 @@ export default function Studio() {
                     <input
                         value={meta.title}
                         onChange={(e) => setMeta((m) => ({ ...m, title: e.target.value }))}
-                        placeholder="Title (e.g. Network Theorems — Set 1)"
+                        placeholder="Title (e.g. Network Theorems, Set 1)"
                         className="h-10 rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                     />
                     <input
@@ -686,7 +686,7 @@ export default function Studio() {
                 {/* Locked size format. Picking one fixes the exact question count. */}
                 <div className="mt-4">
                     <label className="mb-1.5 block text-xs font-semibold text-slate-600">
-                        Format <span className="font-normal text-slate-400">— locks the question count</span>
+                        Format <span className="font-normal text-slate-400">-locks the question count</span>
                     </label>
                     <div className="flex flex-wrap gap-2">
                         <button
@@ -714,7 +714,7 @@ export default function Studio() {
                                             ? "border-indigo-600 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600"
                                             : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50")
                                     }
-                                    title={`${f.label} — exactly ${f.count} questions`}
+                                    title={`${f.label}, exactly ${f.count} questions`}
                                 >
                                     <span>{f.emoji}</span> {f.label}
                                     <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500">{f.count}</span>
@@ -734,7 +734,7 @@ export default function Studio() {
                             <Lock className="h-3 w-3" />
                             {questions.length}/{needCount} questions
                             {questions.length !== needCount &&
-                                ` — ${questions.length < needCount ? `add ${needCount - questions.length} more` : `remove ${questions.length - needCount}`} to publish`}
+                                `, ${questions.length < needCount ? `add ${needCount - questions.length} more` : `remove ${questions.length - needCount}`} to publish`}
                         </div>
                     )}
                 </div>
@@ -751,7 +751,7 @@ export default function Studio() {
                     <div>
                         <p className="text-sm font-semibold text-slate-700">Premium only</p>
                         <p className="text-xs text-slate-400">
-                            Only Premium students can open this — free students see it locked.
+                            Only Premium students can open this, free students see it locked.
                         </p>
                     </div>
                 </label>
@@ -799,7 +799,7 @@ export default function Studio() {
                                 </label>
                             </div>
                             <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
-                                Set a <strong>close time</strong> to run this as a competition — the
+                                Set a <strong>close time</strong> to run this as a competition, the
                                 leaderboard stays hidden until 5 minutes after it closes, then
                                 publishes ranks and notifies everyone. Leave both blank for an
                                 always-open test with an instant, ungated result.
@@ -832,8 +832,8 @@ export default function Studio() {
                                     className="w-full rounded-lg border border-slate-200 px-3 py-2 font-mono text-xs leading-relaxed focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                                 />
                                 <p className="mt-2 text-xs text-slate-500">
-                                    One block per question — the stem, then options as <b>A) B) C)</b> (or 1) 2) 3)),
-                                    then an <b>Answer:</b> line and an optional <b>Explanation:</b> — or paste a JSON array.
+                                    One block per question, the stem, then options as <b>A) B) C)</b> (or 1) 2) 3)),
+                                    then an <b>Answer:</b> line and an optional <b>Explanation:</b>, or paste a JSON array.
                                 </p>
                                 <div className="mt-2.5 flex flex-wrap gap-2">
                                     <button
@@ -987,7 +987,7 @@ export default function Studio() {
                 </div>
                 {list.length === 0 ? (
                     <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-400">
-                        Nothing yet — draft your first set above.
+                        Nothing yet, draft your first set above.
                     </p>
                 ) : shownList.length === 0 ? (
                     <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-400">
@@ -1032,13 +1032,13 @@ export default function Studio() {
                                         )}
                                     </div>
                                     <div className="text-xs text-slate-400">
-                                        {t.subject || "—"} · {t.questionCount} Qs · {t.totalMarks} marks
+                                        {t.subject || "-"} · {t.questionCount} Qs · {t.totalMarks} marks
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1.5">
                                     <button
                                         onClick={() => togglePremium(t)}
-                                        title={t.premium ? "Premium — click to make Free" : "Free — click to make Premium"}
+                                        title={t.premium ? "Premium, click to make Free" : "Free, click to make Premium"}
                                         className={
                                             "inline-flex h-8 items-center gap-1 rounded-md border px-2 text-[11px] font-semibold transition " +
                                             (t.premium

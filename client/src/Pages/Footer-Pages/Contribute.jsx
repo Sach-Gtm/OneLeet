@@ -25,7 +25,7 @@ export default function Contribute() {
 
     useSeo({
         title: "Contribute LEET Papers & Notes | OneLeet",
-        description: "Share a past paper, an important question, or notes that helped you — and help the next batch of LEET aspirants.",
+        description: "Share a past paper, an important question, or notes that helped you, and help the next batch of LEET aspirants.",
         path: "/contribute",
     });
 
@@ -76,7 +76,7 @@ export default function Contribute() {
                 </span>
                 <h1 className="mt-4 text-3xl font-bold text-slate-900">Help build the best LEET resource</h1>
                 <p className="mx-auto mt-2 max-w-md text-slate-500">
-                    Got a past paper, an important question, or notes that helped you? Share it —
+                    Got a past paper, an important question, or notes that helped you? Share it-
                     and help the next batch of aspirants.
                 </p>
             </div>
@@ -109,7 +109,7 @@ export default function Contribute() {
                         rows={5}
                         value={form.description}
                         onChange={set("description")}
-                        placeholder="e.g. IPU LEET 2019 full paper, or a tough DSA question with its solution — tell us the exam, year and subject where relevant."
+                        placeholder="e.g. IPU LEET 2019 full paper, or a tough DSA question with its solution, tell us the exam, year and subject where relevant."
                     />
                 </label>
 

@@ -110,8 +110,8 @@ const CLASSIFICATION_SURVIVOR = [
 ];
 
 const TESTS = [
-    { slug: "challenge", topic: "Challenge Mode", format: "challenge", questions: CLASSIFICATION_CHALLENGE, blurb: "40 'odd one out' classification questions, graded like the real exam. One attempt — the leaderboard is live the moment you finish." },
-    { slug: "survivor", topic: "Survivor Mode", format: "survivor", questions: CLASSIFICATION_SURVIVOR, blurb: "50 classification questions back to back. One attempt — see where you rank on the live leaderboard right after." },
+    { slug: "challenge", topic: "Challenge Mode", format: "challenge", questions: CLASSIFICATION_CHALLENGE, blurb: "40 'odd one out' classification questions, graded like the real exam. One attempt, the leaderboard is live the moment you finish." },
+    { slug: "survivor", topic: "Survivor Mode", format: "survivor", questions: CLASSIFICATION_SURVIVOR, blurb: "50 classification questions back to back. One attempt, see where you rank on the live leaderboard right after." },
 ];
 
 // Publish both graded classification mocks once (per-test SeedFlag).
@@ -131,7 +131,7 @@ async function ensureClassificationMockTestsSeeded() {
 
             const need = TEST_FORMATS[t.format].count;
             if (t.questions.length !== need) {
-                console.warn(`[classification-mock] ${t.topic} has ${t.questions.length} questions, expected ${need} — skipped`);
+                console.warn(`[classification-mock] ${t.topic} has ${t.questions.length} questions, expected ${need}, skipped`);
                 continue;
             }
 
@@ -139,7 +139,7 @@ async function ensureClassificationMockTestsSeeded() {
                 t.questions.map((qq) => ({ ...qq, subject: "Reasoning", topic: "Classification", difficulty: "moderate", marks: 1, createdBy: owner._id }))
             );
             await Test.create({
-                title: `Reasoning: Classification — ${t.topic}`,
+                title: `Reasoning: Classification, ${t.topic}`,
                 description: t.blurb,
                 subject: "Reasoning",
                 category: "topic-wise",

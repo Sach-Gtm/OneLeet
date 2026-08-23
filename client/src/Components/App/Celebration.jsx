@@ -111,7 +111,7 @@ export function Encourage({ rank, total }) {
             <h2 className="mt-2 text-lg font-bold text-slate-900">Great effort!</h2>
             <p className="mt-1 text-sm text-slate-500">
                 You finished{rank ? ` #${rank}` : ""}
-                {total ? ` of ${total}` : ""}. Keep practicing — your next Top&nbsp;3 finish could
+                {total ? ` of ${total}` : ""}. Keep practicing, your next Top&nbsp;3 finish could
                 be just around the corner.
             </p>
         </div>

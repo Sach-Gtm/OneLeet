@@ -105,15 +105,15 @@ export default function CoursesAdmin() {
         } catch (e) { toast.error(e.message); } finally { setSaving(false); }
     };
     const remove = async (c) => {
-        if (!window.confirm(`Delete "${c.name}"? This removes the batch and its enrollments — this can't be undone.`)) return;
+        if (!window.confirm(`Delete "${c.name}"? This removes the batch and its enrollments, this can't be undone.`)) return;
         try { await adminDeleteCourse(c._id); toast.success("Deleted"); load(); } catch (e) { toast.error(e.message); }
     };
 
     return (
         <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
             <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
-                <GraduationCap className="h-4 w-4 text-indigo-600" /> Batches — prices, discounts &amp; details
-                <span className="font-normal text-slate-400">— edit any batch (price, discount, Success Promise…) or delete it</span>
+                <GraduationCap className="h-4 w-4 text-indigo-600" /> Batches, prices, discounts &amp; details
+                <span className="font-normal text-slate-400">-edit any batch (price, discount, Success Promise…) or delete it</span>
                 {open ? <ChevronUp size={16} className="ml-auto" /> : <ChevronDown size={16} className="ml-auto" />}
             </button>
 
@@ -141,7 +141,7 @@ export default function CoursesAdmin() {
                                             {!c.published && <span className="rounded bg-slate-100 px-1.5 text-[10px] font-bold text-slate-500 dark:bg-slate-800">Draft</span>}
                                         </p>
                                         <p className="text-xs text-slate-400">
-                                            {c.examName || (c.kind === "counselling" ? "Counselling" : "—")} · {rupee(c.price)}
+                                            {c.examName || (c.kind === "counselling" ? "Counselling" : "-")} · {rupee(c.price)}
                                             {c.mrp > c.price ? <span className="ml-1 line-through">{rupee(c.mrp)}</span> : null}
                                         </p>
                                     </div>

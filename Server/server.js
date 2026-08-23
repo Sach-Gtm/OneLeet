@@ -62,6 +62,7 @@ const { ensureLeet2024PyqSeeded } = require("./src/config/seedLeet2024Pyq");
 const { ensureFoundationCoursesSeeded } = require("./src/config/seedFoundationCourses");
 const { ensurePaidCoursesSeeded } = require("./src/config/seedPaidCourses");
 const { ensureEnrollmentBackfill } = require("./src/config/seedEnrollmentBackfill");
+const { ensureEmDashesStripped } = require("./src/config/seedStripEmDashes");
 
 // Provision the Super Admin out-of-band once the DB is up, seed the LEET exam
 // catalog + founding mentors + IPU LEET syllabus and exam pattern on first run,
@@ -102,6 +103,8 @@ connectDB().then(async () => {
     // (auto-enroll into matching batches; reset legacy "All LEET" users).
     await ensureFoundationCoursesSeeded();
     await ensurePaidCoursesSeeded();
+    // Strip em dashes from all already-published content (one-time).
+    await ensureEmDashesStripped();
     await ensureEnrollmentBackfill();
     startLeaderboardScheduler();
     startTestLifecycleScheduler();

@@ -38,7 +38,7 @@ export default function ExamAdmin() {
         try {
             await addExam(name.trim(), group);
             clearExamsCache();
-            toast.success("College added — live everywhere");
+            toast.success("College added, live everywhere");
             setName("");
             load();
         } catch (err) {
@@ -70,7 +70,7 @@ export default function ExamAdmin() {
         <div className="rounded-xl border border-slate-200 bg-white p-4">
             <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-800">
                 <GraduationCap className="h-4 w-4 text-indigo-500" /> Universities / LEET exams
-                <span className="font-normal text-slate-400">— add or remove; applies everywhere</span>
+                <span className="font-normal text-slate-400">-add or remove; applies everywhere</span>
             </div>
 
             <form onSubmit={add} className="mb-3 flex flex-wrap gap-2">
@@ -107,7 +107,7 @@ export default function ExamAdmin() {
                 </div>
             ) : rows.length === 0 ? (
                 <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400">
-                    No colleges yet — add your first above.
+                    No colleges yet, add your first above.
                 </p>
             ) : (
                 <div className="max-h-96 space-y-3 overflow-y-auto pr-1">

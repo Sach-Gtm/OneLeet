@@ -76,7 +76,7 @@ export default function ContentProtectionAdmin() {
             <div className="mb-1 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-800">
                 <ShieldAlert className="h-4 w-4 text-amber-500" /> Content protection alerts
                 <span className="font-normal text-slate-400">
-                    — attempts to capture premium content
+, attempts to capture premium content
                 </span>
                 <button
                     onClick={refresh}
@@ -89,7 +89,7 @@ export default function ContentProtectionAdmin() {
 
             <p className="mb-3 text-xs leading-relaxed text-slate-400">
                 Screenshots and screen recording can&apos;t be fully blocked in a browser, so every
-                premium page is watermarked with the student&apos;s name &amp; contact — any leak is
+                premium page is watermarked with the student&apos;s name &amp; contact, any leak is
                 traceable. Detected attempts are listed here so you can gently ask the student to stop.
             </p>
 
@@ -131,7 +131,7 @@ export default function ContentProtectionAdmin() {
                                         {s.name || "Unknown student"}
                                     </p>
                                     <p className="truncate text-xs text-slate-400">
-                                        {s.email || s.phone || "—"}
+                                        {s.email || s.phone || "-"}
                                     </p>
                                 </div>
                                 <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-700">

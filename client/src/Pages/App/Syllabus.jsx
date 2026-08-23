@@ -412,7 +412,7 @@ export default function Syllabus() {
                 }
             }
         } catch {
-            toast.error("Couldn't save that — please try again.");
+            toast.error("Couldn't save that, please try again.");
             load();
         }
     };

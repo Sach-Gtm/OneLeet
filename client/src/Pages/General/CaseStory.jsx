@@ -27,7 +27,7 @@ export default function CaseStory() {
         title: c ? `${c.caseTitle || `How ${c.author || "a student"} cracked LEET`} | OneLeet Success Story` : "Success Story | OneLeet",
         description:
             c?.caseStory?.slice(0, 155) ||
-            "A OneLeet student's success story — from diploma to B.Tech through the Lateral Entry Entrance Test.",
+            "A OneLeet student's success story, from diploma to B.Tech through the Lateral Entry Entrance Test.",
         path: `/success/${slug}`,
     });
 

@@ -42,7 +42,7 @@ async function ensureEnrollmentBackfill() {
             }
             for (const code of codes) {
                 const courseId = courseByCode.get(code);
-                if (!courseId) continue; // no batch for this exam yet — keep the cache entry
+                if (!courseId) continue; // no batch for this exam yet, keep the cache entry
                 await Enrollment.findOneAndUpdate(
                     { student: s._id, course: courseId },
                     { $set: { examCode: code, status: "active" } },

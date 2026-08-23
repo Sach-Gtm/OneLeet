@@ -37,7 +37,7 @@ export const clearToken = () => {
     memToken = null;
     try {
         localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_KEY); // a cleared token means no session — drop the cached user too
+        localStorage.removeItem(USER_KEY); // a cleared token means no session, drop the cached user too
     } catch {
         /* ignore */
     }

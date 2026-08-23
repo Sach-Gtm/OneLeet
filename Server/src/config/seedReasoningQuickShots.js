@@ -88,7 +88,7 @@ const BANKS = [
     {
         slug: "continuous-pattern-series",
         topic: "Continuous Pattern Series",
-        blurb: "A block of letters repeats — fill the gaps in order. Answers reveal as you go.",
+        blurb: "A block of letters repeats, fill the gaps in order. Answers reveal as you go.",
         questions: [
             { text: "Fill the gaps in order:  a  b  _  c  a  _  c  c  _  b  c  _", options: ["abcc", "cbac", "bacc", "ccab"], correctIndex: 1, explanation: "The block 'abcc' repeats; the gaps in order are c, b, a, c." },
             { text: "Fill the gaps in order:  a  a  _  _  a  b  a  _  b", options: ["aba", "baa", "aab", "bba"], correctIndex: 1, explanation: "The block 'aab' repeats; the gaps in order are b, a, a." },
@@ -192,7 +192,7 @@ async function ensureReasoningQuickShotsSeeded() {
             // Locked format safety: never publish a Quick Shot with the wrong count.
             if (bank.questions.length !== QUICK_SHOT.count) {
                 console.warn(
-                    `[reasoning-qs] ${bank.topic} has ${bank.questions.length} questions, expected ${QUICK_SHOT.count} — skipped`
+                    `[reasoning-qs] ${bank.topic} has ${bank.questions.length} questions, expected ${QUICK_SHOT.count}, skipped`
                 );
                 continue;
             }
@@ -209,14 +209,14 @@ async function ensureReasoningQuickShotsSeeded() {
             );
 
             await Test.create({
-                title: `Reasoning: ${bank.topic} — Quick Shot`,
+                title: `Reasoning: ${bank.topic}, Quick Shot`,
                 description: bank.blurb,
                 subject: "Reasoning",
                 category: "topic-wise",
                 format: "quick-shot",
                 mode: "practice", // warm-up: reveal the answer as they go
                 durationMinutes: 10,
-                targets: [], // reasoning is common to every LEET — show to all
+                targets: [], // reasoning is common to every LEET, show to all
                 questions: docs.map((d) => d._id),
                 totalMarks: docs.length,
                 status: "published",

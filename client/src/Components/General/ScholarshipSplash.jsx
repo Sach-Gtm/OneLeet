@@ -178,7 +178,7 @@ export default function ScholarshipSplash() {
                                 Up to <span className="rounded-lg bg-amber-300 px-2 py-0.5 text-slate-900">100% OFF</span>
                             </h2>
                             <p className="relative mx-auto mt-3 max-w-xs text-[15px] font-medium leading-snug text-white/95">
-                                A <b>₹25,000</b> LEET course — yours for just <b>₹499</b>, or <b>100% FREE</b> based on your rank.
+                                A <b>₹25,000</b> LEET course, yours for just <b>₹499</b>, or <b>100% FREE</b> based on your rank.
                             </p>
                         </div>
 
@@ -209,7 +209,7 @@ export default function ScholarshipSplash() {
                                         <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                                     </span>
                                     <Flame className="h-3.5 w-3.5 text-orange-500" />
-                                    <span className="tabular-nums"><b>{count.toLocaleString("en-IN")}</b> already registered — your turn!</span>
+                                    <span className="tabular-nums"><b>{count.toLocaleString("en-IN")}</b> already registered, your turn!</span>
                                 </p>
                             )}
 

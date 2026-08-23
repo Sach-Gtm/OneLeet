@@ -45,7 +45,7 @@ export default function GetStartedChecklist({ user, stats }) {
 
     const doneCount = steps.filter((s) => s.done).length;
     const pct = Math.round((doneCount / steps.length) * 100);
-    if (doneCount === steps.length) return null; // fully set up — nothing to nudge
+    if (doneCount === steps.length) return null; // fully set up, nothing to nudge
 
     return (
         <motion.div
@@ -62,7 +62,7 @@ export default function GetStartedChecklist({ user, stats }) {
                     <div>
                         <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">Get started</h2>
                         <p className="text-xs text-slate-400">
-                            {doneCount} of {steps.length} done — finish setup to get the most out of OneLeet
+                            {doneCount} of {steps.length} done, finish setup to get the most out of OneLeet
                         </p>
                     </div>
                 </div>

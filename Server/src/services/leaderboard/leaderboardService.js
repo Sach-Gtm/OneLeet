@@ -75,7 +75,7 @@ async function finalizeTestLeaderboard(testId) {
         { $set: { leaderboardPublished: true, leaderboardPublishedAt: new Date() } },
         { returnDocument: "after" }
     );
-    if (!claimed) return { finalized: false, test }; // lost the race — already done
+    if (!claimed) return { finalized: false, test }; // lost the race, already done
 
     try {
         const attempts = await Attempt.find({ test: test._id }).select(

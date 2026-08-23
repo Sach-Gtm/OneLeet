@@ -52,7 +52,7 @@ export default function BlocklistAdmin() {
         <div className="rounded-xl border border-slate-200 bg-white p-4">
             <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-800">
                 <Ban className="h-4 w-4 text-rose-500" /> Blocked accounts
-                <span className="font-normal text-slate-400">— can't register or sign in</span>
+                <span className="font-normal text-slate-400">-can't register or sign in</span>
             </div>
 
             <form onSubmit={add} className="mb-3 flex flex-wrap gap-2">

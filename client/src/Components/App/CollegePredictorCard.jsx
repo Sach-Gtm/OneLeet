@@ -42,7 +42,7 @@ export default function CollegePredictorCard() {
             <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-slate-800 dark:text-slate-100">College Predictor</p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Try any target rank and see which {exam.examName || "LEET"} colleges you could get — set a goal and
+                    Try any target rank and see which {exam.examName || "LEET"} colleges you could get, set a goal and
                     prep toward it.
                 </p>
             </div>

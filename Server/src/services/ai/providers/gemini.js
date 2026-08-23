@@ -163,16 +163,16 @@ async function generateStudyNote({ prompt, subject, fileData } = {}) {
         "Write clear, exam-focused revision notes based on the attached material.";
     const context = subject ? ` Subject / context: ${subject}.` : "";
     const src = fileData
-        ? " Base the note on the ATTACHED file (image or PDF) — read it, including any diagrams or handwriting."
+        ? " Base the note on the ATTACHED file (image or PDF), read it, including any diagrams or handwriting."
         : "";
     const full =
         `You are an expert teacher creating study material for the Indian LEET (Lateral Entry) ` +
-        `engineering entrance exam.${context}${src} Do EXACTLY what the teacher asks — it may be ` +
+        `engineering entrance exam.${context}${src} Do EXACTLY what the teacher asks, it may be ` +
         `short notes, long detailed notes, MCQs (show the options and mark the correct answer with a ` +
         `one-line reason), a summary, key points, a comparison table, worked examples, and so on. ` +
         `Produce clean, well-structured GitHub-flavoured Markdown (## headings, - bullets, ` +
         `**bold**, | pipe tables | and 1. numbered lists where they help). Write ALL maths, ` +
-        `symbols and formulae as plain text / Unicode — use → ≤ ≥ × ÷ ± · ° √ ² ₂ etc. directly, ` +
+        `symbols and formulae as plain text / Unicode, use → ≤ ≥ × ÷ ± · ° √ ² ₂ etc. directly, ` +
         `and NEVER use LaTeX or math delimiters like $...$, \\(...\\) or backslash commands ` +
         `(\\rightarrow, \\times, \\frac …). Put each list item on its own line and do not ` +
         `backslash-escape characters. Do not add meta commentary.\n` +
@@ -183,7 +183,7 @@ async function generateStudyNote({ prompt, subject, fileData } = {}) {
     const parsed = safeJsonParse(raw) || {};
     return {
         provider: "gemini",
-        title: parsed.title || (subject ? `${subject} — notes` : "Study note"),
+        title: parsed.title || (subject ? `${subject}, notes` : "Study note"),
         description: parsed.description || "",
         content: parsed.content || raw || "",
     };
@@ -194,10 +194,10 @@ async function generateStudyNote({ prompt, subject, fileData } = {}) {
 // a scanned/uploaded syllabus PDF). Returns an editable draft the author reviews.
 async function structureSyllabus({ text, subject, fileData, instructions } = {}) {
     const src = fileData
-        ? "The syllabus is in the ATTACHED file — read it (including scanned/photographed pages)."
+        ? "The syllabus is in the ATTACHED file, read it (including scanned/photographed pages)."
         : `Syllabus source text:\n"""\n${String(text || "").slice(0, 16000)}\n"""`;
     const steer = instructions
-        ? ` IMPORTANT — the admin gave these instructions; follow them and let them OVERRIDE the ` +
+        ? ` IMPORTANT, the admin gave these instructions; follow them and let them OVERRIDE the ` +
           `source where they conflict (they may set/correct the subject, how chapters are grouped, ` +
           `what to include or skip, hours, etc.): "${String(instructions).slice(0, 1500)}".`
         : "";

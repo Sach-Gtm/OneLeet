@@ -101,7 +101,7 @@ export default function CompetitionAdmin({ isSuper }) {
                                         {t.title}
                                     </td>
                                     <td className="whitespace-nowrap pr-3 text-slate-500">
-                                        {t.closeAt ? new Date(t.closeAt).toLocaleString() : "—"}
+                                        {t.closeAt ? new Date(t.closeAt).toLocaleString() : "-"}
                                     </td>
                                     <td className="text-center tabular-nums text-slate-500">{t.participants}</td>
                                     <td className="text-right">

@@ -38,7 +38,7 @@ async function uploadAttachment(file, folder) {
 // it. Never throws on a mail failure — the user still gets a success response.
 async function notify({ subject, rows, attachmentUrl }) {
     const flat =
-        rows.map(([k, v]) => `${k}: ${v || "—"}`).join(" | ") +
+        rows.map(([k, v]) => `${k}: ${v || "-"}`).join(" | ") +
         (attachmentUrl ? ` | Attachment: ${attachmentUrl}` : "");
     console.log(`[contact] ${subject} :: ${flat}`);
 
@@ -47,7 +47,7 @@ async function notify({ subject, rows, attachmentUrl }) {
             ([k, v]) =>
                 `<tr><td style="padding:4px 14px 4px 0;color:#64748b;vertical-align:top">${esc(
                     k
-                )}</td><td style="padding:4px 0;color:#0f172a">${esc(v) || "—"}</td></tr>`
+                )}</td><td style="padding:4px 0;color:#0f172a">${esc(v) || "-"}</td></tr>`
         )
         .join("");
     const att = attachmentUrl
@@ -57,7 +57,7 @@ async function notify({ subject, rows, attachmentUrl }) {
         <h2 style="color:#4f46e5;margin:0 0 12px">${esc(subject)}</h2>
         <table style="font-size:14px">${body}</table>${att}
       </div>`;
-    const text = rows.map(([k, v]) => `${k}: ${v || "—"}`).join("\n") +
+    const text = rows.map(([k, v]) => `${k}: ${v || "-"}`).join("\n") +
         (attachmentUrl ? `\nAttachment: ${attachmentUrl}` : "");
 
     try {
@@ -77,11 +77,11 @@ async function bugReport(req, res, next) {
         const attachmentUrl = await uploadAttachment(req.file, "oneleet/bug-reports");
         await saveSubmission({ type: "bug", name, email, message: description, attachmentUrl });
         await notify({
-            subject: "🐛 New bug report — OneLeet",
+            subject: "🐛 New bug report, OneLeet",
             rows: [["Name", name], ["Email", email], ["Description", description]],
             attachmentUrl,
         });
-        return res.status(200).json({ success: true, message: "Thanks! Your bug report is in — we'll look into it." });
+        return res.status(200).json({ success: true, message: "Thanks! Your bug report is in, we'll look into it." });
     } catch (error) {
         next(error);
     }
@@ -97,11 +97,11 @@ async function contribution(req, res, next) {
         const attachmentUrl = await uploadAttachment(req.file, "oneleet/contributions");
         await saveSubmission({ type: "contribution", name, email, subject: type, message: description, attachmentUrl });
         await notify({
-            subject: "🎁 New contribution — OneLeet",
+            subject: "🎁 New contribution, OneLeet",
             rows: [["Name", name], ["Email", email], ["Type", type], ["Details", description]],
             attachmentUrl,
         });
-        return res.status(200).json({ success: true, message: "Thank you for contributing — we'll review it soon!" });
+        return res.status(200).json({ success: true, message: "Thank you for contributing, we'll review it soon!" });
     } catch (error) {
         next(error);
     }
@@ -116,7 +116,7 @@ async function callback(req, res, next) {
         }
         await saveSubmission({ type: "callback", name, phone, message: reason });
         await notify({
-            subject: "📞 Callback request — OneLeet",
+            subject: "📞 Callback request, OneLeet",
             rows: [["Name", name], ["Phone", phone], ["Reason", reason]],
         });
         return res.status(200).json({ success: true, message: "Got it! We'll call you back shortly." });

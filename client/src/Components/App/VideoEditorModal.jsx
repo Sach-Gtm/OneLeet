@@ -96,7 +96,7 @@ export default function VideoEditorModal({ video, subjects = [], onClose, onSave
                                     className="h-12 w-20 shrink-0 rounded object-cover"
                                 />
                                 <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700">
-                                    <CheckCircle2 size={14} /> Valid — this plays inside OneLeet.
+                                    <CheckCircle2 size={14} /> Valid, this plays inside OneLeet.
                                 </span>
                             </div>
                         ) : (
@@ -110,7 +110,7 @@ export default function VideoEditorModal({ video, subjects = [], onClose, onSave
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="e.g. Set Theory — Complete Concept"
+                            placeholder="e.g. Set Theory, Complete Concept"
                             className={inputCls}
                         />
                     </label>
@@ -141,7 +141,7 @@ export default function VideoEditorModal({ video, subjects = [], onClose, onSave
                             <input
                                 value={chapter}
                                 onChange={(e) => setChapter(e.target.value)}
-                                placeholder="Unit 1 — Set Theory"
+                                placeholder="Unit 1, Set Theory"
                                 className={inputCls}
                             />
                         </label>

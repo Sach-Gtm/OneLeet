@@ -251,7 +251,7 @@ export default function SuccessWallModal({ reviews = [], onClose }) {
                             <Sparkles className="h-5 w-5 shrink-0 text-amber-500" /> The Success Wall
                         </h2>
                         <p className="mt-0.5 hidden text-xs text-slate-500 dark:text-slate-400 sm:block">
-                            Photos, reviews, videos and full stories from OneLeet students — all in one place.
+                            Photos, reviews, videos and full stories from OneLeet students, all in one place.
                         </p>
                     </div>
                     <button onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700" aria-label="Close">

@@ -34,7 +34,7 @@ const DIFF = {
 };
 
 function DiffBadge({ level }) {
-    if (!level) return <span className="text-slate-300 dark:text-slate-600">—</span>;
+    if (!level) return <span className="text-slate-300 dark:text-slate-600">-</span>;
     return (
         <span className={cn("inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold", DIFF[level] || "bg-slate-100 text-slate-600")}>
             {level}
@@ -174,12 +174,12 @@ function SeatIntakeSection({ rows }) {
                         {list.map((s, i) => (
                             <tr key={i}>
                                 <td className="py-2.5 pr-3 font-semibold text-slate-800 dark:text-slate-100">
-                                    {s.college || "—"}
+                                    {s.college || "-"}
                                     {s.note && <span className="ml-1 text-xs font-normal text-slate-400">({s.note})</span>}
                                 </td>
-                                <td className="py-2.5 pr-3 text-slate-500 dark:text-slate-400">{s.course || "—"}</td>
+                                <td className="py-2.5 pr-3 text-slate-500 dark:text-slate-400">{s.course || "-"}</td>
                                 <td className="py-2.5 text-right font-bold text-slate-700 dark:text-slate-200">
-                                    {s.seats != null ? Number(s.seats).toLocaleString("en-IN") : "—"}
+                                    {s.seats != null ? Number(s.seats).toLocaleString("en-IN") : "-"}
                                 </td>
                             </tr>
                         ))}
@@ -251,7 +251,7 @@ export default function PatternDetail({ p, hasMatrix = false, hasCutoffs = false
                     <div className="min-w-0 flex-1">
                         <p className="text-sm font-bold text-slate-800 dark:text-slate-100">Cut-offs &amp; College Predictor</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Round-wise closing ranks — enter your rank to see which colleges you&apos;d get.
+                            Round-wise closing ranks, enter your rank to see which colleges you&apos;d get.
                         </p>
                     </div>
                     <ArrowRight size={16} className="shrink-0 text-emerald-500" />
@@ -275,10 +275,10 @@ export default function PatternDetail({ p, hasMatrix = false, hasCutoffs = false
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {p.sections.map((s, i) => (
                                     <tr key={i}>
-                                        <td className="py-2.5 pr-3 font-semibold text-slate-800 dark:text-slate-100">{s.name || "—"}</td>
-                                        <td className="py-2.5 pr-3 text-slate-500 dark:text-slate-400">{s.subjects || "—"}</td>
-                                        <td className="py-2.5 pr-3 text-center text-slate-600 dark:text-slate-300">{s.questions ?? "—"}</td>
-                                        <td className="py-2.5 pr-3 text-center font-medium text-slate-700 dark:text-slate-200">{s.marks ?? "—"}</td>
+                                        <td className="py-2.5 pr-3 font-semibold text-slate-800 dark:text-slate-100">{s.name || "-"}</td>
+                                        <td className="py-2.5 pr-3 text-slate-500 dark:text-slate-400">{s.subjects || "-"}</td>
+                                        <td className="py-2.5 pr-3 text-center text-slate-600 dark:text-slate-300">{s.questions ?? "-"}</td>
+                                        <td className="py-2.5 pr-3 text-center font-medium text-slate-700 dark:text-slate-200">{s.marks ?? "-"}</td>
                                         <td className="py-2.5 text-center"><DiffBadge level={s.difficulty} /></td>
                                     </tr>
                                 ))}
@@ -357,7 +357,7 @@ export default function PatternDetail({ p, hasMatrix = false, hasCutoffs = false
             <div className="flex flex-col items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-center sm:flex-row sm:text-left dark:border-slate-700/70 dark:bg-slate-800/40">
                 <div>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Still have questions about this exam?</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Talk to our team — we&apos;ll call you back and clear your doubts.</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Talk to our team, we&apos;ll call you back and clear your doubts.</p>
                 </div>
                 <button
                     onClick={openCallback}

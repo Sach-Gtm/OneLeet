@@ -143,10 +143,10 @@ export default function ExamPatternAdmin() {
         try {
             if (editingId) {
                 await updateExamPattern(editingId, form);
-                toast.success("Pattern updated — live on the dashboard");
+                toast.success("Pattern updated, live on the dashboard");
             } else {
                 await createExamPattern(form);
-                toast.success("Pattern added — live for students preparing for it");
+                toast.success("Pattern added, live for students preparing for it");
             }
             reset();
             load();
@@ -173,7 +173,7 @@ export default function ExamPatternAdmin() {
         <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
             <div className="mb-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
                 <ScrollText className="h-4 w-4 text-indigo-500" /> Exam paper patterns
-                <span className="font-normal text-slate-400">— shown on the dashboard to students preparing for that exam</span>
+                <span className="font-normal text-slate-400">-shown on the dashboard to students preparing for that exam</span>
             </div>
 
             <form onSubmit={save} className="mb-5 space-y-3 rounded-xl border border-slate-100 p-3 dark:border-slate-800">
@@ -214,7 +214,7 @@ export default function ExamPatternAdmin() {
                     <Field label="Duration">
                         <input value={form.duration} onChange={(e) => set("duration", e.target.value)} placeholder="2 hours 30 min" className={inCls} />
                     </Field>
-                    <Field label="Exam date" hint="Powers the student countdown — edit when the real date is announced">
+                    <Field label="Exam date" hint="Powers the student countdown, edit when the real date is announced">
                         <input type="date" value={form.examDate} onChange={(e) => set("examDate", e.target.value)} className={inCls} />
                     </Field>
                 </div>
@@ -256,7 +256,7 @@ export default function ExamPatternAdmin() {
                         </button>
                     </div>
                     {form.sections.length === 0 ? (
-                        <p className="py-2 text-center text-xs text-slate-400">No sections yet — add one.</p>
+                        <p className="py-2 text-center text-xs text-slate-400">No sections yet, add one.</p>
                     ) : (
                         <div className="space-y-2">
                             {form.sections.map((s, i) => (
@@ -289,7 +289,7 @@ export default function ExamPatternAdmin() {
                         </button>
                     </div>
                     {form.topColleges.length === 0 ? (
-                        <p className="py-2 text-center text-xs text-slate-400">No colleges yet — add one.</p>
+                        <p className="py-2 text-center text-xs text-slate-400">No colleges yet, add one.</p>
                     ) : (
                         <div className="space-y-2">
                             {form.topColleges.map((c, i) => (
@@ -315,7 +315,7 @@ export default function ExamPatternAdmin() {
                         </button>
                     </div>
                     {form.seatIntake.length === 0 ? (
-                        <p className="py-2 text-center text-xs text-slate-400">No seat intake yet — add a college and its seats.</p>
+                        <p className="py-2 text-center text-xs text-slate-400">No seat intake yet, add a college and its seats.</p>
                     ) : (
                         <div className="space-y-2">
                             {form.seatIntake.map((s, i) => (
@@ -363,7 +363,7 @@ export default function ExamPatternAdmin() {
                 </div>
             ) : rows.length === 0 ? (
                 <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400 dark:border-slate-700">
-                    No exam patterns yet — add your first above.
+                    No exam patterns yet, add your first above.
                 </p>
             ) : (
                 <ul className="divide-y divide-slate-100 dark:divide-slate-800">

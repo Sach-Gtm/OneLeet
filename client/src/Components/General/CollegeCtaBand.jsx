@@ -61,10 +61,10 @@ export default function CollegeCtaBand() {
                 {/* Foreground content */}
                 <div className="relative flex flex-col items-center gap-4 px-6 py-12 text-center sm:py-14">
                     <h3 className="max-w-3xl text-2xl font-extrabold leading-tight tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] sm:text-3xl md:text-4xl">
-                        Your seat at DTU, NSUT, VJTI &amp; IPU — one decision away.
+                        Your seat at DTU, NSUT, VJTI &amp; IPU, one decision away.
                     </h3>
                     <p className="max-w-xl text-sm font-semibold text-white [text-shadow:0_1px_8px_rgba(0,0,0,0.8)] sm:text-base">
-                        Lateral entry into 20+ top government &amp; private colleges. Skip the JEE cut-off — prep
+                        Lateral entry into 20+ top government &amp; private colleges. Skip the JEE cut-off, prep
                         with exam-pattern mock tests, PYQs and notes built for LEET.
                     </p>
                     <Link

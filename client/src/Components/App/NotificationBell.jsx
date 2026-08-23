@@ -156,7 +156,7 @@ export default function NotificationBell() {
                             <BellRing size={16} className="shrink-0 text-indigo-600" />
                             <span className="min-w-0">
                                 <span className="block text-xs font-semibold text-indigo-800">Get alerts on your device</span>
-                                <span className="block text-[11px] text-indigo-600/80">Turn on system notifications — one tap.</span>
+                                <span className="block text-[11px] text-indigo-600/80">Turn on system notifications, one tap.</span>
                             </span>
                         </button>
                     )}

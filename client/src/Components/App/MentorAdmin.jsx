@@ -101,10 +101,10 @@ export default function MentorAdmin() {
             };
             if (editingId) {
                 await updateMentor(editingId, payload);
-                toast.success("Mentor updated — live on the Mentors page");
+                toast.success("Mentor updated, live on the Mentors page");
             } else {
                 await createMentor(payload);
-                toast.success("Mentor added — live on the Mentors page");
+                toast.success("Mentor added, live on the Mentors page");
             }
             resetForm();
             load();
@@ -131,7 +131,7 @@ export default function MentorAdmin() {
         <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
             <div className="mb-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
                 <Users className="h-4 w-4 text-indigo-500" /> Mentors &amp; journeys
-                <span className="font-normal text-slate-400">— shown on the public Mentors page</span>
+                <span className="font-normal text-slate-400">-shown on the public Mentors page</span>
             </div>
 
             <form ref={formRef} onSubmit={submit} className="mb-5 space-y-2 rounded-lg border border-slate-100 p-3 dark:border-slate-800">
@@ -167,7 +167,7 @@ export default function MentorAdmin() {
                         <input value={form.name} onChange={set("name")} placeholder="Full name" className={inCls} />
                         <div className="flex gap-2">
                             <input value={form.role} onChange={set("role")} placeholder="Role (e.g. Founder & Head Mentor)" className={inCls} />
-                            <input value={form.exam} onChange={set("exam")} placeholder="Cleared (e.g. IPU LEET — AIR 54)" className={inCls} />
+                            <input value={form.exam} onChange={set("exam")} placeholder="Cleared (e.g. IPU LEET, AIR 54)" className={inCls} />
                         </div>
                         <div className="flex gap-2">
                             <input value={form.handle} onChange={set("handle")} placeholder="@handle (optional)" className={inCls} />
@@ -177,14 +177,14 @@ export default function MentorAdmin() {
                     </div>
                 </div>
 
-                <input value={form.tagline} onChange={set("tagline")} placeholder="Tagline — one punchy line (card + hero)" className={inCls} />
+                <input value={form.tagline} onChange={set("tagline")} placeholder="Tagline, one punchy line (card + hero)" className={inCls} />
                 <textarea value={form.description} onChange={set("description")} rows={2} placeholder="Short card blurb (optional)" className={taCls} />
-                <textarea value={form.story} onChange={set("story")} rows={6} placeholder={"The journey — the full story.\nSeparate paragraphs with a blank line."} className={taCls} />
+                <textarea value={form.story} onChange={set("story")} rows={6} placeholder={"The journey, the full story.\nSeparate paragraphs with a blank line."} className={taCls} />
 
                 <div className="grid gap-2 sm:grid-cols-3">
-                    <textarea value={form.highlightsText} onChange={set("highlightsText")} rows={4} placeholder={"Highlights — one per line:\nAIR 54, no coaching\nGuided 100+ students"} className={taCls} />
-                    <textarea value={form.statsText} onChange={set("statsText")} rows={4} placeholder={"Stats — value | label:\n54 | IPU LEET Rank\n100+ | Students guided"} className={taCls} />
-                    <textarea value={form.linksText} onChange={set("linksText")} rows={4} placeholder={"Links — label | url:\noneleet.in | https://oneleet.in"} className={taCls} />
+                    <textarea value={form.highlightsText} onChange={set("highlightsText")} rows={4} placeholder={"Highlights, one per line:\nAIR 54, no coaching\nGuided 100+ students"} className={taCls} />
+                    <textarea value={form.statsText} onChange={set("statsText")} rows={4} placeholder={"Stats, value | label:\n54 | IPU LEET Rank\n100+ | Students guided"} className={taCls} />
+                    <textarea value={form.linksText} onChange={set("linksText")} rows={4} placeholder={"Links, label | url:\noneleet.in | https://oneleet.in"} className={taCls} />
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -212,7 +212,7 @@ export default function MentorAdmin() {
                 <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-indigo-600" /></div>
             ) : rows.length === 0 ? (
                 <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400 dark:border-slate-700">
-                    No mentors yet — add your first above.
+                    No mentors yet, add your first above.
                 </p>
             ) : (
                 <ul className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -230,7 +230,7 @@ export default function MentorAdmin() {
                                     {m.name}
                                     {m.published === false && <span className="rounded bg-slate-100 px-1.5 text-[10px] font-semibold text-slate-400 dark:bg-slate-800">hidden</span>}
                                 </p>
-                                <p className="truncate text-xs text-slate-400">{[m.role, m.exam].filter(Boolean).join(" · ") || "—"}</p>
+                                <p className="truncate text-xs text-slate-400">{[m.role, m.exam].filter(Boolean).join(" · ") || "-"}</p>
                             </div>
                             <button onClick={() => startEdit(m)} className="shrink-0 rounded-md p-1.5 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-500/10" aria-label="Edit mentor">
                                 <Pencil className="h-4 w-4" />

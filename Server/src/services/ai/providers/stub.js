@@ -27,7 +27,7 @@ function generateFlashcards({ title = "this note", subject = "", count = 5 } = {
         cards.push({
             question: `Key concept ${i} from "${title}"${subject ? ` (${subject})` : ""}?`,
             answer:
-                "Sample flashcard answer — configure an AI provider (set AI_PROVIDER=gemini " +
+                "Sample flashcard answer, configure an AI provider (set AI_PROVIDER=gemini " +
                 "and GEMINI_API_KEY) to generate real cards from this note.",
         });
     }
@@ -58,13 +58,13 @@ function draftAssessment({ text = "", subject = "", topic = "", mode = "test", c
             options: ["Option A", "Option B", "Option C", "Option D"],
             correctIndex: i % 4,
             marks: 1,
-            explanation: "Sample explanation — set AI_PROVIDER=gemini + GEMINI_API_KEY for real drafts.",
+            explanation: "Sample explanation, set AI_PROVIDER=gemini + GEMINI_API_KEY for real drafts.",
         });
     }
     return {
         provider: "stub",
         title: `${mode === "practice" ? "Practice" : "Test"}: ${about}`,
-        description: "Sample draft — configure an AI provider to generate from your material.",
+        description: "Sample draft, configure an AI provider to generate from your material.",
         questions,
     };
 }
@@ -73,15 +73,15 @@ function generateStudyNote({ prompt = "", subject = "" } = {}) {
     const ask = String(prompt).trim() || "study notes based on the attached material";
     const subj = subject ? ` (${subject})` : "";
     const content =
-        `_Sample AI note — set AI_PROVIDER=gemini and GEMINI_API_KEY for real results._\n\n` +
+        `_Sample AI note, set AI_PROVIDER=gemini and GEMINI_API_KEY for real results._\n\n` +
         `**Your request:** ${ask}\n\n` +
-        `## Overview\nOnce AI is enabled, the note the AI writes for your request${subj} will appear here — ` +
+        `## Overview\nOnce AI is enabled, the note the AI writes for your request${subj} will appear here, ` +
         `in whatever form you asked for (short notes, detailed notes, MCQs, a summary, and so on).\n\n` +
         `## Key Points\n- Point one\n- Point two\n- Point three\n\n` +
         `## Example\nA short worked example would appear here.`;
     return {
         provider: "stub",
-        title: (subject ? `${subject} — ` : "") + "Sample note",
+        title: (subject ? `${subject}, ` : "") + "Sample note",
         description: `Sample note for: ${ask.slice(0, 60)}`,
         content,
     };
@@ -105,8 +105,8 @@ function structureSyllabus({ text = "", subject = "", instructions = "" } = {}) 
         title: subject ? `${subject} Syllabus` : "Syllabus",
         subject,
         chapters: [
-            { title: "Chapter 1 — Basics", topics: mkTopics(topicNames.slice(0, mid)) },
-            { title: "Chapter 2 — Advanced", topics: mkTopics(topicNames.slice(mid)) },
+            { title: "Chapter 1, Basics", topics: mkTopics(topicNames.slice(0, mid)) },
+            { title: "Chapter 2, Advanced", topics: mkTopics(topicNames.slice(mid)) },
         ],
     };
 }
@@ -119,7 +119,7 @@ function predictDifficulty({ questionText = "" } = {}) {
         difficulty,
         confidence: 0.6,
         rationale:
-            "Sample heuristic based on question length — configure an AI provider (Gemini) " +
+            "Sample heuristic based on question length, configure an AI provider (Gemini) " +
             "for a real difficulty prediction.",
     };
 }
@@ -152,7 +152,7 @@ function analyzePerformance({ stats = {} } = {}) {
         provider: "stub",
         focusAreas: ["Thermodynamics", "Digital Logic"],
         summary:
-            "Sample analysis — configure an AI provider to get a personalised breakdown of your " +
+            "Sample analysis, configure an AI provider to get a personalised breakdown of your " +
             "strengths and weak areas from your test history.",
         recommendations: [
             "Revise your weakest two topics first",

@@ -38,6 +38,6 @@ export async function enableBackgroundPush() {
         await api.post("/push/subscribe", sub.toJSON());
         return true;
     } catch {
-        return false; // unsupported, permission race, or VAPID mismatch — fall back to foreground
+        return false; // unsupported, permission race, or VAPID mismatch, fall back to foreground
     }
 }

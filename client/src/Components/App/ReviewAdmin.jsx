@@ -106,10 +106,10 @@ export default function ReviewAdmin() {
             };
             if (editingId) {
                 await updateReview(editingId, payload);
-                toast.success("Saved — live on the Success Wall");
+                toast.success("Saved, live on the Success Wall");
             } else {
                 await createReview(payload);
-                toast.success("Added — live on the Success Wall");
+                toast.success("Added, live on the Success Wall");
             }
             resetForm();
             load();
@@ -138,7 +138,7 @@ export default function ReviewAdmin() {
         <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
             <div className="mb-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
                 <Star className="h-4 w-4 text-amber-500" /> Success Wall
-                <span className="font-normal text-slate-400">— reviews &amp; student success stories on the landing page</span>
+                <span className="font-normal text-slate-400">-reviews &amp; student success stories on the landing page</span>
             </div>
 
             <form ref={formRef} onSubmit={submit} className="mb-5 space-y-3 rounded-lg border border-slate-100 p-3 dark:border-slate-800">
@@ -178,7 +178,7 @@ export default function ReviewAdmin() {
                         ) : (
                             <button type="button" onClick={() => fileRef.current?.click()} className="flex w-full flex-col items-center gap-1.5 rounded-lg border border-dashed border-slate-300 py-6 text-sm text-slate-500 hover:border-indigo-400 hover:text-indigo-600 dark:border-slate-600">
                                 <Upload size={18} />
-                                {form.type === "video" ? "Upload a video clip (MP4/WebM, ≤50 MB)" : "Upload an image — portrait works best (JPG/PNG, ≤8 MB)"}
+                                {form.type === "video" ? "Upload a video clip (MP4/WebM, ≤50 MB)" : "Upload an image, portrait works best (JPG/PNG, ≤8 MB)"}
                                 {editingId && <span className="text-[11px] text-slate-400">Leave empty to keep the current file</span>}
                             </button>
                         )}
@@ -209,7 +209,7 @@ export default function ReviewAdmin() {
                     {form.isCase && (
                         <div className="mt-2.5 space-y-2">
                             <input value={form.caseTitle} onChange={set("caseTitle")} placeholder="Headline (e.g. How Aman went from diploma to GGSIPU)" className={inCls} />
-                            <textarea value={form.caseStory} onChange={set("caseStory")} rows={5} placeholder={"The full story — how you helped them.\nSeparate paragraphs with a blank line. This becomes a public /success page (great for SEO)."} className={taCls} />
+                            <textarea value={form.caseStory} onChange={set("caseStory")} rows={5} placeholder={"The full story, how you helped them.\nSeparate paragraphs with a blank line. This becomes a public /success page (great for SEO)."} className={taCls} />
                         </div>
                     )}
                 </div>
@@ -229,7 +229,7 @@ export default function ReviewAdmin() {
             {rows === null ? (
                 <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-indigo-600" /></div>
             ) : rows.length === 0 ? (
-                <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400 dark:border-slate-700">Nothing yet — add your first above.</p>
+                <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400 dark:border-slate-700">Nothing yet, add your first above.</p>
             ) : (
                 <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                     {rows.map((r) => {

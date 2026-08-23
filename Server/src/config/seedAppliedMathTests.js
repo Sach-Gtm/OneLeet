@@ -30,7 +30,7 @@ const PROBABILITY = [
 
 // ── Permutations (10) ──
 const PERMUTATIONS = [
-    q("The number of permutations of n different things taken r at a time (ⁿPᵣ) is:", ["n!/(n − r)!", "n!/(r!(n − r)!)", "n!/r!", "(n − r)!/n!"], 0, "ⁿPᵣ = n!/(n − r)! — arrangements, where order matters."),
+    q("The number of permutations of n different things taken r at a time (ⁿPᵣ) is:", ["n!/(n − r)!", "n!/(r!(n − r)!)", "n!/r!", "(n − r)!/n!"], 0, "ⁿPᵣ = n!/(n − r)!, arrangements, where order matters."),
     q("The value of 5! is:", ["25", "60", "20", "120"], 3, "5! = 5 × 4 × 3 × 2 × 1 = 120."),
     q("The value of 0! is:", ["0", "1", "Undefined", "10"], 1, "By definition, 0! = 1."),
     q("The number of ways in which the letters of the word CAT can be arranged is:", ["3", "9", "6", "27"], 2, "All 3 letters are distinct, so the count is 3! = 6."),
@@ -44,7 +44,7 @@ const PERMUTATIONS = [
 
 // ── Combinations (10) ──
 const COMBINATIONS = [
-    q("The number of combinations of n different things taken r at a time (ⁿCᵣ) is:", ["n!/(r!(n − r)!)", "n!/(n − r)!", "n!/r!", "r!/n!"], 0, "ⁿCᵣ = n!/(r!(n − r)!) — selections, where order does not matter."),
+    q("The number of combinations of n different things taken r at a time (ⁿCᵣ) is:", ["n!/(r!(n − r)!)", "n!/(n − r)!", "n!/r!", "r!/n!"], 0, "ⁿCᵣ = n!/(r!(n − r)!), selections, where order does not matter."),
     q("The value of ⁿC₀ is:", ["0", "n", "1", "n!"], 2, "There is exactly one way to choose nothing, so ⁿC₀ = 1."),
     q("The value of ⁿCₙ is:", ["n", "1", "0", "n!"], 1, "There is exactly one way to choose all n items, so ⁿCₙ = 1."),
     q("The value of ⁵C₂ is:", ["20", "25", "5", "10"], 3, "⁵C₂ = (5 × 4)/(2 × 1) = 20/2 = 10."),
@@ -66,15 +66,15 @@ const STATISTICS = [
     q("The median of the data 2, 4, 6, 8 is:", ["4", "6", "5", "8"], 2, "For an even count the median is the average of the two middle values = (4 + 6)/2 = 5."),
     q("The arithmetic mean of the two numbers 12 and 18 is:", ["30", "15", "6", "16"], 1, "Mean = (12 + 18)/2 = 30/2 = 15."),
     q("The measure of central tendency that is most affected by extreme values is the:", ["Median", "Mode", "Range", "Mean"], 3, "The mean uses every value, so it is pulled by extreme (outlier) values; the median and mode are not."),
-    q("The mode of the data 7, 8, 9, 8, 10, 8, 11 is:", ["7", "8", "9", "10"], 1, "8 occurs three times — more than any other value — so the mode is 8."),
+    q("The mode of the data 7, 8, 9, 8, 10, 8, 11 is:", ["7", "8", "9", "10"], 1, "8 occurs three times, more than any other value, so the mode is 8."),
     q("The median of the data 10, 20, 30, 40, 50 is:", ["20", "25", "30", "40"], 2, "The middle (3rd) value of the 5 ordered numbers is 30."),
 ];
 
 const TESTS = [
-    { slug: "probability", topic: "Probability", title: "Applied Maths: Probability — Practice", questions: PROBABILITY, blurb: "10 practice questions on probability — coins, dice, cards and simple events. LEET exam-focused; the answer reveals as you go. 25-minute window." },
-    { slug: "permutations", topic: "Permutations", title: "Applied Maths: Permutations — Practice", questions: PERMUTATIONS, blurb: "10 practice questions on permutations — ⁿPᵣ, factorials and arrangement counting where order matters. 25-minute window." },
-    { slug: "combinations", topic: "Combinations", title: "Applied Maths: Combinations — Practice", questions: COMBINATIONS, blurb: "10 practice questions on combinations — ⁿCᵣ, selections and committee-style counting where order doesn't matter. 25-minute window." },
-    { slug: "statistics", topic: "Statistics", title: "Applied Maths: Statistics — Practice", questions: STATISTICS, blurb: "10 practice questions on statistics — mean, median, mode and range, with worked numericals. 25-minute window." },
+    { slug: "probability", topic: "Probability", title: "Applied Maths: Probability, Practice", questions: PROBABILITY, blurb: "10 practice questions on probability, coins, dice, cards and simple events. LEET exam-focused; the answer reveals as you go. 25-minute window." },
+    { slug: "permutations", topic: "Permutations", title: "Applied Maths: Permutations, Practice", questions: PERMUTATIONS, blurb: "10 practice questions on permutations, ⁿPᵣ, factorials and arrangement counting where order matters. 25-minute window." },
+    { slug: "combinations", topic: "Combinations", title: "Applied Maths: Combinations, Practice", questions: COMBINATIONS, blurb: "10 practice questions on combinations, ⁿCᵣ, selections and committee-style counting where order doesn't matter. 25-minute window." },
+    { slug: "statistics", topic: "Statistics", title: "Applied Maths: Statistics, Practice", questions: STATISTICS, blurb: "10 practice questions on statistics, mean, median, mode and range, with worked numericals. 25-minute window." },
 ];
 
 // Publish each set once (per-test SeedFlag), as repeatable practice attributed
@@ -96,7 +96,7 @@ async function ensureAppliedMathTestsSeeded() {
 
             // Quick Shot locks to exactly 10 questions.
             if (t.questions.length !== TEST_FORMATS["quick-shot"].count) {
-                console.warn(`[applied-math] ${t.topic} has ${t.questions.length}, expected 10 — skipped`);
+                console.warn(`[applied-math] ${t.topic} has ${t.questions.length}, expected 10, skipped`);
                 continue;
             }
 

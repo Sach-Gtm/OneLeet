@@ -126,7 +126,7 @@ function PrefsModal({ initial, formatKeys, onSave, onClose }) {
                 <div className="flex items-start justify-between">
                     <div>
                         <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Choose your tests</h3>
-                        <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Pick how you want to practise — we&apos;ll remember it.</p>
+                        <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Pick how you want to practise, we&apos;ll remember it.</p>
                     </div>
                     <button onClick={onClose} className="rounded-md p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><X size={18} /></button>
                 </div>
@@ -268,7 +268,7 @@ export default function TestsList() {
             <div className="mx-auto max-w-6xl space-y-6">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Tests &amp; Practice</h1>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">You&apos;re in {exams.length} batches — pick one to see its tests. Shared content shows fresh in every batch.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">You&apos;re in {exams.length} batches, pick one to see its tests. Shared content shows fresh in every batch.</p>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {exams.map((code) => {
