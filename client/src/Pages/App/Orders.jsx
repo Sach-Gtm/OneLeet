@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Loader2, Package, MessageCircle, ArrowRight } from "lucide-react";
+import { Loader2, Package, Mail, ArrowRight } from "lucide-react";
 import { getMyOrders, payInstallment, verifyPayment } from "@/Api/PaymentsApi";
-import { whatsappLink } from "@/config/support";
 
 const rupee = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 const fmt = (d) => (d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "");
@@ -40,7 +39,7 @@ export default function Orders() {
                 });
                 rzp.open();
             } else {
-                toast.success("Payment initiated, our team will confirm on WhatsApp shortly.");
+                toast.success("Payment initiated, our team will confirm by email shortly.");
             }
         } catch (e) {
             toast.error(e.message || "Could not start the payment");
@@ -91,8 +90,8 @@ export default function Orders() {
                                     </div>
                                 )}
                                 {o.status === "locked" && (
-                                    <a href={whatsappLink(`Hi OneLeet, I'd like to resume payment on order ${o._id}.`)} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700">
-                                        <MessageCircle size={13} /> Contact us to resume
+                                    <a href={`mailto:help@oneleet.in?subject=${encodeURIComponent(`Resume payment on order ${o._id}`)}`} className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700">
+                                        <Mail size={13} /> Contact us to resume
                                     </a>
                                 )}
                             </div>
