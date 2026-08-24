@@ -3,13 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
     ShoppingCart, Trash2, ShieldCheck, Check, Loader2, CreditCard,
-    ArrowRight, MessageCircle, Sparkles, X,
+    ArrowRight, Mail, Sparkles, X,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { createOrder, applyCoupon, verifyPayment, validateReferral } from "@/Api/PaymentsApi";
 import { track } from "@/lib/telemetry";
 import { useCelebrate } from "@/context/CelebrationContext";
-import { whatsappLink, WHATSAPP_RESPONSE } from "@/config/support";
 
 const rupee = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 
@@ -150,16 +149,13 @@ export default function Checkout() {
                 <h1 className="mt-4 text-2xl font-bold text-slate-900 dark:text-slate-100">Order placed!</h1>
                 <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500 dark:text-slate-400">
                     Your order for <strong>{placed.items.map((i) => i.courseName).join(", ")}</strong> is reserved.
-                    To activate premium, complete the payment of <strong>{rupee(placed.installments?.[0]?.amount ?? placed.total ?? 0)}</strong>-
-                    our team will share the payment details and confirm on WhatsApp {WHATSAPP_RESPONSE}.
+                    To activate premium, complete the payment of <strong>{rupee(placed.installments?.[0]?.amount ?? placed.total ?? 0)}</strong>. Our team will share the payment details and confirm by email shortly.
                 </p>
                 <a
-                    href={whatsappLink(`Hi OneLeet, I placed order ${placed._id} and want to complete payment.`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`mailto:help@oneleet.in?subject=${encodeURIComponent(`Complete payment for order ${placed._id}`)}`}
                     className="mt-5 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700"
                 >
-                    <MessageCircle size={16} /> Complete payment on WhatsApp
+                    <Mail size={16} /> Email us to complete payment
                 </a>
                 <div className="mt-3">
                     <Link to="/orders" className="text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400">View my orders →</Link>
