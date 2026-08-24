@@ -61,6 +61,7 @@ const { ensureDtuNsutSyllabusSeeded } = require("./src/config/seedDtuNsutSyllabu
 const { ensureLeet2024PyqSeeded } = require("./src/config/seedLeet2024Pyq");
 const { ensureFoundationCoursesSeeded } = require("./src/config/seedFoundationCourses");
 const { ensurePaidCoursesSeeded } = require("./src/config/seedPaidCourses");
+const { ensureMbaMockPiSeeded } = require("./src/config/seedMbaMockPi");
 const { ensureEnrollmentBackfill } = require("./src/config/seedEnrollmentBackfill");
 const { ensureEmDashesStripped } = require("./src/config/seedStripEmDashes");
 
@@ -103,6 +104,8 @@ connectDB().then(async () => {
     // (auto-enroll into matching batches; reset legacy "All LEET" users).
     await ensureFoundationCoursesSeeded();
     await ensurePaidCoursesSeeded();
+    // MBA Mock PI program — a purchasable counselling-kind course on /pricing.
+    await ensureMbaMockPiSeeded();
     // Strip em dashes from all already-published content (one-time).
     await ensureEmDashesStripped();
     await ensureEnrollmentBackfill();

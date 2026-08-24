@@ -5,6 +5,9 @@ const { verifyToken } = require("../../middlewares/authMiddleware");
 const { requireAdmin, requireSuperadmin } = require("../../middlewares/roleMiddleware");
 const ctrl = require("../../controllers/commerce/paymentController");
 
+// ── Public gateway status (boolean only, no secrets) ──
+router.get("/health", ctrl.health);
+
 // ── Razorpay webhook (no user token — authenticated by the signature) ──
 router.post("/webhook", ctrl.webhook);
 

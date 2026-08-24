@@ -28,6 +28,7 @@ import {
     PanelLeftClose,
     PanelLeftOpen,
     Crown,
+    Briefcase,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/Components/App/NotificationBell";
@@ -52,6 +53,7 @@ const NAV = [
             { to: "/syllabus", label: "Syllabus", icon: ListChecks },
             { to: "/tests", label: "Tests", icon: ClipboardList },
             { to: "/videos", label: "Videos", icon: MonitorPlay },
+            { to: "/mba", label: "OneLeet MBA", icon: Briefcase },
         ],
     },
     {

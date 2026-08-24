@@ -51,6 +51,7 @@ import CoursesAdmin from "@/Components/App/CoursesAdmin";
 import ReviewAdmin from "@/Components/App/ReviewAdmin";
 import MentorAdmin from "@/Components/App/MentorAdmin";
 import ScholarshipAdmin from "@/Components/App/ScholarshipAdmin";
+import MbaAdmin from "@/Components/App/MbaAdmin";
 import ReferralAdmin from "@/Components/App/ReferralAdmin";
 import { sendNotification } from "@/Api/NotificationApi";
 import { uploadPyq } from "@/Api/PyqApi";
@@ -646,6 +647,9 @@ export default function AdminDashboard() {
 
             {/* All-India Scholarship Test leads + CSV export (admins + super admin) */}
             {canManageStudents && <ScholarshipAdmin />}
+
+            {/* OneLeet MBA batch registrations (admins + super admin) */}
+            {canManageStudents && <MbaAdmin />}
 
             {/* Batches — course prices, discounts, details + delete (admins + super admin) */}
             {canManageStudents && <CoursesAdmin />}
