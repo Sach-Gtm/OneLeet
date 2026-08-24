@@ -26,6 +26,14 @@ const publicOrder = (o) => ({
     createdAt: o.createdAt,
 });
 
+// GET /api/payments/health — PUBLIC. Reports only whether the payment gateway is
+// live (i.e. RAZORPAY_KEY_ID + _SECRET are set in the server env). Returns a bare
+// boolean — never a key or secret — so it's safe to expose and lets us confirm
+// the gateway is wired without creating an order.
+function health(req, res) {
+    return res.json({ success: true, live: gateway.isLive() });
+}
+
 // POST /api/payments/orders — create a pending order from a cart.
 // body: { slugs: [String], couponCode?, referralCode?,
 //         acceptedTerms: { terms, successPromise, noRefund } }
@@ -297,6 +305,6 @@ async function adminSetPremium(req, res, next) {
 }
 
 module.exports = {
-    createOrder, myOrders, getOrder, payInstallment, verifyPayment, webhook,
+    health, createOrder, myOrders, getOrder, payInstallment, verifyPayment, webhook,
     adminConfirm, adminReopen, adminListOrders, adminSetPremium,
 };
