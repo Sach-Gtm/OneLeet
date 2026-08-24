@@ -16,16 +16,6 @@ import Logo from "@/Components/General/Logo";
 import { submitCallback } from "@/Api/ContactApi";
 import { CALLBACK_EVENT } from "@/lib/callback";
 
-// No socials yet — clicking one drops a cheeky nudge instead of a dead link.
-const FUNNY_LINES = [
-    "No socials yet. We're too busy building. Go study! 📚",
-    "Coming soon. For now, go crack some PYQs 😉",
-    "Nothing here yet. Back to the mocks, champ! 💪",
-    "Socials loading… meanwhile, one more mock test? 🚀",
-];
-const comingSoon = () =>
-    toast(FUNNY_LINES[Math.floor(Math.random() * FUNNY_LINES.length)], { icon: "🔒" });
-
 const linkCls = "text-slate-500 transition-all hover:pl-1 hover:text-indigo-600";
 
 function CallbackModal({ onClose }) {
@@ -121,7 +111,7 @@ export default function Footer() {
                     <div className="mt-4 flex items-center gap-2.5">
                         <a href="https://www.instagram.com/oneleet.in/" target="_blank" rel="noopener noreferrer" className={social + " hover:border-pink-300 hover:text-pink-500"} aria-label="Instagram"><Instagram size={15} /></a>
                         <a href="https://t.me/oneleetpublic" target="_blank" rel="noopener noreferrer" className={social + " hover:border-sky-300 hover:text-sky-500"} aria-label="Telegram" title="OneLeet Official on Telegram"><Send size={15} /></a>
-                        <button type="button" onClick={comingSoon} className={social + " hover:border-indigo-300 hover:text-indigo-600"} aria-label="LinkedIn"><Linkedin size={15} /></button>
+                        <a href="https://www.linkedin.com/company/oneleetofficial" target="_blank" rel="noopener noreferrer" className={social + " hover:border-indigo-300 hover:text-indigo-600"} aria-label="LinkedIn" title="OneLeet on LinkedIn"><Linkedin size={15} /></a>
                         <a href="https://www.youtube.com/@oneleetofficial" target="_blank" rel="noopener noreferrer" className={social + " hover:border-red-300 hover:text-red-500"} aria-label="YouTube" title="OneLeet on YouTube"><Youtube size={15} /></a>
                     </div>
                 </div>
