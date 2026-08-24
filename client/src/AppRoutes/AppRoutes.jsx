@@ -46,6 +46,7 @@ const Dashboard = lazy(() => import("@/Pages/App/Dashboard"));
 const Checkout = lazy(() => import("@/Pages/App/Checkout"));
 const Orders = lazy(() => import("@/Pages/App/Orders"));
 const Refer = lazy(() => import("@/Pages/App/Refer"));
+const OneLeetMba = lazy(() => import("@/Pages/App/OneLeetMba"));
 const Courses = lazy(() => import("@/Pages/App/Courses"));
 const CourseDetail = lazy(() => import("@/Pages/App/CourseDetail"));
 const PrepGuide = lazy(() => import("@/Pages/App/PrepGuide"));
@@ -126,6 +127,7 @@ const AppRoutes = () => {
                         <Route path="/checkout" element={<Checkout />} />
                         <Route path="/orders" element={<Orders />} />
                         <Route path="/refer" element={<Refer />} />
+                        <Route path="/mba" element={<OneLeetMba />} />
                         <Route path="/exam-pattern" element={<ExamPatternPage />} />
                         {/* Content routes — a signed-in student must have joined a
                             batch first (RequireCourse shows a "choose a course" gate). */}

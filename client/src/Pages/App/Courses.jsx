@@ -109,6 +109,10 @@ export default function Courses() {
         path: "/courses",
     });
 
+    // Only free-to-join LEET exam batches belong here; paid counselling / interview
+    // packs (e.g. the MBA Mock PI) live on /pricing, not this "Enroll free" page.
+    const batches = (courses || []).filter((c) => (c.kind || "exam") === "exam");
+
     return (
         <div className="relative min-h-screen">
             {/* Real sky behind the whole batches page — light-blue with clouds. */}
@@ -139,7 +143,7 @@ export default function Courses() {
             )}
 
             {/* Empty */}
-            {courses !== null && courses.length === 0 && (
+            {courses !== null && batches.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-slate-200 py-16 text-center dark:border-slate-700">
                     <GraduationCap className="mx-auto h-8 w-8 text-slate-300" />
                     <p className="mt-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
@@ -152,9 +156,9 @@ export default function Courses() {
             )}
 
             {/* Grid */}
-            {courses !== null && courses.length > 0 && (
+            {courses !== null && batches.length > 0 && (
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                    {courses.map((c, i) => (
+                    {batches.map((c, i) => (
                         <CourseCard key={c._id || c.slug} course={c} index={i} />
                     ))}
                 </div>
