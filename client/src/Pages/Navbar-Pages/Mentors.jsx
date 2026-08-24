@@ -9,7 +9,6 @@ import { getMentors } from "@/Api/MentorsApi";
 // never empty. These mirror the server's founding-mentor seed.
 const FALLBACK = [
     { _id: "f1", slug: "sachin-gautam", name: "Sachin Gautam", role: "Founder & Head Mentor", handle: "@sachingautam", exam: "IPU LEET, AIR 54", tagline: "AIR 54 with zero coaching, now building the path he wishes he'd had.", highlights: ["AIR 54 in IPU LEET, no coaching", "Guided 100+ students free", "3× hackathon winner"] },
-    { _id: "f2", slug: "robin", name: "Robin", role: "Co-founder", exam: "MBA, IIM Rohtak", tagline: "An IIM Rohtak MBA who's mentored 100+ students, and cleared interview after interview himself.", highlights: ["MBA from IIM Rohtak", "100+ students mentored", "Interviews & exams cleared"] },
     { _id: "f3", slug: "parth-singh-shekhawat", name: "Parth Singh Shekhawat", role: "Mentor", exam: "IPU LEET 2024, AIR 6", tagline: "AIR 6, mentored before OneLeet even had a website.", highlights: ["AIR 6 in IPU LEET 2024", "Final-year student at MSIT"] },
     { _id: "f4", slug: "ayush", name: "Ayush", role: "Mentor & Co-founder", exam: "IPU LEET, Rank 63", tagline: "Rank 63 with no coaching, only the right guidance.", highlights: ["Rank 63, no coaching", "Co-founder of 2 ventures"] },
 ];
