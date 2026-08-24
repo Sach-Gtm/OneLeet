@@ -35,7 +35,7 @@ export default function SuccessPromise() {
             {/* These terms are in effect and govern the purchase */}
             <div className="mt-6 flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
                 <Info size={16} className="mt-0.5 shrink-0" />
-                <p>These terms govern your purchase of a OneLeet membership and the Success Promise that comes with it. If anything is unclear, reach us on WhatsApp Business before you buy. We&apos;re happy to walk you through it.</p>
+                <p>These terms govern your purchase of a OneLeet membership and the Success Promise that comes with it. If anything is unclear, email us at <a href="mailto:help@oneleet.in" className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400">help@oneleet.in</a> before you buy. We&apos;re happy to walk you through it.</p>
             </div>
 
             <div className="mt-6 space-y-5">
