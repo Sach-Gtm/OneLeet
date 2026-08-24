@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Loader2, Gift, Copy, Check, Share2, Users, IndianRupee, Clock, Wallet } from "lucide-react";
 import { getMyReferral } from "@/Api/PaymentsApi";
-import { whatsappLink } from "@/config/support";
+import { whatsappShareLink } from "@/config/support";
 import TopoLines from "@/Components/General/TopoLines";
 
 const rupee = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
@@ -59,7 +59,7 @@ export default function Refer() {
                         </div>
                         <p className="mt-1 px-3 text-[11px] text-indigo-200">Your referral code: <span className="font-bold tracking-wider">{ref.code}</span></p>
                     </div>
-                    <a href={whatsappLink(shareText)} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-600">
+                    <a href={whatsappShareLink(shareText)} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-600">
                         <Share2 size={15} /> Share on WhatsApp
                     </a>
                 </div>
