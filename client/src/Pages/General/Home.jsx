@@ -69,10 +69,17 @@ export default function Home() {
 
             {/* Hero */}
             <section className="relative flex min-h-[86vh] w-full flex-col items-center justify-center overflow-hidden px-4 pb-12 pt-24 text-center sm:px-6 sm:pt-28">
-                {/* Instant pastel backdrop — paints immediately with no JS, so the
-                    hero (the LCP) never waits on WebGL. The GPU shader fades in
-                    over it once its chunk has loaded. */}
-                <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(ellipse_75%_55%_at_50%_0%,#d3f2fb_0%,#eef2ff_32%,#FAF9F6_68%)] dark:bg-slate-950" />
+                {/* Always-on aurora backdrop — pure CSS (no JS, no WebGL), so it
+                    paints instantly, keeps the hero LCP light, and keeps flowing
+                    even when the GPU shader is skipped (Data-Saver / no WebGL /
+                    small screens). The premium WebGL wash layers on top when the
+                    browser supports it. */}
+                <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden bg-[#FAF9F6] dark:bg-slate-950">
+                    <div className="ol-aurora absolute -left-[15%] -top-[30%] h-[75vh] w-[75vh] rounded-full bg-indigo-300/60 blur-[90px] dark:bg-indigo-500/20" />
+                    <div className="ol-aurora-2 absolute -right-[12%] -top-[20%] h-[65vh] w-[65vh] rounded-full bg-violet-300/55 blur-[90px] dark:bg-violet-500/20" />
+                    <div className="ol-aurora-3 absolute left-[22%] top-[12%] h-[60vh] w-[60vh] rounded-full bg-sky-300/55 blur-[90px] dark:bg-sky-500/15" />
+                    <div className="ol-aurora-2 absolute right-[16%] top-[22%] h-[50vh] w-[50vh] rounded-full bg-rose-200/50 blur-[80px] dark:bg-rose-500/10" />
+                </div>
                 {/* Live GPU shader wash, loaded off the critical path. */}
                 <Suspense fallback={null}>
                     <ShaderHero className="absolute inset-0 -z-10" />
