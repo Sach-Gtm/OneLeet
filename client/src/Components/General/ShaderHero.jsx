@@ -77,12 +77,13 @@ const fragment = /* glsl */ `
         vec3 peach  = vec3(0.996, 0.847, 0.706);
 
         vec3 col = base;
-        col = mix(col, indigo, clamp(smoothstep(-0.1, 0.95, f) * 0.55, 0.0, 1.0));
-        col = mix(col, violet, clamp(smoothstep(0.05, 1.25, length(q)) * 0.5, 0.0, 1.0));
-        col = mix(col, peach,  clamp(smoothstep(0.7, 1.35, f + 0.35 * r.x) * 0.45, 0.0, 1.0));
+        col = mix(col, indigo, clamp(smoothstep(-0.1, 0.95, f) * 0.66, 0.0, 1.0));
+        col = mix(col, violet, clamp(smoothstep(0.05, 1.25, length(q)) * 0.6, 0.0, 1.0));
+        col = mix(col, peach,  clamp(smoothstep(0.7, 1.35, f + 0.35 * r.x) * 0.54, 0.0, 1.0));
 
-        // Lift toward white so it stays a gentle, premium haze behind text.
-        col = mix(vec3(1.0), col, 0.62);
+        // Lift toward white so it stays a premium haze that keeps dark text
+        // readable — but leave more colour in than before so the wash is visible.
+        col = mix(vec3(1.0), col, 0.78);
 
         gl_FragColor = vec4(col, 1.0);
     }
@@ -101,7 +102,7 @@ export default function ShaderHero({ className = "" }) {
         const conn = navigator.connection || navigator.webkitConnection;
         if (window.matchMedia("(max-width: 640px)").matches || (conn && conn.saveData)) return;
 
-        let renderer, program, mesh, gl, raf;
+        let renderer, program, mesh, gl, raf, onVis, io;
         try {
             renderer = new Renderer({
                 dpr: Math.min(window.devicePixelRatio || 1, 1.25),
@@ -154,32 +155,46 @@ export default function ShaderHero({ className = "" }) {
 
         const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (reduce) {
+            // Respect reduced-motion: paint one gentle frame and hold it.
             program.uniforms.uTime.value = 12.0;
             renderer.render({ scene: mesh });
         } else {
-            // Play an intro that eases to a gentle stop, then hold the frame —
-            // "runs on open, then settles". Re-runs whenever this remounts
-            // (e.g. navigating login → register opens a fresh page).
-            const DURATION = 9000;
+            // Keep the aurora flowing continuously. To stay responsible about
+            // GPU/battery for an always-on background, the loop pauses whenever
+            // the tab is hidden or the hero scrolls out of view, and resumes when
+            // it's on screen again. uTime tracks wall-clock so it never jumps.
             const start = performance.now();
-            let last = start;
-            let elapsed = 0;
-            const loop = (now) => {
-                const prog = Math.min((now - start) / DURATION, 1);
-                const speed = 0.5 + 0.5 * Math.cos(prog * Math.PI); // 1 → 0 ease
-                elapsed += (now - last) * speed;
-                last = now;
-                program.uniforms.uTime.value = elapsed / 1000;
+            let running = false;
+            const frame = (now) => {
+                program.uniforms.uTime.value = (now - start) / 1000;
                 renderer.render({ scene: mesh });
-                if (prog < 1) raf = requestAnimationFrame(loop);
+                raf = requestAnimationFrame(frame);
             };
-            raf = requestAnimationFrame(loop);
+            const play = () => {
+                if (running) return;
+                running = true;
+                raf = requestAnimationFrame(frame);
+            };
+            const pause = () => {
+                if (!running) return;
+                running = false;
+                cancelAnimationFrame(raf);
+            };
+            play();
+
+            onVis = () => (document.hidden ? pause() : play());
+            document.addEventListener("visibilitychange", onVis);
+
+            io = new IntersectionObserver(([e]) => (e && e.isIntersecting ? play() : pause()), { threshold: 0 });
+            io.observe(container);
         }
 
         return () => {
             cancelAnimationFrame(raf);
             window.removeEventListener("resize", resize);
             window.removeEventListener("pointermove", onPointer);
+            if (onVis) document.removeEventListener("visibilitychange", onVis);
+            if (io) io.disconnect();
             const ext = gl.getExtension("WEBGL_lose_context");
             if (ext) ext.loseContext();
             if (gl.canvas.parentNode) gl.canvas.parentNode.removeChild(gl.canvas);
