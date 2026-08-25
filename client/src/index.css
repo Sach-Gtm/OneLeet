@@ -372,6 +372,24 @@
 }
 .ol-aurora { animation: ol-aurora 16s ease-in-out infinite; will-change: transform; }
 
+/* Two more drift paths so the CSS aurora blobs behind the hero move
+   independently (used as the always-on, no-WebGL fallback background). */
+@keyframes ol-aurora-2 {
+  0%   { transform: translate3d(6%, 4%, 0) scale(1); }
+  50%  { transform: translate3d(-7%, -6%, 0) scale(1.22); }
+  100% { transform: translate3d(6%, 4%, 0) scale(1); }
+}
+.ol-aurora-2 { animation: ol-aurora-2 21s ease-in-out infinite; will-change: transform; }
+@keyframes ol-aurora-3 {
+  0%   { transform: translate3d(-5%, -6%, 0) scale(1.15); }
+  50%  { transform: translate3d(7%, 5%, 0) scale(0.95); }
+  100% { transform: translate3d(-5%, -6%, 0) scale(1.15); }
+}
+.ol-aurora-3 { animation: ol-aurora-3 26s ease-in-out infinite; will-change: transform; }
+@media (prefers-reduced-motion: reduce) {
+  .ol-aurora, .ol-aurora-2, .ol-aurora-3 { animation: none; }
+}
+
 /* Soft breathing glow. */
 @keyframes ol-glow {
   0%, 100% { opacity: 0.3; transform: scale(1); }
