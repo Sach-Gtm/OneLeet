@@ -7,6 +7,7 @@ import {
     CheckCircle2,
     Loader2,
     Sparkles,
+    ShieldCheck,
 } from "lucide-react";
 import { getCourses } from "@/Api/CoursesApi";
 import CourseBanner, { CourseSky, hueFor } from "@/Components/General/CourseBanner";
@@ -132,6 +133,9 @@ export default function Courses() {
                         papers, ranked mocks, seat &amp; cut-off data and a plan tied to your exam
                         date, all in one place.
                     </p>
+                    <Link to="/guarantee" className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-3.5 py-1.5 text-xs font-bold text-slate-900 shadow-sm transition hover:bg-amber-300">
+                        <ShieldCheck size={13} /> Premium is backed by a 100% money-back guarantee <ArrowRight size={12} />
+                    </Link>
                 </div>
             </div>
 
