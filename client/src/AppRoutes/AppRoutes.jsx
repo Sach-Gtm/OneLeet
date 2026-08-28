@@ -30,6 +30,7 @@ const Colleges = lazy(() => import("@/Pages/General/Colleges"));
 const Pricing = lazy(() => import("@/Pages/General/Pricing"));
 const ScholarshipRegister = lazy(() => import("@/Pages/General/ScholarshipRegister"));
 const SuccessPromise = lazy(() => import("@/Pages/General/SuccessPromise"));
+const Guarantee = lazy(() => import("@/Pages/General/Guarantee"));
 const SuccessStories = lazy(() => import("@/Pages/General/SuccessStories"));
 const CaseStory = lazy(() => import("@/Pages/General/CaseStory"));
 const PrivacyPolicy = lazy(() => import("@/Pages/Footer-Pages/PrivacyPolicy"));
@@ -90,6 +91,7 @@ const AppRoutes = () => {
                         <Route path="/pricing" element={<Pricing />} />
                         <Route path="/scholarship" element={<ScholarshipRegister />} />
                         <Route path="/success-promise" element={<SuccessPromise />} />
+                        <Route path="/guarantee" element={<Guarantee />} />
                         <Route path="/success" element={<SuccessStories />} />
                         <Route path="/success/:slug" element={<CaseStory />} />
                         <Route path="/terms" element={<SuccessPromise />} />
