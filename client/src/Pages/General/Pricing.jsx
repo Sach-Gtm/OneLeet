@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
     Sparkles, BookOpen, ClipboardList, FileText, BarChart3, Target, Compass, Users,
     Check, Crown, ArrowRight, ShieldCheck, Clock, Star, GraduationCap, Info, Plus,
+    ClipboardCheck,
 } from "lucide-react";
 import {
     EXAM_COURSES, COUNSELLING_COURSES, MEMBERSHIP_GROUPS, FREE_FEATURES,
@@ -19,6 +20,7 @@ import CountdownLaunch from "@/Components/General/CountdownLaunch";
 const GROUP_ICON = {
     sparkles: Sparkles, book: BookOpen, clipboard: ClipboardList, files: FileText,
     chart: BarChart3, target: Target, compass: Compass, users: Users,
+    concierge: ClipboardCheck,
 };
 
 const rupee = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
@@ -70,6 +72,9 @@ function CourseCard({ c, featured }) {
                         <ShieldCheck size={12} /> Success Promise
                     </p>
                     <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">{c.promise}</p>
+                    <Link to="/guarantee" className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
+                        How the money-back guarantee works <ArrowRight size={11} />
+                    </Link>
                 </div>
             )}
 
@@ -159,6 +164,11 @@ export default function Pricing() {
                     One membership for your exam: AI mentor, premium PYQs, mock series, rank & college
                     predictor, counselling support and a Success Promise. Built by someone who cleared LEET.
                 </motion.p>
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.18 }} className="mt-4">
+                    <Link to="/guarantee" className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-xs font-bold text-amber-800 shadow-sm transition hover:bg-amber-100 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
+                        <ShieldCheck size={14} /> 100% money-back guarantee: clear your target or get a refund <ArrowRight size={13} />
+                    </Link>
+                </motion.div>
                 <div className="mx-auto mt-5 flex max-w-3xl flex-wrap justify-center gap-2">
                     {MEMBERSHIP_PROMISE.map((p, i) => (
                         <motion.span key={p}

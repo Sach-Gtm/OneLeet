@@ -82,6 +82,7 @@ export const MEMBERSHIP_GROUPS = [
     { icon: "chart", title: "Smart Analytics", items: ["Daily & weekly progress", "Accuracy & speed", "Strong / weak topics", "AI suggestions"] },
     { icon: "target", title: "Rank & College Predictor Pro", items: ["Expected rank & trends", "Round & category-wise", "Safe / dream / backup colleges"] },
     { icon: "compass", title: "Counselling Hub", items: ["Process & key dates", "Documents & choice-filling", "Freeze / float guide", "Round updates"] },
+    { icon: "concierge", title: "Applications & counselling, done for you", tag: "Done for you", items: ["We fill your application & exam forms, you only pay the official form fee", "We track every important date so you never miss a deadline", "We run your counselling round by round: choice-filling, documents, freeze / float", "A 1:1 counselling call to lock your college & branch strategy"] },
     { icon: "users", title: "Live Sessions & Mentor Support", items: ["Live classes & doubt sessions", "1:1 / 1:M mentorship", "Premium WhatsApp support: 6-hour response", "Career & college guidance", "Premium community"] },
 ];
 
@@ -95,6 +96,6 @@ export const FREE_FEATURES = [
 // The one-line promise the membership makes (shown at the top of the page).
 export const MEMBERSHIP_PROMISE = [
     "Complete LEET preparation", "AI personal mentor", "Premium PYQs & mock series",
-    "Rank & College Predictor Pro", "Counselling support", "Mentor community",
+    "Rank & College Predictor Pro", "Forms & counselling done for you", "Mentor community",
     "Performance analytics", "Personalised study plan", "Future updates for your exam",
 ];

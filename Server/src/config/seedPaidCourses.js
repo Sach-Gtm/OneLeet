@@ -12,7 +12,7 @@ const { getExams } = require("./exams");
 // v2: lower the struck-through `mrp` (the "original" price) to more believable
 // launch numbers. The paid `price` students actually pay is unchanged; the re-run
 // re-applies price/promise (no change) and the new mrp to each existing batch.
-const SEED_KEY = "paid-courses-v2";
+const SEED_KEY = "paid-courses-v3";
 
 const WHATS_INSIDE = [
     "Complete master course, notes, short notes, formula sheets & mind maps",
@@ -21,6 +21,7 @@ const WHATS_INSIDE = [
     "AI mentor, doubt solver, weak-topic detection & study planner",
     "Smart analytics, Rank & College Predictor Pro",
     "Counselling hub + 1:1 / 1:M mentorship and live doubt sessions",
+    "We fill your application & exam forms (you only pay the official form fee) and run your counselling, so you never miss a date",
     "A Success Promise backed by clear, per-exam terms",
 ];
 
@@ -75,10 +76,13 @@ async function ensurePaidCoursesSeeded() {
             const existing = await Course.findOne({ slug: c.slug });
             if (existing) {
                 // One-time launch-price correction + Success Promise on the batches
-                // that were seeded earlier at different prices.
+                // that were seeded earlier at different prices. v3 also refreshes
+                // the "what's inside" list (adds the done-for-you forms/counselling
+                // perk) on the already-seeded courses.
                 existing.price = c.price;
                 existing.mrp = c.mrp;
                 existing.successPromise = c.promise;
+                existing.whatsInside = WHATS_INSIDE;
                 existing.validityDays = existing.validityDays || 365;
                 existing.kind = "exam";
                 if (!existing.published) existing.published = true;
