@@ -123,6 +123,7 @@ export default function Footer() {
                         <li><Link to="/community" className={linkCls}>Community</Link></li>
                         <li><Link to="/mentor" className={linkCls}>Team</Link></li>
                         <li><Link to="/success" className={linkCls}>Success Stories</Link></li>
+                        <li><Link to="/guarantee" className={linkCls}>Guarantee</Link></li>
                         <li><Link to="/privacy" className={linkCls}>Privacy Policy</Link></li>
                     </ul>
                 </div>
