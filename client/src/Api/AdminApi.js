@@ -233,6 +233,43 @@ export const exportScholarship = async () => {
     }
 };
 
+// Campus Ambassador applications.
+export const getAmbassadors = async () => {
+    try {
+        const { data } = await api.get("/admin/ambassador");
+        return data; // { success, count, applications }
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Set an applicant's selection status (new / shortlisted / selected / rejected).
+export const setAmbassadorStatus = async (id, status) => {
+    try {
+        const { data } = await api.patch(`/admin/ambassador/${id}`, { status });
+        return data;
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
+// Download the ambassador applications CSV (triggers a browser download).
+export const exportAmbassadors = async () => {
+    try {
+        const res = await api.get("/admin/ambassador/export", { responseType: "blob" });
+        const url = URL.createObjectURL(new Blob([res.data], { type: "text/csv" }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "oneleet-ambassador-applications.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        unwrap(error);
+    }
+};
+
 // Referral cash-payout ledger: who to pay, how much (7%), when it's due.
 export const getReferralPayouts = async () => {
     try {
