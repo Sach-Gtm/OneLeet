@@ -8,6 +8,7 @@ const {
 } = require("../../middlewares/roleMiddleware");
 const admin = require("../../controllers/admin/adminController");
 const scholarship = require("../../controllers/content/scholarshipController");
+const ambassador = require("../../controllers/content/ambassadorController");
 
 // Student data + the team roster are admin / super-admin only. Mentors
 // (teachers) are deliberately excluded from all of it.
@@ -25,6 +26,11 @@ router.get("/achievements/export", admin.exportAchievements);
 // All-India Scholarship Test registrations + CSV export.
 router.get("/scholarship", scholarship.adminList);
 router.get("/scholarship/export", scholarship.adminExport);
+
+// Campus Ambassador applications: list, status update + CSV export.
+router.get("/ambassador", ambassador.adminList);
+router.get("/ambassador/export", ambassador.adminExport);
+router.patch("/ambassador/:id", ambassador.adminSetStatus);
 
 // AI spend dashboard.
 router.get("/ai-usage", admin.aiUsage);

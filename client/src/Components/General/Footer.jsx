@@ -124,6 +124,7 @@ export default function Footer() {
                         <li><Link to="/mentor" className={linkCls}>Team</Link></li>
                         <li><Link to="/success" className={linkCls}>Success Stories</Link></li>
                         <li><Link to="/guarantee" className={linkCls}>Guarantee</Link></li>
+                        <li><Link to="/ambassador" className="inline-flex items-center gap-1.5 font-semibold text-indigo-600 transition-all hover:pl-1 hover:text-indigo-700 dark:text-indigo-400">Campus Ambassador <span className="rounded bg-amber-400 px-1 py-0.5 text-[9px] font-bold text-slate-900">EARN</span></Link></li>
                         <li><Link to="/privacy" className={linkCls}>Privacy Policy</Link></li>
                     </ul>
                 </div>
